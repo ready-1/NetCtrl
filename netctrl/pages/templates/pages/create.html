@@ -6,10 +6,10 @@
 {% endblock head %}
 
 {% block content %}
-<form action="/pages/create/" method="post">
+<form action="{% url 'pages:create' %}" method="post">
     {% csrf_token %}
     {{ form }}
     <input class ="btn btn-primary" type="submit" value="Submit">
-    <a class ="btn btn-secondary" href="{% url 'pages' %}">Cancel</a>
+    <a class ="btn btn-secondary" href="{% url 'pages:pages' %}">Cancel</a>
 </form>
 {% endblock %}

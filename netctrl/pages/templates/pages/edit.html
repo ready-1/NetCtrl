@@ -12,7 +12,7 @@
     {% csrf_token %}
     {{ form }}
     <input class ="btn btn-primary" type="submit" value="Save">
-    <a class ="btn btn-secondary" href="{% url 'pages' %}">Cancel</a>
+    <a class ="btn btn-secondary" href="{% url 'pages:pages' %}">Cancel</a>
 
 </form>
 {% endblock %}

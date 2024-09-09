@@ -5,8 +5,8 @@ This will delete {{ page.title }}. <br />
 This action cannot be undone.<br />
 
 <span class="text-danger">Are you sure?</span>
-<form action="{% url 'delete' page.slug %}" method="post" class="mt-2">
+<form action="{% url 'pages:delete' page.slug %}" method="post" class="mt-2">
     {% csrf_token %}
     <input class ="btn btn-danger" type="submit" value="Delete">
-    <a class ="btn btn-secondary" href="{% url 'page' page.slug %}">Cancel</a>
+    <a class ="btn btn-secondary" href="{% url 'pages:page' page.slug %}">Cancel</a>
 {% endblock %}

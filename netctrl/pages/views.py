@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 from .models import Page
 from .forms import PageForm
@@ -46,7 +47,7 @@ def delete(request, slug):
     page = Page.objects.get(slug=slug)
     if request.method == "POST":
         page.delete()
-        return HttpResponseRedirect("/")
+        return HttpResponseRedirect(reverse("pages:home"))
 
     return render(request, "pages/delete.html", {"page": page})
 

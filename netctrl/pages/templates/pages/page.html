@@ -5,8 +5,8 @@
 
 <p>{{ page.content|safe }}</p>
 
-<p><a class="btn btn-primary" href="{% url 'pages' %}">Back to pages</a>
-<a href="{% url 'edit' page.slug %}"><span class="btn btn-primary">Edit</span></a>
-<a href="{% url 'delete' page.slug %}"><span class="btn btn-primary">Delete</span></a>
+<p><a class="btn btn-primary" href="{% url 'pages:pages' %}">Back to pages</a>
+<a href="{% url 'pages:edit' page.slug %}"><span class="btn btn-primary">Edit</span></a>
+<a href="{% url 'pages:delete' page.slug %}"><span class="btn btn-primary">Delete</span></a>
 </p>
 {% endblock %}

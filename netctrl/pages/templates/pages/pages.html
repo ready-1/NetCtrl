@@ -12,20 +12,20 @@
     <tbody>
         {% for page in pages %}
         <tr>
-        <td><a href="{% url 'page' page.slug %}"> {{ page.title }}</a></td>
+        <td><a href="{% url 'pages:page' page.slug %}"> {{ page.title }}</a></td>
         <td>
             {{ page.slug }}
         </td>
         <td>
-            <a href="{% url 'edit' page.slug %}"><span class="btn btn-primary btn-sm">Edit</span></a>
-            <a href="{% url 'delete' page.slug %}"><span class="btn btn-primary btn-sm">Delete</span></a>
+            <a href="{% url 'pages:edit' page.slug %}"><span class="btn btn-primary btn-sm">Edit</span></a>
+            <a href="{% url 'pages:delete' page.slug %}"><span class="btn btn-primary btn-sm">Delete</span></a>
         </td>
 
       </tr>
       {% endfor %}
     </tbody>
   </table>
-  <a class="btn btn-primary" href="{% url 'create' %}">New Page</a>
+  <a class="btn btn-primary" href="{% url 'pages:create' %}">New Page</a>
 
 
 
