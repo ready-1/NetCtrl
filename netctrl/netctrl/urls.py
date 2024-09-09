@@ -21,6 +21,7 @@ from django.urls import path, include
 # from debug_toolbar.toolbar import debug_toolbar_urls
 
 urlpatterns = [
+    path('tinymce/', include('tinymce.urls')),
     path("", include("pages.urls")),
     path("admin/", admin.site.urls),
 ]

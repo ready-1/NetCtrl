@@ -1,5 +1,10 @@
 {% extends "base.html" %} 
 
+{% block head %}
+{{ form.media }}
+<!-- inside head block -->
+{% endblock head %}
+
 {% block content %}
 <form action="/pages/create/" method="post">
     {% csrf_token %}

@@ -18,6 +18,7 @@ def pages(request):
 def page(request, slug):
     page = Page.objects.get(slug=slug)
     return render(request, "pages/page.html", {"page": page})
+    
 
 
 def edit(request, slug):

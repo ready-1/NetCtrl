@@ -1,4 +1,11 @@
-{% extends "base.html" %} 
+{% extends "base.html" %} {% load static %}
+
+{% block head %}
+{{ form.media }}
+<script src="{% static 'netctrl/js/tinymce_init.js' %}"></script>
+<!-- inside head block -->
+
+{% endblock head %}
 
 {% block content %}
 <form action="/pages/edit/{{ page.slug }}/" method="post">
