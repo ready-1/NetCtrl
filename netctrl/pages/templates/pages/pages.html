@@ -1,0 +1,32 @@
+{% extends "base.html" %} {% block content %} 
+<h1>Page List</h1>
+
+<table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">Title</th>
+        <th scope="col">Slug</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for page in pages %}
+        <tr>
+        <td><a href="{% url 'page' page.slug %}"> {{ page.title }}</a></td>
+        <td>
+            {{ page.slug }}
+        </td>
+        <td>
+            <a href="{% url 'edit' page.slug %}"><span class="btn btn-primary btn-sm">Edit</span></a>
+            <a href="{% url 'delete' page.slug %}"><span class="btn btn-primary btn-sm">Delete</span></a>
+        </td>
+
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <a class="btn btn-primary" href="{% url 'create' %}">New Page</a>
+
+
+
+{% endblock %}
