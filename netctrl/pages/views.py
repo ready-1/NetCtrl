@@ -7,7 +7,11 @@ from .forms import PageForm
 
 # Create your views here.
 def home(request):
-    return render(request, "pages/")
+    pages = Page.objects.all()
+    if not pages.filter(slug="home"):
+        Page.objects.create(title="Home", content="Home page - please edit", slug="home")
+    page = Page.objects.get(slug="home")
+    return render(request, "pages/page.html", {"page": page})
 
 
 def pages(request):
