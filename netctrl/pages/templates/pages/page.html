@@ -5,8 +5,10 @@
 
 <p>{{ page.content|safe }}</p>
 
+{% if request.path != '/' %}
 <p><a class="btn btn-primary" href="{% url 'pages:pages' %}">Back to pages</a>
 <a href="{% url 'pages:edit' page.slug %}"><span class="btn btn-primary">Edit</span></a>
 <a href="{% url 'pages:delete' page.slug %}"><span class="btn btn-primary">Delete</span></a>
 </p>
+{% endif %}
 {% endblock %}
