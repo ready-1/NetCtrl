@@ -24,8 +24,13 @@
   
   
   <main role="main" class="container">
-    <div class="mb-5">
+    <div class="row mb-2" id="navbar">
     {%include "header.html"%}
+    </div>
+
+    {%include "grid.html"%}
+
+    <div class="row" id="content">
     {% block content %}{% endblock %}
     </div>
   </main><!-- /.container -->

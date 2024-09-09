@@ -1,12 +1,12 @@
 {% extends "base.html" %} {% block content %} 
-<h1>Delete</h1>
+<span class="text-danger"><h1>Delete</h1></span>
 
-This will delete {{ page.title }}. <br />
-This action cannot be undone.<br />
+<p>This will delete {{ page.title }}. <br />
+This action cannot be undone.</p>
 
-<span class="text-danger">Are you sure?</span>
-<form action="{% url 'pages:delete' page.slug %}" method="post" class="mt-2">
+<span class="text-danger display-6">Are you sure?</span>
+<form action="{% url 'pages:delete' page.slug %}" method="post" class="mt-4">
     {% csrf_token %}
-    <input class ="btn btn-danger" type="submit" value="Delete">
-    <a class ="btn btn-secondary" href="{% url 'pages:page' page.slug %}">Cancel</a>
+    <input class ="btn btn-sm btn-danger" type="submit" value="Delete">
+    <a href="{% url 'pages:page' page.slug %}"><button type="button" class="btn btn-outline-secondary btn-sm ">Cancel</button></a>
 {% endblock %}
