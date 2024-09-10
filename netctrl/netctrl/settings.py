@@ -25,6 +25,8 @@ SECRET_KEY = "django-insecure-ns5ijdsa)d7hiblm0l3^d4i#$^@p57#h(1$83-8b^(+$hcg6h8
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+GRIDRULER = True
+
 
 ALLOWED_HOSTS = []
 INTERNAL_IPS = ["127.0.0.1"]
@@ -68,6 +70,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "netctrl.context_processors.settings",  
             ],
         },
     },
