@@ -1,4 +1,6 @@
-{% extends "base.html" %} {% block content %} 
+{% extends "base.html" %} {% load crispy_forms_tags %}
+
+{% block content %} 
 <span class="text-danger"><h1>Delete</h1></span>
 
 <p>This will delete {{ page.title }}. <br />
@@ -8,5 +10,5 @@ This action cannot be undone.</p>
 <form action="{% url 'pages:delete' page.slug %}" method="post" class="mt-4">
     {% csrf_token %}
     <input class ="btn btn-sm btn-danger" type="submit" value="Delete">
-    <a href="{% url 'pages:page' page.slug %}"><button type="button" class="btn btn-outline-secondary btn-sm ">Cancel</button></a>
+    <a href="{% url 'pages:page' page.slug %}"><button type="button" class="btn btn-secondary btn-sm ">Cancel</button></a>
 {% endblock %}

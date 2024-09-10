@@ -1,4 +1,4 @@
-{% extends "base.html" %} 
+{% extends "base.html" %} {% load crispy_forms_tags %}
 
 {% block head %}
 {{ form.media }}
@@ -8,8 +8,8 @@
 {% block content %}
 <form action="{% url 'pages:create' %}" method="post">
     {% csrf_token %}
-    {{ form }}
+    {{ form|crispy }}
     <input class ="btn btn-sm btn-primary" type="submit" value="Submit">
-    <a href="{% url 'pages:pages' %}"><button type="button" class="btn btn-outline-secondary btn-sm">Cancel</button></a>
+    <a href="{% url 'pages:pages' %}"><button type="button" class="btn btn-secondary btn-sm">Cancel</button></a>
 </form>
 {% endblock %}

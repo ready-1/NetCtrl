@@ -34,6 +34,8 @@ INTERNAL_IPS = ["127.0.0.1"]
 
 INSTALLED_APPS = [
     'tinymce',
+    'crispy_forms',
+    "crispy_bootstrap5",
     "pages",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -140,3 +142,7 @@ TINYMCE_DEFAULT_CONFIG = {
     "skin": "oxide-dark",
     "content_css": "dark",    
 }
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
+
