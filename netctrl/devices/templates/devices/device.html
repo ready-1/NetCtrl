@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Device Details for {{ device.short_name }}</h1>
+
+<div>In Band IP: {{ device.in_band_ip }}</div>
+<div>Out Band IP: {{ device.out_band_ip }}</div> 
+
+
+{% endblock %}

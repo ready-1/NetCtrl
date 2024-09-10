@@ -1,3 +1,6 @@
 from django.contrib import admin
 
-# Register your models here.
+#  register devices.models.Netgear
+from .models import Netgear
+
+admin.site.register(Netgear)
