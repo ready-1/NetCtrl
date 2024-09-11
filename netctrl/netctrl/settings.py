@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-ns5ijdsa)d7hiblm0l3^d4i#$^@p57#h(1$83-8b^(+$hcg6h8
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-NC_GRIDRULER = True
+NC_GRIDRULER = False
 
 
 ALLOWED_HOSTS = []
