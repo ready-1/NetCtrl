@@ -7,8 +7,8 @@ class Netgear(models.Model):
     out_band_ip = models.CharField(max_length=15)
     username = models.CharField(max_length=100)
     password = models.CharField(max_length=100)
-    login_token = models.CharField(max_length=100)
-    login_epoch_time = models.IntegerField()
+    login_token = models.CharField(max_length=100, default="", blank=True)
+    login_epoch_time = models.IntegerField(default=0, blank=True)
     
     # #  from /device_info
     # # "name": "<string>",

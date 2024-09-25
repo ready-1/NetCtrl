@@ -1,0 +1,14 @@
+{% extends "base.html" %} {% load crispy_forms_tags %}
+
+{% block content %} 
+<span class="text-danger"><h1>Delete</h1></span>
+
+<p>This will delete {{ device.short_name }}. <br />
+This action cannot be undone.</p>
+
+<span class="text-danger display-6">Are you sure?</span>
+<form action="{% url 'devices:delete' page.slug %}" method="post" class="mt-4">
+    {% csrf_token %}
+    <input class ="btn btn-sm btn-danger" type="submit" value="Delete">
+    <a href="{% url 'devices:device' page.slug %}"><button type="button" class="btn btn-secondary btn-sm ">Cancel</button></a>
+{% endblock %}

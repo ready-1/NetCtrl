@@ -1,0 +1,17 @@
+{% extends "base.html" %} {% load crispy_forms_tags %} {% load static %}
+
+{% block head %}
+{{ form.media }}
+<script src="{% static 'netctrl/js/tinymce_init.js' %}"></script>
+<!-- inside head block -->
+
+{% endblock head %}
+
+{% block content %}
+<form action="/devices/edit/{{ device.short_name }}/" method="post">
+    {% csrf_token %}
+    {{ form|crispy}}
+    <input class ="btn btn-sm btn-primary" type="submit" value="Save">
+    <a href="{% url 'device:devices' %}"><button type="button" class="btn btn-secondary btn-sm">Cancel</button></a>
+</form>
+{% endblock %}

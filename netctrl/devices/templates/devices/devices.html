@@ -13,5 +13,8 @@
         </div>
     </div>
   </div>
+  {% empty %}
+    <p>No devices found.</p>
 {% endfor %}
+<a href="{% url 'devices:create' %}"><span class="btn btn-sm btn-primary mt-2" >New Device</span></a>
 {% endblock %}

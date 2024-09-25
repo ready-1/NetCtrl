@@ -4,4 +4,8 @@ from .models import Netgear
 class NetgearForm(ModelForm):
     class Meta:
         model = Netgear
-        fields = '__all__'
+        fields = ["short_name", 
+                  "in_band_ip", 
+                  "out_band_ip", 
+                  "username", 
+                  "password",]

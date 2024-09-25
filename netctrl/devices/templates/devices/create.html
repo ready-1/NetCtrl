@@ -1,0 +1,15 @@
+{% extends "base.html" %} {% load crispy_forms_tags %}
+
+{% block head %}
+{{ form.media }}
+<!-- inside head block -->
+{% endblock head %}
+
+{% block content %}
+<form action="{% url 'devices:create' %}" method="post">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <input class ="btn btn-sm btn-primary" type="submit" value="Submit">
+    <a href="{% url 'devices:devices' %}"><button type="button" class="btn btn-secondary btn-sm">Cancel</button></a>
+</form>
+{% endblock %}
