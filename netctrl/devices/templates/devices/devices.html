@@ -6,10 +6,12 @@
 
 <div class="card" style="width: 18rem;">
     <div class="card-body">
-        <a class="btn btn-sm btn-success" href="{% url 'devices:device' device.short_name %}"> <h5 class="card-title">{{ device.short_name }}</h5></a>
+        <a class="btn btn-sm 
+        {% if device.alive %} btn-success {% else %} btn-danger {% endif %}
+        " href="{% url 'devices:device' device.short_name %}"> <h5 class="card-title">{{ device.short_name }}</h5></a>
         <div class="mt-3">
-        <a class="btn btn-sm btn-warning" href="http://{{ device.in_band_ip }}" class="card-link">In Band</a>
-        <a class="btn btn-sm btn-primary" href="http://{{ device.out_band_ip }}" class="card-link">Out Band</a>
+        <a class="btn btn-sm btn-warning" target="_blank" href="http://{{ device.in_band_ip }}" class="card-link">In Band</a>
+        <a class="btn btn-sm btn-primary" target="_blank" href="http://{{ device.out_band_ip }}" class="card-link">Out Band</a>
         </div>
     </div>
   </div>

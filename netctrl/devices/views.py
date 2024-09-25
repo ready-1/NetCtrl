@@ -5,8 +5,15 @@ from django.urls import reverse
 from .models import Netgear 
 from .forms import NetgearForm
 
+
 def devices(request):
     devs = Netgear.objects.all()
+    
+    # check if devices are online
+    # for dev in devs:
+    #     dev.
+            
+
     return render(request, "devices/devices.html", { 'devices' : devs })
 
 def device(request, short_name):
