@@ -38,6 +38,17 @@ class Netgear(models.Model):
     # num_of_ports = models.IntegerField()
     # #     "bootVersion": "<string>",
 
+    def poll_switch(self):
+        self.is_alive()
+        if self.alive:
+            self.device_info = self.get_device_info()
+            self.device_name = self.get_device_name()
+
+            self.sw_device_name = json.loads(self.device_name)["name"]
+            self.sw_device_location = json.loads(self.device_name)["location"]
+            self.sw_model = json.loads(self.device_info)["model"]
+            self.sw_numOfPorts = json.loads(self.device_info)["numOfPorts"]
+
     def __init__(self, *args, **kwargs):
         super(Netgear, self).__init__(*args, **kwargs)
 
@@ -52,16 +63,7 @@ class Netgear(models.Model):
         poll_switch(self) # polls switch for device info
 
 
-    def poll_switch(self):
-        self.is_alive()
-        if self.alive:
-            self.device_info = self.get_device_info()
-            self.device_name = self.get_device_name()
 
-            self.sw_device_name = json.loads(self.device_name)["name"]
-            self.sw_device_location = json.loads(self.device_name)["location"]
-            self.sw_model = json.loads(self.device_info)["model"]
-            self.sw_numOfPorts = json.loads(self.device_info)["numOfPorts"]
 
     def make_url(self):
         return "https://" + self.out_band_ip + ":8443/api/v1/"
