@@ -1,8 +1,12 @@
+Lksz24]AbN
+
+
 import os, sys
 import json
 import requests
 from django.db import models
 
+from django.contrib.postgres.fields import JSONField
 
 # Create your models here.
 class Netgear(models.Model):
@@ -13,6 +17,7 @@ class Netgear(models.Model):
     password = models.CharField(max_length=100)
     login_token = models.CharField(max_length=100, default="", blank=True)
     login_epoch_time = models.IntegerField(default=0, blank=True)
+    current_switch_config = models.JSONField(blank=True, null=True)
 
     # #  from /self_info
     # # "name": "<string>",
@@ -35,7 +40,28 @@ class Netgear(models.Model):
 
     def __init__(self, *args, **kwargs):
         super(Netgear, self).__init__(*args, **kwargs)
-        self.alive = self.is_alive()
+
+        self.alive = False
+        self.device_info = ""
+        self.device_name = ""
+        self.sw_device_name = ""
+        self.sw_device_location = ""
+        self.sw_model = ""
+        self.sw_numOfPorts = 0
+
+        poll_switch(self) # polls switch for device info
+
+
+    def poll_switch(self):
+        self.is_alive()
+        if self.alive:
+            self.device_info = self.get_device_info()
+            self.device_name = self.get_device_name()
+
+            self.sw_device_name = json.loads(self.device_name)["name"]
+            self.sw_device_location = json.loads(self.device_name)["location"]
+            self.sw_model = json.loads(self.device_info)["model"]
+            self.sw_numOfPorts = json.loads(self.device_info)["numOfPorts"]
 
     def make_url(self):
         return "https://" + self.out_band_ip + ":8443/api/v1/"
@@ -119,6 +145,102 @@ class Netgear(models.Model):
         status = json.loads(response.text)["resp"]["status"]
 
         return status
+    
+    def get_device_info(self):
+        self.login_to_switch()
+        url = self.make_url() + "device_info"
+
+        payload = {}
+        headers = {
+            "Accept": "application/json",
+            "Authorization": "Bearer " + self.login_token,
+        }
+
+        
+        response = requests.request("GET", url, headers=headers, data=payload, verify=False)
+        self.logout_from_switch()
+
+        # {
+        #   "resp": {
+        #     "status": "failure",
+        #     "respCode": "<integer>",
+        #     "respMsg": "<string>"
+        #   },
+        #   "device_info": {
+        #     "name": "<string>",
+        #     "serialNumber": "<string>",
+        #     "macAddr": "<string>",
+        #     "model": "<string>",
+        #     "lanIpAddress": "<string>",
+        #     "swVer": "<string>",
+        #     "lastReboot": "<string>",
+        #     "numOfPorts": "<integer>",
+        #     "numOfActivePorts": "<integer>",
+        #     "rstpState": "<boolean>",
+        #     "memoryUsed": "<string>",
+        #     "memoryUsage": "<string>",
+        #     "cpuUsage": "<string>",
+        #     "fanState": "<string>",
+        #     "poeState": "<boolean>",
+        #     "upTime": "<string>",
+        #     "temperatureSensors": [
+        #       {
+        #         "sensorNum": "<integer>",
+        #         "sensorDesc": "<integer>",
+        #         "sensorTemp": "<string>",
+        #         "sensorState": "2"
+        #       },
+        #       {
+        #         "sensorNum": "<integer>",
+        #         "sensorDesc": "<integer>",
+        #         "sensorTemp": "<string>",
+        #         "sensorState": "1"
+        #       }
+        #     ],
+        #     "bootVersion": "<string>",
+        #     "rxData": "<integer>",
+        #     "txData": "<integer>",
+        #     "adminPoePower": "<integer>"
+        #   }
+        # }
+
+        device_info_resp = json.loads(response.text)
+        return json.dumps(device_info_resp["deviceInfo"], indent=4)
+    
+    def get_device_name(self):
+        self.login_to_switch()
+        url = self.make_url() + "device_name"
+
+        payload = {}
+        headers = {
+            "Accept": "application/json",
+            "Authorization": "Bearer " + self.login_token,
+        }
+
+        
+        response = requests.request("GET", url, headers=headers, data=payload, verify=False)
+        self.logout_from_switch()
+
+        # {
+        # "resp": {
+        #     "status": "failure",
+        #     "respCode": "<integer>",
+        #     "respMsg": "<string>"
+        # },
+        # "deviceName": {
+        #     "name": "<string>",
+        #     "location": "<string>"
+        # }
+        # }
+
+        device_name_resp = json.loads(response.text)
+        return json.dumps(device_name_resp["deviceName"], indent=4)
+
+    def get_system_config(self):
+        pass
+
+    def get_system_rfc1213(self):
+        pass
 
     def __str__(self):
         return self.short_name

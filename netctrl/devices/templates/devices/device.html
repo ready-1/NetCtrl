@@ -1,10 +1,55 @@
 {% extends "base.html" %}
 
+
 {% block content %}
 <h1>Device Details for {{ device.short_name }}</h1>
 
+<div class="row">
+<div class="col-4">
+    Device Name: {{ device.sw_device_name }}
+</div>
+<div class="col-4">
+    Device Location: {{ device.sw_device_location }}
+</div>
+<div class="col-4">
+    Model: {{ device.sw_model }}
+</div>
+<div class="col-4">
+    Total Ports: {{ device.sw_numOfPorts }}
+</div>
+</div>
+
 <div>In Band IP: {{ device.in_band_ip }}</div>
 <div>Out Band IP: {{ device.out_band_ip }}</div> 
+
+
+
+
+
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="device-info-tab" data-bs-toggle="tab" data-bs-target="#device-info-tab-pane" type="button" role="tab" aria-controls="device-tab-pane" aria-selected="true">device-info</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="system_config-tab" data-bs-toggle="tab" data-bs-target="#system_config-tab-pane" type="button" role="tab" aria-controls="system_config-tab-pane" aria-selected="false">system_config</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="rfc1213-tab" data-bs-toggle="tab" data-bs-target="#rfc1213-tab-pane" type="button" role="tab" aria-controls="rfc1213-tab-pane" aria-selected="false">rfc1213</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="vlans-tab" data-bs-toggle="tab" data-bs-target="#vlans-tab-pane" type="button" role="tab" aria-controls="vlans-tab-pane" aria-selected="false" vlans>vlans</button>
+    </li>
+  </ul>
+  <div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade show active" id="device-info-tab-pane" role="tabpanel" aria-labelledby="device-info-tab" tabindex="0">
+        <pre>{{ device.device_info|safe }}</pre>
+    </div>
+    <div class="tab-pane fade" id="system_config-tab-pane" role="tabpanel" aria-labelledby="system_config-tab" tabindex="0">system_config</div>
+    <div class="tab-pane fade" id="rfc1213-tab-pane" role="tabpanel" aria-labelledby="rfc1213-tab" tabindex="0">rfc1213</div>
+    <div class="tab-pane fade" id="vlans-tab-pane" role="tabpanel" aria-labelledby="vlans-tab" tabindex="0">VLANS</div>
+  </div>
+
+
 
 <a href="{% url 'devices:devices' %}"><span class="btn btn-sm btn-primary mt-2" >Back</span></a>
 {% endblock %}
