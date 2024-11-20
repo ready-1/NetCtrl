@@ -16,9 +16,11 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import path, include
+from django.shortcuts import redirect
 
 urlpatterns = [
-    path('wiki/', include('wiki.urls')),
-    path("admin/", admin.site.urls),
+    path('admin/', admin.site.urls),
+    path('wiki/', include('wiki.urls')),  # Include the wiki app's URLs
+    path('', lambda request: redirect('wiki:wiki_list', permanent=False)),  # Redirect "/" to wiki_list
 ]
