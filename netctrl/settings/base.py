@@ -58,12 +58,12 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "ctrl.urls"
+ROOT_URLCONF = "netctrl.urls"
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": ["templates"],
+        'DIRS': [BASE_DIR /  "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -76,7 +76,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "ctrl.wsgi.application"
+WSGI_APPLICATION = "netctrl.wsgi.application"
 
 
 # Database
@@ -133,10 +133,22 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
+STATICFILES_DIRS = [
+    BASE_DIR / "static"  # Ensure this matches your directory structure
+]
 
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+# The URL to use when referring to static files (where they will be served from)
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
+
+# The absolute path to the directory where collectstatic will collect static files for deployment.
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+
+# The URL to use when referring to media files.
+MEDIA_URL = '/media/'
+
+# The absolute path to the directory where media will be stored.
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
