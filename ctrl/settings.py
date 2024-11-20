@@ -33,6 +33,7 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='', cast=lambda v: [s.strip() fo
 # Application definition
 
 INSTALLED_APPS = [
+    "tinymce",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -133,3 +134,11 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# TinyMCE settings
+TINYMCE_DEFAULT_CONFIG = {
+    "height": 500,
+    "width": "100%",
+    "plugins": "link image code",
+    "toolbar": "undo redo | styleselect | bold italic | alignleft aligncenter alignright | link image | code",
+}
