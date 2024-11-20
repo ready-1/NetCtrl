@@ -1,0 +1,44 @@
+{% load static %}
+<!doctype html>
+<html lang="en" data-bs-theme="dark">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    {% comment %} <link rel="icon" href="/docs/4.0/assets/img/favicons/favicon.ico"> {% endcomment %}
+
+    <title>{{ page.title }}</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static "netctrl/css/bootstrap.min.css" %}" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="{% static "netctrl/css/style.css" %}"" rel="stylesheet">
+    {% block head %}{% endblock %}
+  </head>
+
+
+<body>
+  
+  
+  
+  <main role="main" class="container">
+    <div class="row mb-2" id="navbar">
+    {%include "header.html"%}
+    </div>
+    
+    {% include "grid.html" %}
+
+
+
+    <div class="row" id="content">
+    {% block content %}{% endblock %}
+    </div>
+  </main><!-- /.container -->
+
+
+  <script src="{% static "netctrl/js/bootstrap.bundle.js" %}" type="text/javascript"></script>
+  {% comment %} <script src="{% static "netctrl/js/tinymce_init.js" %}" type="text/javascript"></script> {% endcomment %}
+</body>
+</html>
