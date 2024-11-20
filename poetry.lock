@@ -15,16 +15,6 @@ files = [
 tests = ["mypy (>=0.800)", "pytest", "pytest-asyncio"]
 
 [[package]]
-name = "decouple"
-version = "0.0.7"
-description = "Decoupling logic"
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "decouple-0.0.7.tar.gz", hash = "sha256:c253c1cc62b76e9720a066f334552548c6de1884bc3bdf456ddb62d61b867b09"},
-]
-
-[[package]]
 name = "django"
 version = "5.1.3"
 description = "A high-level Python web framework that encourages rapid development and clean, pragmatic design."
@@ -121,6 +111,17 @@ files = [
 ]
 
 [[package]]
+name = "python-decouple"
+version = "3.8"
+description = "Strict separation of settings from code."
+optional = false
+python-versions = "*"
+files = [
+    {file = "python-decouple-3.8.tar.gz", hash = "sha256:ba6e2657d4f376ecc46f77a3a615e058d93ba5e465c01bbe57289bfb7cce680f"},
+    {file = "python_decouple-3.8-py3-none-any.whl", hash = "sha256:d0d45340815b25f4de59c974b855bb38d03151d81b037d9e3f463b0c9f8cbd66"},
+]
+
+[[package]]
 name = "sqlparse"
 version = "0.5.2"
 description = "A non-validating SQL parser."
@@ -149,4 +150,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "9ccca260f9a70f24f416c43331ae00697a3122e38e844c61fdc66759138239c8"
+content-hash = "8e7a82d3fe7c69f6e90481623480570b25bab1d3f5ce60f0acbc8f46814c94ca"
