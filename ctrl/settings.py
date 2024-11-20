@@ -41,6 +41,13 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 ]
 
+# Third Party Apps
+INSTALLED_APPS += ['tinymce']
+
+# Project Apps
+INSTALLED_APPS += ['wiki']
+
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -56,7 +63,7 @@ ROOT_URLCONF = "ctrl.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": ["templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -127,9 +134,19 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
+STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_URL = "static/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# TinyMCE settings
+TINYMCE_DEFAULT_CONFIG = {
+    "height": 500,
+    "width": "100%",
+    "plugins": "link image code",
+    "toolbar": "undo redo | styleselect | bold italic | alignleft aligncenter alignright | link image | code",
+}
+
