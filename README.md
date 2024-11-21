@@ -1,37 +1,7 @@
-# Django File Manager Implementation To-Do List
-
-## 1. Setup and Installation
-- [ ] Clone the Django File Manager repository or extract the relevant components.
-- [ ] Configure `MEDIA_URL` and `MEDIA_ROOT` in `settings.py`.
-- [ ] Add file manager URLs to the project’s `urls.py`.
-
-## 2. Basic Integration
-- [ ] Set up file manager views for uploading, listing, and deleting files.
-- [ ] Test file uploading and ensure files are saved in the `MEDIA_ROOT` directory.
-- [ ] Verify file accessibility via the browser.
-
-## 3. UI Customization
-- [ ] Adjust templates to match your project’s look and feel (e.g., Bootstrap 5).
-- [ ] Add navigation links to integrate the file manager with the existing wiki.
-
-## 4. Testing and Debugging
-- [ ] Verify file manager functionality with various file types (e.g., images, PDFs, binaries).
-- [ ] Test edge cases like large file uploads and invalid formats.
-
-## 5. Enhancements
-- [ ] Integrate `django-taggit` for tagging files.
-- [ ] Add views and filters to browse files by tags or categories.
-- [ ] Add tagging functionality to the file upload form.
-- [ ] Update templates to display tags and allow filtering by them.
-
-## 6. Documentation
-- [ ] Write a brief guide on how to use the file manager.
-- [ ] Document any customizations or additional features.
-
-
 # Wiki Pages
 - [ ] Add a check for duplicate page names.
 - [ ] adjust formatting of page content and bottom buttons
+- [ ] implement better tagging
 
 # Firmware Update Checker
 - [ ] Add a check for firmware updates for all devices in the system.

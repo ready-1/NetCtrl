@@ -43,6 +43,7 @@ INSTALLED_APPS = [
 
 # Third Party Apps
 INSTALLED_APPS += ['tinymce']
+INSTALLED_APPS += ['taggit']
 
 # Project Apps
 INSTALLED_APPS += ['wiki']

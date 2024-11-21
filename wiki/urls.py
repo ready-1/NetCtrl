@@ -10,3 +10,12 @@ urlpatterns = [
     path('edit/<int:pk>/', views.wiki_edit, name='wiki_edit'),
     path('delete/<int:pk>/', views.wiki_delete, name='wiki_delete'),
 ]
+
+# File manager URLs
+urlpatterns += [
+    path('files/', views.file_list, name='file_list'),
+    path('files/upload/', views.file_upload, name='file_upload'),
+    path('files/<int:pk>/delete/', views.file_confirm_delete, name='file_confirm_delete'),
+    path('image-upload/', views.image_upload, name='image_upload'),
+    path('files/api/', views.file_list_api, name='file_list_api'),
+]

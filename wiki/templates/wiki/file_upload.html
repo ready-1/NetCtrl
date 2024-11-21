@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Upload File</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="form-group">
+            <label for="tags">Existing Tags</label>
+            <div>
+                {% for tag in existing_tags %}
+                    <span class="badge bg-primary existing-tag" style="cursor: pointer;" data-tag="{{ tag.name }}">{{ tag.name }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        <button type="submit" class="btn btn-success">Upload</button>
+        <a href="{% url 'wiki:file_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+
+
+<script>
+    document.querySelectorAll('.existing-tag').forEach(tag => {
+        tag.addEventListener('click', () => {
+            const tagInput = document.querySelector('#id_tags');  // Adjust selector if necessary
+            const existingValue = tagInput.value.trim();
+            const newValue = tag.dataset.tag;
+            if (!existingValue.includes(newValue)) {
+                tagInput.value = existingValue ? `${existingValue}, ${newValue}` : newValue;
+            }
+        });
+    });
+</script>
+
+{% endblock %}
+
+
+
+

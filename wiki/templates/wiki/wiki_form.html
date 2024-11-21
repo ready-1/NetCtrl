@@ -17,11 +17,65 @@
 <script src="{% static 'tinymce/tinymce.min.js' %}"></script>
 <script>
     tinymce.init({
-        selector: 'textarea',
-        height: 500,
-        plugins: 'link image code',
-        toolbar: 'undo redo | styleselect | bold italic | alignleft aligncenter alignright | link image | code'
+        selector: 'textarea',  // Replace with your selector
+        plugins: 'image link code',
+        toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent | image link code',
+        automatic_uploads: true,
+        images_upload_url: '/wiki/image-upload/',  // A URL to handle image uploads
+        file_picker_callback: function (callback, value, meta) {
+            if (meta.filetype === 'file') {
+                fetch('/wiki/files/api/')  // Fetch the file list from the new API endpoint
+                    .then(response => response.json())
+                    .then(files => {
+                        // Create a simple file picker dialog
+                        let filePicker = document.createElement('div');
+                        filePicker.style.position = 'fixed';
+                        filePicker.style.top = '50%';
+                        filePicker.style.left = '50%';
+                        filePicker.style.transform = 'translate(-50%, -50%)';
+                        filePicker.style.background = '#fff';
+                        filePicker.style.border = '1px solid #ccc';
+                        filePicker.style.padding = '20px';
+                        filePicker.style.zIndex = '10000';
+    
+                        let fileList = document.createElement('ul');
+                        fileList.style.listStyle = 'none';
+                        fileList.style.padding = '0';
+    
+                        files.forEach(file => {
+                            let listItem = document.createElement('li');
+                            listItem.style.margin = '5px 0';
+    
+                            let link = document.createElement('a');
+                            link.href = '#';
+                            link.textContent = file.name;
+                            link.onclick = function () {
+                                callback(file.url, { text: file.name });
+                                document.body.removeChild(filePicker);  // Close the dialog
+                                return false;
+                            };
+    
+                            listItem.appendChild(link);
+                            fileList.appendChild(listItem);
+                        });
+    
+                        filePicker.appendChild(fileList);
+    
+                        let closeButton = document.createElement('button');
+                        closeButton.textContent = 'Close';
+                        closeButton.style.marginTop = '10px';
+                        closeButton.onclick = function () {
+                            document.body.removeChild(filePicker);  // Close the dialog
+                        };
+    
+                        filePicker.appendChild(closeButton);
+                        document.body.appendChild(filePicker);
+                    });
+            }
+        },
     });
+
+
 </script>
 {% endblock %}
 
