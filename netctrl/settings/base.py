@@ -29,6 +29,8 @@ DEBUG = config("DEBUG", default=False, cast=bool)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='', cast=lambda v: [s.strip() for s in v.split(',')])
 
+BUG_QUEUE_FILE = BASE_DIR / "data" / "bug_queue.json"
+
 
 # Application definition
 
@@ -46,7 +48,7 @@ INSTALLED_APPS += ['tinymce']
 INSTALLED_APPS += ['taggit']
 
 # Project Apps
-INSTALLED_APPS += ['wiki']
+INSTALLED_APPS += ['bugtracker', 'wiki']
 
 
 MIDDLEWARE = [

@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Submit a Bug or Feature Request</h1>
+    <form method="post" action="{% url 'bugtracker:new' %}">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input type="text" class="form-control" id="title" name="title" required>
+        </div>
+        <div class="mb-3">
+            <label for="issue_type" class="form-label">Type</label>
+            <select class="form-select" id="issue_type" name="issue_type" required onchange="updateDescriptionBoilerplate()">
+                <option value="" selected disabled>Select Type</option>
+                <option value="Bug">Bug</option>
+                <option value="Feature">Feature</option>
+                <option value="Question">Question</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea 
+                class="form-control" 
+                id="description" 
+                name="description" 
+                rows="6" 
+                placeholder="Select an issue type to get prompts for the description."
+            ></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="submitter_name" class="form-label">Your Name</label>
+            <input type="text" class="form-control" id="submitter_name" name="submitter_name" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+
+<script>
+    function updateDescriptionBoilerplate() {
+        const descriptionField = document.getElementById('description');
+        const issueType = document.getElementById('issue_type').value;
+
+        if (issueType === 'Bug') {
+            descriptionField.value = 
+                "Please provide a clear description of the bug:\n" +
+                "- Steps to reproduce: \n" +
+                "- Expected behavior: \n" +
+                "- Actual behavior: \n" +
+                "- System information (e.g., version, platform): ";
+        } else if (issueType === 'Feature') {
+            descriptionField.value = 
+                "Please describe the feature request clearly:\n" +
+                "- What is the use case for this feature? \n" +
+                "- How will it benefit users? \n" +
+                "- Any additional context or details: ";
+        } else if (issueType === 'Question') {
+            descriptionField.value = 
+                "Please make your question as specifically as possible:\n" +
+                "- What is the question? \n" +
+                "- What is the context? \n" +
+                "- How will it benefit users? \n" +
+                "- Any additional context or details: ";
+        } else {
+            descriptionField.value = "";
+        }
+    }
+</script>
+{% endblock %}

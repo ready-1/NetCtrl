@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5 text-center">
+    <h1>Submission Successful</h1>
+    <p>Thank you for your submission! Your issue has been recorded.</p>
+    <a href="{% url 'bugtracker:new' %}" class="btn btn-primary">Submit Another</a>
+    <a href="/" class="btn btn-secondary">Return to Home</a>
+</div>
+{% endblock %}

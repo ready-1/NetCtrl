@@ -24,5 +24,6 @@ from django.shortcuts import redirect
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('wiki/', include('wiki.urls')),  # Include the wiki app's URLs
+    path('bugtracker/', include('bugtracker.urls')),  # Include the bugtracker app's URLs
     path('', lambda request: redirect('wiki:wiki_list', permanent=False)),  # Redirect "/" to wiki_list
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
