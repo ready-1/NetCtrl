@@ -3,7 +3,7 @@ python/
 db.sqlite3
 staticfiles/
 netctrl/media/
-
+netctrl/data/
 
 # Created by https://www.toptal.com/developers/gitignore/api/python,visualstudiocode,macos
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,visualstudiocode,macos

@@ -5,16 +5,28 @@ from pathlib import Path
 from django.conf import settings
 from datetime import datetime, timezone
 
-# Use QUEUE_FILE from settings
-QUEUE_FILE = settings.BUG_QUEUE_FILE
+# Use the existing BUG_QUEUE_FILE variable from settings
+QUEUE_FILE = Path(settings.BUG_QUEUE_FILE)
+
+
+def sanitize_json_string(input_string):
+    """
+    Sanitize input string for JSON compatibility.
+    """
+    if not isinstance(input_string, str):
+        return input_string
+    return input_string.encode("unicode_escape").decode("utf-8")
 
 
 def new_bug_request(request):
     if request.method == "POST":
-        title = request.POST.get("title")
-        description = request.POST.get("description", "")
-        issue_type = request.POST.get("issue_type")
-        submitter_name = request.POST.get("submitter_name")
+        # Retrieve and sanitize inputs
+        title = sanitize_json_string(request.POST.get("title", "").strip())
+        description = sanitize_json_string(request.POST.get("description", "").strip())
+        issue_type = sanitize_json_string(request.POST.get("issue_type", "").strip())
+        submitter_name = sanitize_json_string(
+            request.POST.get("submitter_name", "").strip()
+        )
 
         # Validate input
         if not title or not submitter_name or not issue_type:
@@ -34,27 +46,33 @@ def new_bug_request(request):
                 json.dump({"issues": []}, f, indent=4)
 
         # Load queue
-        with open(QUEUE_FILE, "r") as f:
-            queue_data = json.load(f)
+        try:
+            with open(QUEUE_FILE, "r") as f:
+                queue_data = json.load(f)
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Queue file is corrupted."}, status=500)
 
         # Add to queue
         issue = {
             "title": title,
             "body": f"{description}\n\n**Submitted by:** {submitter_name}",
             "labels": labels,
-            "created_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),  # ISO 8601 with Z
+            "created_at": datetime.now(timezone.utc).strftime(
+                "%Y-%m-%dT%H:%M:%SZ"
+            ),  # ISO 8601 with Z
             "retry_count": 0,
             "status": "queued",
         }
         queue_data["issues"].append(issue)
 
-        # Save queue
+        # Save updated queue
         with open(QUEUE_FILE, "w") as f:
             json.dump(queue_data, f, indent=4)
 
         return redirect("bugtracker:success")  # Redirect to a success page
 
     return render(request, "bugtracker/bug_form.html")
+
 
 def success_page(request):
     return render(request, "bugtracker/success.html")
