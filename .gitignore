@@ -4,6 +4,7 @@ db.sqlite3
 staticfiles/
 netctrl/media/
 netctrl/data/
+archive/
 
 #  Local environment variables
 .env
