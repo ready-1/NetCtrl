@@ -7,12 +7,19 @@ services:
     ports:
       - "8000:8000"
     environment:
+      SECRET_KEY: ${SECRET_KEY:-default_secret_key}
       DEBUG: "${DEBUG:-false}"  # Default to false if not provided
+      DB_ENGINE: ${DB_ENGINE:-django.db.backends.postgresql}
+      DB_NAME: ${DB_NAME:-default_db}
+      DB_USER: ${DB_USER:-default_user}
+      DB_PASSWORD: ${DB_PASSWORD:-default_password}
+      DB_HOST: ${DB_HOST:-db}
+      DB_PORT: ${DB_PORT:-5432}
     depends_on:
       - db
     container_name: web
     hostname: web
-
+      
   db:
     image: postgres:15
     container_name: db
@@ -20,9 +27,9 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
-      POSTGRES_USER: "${POSTGRES_USER:-default_user}"  # Default to 'default_user'
-      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-default_password}"  # Default to 'default_password'
-      POSTGRES_DB: "${POSTGRES_DB:-default_db}"  # Default to 'default_db'
+      POSTGRES_USER: "${DB_USER:-default_user}"  # Default to 'default_user'
+      POSTGRES_PASSWORD: "${DB_PASSWORD:-default_password}"  # Default to 'default_password'
+      POSTGRES_DB: "${DB_NAME:-default_db}"  # Default to 'default_db'
 
 volumes:
   postgres_data:

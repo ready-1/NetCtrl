@@ -22,15 +22,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config("SECRET_KEY")
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config("DEBUG", default=False, cast=bool)
+DEBUG = os.getenv("DEBUG", False)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='', cast=lambda v: [s.strip() for s in v.split(',')])
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',') # or config('ALLOWED_HOSTS', default='', cast=lambda v: [s.strip() for s in v.split(',')])
 
-BUG_QUEUE_FILE = BASE_DIR / "data" / "bug_queue.json"
-
+BUG_QUEUE_FILE = Path(BASE_DIR / "data" / os.getenv("BUG_QUEUE_FILE")) if os.getenv("BUG_QUEUE_FILE") else BASE_DIR / "data" / "bug_queue.json"
 
 # Application definition
 
@@ -94,14 +93,16 @@ WSGI_APPLICATION = "netctrl.wsgi.application"
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config("DB_NAME"),
-        'USER': config("DB_USER"),
-        'PASSWORD': config("DB_PASSWORD"),
-        'HOST': config("DB_HOST"),
-        'PORT':config("DB_PORT"),
+        'ENGINE': os.getenv("DB_ENGINE", 'django.db.backends.postgresql'),
+        'NAME': os.getenv("DB_NAME"),
+        'USER': os.getenv("DB_USER"),
+        'PASSWORD': os.getenv("DB_PASSWORD"),
+        'HOST': os.getenv("DB_HOST"),
+        'PORT': os.getenv("DB_PORT"),
     }
 }
+
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
