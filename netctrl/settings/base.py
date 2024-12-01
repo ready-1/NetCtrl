@@ -47,7 +47,7 @@ INSTALLED_APPS += ['tinymce']
 INSTALLED_APPS += ['taggit']
 
 # Project Apps
-INSTALLED_APPS += ['bugtracker', 'wiki']
+INSTALLED_APPS += ['accounts','bugtracker', 'wiki']
 
 
 MIDDLEWARE = [
