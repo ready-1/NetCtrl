@@ -2,6 +2,9 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from .models import CustomUser
 from django.contrib import messages
+from django.contrib.auth.forms import UserCreationForm
+from django.urls import reverse_lazy
+from django.views.generic.edit import CreateView
 
 
 # Check if the user is an approver
@@ -43,3 +46,10 @@ def approve_user(request, user_id):
     except CustomUser.DoesNotExist:
         messages.error(request, "User not found or already approved.")
     return redirect('accounts:pending_approvals')
+
+
+
+class SignUpView(CreateView):
+    template_name = "accounts/signup.html"  # Updated to use a template within the accounts app
+    form_class = UserCreationForm
+    success_url = reverse_lazy("login")
