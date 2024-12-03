@@ -1,6 +1,13 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from .models import CustomUser
+from django.contrib import messages
+
+
+# Check if the user is an approver
+def is_approver(user):
+    return user.is_authenticated and user.notify_on_approval
+
 
 @login_required
 def user_approvals(request):
@@ -17,3 +24,22 @@ def user_approvals(request):
             user.save()
 
     return render(request, 'user_approvals.html', {'pending_users': pending_users})
+
+
+@login_required
+@user_passes_test(is_approver)
+def pending_approvals(request):
+    pending_users = CustomUser.objects.filter(is_active=False)
+    return render(request, 'accounts/pending_approvals.html', {'pending_users': pending_users})
+
+@login_required
+@user_passes_test(is_approver)
+def approve_user(request, user_id):
+    try:
+        user = CustomUser.objects.get(id=user_id, is_active=False)
+        user.is_active = True
+        user.save()
+        messages.success(request, f"User {user.username} has been approved.")
+    except CustomUser.DoesNotExist:
+        messages.error(request, "User not found or already approved.")
+    return redirect('accounts:pending_approvals')
