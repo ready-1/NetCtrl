@@ -160,6 +160,9 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Redirect to the homepage after login
+LOGIN_REDIRECT_URL = '/'  # Redirect to the homepage or any desired URL
+
 # TinyMCE settings
 TINYMCE_DEFAULT_CONFIG = {
     "height": 500,
