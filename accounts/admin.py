@@ -2,7 +2,10 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import CustomUser
 
-@admin.register(CustomUser)
+
+admin.site.register(CustomUser, UserAdmin)
+
+
 class CustomUserAdmin(UserAdmin):
     fieldsets = UserAdmin.fieldsets + (
         (None, {'fields': ('notify_on_approval',)}),
