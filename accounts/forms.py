@@ -14,10 +14,12 @@ class CustomUserCreationForm(UserCreationForm):
         model = CustomUser
         fields = ('username', 'email', 'password1', 'password2')
 
-
-    def clean_username(self):
-        print(f"Using model in clean_username: {self._meta.model}")
-        return super().clean_username()
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.is_active = False  # New users are inactive by default
+        if commit:
+            user.save()
+        return user
 
 
 class CustomUserChangeForm(UserChangeForm):
