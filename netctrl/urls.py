@@ -24,6 +24,7 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('accounts/login/', auth_views.LoginView.as_view(), name='login'),
     path('accounts/', include('accounts.urls')),
     path('wiki/', include('wiki.urls')),  # Include the wiki app's URLs
     path('bugtracker/', include('bugtracker.urls')),  # Include the bugtracker app's URLs
