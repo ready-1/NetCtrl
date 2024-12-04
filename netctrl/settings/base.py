@@ -167,6 +167,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Redirect to the homepage after login/logout
 LOGIN_REDIRECT_URL = '/'  # Redirect to the homepage or any desired URL
 LOGOUT_REDIRECT_URL = '/'  # Redirect to the homepage or another desired page
+LOGIN_URL = '/accounts/login/'  # Redirect to the login page
 
 # TinyMCE settings
 TINYMCE_DEFAULT_CONFIG = {
