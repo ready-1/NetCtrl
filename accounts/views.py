@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from .models import CustomUser
 from django.contrib import messages
 from .forms import CustomUserCreationForm
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views.generic.edit import CreateView
 from django.contrib.auth import get_user_model
 
@@ -54,3 +54,19 @@ class SignUpView(CreateView):
     template_name = "accounts/signup.html"  # Updated to use a template within the accounts app
     form_class = CustomUserCreationForm
     success_url = reverse_lazy("login")
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+
+        # Flash message for admins
+        user = self.object
+        admin_user = self.request.user
+        if admin_user.is_staff:
+            link = reverse('admin:accounts_customuser_change', args=[user.id])
+            messages.success(
+                self.request,
+                f"New user '{user.username}' created and is pending approval. "
+                f"<a href='{link}'>Approve now</a>",
+                extra_tags='safe',  # Allow HTML in the message
+            )
+        return response
