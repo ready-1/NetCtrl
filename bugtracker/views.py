@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 from django.conf import settings
 from datetime import datetime, timezone
+from django.contrib.auth.decorators import login_required
 
 # Use the existing BUG_QUEUE_FILE variable from settings
 QUEUE_FILE = Path(settings.BUG_QUEUE_FILE)
@@ -17,7 +18,7 @@ def sanitize_json_string(input_string):
         return input_string
     return input_string.encode("unicode_escape").decode("utf-8")
 
-
+@login_required
 def new_bug_request(request):
     if request.method == "POST":
         # Retrieve and sanitize inputs
@@ -73,6 +74,6 @@ def new_bug_request(request):
 
     return render(request, "bugtracker/bug_form.html")
 
-
+@login_required
 def success_page(request):
     return render(request, "bugtracker/success.html")

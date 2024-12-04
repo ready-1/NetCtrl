@@ -6,6 +6,7 @@ from django.core.files.base import ContentFile
 from taggit.models import Tag
 from .models import FileUpload, WikiPage
 from .forms import FileUploadForm, WikiPageForm
+from django.contrib.auth.decorators import login_required
 
 
 def wiki_list(request):
@@ -17,11 +18,7 @@ def wiki_detail(request, pk):
     page = get_object_or_404(WikiPage, pk=pk)
     return render(request, "wiki/wiki_detail.html", {"page": page})
 
-
-from django.shortcuts import redirect
-from .forms import WikiPageForm
-
-
+@login_required
 def wiki_add(request):
     if request.method == "POST":
         form = WikiPageForm(request.POST)
@@ -33,6 +30,7 @@ def wiki_add(request):
     return render(request, "wiki/wiki_form.html", {"form": form})
 
 
+@login_required
 def wiki_edit(request, pk):
     page = get_object_or_404(WikiPage, pk=pk)
     if request.method == "POST":
@@ -44,7 +42,7 @@ def wiki_edit(request, pk):
         form = WikiPageForm(instance=page)
     return render(request, "wiki/wiki_form.html", {"form": form})
 
-
+@login_required
 def wiki_delete(request, pk):
     page = get_object_or_404(WikiPage, pk=pk)
     if request.method == "POST":
@@ -54,11 +52,12 @@ def wiki_delete(request, pk):
 
 
 # File Manager Views
+@login_required
 def file_list(request):
     files = FileUpload.objects.all()
     return render(request, "wiki/file_list.html", {"files": files})
 
-
+@login_required
 def file_upload(request):
     existing_tags = Tag.objects.all()  # Fetch all existing tags
     if request.method == "POST":
@@ -72,13 +71,13 @@ def file_upload(request):
         request, "wiki/file_upload.html", {"form": form, "existing_tags": existing_tags}
     )
 
-
+@login_required
 def file_delete(request, pk):
     file = get_object_or_404(FileUpload, pk=pk)
     file.delete()
     return redirect("wiki:file_list")
 
-
+@login_required
 def file_confirm_delete(request, pk):
     file = get_object_or_404(FileUpload, pk=pk)
     if request.method == "POST":
@@ -86,7 +85,7 @@ def file_confirm_delete(request, pk):
         return redirect("wiki:file_list")
     return render(request, "wiki/file_confirm_delete.html", {"file": file})
 
-
+@login_required
 @csrf_exempt
 def image_upload(request):
     if request.method == "POST":
@@ -98,7 +97,7 @@ def image_upload(request):
             return JsonResponse({"location": default_storage.url(path)})
     return JsonResponse({"error": "Image upload failed"}, status=400)
 
-
+@login_required
 def file_list_api(request):
     files = FileUpload.objects.all()
     file_data = [{"name": file.name, "url": file.file.url} for file in files]
