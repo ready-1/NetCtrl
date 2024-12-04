@@ -49,6 +49,10 @@ INSTALLED_APPS += ['taggit']
 # Project Apps
 INSTALLED_APPS += ['accounts','bugtracker', 'wiki']
 
+# Authentication
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -160,8 +164,9 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# Redirect to the homepage after login
+# Redirect to the homepage after login/logout
 LOGIN_REDIRECT_URL = '/'  # Redirect to the homepage or any desired URL
+LOGOUT_REDIRECT_URL = '/'  # Redirect to the homepage or another desired page
 
 # TinyMCE settings
 TINYMCE_DEFAULT_CONFIG = {
