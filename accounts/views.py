@@ -5,8 +5,15 @@ from django.contrib import messages
 from .forms import CustomUserCreationForm
 from django.urls import reverse_lazy, reverse
 from django.views.generic.edit import CreateView
+from django.views import View
 from django.contrib.auth import get_user_model
 
+
+
+class TestView(View):
+    def get(self, request):
+        messages.success(request, "Test flash message.")
+        return render(request, 'test.html')
 
 # Check if the user is an approver
 def is_approver(user):
