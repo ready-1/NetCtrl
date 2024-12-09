@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import CustomUser
 
-
+@admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
 
@@ -14,7 +14,7 @@ class CustomUserAdmin(UserAdmin):
     )
     list_display = UserAdmin.list_display + ('notify_on_approval',)
 
-admin.site.register(CustomUser, UserAdmin)
+# admin.site.register(CustomUser, UserAdmin)
 
 
 
