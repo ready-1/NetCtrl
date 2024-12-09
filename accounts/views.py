@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from .models import CustomUser
 from django.contrib import messages
+from django.contrib.messages.views import SuccessMessageMixin
 from .forms import CustomUserCreationForm
 from django.urls import reverse_lazy, reverse
 from django.views.generic.edit import CreateView
@@ -58,22 +59,22 @@ def approve_user(request, user_id):
 
 
 class SignUpView(CreateView):
-    template_name = "accounts/signup.html"  # Updated to use a template within the accounts app
+    template_name = "accounts/signup.html"
     form_class = CustomUserCreationForm
     success_url = reverse_lazy("login")
 
     def form_valid(self, form):
         response = super().form_valid(form)
 
-        # Flash message for admins
-        user = self.object
-        admin_user = self.request.user
-        if admin_user.is_staff:
-            link = reverse('admin:accounts_customuser_change', args=[user.id])
-            messages.success(
+        # Flash message for admins about new user creation
+        user = self.object  # The newly created user
+        admin_users = CustomUser.objects.filter(is_staff=True, notify_on_approval=True)
+        for admin in admin_users:
+            messages.add_message(
                 self.request,
-                f"New user '{user.username}' created and is pending approval. "
-                f"<a href='{link}'>Approve now</a>",
+                messages.INFO,
+                f"New user '{user.username}' created and is pending approval.",
                 extra_tags='safe',  # Allow HTML in the message
             )
+
         return response
