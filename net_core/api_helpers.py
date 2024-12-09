@@ -5,59 +5,47 @@ from django.conf import settings
 # Get the logger defined in settings.py
 logger = logging.getLogger('app')
 
+VALID_HTTP_METHODS = {"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"}
+
 def make_api_request(url, method="GET", headers=None, data=None, params=None, timeout=10):
     """
-    Makes a robust API request with centralized logging.
-    
-    :param url: The API endpoint URL
-    :param method: HTTP method (GET, POST, PUT, DELETE)
-    :param headers: Dictionary of request headers
-    :param data: JSON data payload for POST/PUT requests
-    :param params: Dictionary of query parameters for GET requests
-    :param timeout: Timeout in seconds for the API call
-    :return: JSON response data if successful; raises exceptions on failure
+    Makes an API request with robust error handling and logging.
     """
+    # Validate the URL
+    if not url or not isinstance(url, str) or url.strip() == "":
+        logger.error("The URL provided is empty or invalid.")
+        raise ValueError("The URL provided is empty or invalid.")
+    
+    # Validate the HTTP method
+    if method.upper() not in VALID_HTTP_METHODS:
+        logger.error(f"Invalid HTTP method: {method}")
+        raise ValueError(f"Invalid HTTP method: {method}")
+
     try:
-        if settings.DEBUG == True:
-            logger.debug(f"Starting API request: {method} {url}")
-            logger.debug(f"Headers: {headers}")
-            logger.debug(f"Data: {data}")
-            logger.debug(f"Params: {params}")
-        else:
-            logger.info(f"Starting API request: {method} {url}")
-        
+        logger.debug(f"Starting API request: {method} {url}")
         response = requests.request(
-            method=method,
+            method=method.upper(),
             url=url,
             headers=headers,
             json=data,
             params=params,
             timeout=timeout
         )
-        
-        logger.info(f"Response Status: {response.status_code}")
-        response.raise_for_status()
-        
+        response.raise_for_status()  # Raise HTTPError for bad responses (4xx and 5xx)
         try:
-            json_response = response.json()
-            if settings.DEBUG == True:
-                logger.debug(f"Response JSON: {json_response}")
-            else:
-                logger.info(f"API Call to {url} completed successfully.")
-            logger.debug(f"Response JSON: {json_response}")
-            return json_response
+            return response.json()
         except ValueError:
             logger.error("Response is not valid JSON")
             raise ValueError("Response is not valid JSON")
-    
     except requests.Timeout:
         logger.error("Request timed out")
         raise TimeoutError("The request timed out")
-    
     except requests.ConnectionError as conn_err:
         logger.error(f"Connection error: {conn_err}")
-        raise
-    
+        raise Exception("Connection error occurred") from conn_err
+    except requests.HTTPError as http_err:
+        logger.error(f"HTTP error occurred: {http_err}")
+        raise http_err  # Re-raise HTTPError for specific handling
     except requests.RequestException as req_err:
         logger.error(f"API request failed: {req_err}")
-        raise
+        raise Exception("API request failed") from req_err
