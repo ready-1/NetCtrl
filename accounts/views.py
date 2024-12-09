@@ -8,6 +8,7 @@ from django.urls import reverse_lazy, reverse
 from django.views.generic.edit import CreateView
 from django.views import View
 from django.contrib.auth import get_user_model
+from .forms import CustomUserCreationForm
 
 
 
@@ -59,22 +60,24 @@ def approve_user(request, user_id):
 
 
 class SignUpView(CreateView):
-    template_name = "accounts/signup.html"
-    form_class = CustomUserCreationForm
-    success_url = reverse_lazy("login")
+    template_name = "accounts/signup.html"  # Template for the signup page
+    form_class = CustomUserCreationForm  # Form class for signup
+    success_url = reverse_lazy("login")  # Redirect after successful signup
 
     def form_valid(self, form):
+        print("form_valid executed")  # Debugging
         response = super().form_valid(form)
 
-        # Flash message for admins about new user creation
-        user = self.object  # The newly created user
+        # Notify admins about the new user
+        user = self.object  # Newly created user instance
         admin_users = CustomUser.objects.filter(is_staff=True, notify_on_approval=True)
         for admin in admin_users:
-            messages.add_message(
+            print(f"Adding flash message for admin: {admin.username}")  # Debugging
+            link = reverse('admin:accounts_customuser_change', args=[user.id])
+            messages.success(
                 self.request,
-                messages.INFO,
-                f"New user '{user.username}' created and is pending approval.",
+                f"New user '{user.username}' created and is pending approval. "
+                f"<a href='{link}'>Approve now</a>",
                 extra_tags='safe',  # Allow HTML in the message
             )
-
         return response
