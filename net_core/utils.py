@@ -1,9 +1,14 @@
 import re
 
 def validate_ip_address(ip):
-    # Simple IPv4 validation
-    pattern = r'^(\d{1,3}\.){3}\d{1,3}$'
-    if not re.match(pattern, ip):
+    try:
+        octets = ip.split('.')
+        if len(octets) != 4:
+            raise ValueError("Invalid IP address format")
+        for octet in octets:
+            if not 0 <= int(octet) <= 255:
+                raise ValueError("Invalid IP address format")
+    except (ValueError, TypeError):
         raise ValueError("Invalid IP address format")
     return ip
 
