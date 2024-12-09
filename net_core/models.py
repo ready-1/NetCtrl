@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.postgres.fields import JSONField
 
 class Switch(models.Model):
     STATUS_CHOICES = [
@@ -14,8 +13,8 @@ class Switch(models.Model):
     model = models.CharField(max_length=100, help_text="Switch model number")
     serial_number = models.CharField(max_length=100, unique=True, help_text="Serial number of the switch")
     firmware_version = models.CharField(max_length=50, help_text="Current firmware version")
-    last_known_state = JSONField(blank=True, null=True, help_text="Last known state or configuration (JSON format)")
-    gold_master_config = JSONField(blank=True, null=True, help_text="Gold Master configuration (JSON format)")
+    last_known_state = models.JSONField(blank=True, null=True, help_text="Last known state or configuration (JSON format)")
+    gold_master_config = models.JSONField(blank=True, null=True, help_text="Gold Master configuration (JSON format)")
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='active', help_text="Current status of the switch")
     location = models.CharField(max_length=200, blank=True, null=True, help_text="Physical location or identifier")
     port_count = models.PositiveIntegerField(help_text="Number of physical ports on the switch")
