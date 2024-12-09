@@ -47,7 +47,7 @@ INSTALLED_APPS += ['tinymce']
 INSTALLED_APPS += ['taggit']
 
 # Project Apps
-INSTALLED_APPS += ['accounts','bugtracker', 'wiki']
+INSTALLED_APPS += ['accounts','bugtracker', 'net_core','wiki']
 
 # Authentication
 AUTHENTICATION_BACKENDS = [
