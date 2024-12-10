@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Switch List</h1>
+    <a href="{% url 'net_frontend:switch_create' %}" class="btn btn-primary mb-3">Add New Switch</a>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>In-Band IP</th>
+                <th>Out-of-Band IP</th>
+                <th>Model</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for switch in switches %}
+            <tr>
+                <td>
+                <a href="{% url 'net_frontend:switch_detail' switch.pk %}">{{ switch.name }}</a>
+                </td>
+                <td>
+                    {% if switch.ip_address_in_band %}
+                        <a href="https://{{ switch.ip_address_in_band }}:49151" target="_blank">{{ switch.ip_address_in_band }}</a>
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </td>
+                <td>
+                    {% if switch.ip_address_out_band %}
+                        <a href="https://{{ switch.ip_address_out_band }}:49151" target="_blank">{{ switch.ip_address_out_band }}</a>
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </td>
+                <td>{{ switch.model }}</td>
+                <td>{{ switch.get_status_display }}</td>
+                <td>
+                    <a href="{% url 'net_frontend:switch_detail' switch.pk %}" class="btn btn-info btn-sm">View</a>
+                    <a href="{% url 'net_frontend:switch_update' switch.pk %}" class="btn btn-warning btn-sm">Edit</a>
+                    <a href="{% url 'net_frontend:switch_delete' switch.pk %}" class="btn btn-danger btn-sm">Delete</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center">No switches available.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

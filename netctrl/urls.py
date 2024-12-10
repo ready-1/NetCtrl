@@ -26,6 +26,7 @@ urlpatterns = [
     path('admin/', admin.site.urls), # Include the admin site
     path('accounts/login/', auth_views.LoginView.as_view(), name='login'), # Use the built-in login view
     path('accounts/', include('accounts.urls')), # Include the accounts app's URLs
+    path('net_frontend/', include('net_frontend.urls')),  # Include the net_frontend app's URLs
     path('wiki/', include('wiki.urls')),  # Include the wiki app's URLs
     path('bugtracker/', include('bugtracker.urls')),  # Include the bugtracker app's URLs
     path('', lambda request: redirect('wiki:wiki_list', permanent=False)),  # Redirect "/" to wiki_list

@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Switch Detail</h1>
+    <dl class="row">
+        <dt class="col-sm-3">Name</dt>
+        <dd class="col-sm-9">{{ switch.name }}</dd>
+
+        <dt class="col-sm-3">In-Band IP</dt>
+        <dd class="col-sm-9">
+            {% if switch.ip_address_in_band %}
+                <a href="https://{{ switch.ip_address_in_band }}:49151" target="_blank">{{ switch.ip_address_in_band }}</a>
+            {% else %}
+                N/A
+            {% endif %}
+        </dd>
+
+        <dt class="col-sm-3">Out-of-Band IP</dt>
+        <dd class="col-sm-9">
+            {% if switch.ip_address_out_band %}
+                <a href="https://{{ switch.ip_address_out_band }}:49151" target="_blank">{{ switch.ip_address_out_band }}</a>
+            {% else %}
+                N/A
+            {% endif %}
+        </dd>
+
+        <dt class="col-sm-3">MAC Address</dt>
+        <dd class="col-sm-9">{{ switch.mac_address }}</dd>
+
+        <dt class="col-sm-3">Model</dt>
+        <dd class="col-sm-9">{{ switch.model }}</dd>
+
+        <dt class="col-sm-3">Serial Number</dt>
+        <dd class="col-sm-9">{{ switch.serial_number }}</dd>
+
+        <dt class="col-sm-3">Firmware Version</dt>
+        <dd class="col-sm-9">{{ switch.firmware_version }}</dd>
+
+        <dt class="col-sm-3">Status</dt>
+        <dd class="col-sm-9">{{ switch.get_status_display }}</dd>
+
+        <dt class="col-sm-3">Location</dt>
+        <dd class="col-sm-9">{{ switch.location }}</dd>
+
+        <dt class="col-sm-3">Port Count</dt>
+        <dd class="col-sm-9">{{ switch.port_count }}</dd>
+
+        <dt class="col-sm-3">Asset ID</dt>
+        <dd class="col-sm-9">{{ switch.asset_id }}</dd>
+
+        <dt class="col-sm-3">Notes</dt>
+        <dd class="col-sm-9">{{ switch.notes }}</dd>
+
+        <dt class="col-sm-3">Last Sync</dt>
+        <dd class="col-sm-9">{{ switch.last_sync }}</dd>
+    </dl>
+
+    <a href="{% url 'net_frontend:switch_update' switch.pk %}" class="btn btn-warning">Edit</a>
+    <a href="{% url 'net_frontend:switch_delete' switch.pk %}" class="btn btn-danger">Delete</a>
+    <a href="{% url 'net_frontend:switch_list' %}" class="btn btn-secondary">Back to List</a>
+</div>
+{% endblock %}
