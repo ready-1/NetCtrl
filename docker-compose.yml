@@ -16,6 +16,8 @@ services:
       DB_HOST: ${DB_HOST:-db}
       DB_PORT: ${DB_PORT:-5432}
       ALLOWED_HOSTS: ${ALLOWED_HOSTS:-127.0.0.1,localhost}
+      SWITCH_USERNAME: ${SWITCH_USERNAME:-admin}
+      SWITCH_PASSWORD: ${SWITCH_PASSWORD:-password}
     depends_on:
       - db
     container_name: web

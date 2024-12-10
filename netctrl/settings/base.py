@@ -60,6 +60,11 @@ LOGGING = {
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv("SECRET_KEY")
 
+# SECURITY WARNING: keep the switch credentials used in production secret!
+SWITCH_USERNAME = os.getenv("SWITCH_USERNAME")
+SWITCH_PASSWORD = os.getenv("SWITCH_PASSWORD")
+
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", False)
 
