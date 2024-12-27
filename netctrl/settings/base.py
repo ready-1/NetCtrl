@@ -64,6 +64,9 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 SWITCH_USERNAME = os.getenv("SWITCH_USERNAME")
 SWITCH_PASSWORD = os.getenv("SWITCH_PASSWORD")
 
+# Use HTTPS for switch API requests
+USE_HTTPS = True #os.getenv("USE_HTTPS") # Set to True for HTTPS, False for HTTP
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", False)
