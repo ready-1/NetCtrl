@@ -18,6 +18,7 @@ services:
       ALLOWED_HOSTS: ${ALLOWED_HOSTS:-127.0.0.1,localhost}
       SWITCH_USERNAME: ${SWITCH_USERNAME:-admin}
       SWITCH_PASSWORD: ${SWITCH_PASSWORD:-password}
+      USE_HTTPS: ${USE_HTTPS:-true}
     depends_on:
       - db
     container_name: web
