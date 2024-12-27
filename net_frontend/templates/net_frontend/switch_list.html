@@ -23,14 +23,14 @@
                 </td>
                 <td>
                     {% if switch.ip_address_in_band %}
-                        <a href="https://{{ switch.ip_address_in_band }}:49151" target="_blank">{{ switch.ip_address_in_band }}</a>
+                        <a href="http://{{ switch.ip_address_in_band }}:49151" target="_blank">{{ switch.ip_address_in_band }}</a>
                     {% else %}
                         N/A
                     {% endif %}
                 </td>
                 <td>
                     {% if switch.ip_address_out_band %}
-                        <a href="https://{{ switch.ip_address_out_band }}:49151" target="_blank">{{ switch.ip_address_out_band }}</a>
+                        <a href="http://{{ switch.ip_address_out_band }}:49151" target="_blank">{{ switch.ip_address_out_band }}</a>
                     {% else %}
                         N/A
                     {% endif %}
