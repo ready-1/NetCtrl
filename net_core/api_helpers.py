@@ -1,7 +1,12 @@
 import logging
 import requests
+import urllib3
 from datetime import datetime, timedelta
 from django.conf import settings
+
+# Suppress only the specific SSL warning
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
 
 # Get the logger defined in settings.py
 logger = logging.getLogger('app')
@@ -23,6 +28,7 @@ class TokenManager:
         Returns a valid token for the specified switch.
         Fetches a new token if the current one is expired or unavailable.
         """
+        logger.info(f"Fetching token for switch {switch_ip}")
         if not cls._is_token_valid(switch_ip):
             cls._fetch_token(switch_ip, username, password)
         return cls._tokens[switch_ip]["token"]
@@ -42,21 +48,58 @@ class TokenManager:
         """
         Logs in to the switch and retrieves a new token.
         """
-        login_url = f"https://{switch_ip}/login"  # Replace with actual login endpoint
-        response = requests.post(
-            login_url,
-            json={"username": username, "password": password},
-        )
-        if response.status_code == 200:
+        protocol = "https" if settings.USE_HTTPS else "http"
+        port = "8443" if settings.USE_HTTPS else "80"
+        login_url = f"{protocol}://{switch_ip}:{port}/api/v1/login"
+
+        # Construct payload matching Postman structure
+        payload = {
+            "login": {
+                "username": username,
+                "password": password
+            }
+        }
+
+        # Define headers based on Postman
+        headers = {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }
+
+        try:
+            logger.debug(f"Login request details for {switch_ip}: URL={login_url}, Headers={headers}, Payload={payload}")
+            response = requests.post(
+                login_url,
+                headers=headers,
+                json=payload, # Pass payload as JSON
+                verify=False,
+            )
+            logger.debug(f"Login response for {switch_ip}: {response}")
+            response.raise_for_status()  # Raise an HTTPError for bad responses (4xx and 5xx)
+
+            # Log the response for debugging
             data = response.json()
-            token = data["token"]
-            expires_in = data["expires"]  # Time in seconds until token expires
+            logger.debug(f"Login response for {switch_ip}: {data}")
+
+            # Check API-specific response for errors
+            if data.get("resp", {}).get("status") == "fail":
+                error_message = data["resp"].get("respMsg", "Unknown error")
+                raise Exception(f"API login failed: {error_message}")
+
+            # Extract token and expiry
+            token = data["login"]["token"]
+            expires_in = int(data["login"].get("expire", 3600))  # Default to 1 hour
             cls._tokens[switch_ip] = {
                 "token": token,
                 "expiry": datetime.now() + timedelta(seconds=expires_in),
             }
-        else:
-            raise Exception(f"Failed to login to {switch_ip}: {response.text}")
+        except requests.RequestException as e:
+            logger.error(f"Failed to login to {switch_ip}: {str(e)}")
+            raise Exception(f"Failed to login to {switch_ip}: {str(e)}")
+        except ValueError:
+            logger.error(f"Invalid JSON response from {login_url}")
+            raise Exception(f"Invalid JSON response from {login_url}")
+
 
     @classmethod
     def logout(cls, switch_ip):
@@ -72,75 +115,158 @@ class TokenManager:
                 del cls._tokens[switch_ip]
             else:
                 raise Exception(f"Failed to logout from {switch_ip}: {response.text}")
-
-def make_api_request(url, method="GET", headers=None, data=None, params=None, timeout=10):
-    """
-    Makes an HTTP API request with robust error handling and detailed logging.
     
-    Args:
-        url (str): The target URL for the API request.
-        method (str): The HTTP method to use for the request (e.g., "GET", "POST").
-        headers (dict, optional): HTTP headers to include in the request.
-        data (dict, optional): Payload to send in the body of the request (for POST/PUT methods).
-        params (dict, optional): Query parameters to include in the request URL.
-        timeout (int, optional): Timeout duration in seconds for the request (default: 10).
 
-    Returns:
-        dict: Parsed JSON response from the API.
-
-    Raises:
-        ValueError: If the URL or HTTP method is invalid, or if the response is not valid JSON.
-        TimeoutError: If the request exceeds the specified timeout duration.
-        Exception: For connection errors, generic API failures, or any other unforeseen errors.
+def make_api_request(switch_ip, endpoint, method="GET", data=None, params=None, timeout=10):
+    """
+    Makes an HTTP API request to a switch with robust error handling and token management.
     """
 
-    # Validate the URL is non-empty and a proper string
-    if not url or not isinstance(url, str) or url.strip() == "":
-        logger.error("The URL provided is empty or invalid.")
-        raise ValueError("The URL provided is empty or invalid.")
-    
-    # Validate the HTTP method against predefined valid methods
-    if method.upper() not in VALID_HTTP_METHODS:
-        logger.error(f"Invalid HTTP method: {method}")
-        raise ValueError(f"Invalid HTTP method: {method}")
+    protocol = "https" if settings.USE_HTTPS else "http"
+    port = "8443" if settings.USE_HTTPS else "80"
+    url = f"{protocol}://{switch_ip}:{port}/api/v1/{endpoint}"
+
+    # Get a valid token using TokenManager
+    token = TokenManager.get_token(switch_ip, settings.SWITCH_USERNAME, settings.SWITCH_PASSWORD)
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Accept": "application/json"
+    }
 
     try:
-        # Log the request details for debugging purposes
-        logger.debug(f"Starting API request: Method={method}, URL={url}")
-        logger.debug(f"Headers: {headers}")
-        logger.debug(f"Data: {data}")
-        logger.debug(f"Params: {params}")
-        
-        # Perform the HTTP request
+        # Make the API request
+        logger.debug(f"Making API call: {method} {url}")
         response = requests.request(
             method=method.upper(),
             url=url,
             headers=headers,
             json=data,
             params=params,
-            timeout=timeout
+            timeout=timeout,
+            verify=False  # Disable SSL for now
         )
-        
-        # Raise an HTTPError for responses with 4xx or 5xx status codes
         response.raise_for_status()
 
-        # Attempt to parse the response JSON
-        try:
-            return response.json()
-        except ValueError:
-            logger.error("Response is not valid JSON")
-            raise ValueError("Response is not valid JSON")
-    
-    # Catch specific exceptions and log meaningful messages
-    except requests.Timeout:
-        logger.error("Request timed out")
-        raise TimeoutError("The request timed out")
-    except requests.ConnectionError as conn_err:
-        logger.error(f"Connection error occurred: {conn_err}")
-        raise Exception("Connection error occurred") from conn_err
+        # Parse and return the JSON response
+        return response.json()
     except requests.HTTPError as http_err:
+        if response.status_code == 401:  # Unauthorized
+            logger.warning(f"Token expired for switch {switch_ip}. Fetching a new token...")
+            TokenManager._fetch_token(switch_ip, settings.SWITCH_USERNAME, settings.SWITCH_PASSWORD)
+            return make_api_request(switch_ip, endpoint, method, data, params, timeout)
         logger.error(f"HTTP error occurred: {http_err}")
-        raise http_err  # Re-raise HTTPError to allow higher-level handling
-    except requests.RequestException as req_err:
-        logger.error(f"API request failed: {req_err}")
-        raise Exception("API request failed") from req_err
+        raise
+    except Exception as e:
+        logger.error(f"API call failed: {e}")
+        raise
+
+
+def fetch_device_info(switch_ip):
+    """
+    Fetches detailed information about the device from the device_info endpoint.
+
+    Args:
+        switch_ip (str): The IP address of the switch.
+
+    Returns:
+        dict: A dictionary containing device information with the following keys:
+            - serialNumber (str): The device's serial number.
+            - macAddr (str): The MAC address of the device.
+            - model (str): The model number of the device.
+            - swVer (str): The firmware version of the device.
+            - numOfPorts (int): The total number of ports on the device.
+            - numOfActivePorts (int): The number of active ports on the device.
+            - memoryUsage (str): The memory usage percentage.
+            - cpuUsage (str): The CPU usage percentage.
+            - fanState (list[dict]): A list of fan statuses.
+            - poeState (bool): Indicates if PoE is enabled.
+            - upTime (str): The device uptime.
+            - temperatureSensors (list[dict]): A list of temperature sensor data.
+            - bootVersion (str): The boot version.
+            - rxData (int): Received data in bytes.
+            - txData (int): Transmitted data in bytes.
+
+    Raises:
+        Exception: If the API response indicates a failure or if the request fails.
+
+    Example Response:
+    {
+        "deviceInfo": {
+            "serialNumber": "53L69C5FF001D",
+            "macAddr": "BC:A5:11:A0:7E:1D",
+            "model": "M4300-52G-PoE+",
+            "swVer": "12.0.19.6",
+            "numOfPorts": 52,
+            "numOfActivePorts": 1,
+            "memoryUsage": "90.71%",
+            "cpuUsage": "16.33%",
+            "fanState": [{"FAN-1": "Operational"}, {"FAN-2": "Operational"}],
+            "poeState": true,
+            "upTime": "00 Days 00 Hrs 36 Mins 45 Secs",
+            "temperatureSensors": [
+                {"sensorNum": 1, "sensorDesc": "MAC-A", "sensorTemp": 29, "sensorState": 1},
+                {"sensorNum": 2, "sensorDesc": "MAC-B", "sensorTemp": 36, "sensorState": 1}
+            ],
+            "bootVersion": "B1.0.0.17",
+            "rxData": 4619673,
+            "txData": 1347062
+        },
+        "resp": {
+            "status": "success",
+            "respCode": 0,
+            "respMsg": "Operation success"
+        }
+    }
+    """
+    response = make_api_request(
+        switch_ip=switch_ip,
+        endpoint="device_info",
+        method="GET"
+    )
+
+    if response.get("resp", {}).get("status") != "success":
+        error_message = response["resp"].get("respMsg", "Unknown error")
+        raise Exception(f"API call to device_info failed: {error_message}")
+
+    return response.get("deviceInfo", {})
+
+def fetch_device_name(switch_ip):
+    """
+    Fetches the device name and location from the device_name endpoint.
+
+    Args:
+        switch_ip (str): The IP address of the switch.
+
+    Returns:
+        dict: A dictionary containing the following keys:
+            - name (str): The name of the device.
+            - location (str): The location of the device.
+
+    Raises:
+        Exception: If the API response indicates a failure or if the request fails.
+
+    Example Response:
+    {
+        "resp": {
+            "status": "success",
+            "respCode": 0,
+            "respMsg": "Operation success"
+        },
+        "deviceName": {
+            "name": "Switch-01",
+            "location": "Server Room"
+        }
+    }
+    """
+    response = make_api_request(
+        switch_ip=switch_ip,
+        endpoint="device_name",
+        method="GET"
+    )
+
+    if response.get("resp", {}).get("status") != "success":
+        error_message = response["resp"].get("respMsg", "Unknown error")
+        raise Exception(f"API call to device_name failed: {error_message}")
+
+    return response.get("deviceName", {})
+
