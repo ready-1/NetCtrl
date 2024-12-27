@@ -1,5 +1,6 @@
 import logging
 import requests
+from datetime import datetime, timedelta
 from django.conf import settings
 
 # Get the logger defined in settings.py
@@ -7,6 +8,70 @@ logger = logging.getLogger('app')
 
 # Define valid HTTP methods for validation
 VALID_HTTP_METHODS = {"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"}
+
+
+class TokenManager:
+    """
+    Manages API tokens for multiple switches, including fetching, refreshing,
+    and validating tokens.
+    """
+    _tokens = {}  # Stores tokens and expiry times keyed by switch IP
+
+    @classmethod
+    def get_token(cls, switch_ip, username, password):
+        """
+        Returns a valid token for the specified switch.
+        Fetches a new token if the current one is expired or unavailable.
+        """
+        if not cls._is_token_valid(switch_ip):
+            cls._fetch_token(switch_ip, username, password)
+        return cls._tokens[switch_ip]["token"]
+
+    @classmethod
+    def _is_token_valid(cls, switch_ip):
+        """
+        Checks if the token for a given switch is valid.
+        """
+        token_data = cls._tokens.get(switch_ip)
+        if not token_data:
+            return False
+        return datetime.now() < token_data["expiry"]
+
+    @classmethod
+    def _fetch_token(cls, switch_ip, username, password):
+        """
+        Logs in to the switch and retrieves a new token.
+        """
+        login_url = f"https://{switch_ip}/login"  # Replace with actual login endpoint
+        response = requests.post(
+            login_url,
+            json={"username": username, "password": password},
+        )
+        if response.status_code == 200:
+            data = response.json()
+            token = data["token"]
+            expires_in = data["expires"]  # Time in seconds until token expires
+            cls._tokens[switch_ip] = {
+                "token": token,
+                "expiry": datetime.now() + timedelta(seconds=expires_in),
+            }
+        else:
+            raise Exception(f"Failed to login to {switch_ip}: {response.text}")
+
+    @classmethod
+    def logout(cls, switch_ip):
+        """
+        Logs out from the specified switch and invalidates its token.
+        """
+        if switch_ip in cls._tokens:
+            token = cls._tokens[switch_ip]["token"]
+            logout_url = f"https://{switch_ip}/logout"  # Replace with actual logout endpoint
+            headers = {"Authorization": f"Bearer {token}"}
+            response = requests.post(logout_url, headers=headers)
+            if response.status_code == 200:
+                del cls._tokens[switch_ip]
+            else:
+                raise Exception(f"Failed to logout from {switch_ip}: {response.text}")
 
 def make_api_request(url, method="GET", headers=None, data=None, params=None, timeout=10):
     """
