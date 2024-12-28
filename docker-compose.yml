@@ -18,12 +18,16 @@ services:
       ALLOWED_HOSTS: ${ALLOWED_HOSTS:-127.0.0.1,localhost}
       SWITCH_USERNAME: ${SWITCH_USERNAME:-admin}
       SWITCH_PASSWORD: ${SWITCH_PASSWORD:-password}
+      SWITCH_IP: ${SWITCH_IP:-192.168.99.92}
       USE_HTTPS: ${USE_HTTPS:-true}
+      REDIS_HOST: redis  # Redis hostname
+      REDIS_PORT: 6379   # Redis port
     depends_on:
       - db
+      - redis
     container_name: web
     hostname: web
-      
+
   db:
     image: postgres:15
     container_name: db
@@ -34,6 +38,14 @@ services:
       POSTGRES_USER: "${DB_USER:-default_user}"  # Default to 'default_user'
       POSTGRES_PASSWORD: "${DB_PASSWORD:-default_password}"  # Default to 'default_password'
       POSTGRES_DB: "${DB_NAME:-default_db}"  # Default to 'default_db'
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    hostname: redis
+    ports:
+      - "6379:6379"
+    command: redis-server --save 60 1 --loglevel warning  # Optional command for persistence and logs
 
 volumes:
   postgres_data:
