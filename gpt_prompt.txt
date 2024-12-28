@@ -1,5 +1,3 @@
-
-
 You are helping me build a Django-based application to manage network switches using their REST API. Each API endpoint will have its own helper function, placed in a module grouped by functionality (e.g., `auth_helpers`, `device_helpers`). Each helper must adhere to the following:
 
 Requirements:
