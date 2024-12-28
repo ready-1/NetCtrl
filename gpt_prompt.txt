@@ -15,7 +15,7 @@ Requirements:
    - **Raises**: Possible exceptions with their conditions.
    - **Example Usage**: Code snippets showing how to use the function.
    - **Example Response**: A sample response from the API documentation.
-   - **JSON Response Structure**: A detailed explanation of the JSON response structure, including the resp and device_info sections, and list all fields, their data types, and descriptions, as outlined in the API yaml file.  This means ALL return values should be documented with their types, possible values,  and descriptions in the helper function docstring.
+   - **JSON Response Structure**: A detailed explanation of the JSON response structure, including the resp and device_info sections, and list all fields, their data types, and descriptions (including all enum values) as outlined in the API yaml file.  This means ALL return values should be documented with their types, possible values,  and descriptions in the helper function docstring.
 
 3. **Error Handling**:
    - Validate inputs and raise `ValueError` for invalid inputs.
