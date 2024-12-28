@@ -1,17 +1,21 @@
 You are helping me build a Django-based application to manage network switches using their REST API. Each API endpoint will have its own helper function, placed in a module grouped by functionality (e.g., `auth_helpers`, `device_helpers`). Each helper must adhere to the following:
 
+The API is documented in a yaml file attached to this prompt.
+
 Requirements:
 1. **Consistency**:
    - All helper functions follow a standard style and format for maintainability.
 
 2. **Docstrings**:
    Each helper function includes a detailed docstring with:
+   - **Summary**: A one-line summary of the function's purpose to include the endpoint.
    - **Purpose**: A concise explanation of the function's role.
    - **Inputs**: Parameter list, types, and descriptions.
    - **Returns**: Expected structure of the response (keys, types, descriptions).
    - **Raises**: Possible exceptions with their conditions.
    - **Example Usage**: Code snippets showing how to use the function.
    - **Example Response**: A sample response from the API documentation.
+   - **JSON Response Structure**: A detailed explanation of the JSON response structure, including the resp and device_info sections, and list all fields, their data types, and descriptions, as outlined in the API yaml file.  This means ALL return values should be documented with their types, possible values,  and descriptions in the helper function docstring.
 
 3. **Error Handling**:
    - Validate inputs and raise `ValueError` for invalid inputs.
@@ -50,6 +54,8 @@ The `api_helpers` package is structured as:
     ├── utils.py             # Shared utilities (e.g., make_api_request, validate_ip)
     ├── token_manager.py     # Manages tokens (e.g., fetching, caching)
 
+You will need to indicate the location of the helper file based on the project structure outlined above.
+
 Helper Function Expectations:
 - Each helper is its own file (e.g., `login.py`) for modularity.
 - Grouped by related functionality (e.g., `auth_helpers` for authentication).
@@ -57,8 +63,7 @@ Helper Function Expectations:
   ```python
   from net_core.api_helpers.auth_helpers import login, logout
 
-
-
+Prompt to add the import to the appropriate __init__.py file.
 
 Standard Module Preamble:
 """
@@ -84,5 +89,9 @@ logger = logging.getLogger("app")
 API_VERSION = "v1"
 TIMEOUT = 10  # Default timeout for API requests
 
-API Documentation
+Use this prompt to:
+1. Tell me the name and location of this helper.
+2. Show me the entire code listing for this helper.
+3. Prompt me to add the import to the appropriate __init__.py file.
+4. Tell me of any other changes that should be made to the application to implement this helper.
 
