@@ -43,3 +43,9 @@
         devices based on their response time.  Maybe it will be 
         best to have a thread for each device that polls on an interval.
         Might be better to spawn seperate docker workers to handle this.
+
+
+## 99. Deployment
+- [ ] Create a bootstrap script to set up the environment.
+        - [ ] handle this ==> "sysctl -w vm.overcommit_memory=1" for redis and docker at the host level
+              

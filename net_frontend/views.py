@@ -9,7 +9,7 @@ from django.conf import settings
 
 from net_core.models import Switch
 from net_frontend.forms import SwitchForm
-from net_core.api_helpers import make_api_request, fetch_device_info, fetch_device_name
+from net_core.api_helpers.api_helpers import make_api_request, fetch_device_info, fetch_device_name
 
 
 

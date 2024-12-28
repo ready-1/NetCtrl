@@ -1,6 +1,6 @@
 from django.test import TestCase
 from net_core.models import Switch
-from net_core.utils import validate_ip_address, format_mac_address
+from net_core.api_helpers.utils import validate_ip_address, format_mac_address
 
 class SwitchModelTest(TestCase):
     def test_create_switch(self):
