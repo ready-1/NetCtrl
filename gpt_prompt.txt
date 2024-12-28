@@ -94,4 +94,5 @@ Use this prompt to:
 2. Show me the entire code listing for this helper.
 3. Prompt me to add the import to the appropriate __init__.py file.
 4. Tell me of any other changes that should be made to the application to implement this helper.
+5. Name this chat EXACTLY as "API Helper \" plus the endpoint (e.g. "API Helper \login")
 
