@@ -36,9 +36,6 @@ class TokenManager:
         logger.info(f"No valid token found for switch {switch_ip}. Fetching a new one...")
         return cls._fetch_token(switch_ip, username, password)
 
-
-
-
     @classmethod
     def _fetch_token(cls, switch_ip: str, username: str, password: str) -> str:
         protocol = "https" if settings.USE_HTTPS else "http"
@@ -102,3 +99,28 @@ class TokenManager:
         cache_key = f"{cls.TOKEN_CACHE_PREFIX}_{switch_ip}"
         ttl = cache.ttl(cache_key)  # Redis-specific method for TTL
         return ttl if ttl is not None else -1
+    
+    @classmethod
+    def clear_token(cls, switch_ip: str) -> None:
+        """
+        Clears the stored token for a given switch IP from the cache.
+
+        Purpose:
+            Removes the token associated with the specified switch IP from the
+            cache, forcing the system to fetch a new token when needed.
+
+        Parameters:
+            switch_ip (str): IP address of the switch whose token needs to be cleared.
+
+        Returns:
+            None
+
+        Example Usage:
+            >>> TokenManager.clear_token("192.168.1.1")
+        """
+        cache_key = f"{cls.TOKEN_CACHE_PREFIX}_{switch_ip}"
+        if cache.get(cache_key):
+            cache.delete(cache_key)
+            logger.info("Token cleared for switch %s.", switch_ip)
+        else:
+            logger.warning("No token found in cache for switch %s.", switch_ip)
