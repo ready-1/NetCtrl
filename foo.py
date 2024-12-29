@@ -2,9 +2,10 @@ import os
 
 from pprint import pprint
 
-from net_core.api_helpers.device_helpers import get_device_info
+from net_core.api_helpers.device_helpers import get_device_name, set_device_name, reboot_device
 from net_core.api_helpers.token_manager import TokenManager
-from django.conf import settings
+
+
 
 SWITCH_IP=os.getenv("SWITCH_IP")
 SWITCH_USERNAME=os.getenv("SWITCH_USERNAME")
@@ -17,13 +18,14 @@ def test_device_info():
     try:
         # Step 1: Obtain a valid token using TokenManager
         token_manager = TokenManager()
+        token_manager.clear_token(SWITCH_IP)
         token = token_manager.get_token(SWITCH_IP, SWITCH_USERNAME, SWITCH_PASSWORD)
         print(f"Successfully obtained token: {token}")
 
-        # Step 2: Call the get_device_info function with the token
-        device_info = get_device_info(SWITCH_IP, token)
-        print("Device Info Retrieved Successfully:")
-        print(device_info)
+        
+        result = reboot_device(SWITCH_IP, token, 5)    
+        
+        print(result)
 
     except Exception as e:
         pprint(f"Error during test: {e}")

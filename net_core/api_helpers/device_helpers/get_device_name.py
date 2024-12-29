@@ -1,9 +1,8 @@
 """
-Helper functions for managing device name.
+Helper functions for retrieving the device name.
 
-This module provides a function to fetch the device name from the
-network switch API. The function adheres to a consistent format with
-detailed error handling and response validation.
+This module provides a function to interact with the `/device_name` endpoint
+of the network switch API. It retrieves the name and location of the device.
 
 Author: Bob King (Ready-1 LLC)
 Date: 2024-12-28
@@ -15,74 +14,89 @@ from net_core.api_helpers.utils import make_api_request, InvalidResponse
 # Configure logger for the module
 logger = logging.getLogger("app")
 
-# Constants
-API_VERSION = "v1"
+# Constants specific to this module
 TIMEOUT = 10  # Default timeout for API requests
 
-def get_device_name(switch_ip, token):
+def get_device_name(switch_ip: str, token: str) -> dict:
     """
-    Fetches the device name using the NetCtrl REST API.
+    Retrieve the device name and location from the `/device_name` endpoint.
 
     Purpose:
-        Retrieves the current device name from the network switch.
+        Fetches the device name and location for the specified switch.
 
     Inputs:
-        token (str): Bearer token for API authentication.
+        switch_ip (str): The IP address of the target switch.
+        token (str): The authentication token for the API.
 
     Returns:
-        dict: Dictionary containing the device name.
-            Example: {"name": "NGTR_SW", "location": "TBD"}
+        dict: A dictionary containing the device name and location.
 
     Raises:
-        ValueError: If the token is invalid.
+        ValueError: If inputs are invalid (e.g., missing or malformed).
         InvalidResponse: If the API response is not as expected.
 
     Example Usage:
-        token = "Bearer abc123"
-        device_name = get_device_name(token)
-        print(device_name)
-
-    Example Response:
+        >>> get_device_name("192.168.1.1", "your_auth_token")
         {
             "name": "NGTR_SW",
             "location": "TBD"
         }
 
+    Example Response:
+        {
+            "resp": {
+                "status": "success",
+                "respCode": 0,
+                "respMsg": "Device name retrieved successfully"
+            },
+            "deviceName": {
+                "name": "NGTR_SW",
+                "location": "TBD"
+            }
+        }
+
     JSON Response Structure:
-        - `resp` (dict):
-            - `status` (str): Response status.
-            - `respCode` (int): Response code (0 for success).
-            - `respMsg` (str): Response message.
-        - `deviceName` (dict):
-            - `name` (str): Device name.
-            - `location` (str): Device location.
+        - resp (dict):
+            - status (str): Response status, e.g., "success".
+            - respCode (int): Response code (0 indicates success).
+            - respMsg (str): Response message.
+        - deviceName (dict):
+            - name (str): The device's name.
+            - location (str): The device's location.
 
     """
-    if not isinstance(token, str) or not token.strip():
-        raise ValueError("Invalid token provided.")
+    # Validate inputs
+    if not switch_ip or not isinstance(switch_ip, str):
+        raise ValueError("Invalid switch_ip: must be a non-empty string.")
+    if not token or not isinstance(token, str):
+        raise ValueError("Invalid token: must be a non-empty string.")
 
-    url = f"https://127.0.0.1:8443/api/{API_VERSION}/device_name"
+    # Endpoint for the API call
+    endpoint = "/device_name"
     headers = {"Authorization": f"Bearer {token}"}
 
     try:
-        response = make_api_request("GET", url, headers=headers, timeout=TIMEOUT)
+        # Make the API request
+        response = make_api_request(
+            switch_ip=switch_ip,
+            endpoint=endpoint,
+            method="GET",
+            headers=headers,
+            timeout=TIMEOUT
+        )
 
-        if "resp" not in response or "deviceName" not in response:
-            raise InvalidResponse("Missing 'resp' or 'deviceName' in response.")
+        # Validate the response
+        if not response.get("resp") or response["resp"].get("respCode") != 0:
+            raise InvalidResponse(
+                f"Error from API: {response['resp'].get('respMsg', 'Unknown error')}"
+            )
+        
+        if "deviceName" not in response:
+            raise InvalidResponse("Missing 'deviceName' in API response.")
 
-        resp = response["resp"]
-        if resp.get("respCode") != 0:
-            raise InvalidResponse(f"API Error: {resp.get('respMsg')}")
+        # Return relevant data
+        return response["deviceName"]
 
-        device_name = response["deviceName"]
-        return {
-            "name": device_name.get("name"),
-            "location": device_name.get("location"),
-        }
-
-    except InvalidResponse as e:
-        logger.error(f"Invalid API response: {e}")
-        raise
     except Exception as e:
-        logger.error(f"Error fetching device name: {e}")
+        logger.error(f"Failed to retrieve device name: {e}")
         raise

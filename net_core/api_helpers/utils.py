@@ -78,7 +78,9 @@ def make_api_request(switch_ip, endpoint, method="GET", data=None, params=None, 
     """
     protocol = "https" if settings.USE_HTTPS else "http"
     port = "8443" if settings.USE_HTTPS else "80"
-    url = f"{protocol}://{switch_ip}:{port}/api/v1/{endpoint}"
+    url = f"{protocol}://{switch_ip}:{port}/api/v1/{endpoint.lstrip('/')}"
+    print(url)
+
 
     # Get a valid token using TokenManager
     token = TokenManager.get_token(switch_ip, settings.SWITCH_USERNAME, settings.SWITCH_PASSWORD)
