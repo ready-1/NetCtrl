@@ -112,3 +112,43 @@ def config_copy(switch_ip: str, token: str, directive: str) -> dict:
     except Exception as e:
         logger.exception("Error during config_copy operation.")
         raise
+
+def save_config(switch_ip: str, token: str) -> dict:
+    """
+    Shortcut to save the running configuration to the startup configuration.
+
+    Purpose:
+        Provides a convenience wrapper for `config_copy` to save the running
+        configuration to the startup configuration.
+
+    Parameters:
+        switch_ip (str): The IP address of the target switch.
+        token (str): Authentication token for API access.
+
+    Returns:
+        dict: Response data from the API with keys:
+              - `resp`: General response details.
+              - `respCode`: Status code (0 indicates success).
+              - `respMsg`: Detailed message.
+
+    Raises:
+        InvalidResponse: If the API response is malformed or indicates an error.
+
+    Example Usage:
+        ```python
+        response = save_config(switch_ip="192.168.1.1", token="eyJhbGc...")
+        print(response)
+        ```
+
+    Example Response:
+        ```json
+        {
+            "resp": {
+                "respCode": 0,
+                "respMsg": "Configuration copied successfully."
+            }
+        }
+        ```
+    """
+    logger.info(f"Saving running-config to startup-config for switch: {switch_ip}")
+    return config_copy(switch_ip=switch_ip, token=token, directive="rtos")

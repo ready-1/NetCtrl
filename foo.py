@@ -2,7 +2,7 @@ import os
 
 from pprint import pprint
 
-from net_core.api_helpers.device_helpers import get_device_name, set_device_name, reboot_device
+from net_core.api_helpers.device_helpers import get_device_name, set_device_name, reboot_device, config_copy, save_config
 from net_core.api_helpers.token_manager import TokenManager
 
 
@@ -23,7 +23,7 @@ def test_device_info():
         print(f"Successfully obtained token: {token}")
 
         
-        result = reboot_device(SWITCH_IP, token, 5)    
+        result = save_config(SWITCH_IP, token)   
         
         print(result)
 
