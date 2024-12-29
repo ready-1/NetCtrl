@@ -6,6 +6,7 @@ from django.core.cache import cache
 
 logger = logging.getLogger('app')
 
+
 # Suppress only the specific SSL warning
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 

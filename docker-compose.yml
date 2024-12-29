@@ -7,6 +7,8 @@ services:
     ports:
       - "8000:8000"
     environment:
+      DJANGO_SETTINGS_MODULE: netctrl.settings.base
+
       SECRET_KEY: ${SECRET_KEY:-default_secret_key}
       DEBUG: "${DEBUG:-false}"  # Default to false if not provided
       DB_ENGINE: ${DB_ENGINE:-django.db.backends.postgresql}

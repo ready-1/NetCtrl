@@ -62,8 +62,28 @@ Helper Function Expectations:
 - Imports are aggregated in `__init__.py` for simpler imports:
   ```python
   from net_core.api_helpers.auth_helpers import login, logout
+- Helper will need to receive the following inputs:
+  ```python
+  switch_ip: str
+  token: str
+- Helper will need to give make_api_request switch_ip, endpoint, method, data, params, headers, timeout.  See details below.
+     
+make_api_request details 
+   Parameters:
+      switch_ip (str): The IP address of the target switch.
+      endpoint (str): The API endpoint to call (e.g., 'login').
+      method (str): HTTP method to use (default: 'GET').
+      data (dict, optional): JSON payload to send with the request (default: None).
+      params (dict, optional): Query parameters to include in the URL (default: None).
+      headers (dict, optional): Custom headers to include in the request (default: None).
+      timeout (int): Timeout for the request in seconds (default: 10).
 
-Prompt to add the import to the appropriate __init__.py file.
+   Returns:
+      dict: Parsed JSON response from the API.
+
+   Raises:
+      requests.HTTPError: If an HTTP error occurs during the request.
+      Exception: For unexpected issues during the API call.
 
 Standard Module Preamble:
 """
