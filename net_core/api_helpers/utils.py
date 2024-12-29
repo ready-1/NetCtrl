@@ -3,6 +3,8 @@ import requests
 import logging
 from django.conf import settings
 
+from pprint import pprint
+
 from net_core.api_helpers.token_manager import TokenManager
 
 logger = logging.getLogger('app')
@@ -97,6 +99,7 @@ def make_api_request(switch_ip, endpoint, method="GET", data=None, params=None, 
             timeout=timeout,
             verify=False  # Disable SSL for now
         )
+        pprint(response)
         response.raise_for_status()
 
         # Parse and return the JSON response
