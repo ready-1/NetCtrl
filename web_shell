@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# Initialize loop counter
+loop_counter=0
+
+while true; do
+  # Check if the container named "web" exists and is running
+  if docker ps --filter "name=web" --filter "status=running" | grep -q "web"; then
+    # If the container is found, clear the screen, open the docker shell, pause 5s and do it again.
+    clear
+    docker exec -it web /bin/bash
+    loop_counter=0
+    sleep 5
+  else
+    # If the container is not found, increment the counter
+    loop_counter=$((loop_counter + 1))
+    # Clear the screen
+    clear
+    # Print the loop counter
+    echo "Container 'web' not available. Loop count: $loop_counter"
+    # Wait for 2 seconds
+    sleep 2
+  fi
+done
