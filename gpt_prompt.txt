@@ -66,24 +66,42 @@ Helper Function Expectations:
   ```python
   switch_ip: str
   token: str
-- Helper will need to give make_api_request switch_ip, endpoint, method, data, params, headers, timeout.  See details below.
+- Helper will need to give make_api_request parameters and expect response and error handlingas detailed below.
      
-make_api_request details 
-   Parameters:
-      switch_ip (str): The IP address of the target switch.
-      endpoint (str): The API endpoint to call (e.g., 'login').
-      method (str): HTTP method to use (default: 'GET').
-      data (dict, optional): JSON payload to send with the request (default: None).
-      params (dict, optional): Query parameters to include in the URL (default: None).
-      headers (dict, optional): Custom headers to include in the request (default: None).
-      timeout (int): Timeout for the request in seconds (default: 10).
+make_api_request() 
+    """
+    Makes an HTTP API request to a switch with robust error handling and token management.
 
-   Returns:
-      dict: Parsed JSON response from the API.
+    This function handles various error conditions, including expired or invalid tokens (stale tokens),
+    by leveraging the TokenManager to clear stale tokens and fetch new ones. If the API returns a 403
+    (Forbidden) or 401 (Unauthorized) status, indicating the token is no longer valid, the function will
+    clear the token, request a new one, and retry the API call automatically.
 
-   Raises:
-      requests.HTTPError: If an HTTP error occurs during the request.
-      Exception: For unexpected issues during the API call.
+    Parameters:
+        switch_ip (str): The IP address of the target switch.
+        endpoint (str): The API endpoint to call (e.g., 'login').
+        method (str): HTTP method to use (default: 'GET').
+        headers (dict, optional): Custom headers to include in the request (default: None).
+        data (dict, optional): JSON payload to send with the request (default: None).
+        params (dict, optional): Query parameters to include in the URL (default: None).
+        timeout (int): Timeout for the request in seconds (default: 10).
+        retries (int): Number of retry attempts for recoverable errors (default: 3).
+
+    Returns:
+        dict: Parsed JSON response from the API if successful.
+
+    Raises:
+        requests.RequestException: If the request fails after all retry attempts.
+        requests.HTTPError: If a non-recoverable HTTP error occurs.
+        ValueError: If the response cannot be parsed as JSON.
+        Exception: For unexpected errors during the API call.
+
+    Token Management:
+        - When a 403 or 401 status code is returned, the function detects the stale token condition.
+        - The `TokenManager.clear_token` method is called to invalidate the current token.
+        - The function then retries the API call, obtaining a fresh token automatically.
+        - This process ensures uninterrupted operation when tokens expire or are invalidated.
+    """
 
 Standard Module Preamble:
 """
