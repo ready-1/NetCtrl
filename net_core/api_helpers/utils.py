@@ -56,7 +56,7 @@ def format_mac_address(mac):
     return mac.lower().replace('-', ':')
 
 
-def make_api_request(switch_ip, endpoint, method="GET", data=None, params=None, timeout=10, retries=3):
+def make_api_request(switch_ip, endpoint, method="GET", headers=None, data=None, params=None, timeout=10, retries=3):
     """
     Makes an HTTP API request to a switch with robust error handling and token management.
 
@@ -69,6 +69,7 @@ def make_api_request(switch_ip, endpoint, method="GET", data=None, params=None, 
         switch_ip (str): The IP address of the target switch.
         endpoint (str): The API endpoint to call (e.g., 'login').
         method (str): HTTP method to use (default: 'GET').
+        headers (dict, optional): Custom headers to include in the request (default: None).
         data (dict, optional): JSON payload to send with the request (default: None).
         params (dict, optional): Query parameters to include in the URL (default: None).
         timeout (int): Timeout for the request in seconds (default: 10).
