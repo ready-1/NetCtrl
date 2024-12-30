@@ -2,7 +2,7 @@ import os
 
 from pprint import pprint
 
-from net_core.api_helpers.device_helpers import get_device_name, set_device_name, reboot_device, config_copy, save_config, get_bonjour_status
+from net_core.api_helpers.device_helpers import get_device_name, set_device_name, reboot_device, config_copy, save_config, get_bonjour_status, set_bonjour_status
 from net_core.api_helpers.token_manager import TokenManager
 
 
@@ -23,8 +23,13 @@ def test_device_info():
         print(f"Successfully obtained token: {token}")
 
         
-        result = get_bonjour_status(SWITCH_IP, token)   
-        
+        result = set_bonjour_status(SWITCH_IP, token, "disabled")
+        print(result)
+        result = get_bonjour_status(SWITCH_IP, token)
+        print(result)
+        result = set_bonjour_status(SWITCH_IP, token, "enabled")
+        print(result)
+        result = get_bonjour_status(SWITCH_IP, token)
         print(result)
 
     except Exception as e:
