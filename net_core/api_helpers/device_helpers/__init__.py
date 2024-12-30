@@ -6,3 +6,4 @@ from .config_copy import config_copy, save_config
 from .get_bonjour_status import get_bonjour_status
 from .set_bonjour_status import set_bonjour_status
 from .get_lldp_remote_devices import get_lldp_remote_devices
+from .get_dual_image_status import get_dual_image_status
