@@ -5,3 +5,4 @@ from .reboot_device import reboot_device
 from .config_copy import config_copy, save_config
 from .get_bonjour_status import get_bonjour_status
 from .set_bonjour_status import set_bonjour_status
+from .get_lldp_remote_devices import get_lldp_remote_devices
