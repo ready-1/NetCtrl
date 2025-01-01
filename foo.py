@@ -25,6 +25,9 @@ logging.basicConfig(
 logger = logging.getLogger("script_logger")
 
 def test_helper_function():
+    # Clear terminal using ANSI escape sequences
+    print("\033[H\033[J", end="")
+    logger.info("Starting test of helper function...")
     logger.info("Testing helper function...")
 
     # Import your helper function here
