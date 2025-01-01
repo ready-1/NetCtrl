@@ -113,7 +113,7 @@ def traceroute_start(
     if not isinstance(wait, int) or not (1 <= wait <= 60):
         raise ValueError("Invalid wait: must be an integer between 1 and 60.")
 
-    endpoint = f"/{API_VERSION}/traceroute_start"
+    endpoint = f"/traceroute_start"
     headers = {"Authorization": f"Bearer {token}"}
     data = {
         "tracerouteStart": {
