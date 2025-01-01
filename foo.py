@@ -40,24 +40,13 @@ def test_helper_function():
         token = token_manager.get_token(switch_ip, switch_username, switch_password)
         logger.debug(f"Retrieved token: {token}")
 
-        from net_core.api_helpers.device_helpers import get_system_rfc1213, set_system_rfc1213
+        from net_core.api_helpers.diagnostics_helpers import ping_test_start
 
        
-        result = set_system_rfc1213(switch_ip, token, "M4324X", "San Jose", "Bob King")
+        result = ping_test_start(switch_ip, token, "237.84.2.178", action=1, ip_version=4, count=3, size=64, timeout=10, interval=1.0)
         pretty_json = json.dumps(result, indent=4)
         logger.info(f"API response: {pretty_json}")
 
-        result = get_system_rfc1213(switch_ip, token)
-        pretty_json = json.dumps(result, indent=4)
-        logger.info(f"API response: {pretty_json}")
-
-        result = set_system_rfc1213(switch_ip, token, "Lab Switch", "Dade City", "Bob King")
-        pretty_json = json.dumps(result, indent=4)
-        logger.info(f"API response: {pretty_json}")
-
-        result = get_system_rfc1213(switch_ip, token)
-        pretty_json = json.dumps(result, indent=4)
-        logger.info(f"API response: {pretty_json}")
 
     except Exception as e:
         logger.error("Error occurred while testing helper function: %s", e)
