@@ -2,11 +2,9 @@ import logging
 import os
 import json
 import django
-from django.conf import settings
 from net_core.api_helpers.token_manager import TokenManager
 
 # Set up Django environment
-# os.environ.setdefault("DJANGO_SETTINGS_MODULE", "myproject.settings")
 django.setup()
 
 # Configure logging
@@ -21,17 +19,11 @@ logging.basicConfig(
     ]
 )
 
-# Create a logger for the script
 logger = logging.getLogger("script_logger")
 
 def test_helper_function():
-    # Clear terminal using ANSI escape sequences
     print("\033[H\033[J", end="")
     logger.info("Starting test of helper function...")
-    logger.info("Testing helper function...")
-
-    # Import your helper function here
-    
 
     try:
         # Retrieve required settings
@@ -42,32 +34,33 @@ def test_helper_function():
         if not switch_ip or not switch_username or not switch_password:
             raise ValueError("SWITCH_IP, SWITCH_USERNAME, and SWITCH_PASSWORD must be set in environment variables.")
 
-        logger.debug(f"Using SWITCH_IP: {switch_ip}, SWITCH_USERNAME: {switch_username}")
+        logger.debug(f"Using SWITCH_IP: {switch_ip}, SWITCH_USERNAME: {switch_username}, SWITCH_PASSWORD: {switch_password}")
 
-        # Initialize the TokenManager
         token_manager = TokenManager()
-
-        # Retrieve the token
         token = token_manager.get_token(switch_ip, switch_username, switch_password)
         logger.debug(f"Retrieved token: {token}")
 
-    
-    
-        from net_core.api_helpers.device_helpers import get_active_image
-    
-        # Call the helper function
-        response = get_active_image(switch_ip, token)
-        
-        pretty_response = json.dumps(response, indent=4)
-        logger.info("Helper function response:\n%s", pretty_response)
+        from net_core.api_helpers.device_helpers import get_system_rfc1213, set_system_rfc1213
 
-    
-    
-    
-    
-    
+       
+        result = set_system_rfc1213(switch_ip, token, "M4324X", "San Jose", "Bob King")
+        pretty_json = json.dumps(result, indent=4)
+        logger.info(f"API response: {pretty_json}")
+
+        result = get_system_rfc1213(switch_ip, token)
+        pretty_json = json.dumps(result, indent=4)
+        logger.info(f"API response: {pretty_json}")
+
+        result = set_system_rfc1213(switch_ip, token, "Lab Switch", "Dade City", "Bob King")
+        pretty_json = json.dumps(result, indent=4)
+        logger.info(f"API response: {pretty_json}")
+
+        result = get_system_rfc1213(switch_ip, token)
+        pretty_json = json.dumps(result, indent=4)
+        logger.info(f"API response: {pretty_json}")
+
     except Exception as e:
-        logger.error("Error occurred while testing helper: %s", e)
+        logger.error("Error occurred while testing helper function: %s", e)
 
 if __name__ == "__main__":
     logger.info("Starting the script...")
