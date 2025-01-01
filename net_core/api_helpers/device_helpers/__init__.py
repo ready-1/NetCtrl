@@ -13,3 +13,4 @@ from .get_config_file_comparison import get_config_file_comparison
 from .get_system_config import get_system_config
 from .set_system_config import set_system_config
 from .get_system_rfc1213 import get_system_rfc1213
+from .set_system_rfc1213 import set_system_rfc1213
