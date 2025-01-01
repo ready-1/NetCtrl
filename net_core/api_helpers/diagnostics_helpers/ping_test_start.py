@@ -25,9 +25,9 @@ def ping_test_start(
     host: str,
     action: int = 1,
     ip_version: int = 4,
-    count: int = 3,
+    count: int = 1,
     size: int = 64,
-    timeout: int = 60,
+    timeout: int = 10,
     interval: float = 1.0,
 ) -> dict:
     """
@@ -42,9 +42,9 @@ def ping_test_start(
         host (str): The target hostname or IP address.
         action (int, optional): Action to perform (1=start, 0=stop). Default is 1.
         ip_version (int, optional): IP version (4=IPv4, 6=IPv6). Default is 4.
-        count (int, optional): Number of echo requests to send (1-1024). Default is 3.
+        count (int, optional): Number of echo requests to send (1-1024). Default is 1.
         size (int, optional): Size of ping packets in bytes (1-655535). Default is 64.
-        timeout (int, optional): Timeout for each ping packet in seconds (1-300). Default is 60.
+        timeout (int, optional): Timeout for each ping packet in seconds (1-300). Default is 10.
         interval (float, optional): Interval between packets in seconds (0.5-10). Default is 1.0.
 
     Returns:
