@@ -11,3 +11,4 @@ from .get_active_image import get_active_image
 from .set_active_image import set_active_image
 from .get_config_file_comparison import get_config_file_comparison
 from .get_system_config import get_system_config
+from .set_system_config import set_system_config
