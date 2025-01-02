@@ -1,6 +1,7 @@
 import logging
 import os
 import json
+import time
 import django
 from net_core.api_helpers.token_manager import TokenManager
 
@@ -20,6 +21,7 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger("script_logger")
+logger.propagate = False
 
 def test_helper_function():
     print("\033[H\033[J", end="")
@@ -36,16 +38,49 @@ def test_helper_function():
 
         logger.debug(f"Using SWITCH_IP: {switch_ip}, SWITCH_USERNAME: {switch_username}, SWITCH_PASSWORD: {switch_password}")
 
+
+
+
         token_manager = TokenManager()
+        token_manager.clear_token(switch_ip)
         token = token_manager.get_token(switch_ip, switch_username, switch_password)
-        logger.debug(f"Retrieved token: {token}")
+        logger.debug(f"Retrieved token: {token}\n\n")
 
-        from net_core.api_helpers.diagnostics_helpers import ping_test_start
 
-       
-        result = ping_test_start(switch_ip, token, "237.84.2.178", action=1, ip_version=4, count=3, size=64, timeout=10, interval=1.0)
+        from net_core.api_helpers.diagnostics_helpers import ping_test_start, get_ping_test_status, traceroute_start, get_traceroute_status, get_port_mirroring, set_port_mirroring, delete_port_mirroring
+
+
+        logger.info("Setting port mirroring...")
+        result = set_port_mirroring(
+            switch_ip,
+            token,
+            session_num=3,
+            admin_mode="true",
+            dest_port=30,
+            src_ports=[
+                {"intfType": 0, "intfNum": 31, "direction": 1},
+                {"intfType": 0, "intfNum": 32, "direction": 1}
+            ]
+        )
         pretty_json = json.dumps(result, indent=4)
-        logger.info(f"API response: {pretty_json}")
+        logger.info(f"Port mirroring set: {result}")
+
+        logger.info("Getting the port mirroring status...")
+        result = get_port_mirroring(switch_ip, token, 3)
+        pretty_json = json.dumps(result, indent=4)
+        logger.info(f"Port mirroring status: {pretty_json}")
+
+        logger.info("Deleting the port mirroring session...")
+        result = delete_port_mirroring(switch_ip, token, 3)
+        pretty_json = json.dumps(result, indent=4)
+        logger.info(f"Port mirroring session deleted: {pretty_json}")
+
+        logger.info("Getting the port mirroring status...")
+        result = get_port_mirroring(switch_ip, token, 3)
+        pretty_json = json.dumps(result, indent=4)
+        logger.info(f"Port mirroring status: {pretty_json}")
+
+
 
 
     except Exception as e:
@@ -55,3 +90,6 @@ if __name__ == "__main__":
     logger.info("Starting the script...")
     test_helper_function()
     logger.info("Script finished.")
+
+
+

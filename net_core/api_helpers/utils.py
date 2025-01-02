@@ -6,7 +6,8 @@ from django.conf import settings
 from pprint import pprint
 from net_core.api_helpers.token_manager import TokenManager
 
-logger = logging.getLogger('app')
+logger = logging.getLogger('app.api_helpers')
+logger.propagate = False
 
 class InvalidResponse(Exception):
     """Custom exception for invalid API responses."""
