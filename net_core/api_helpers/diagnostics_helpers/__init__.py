@@ -5,3 +5,4 @@ from .traceroute_start import traceroute_start
 from .get_traceroute_status import get_traceroute_status
 from .get_port_mirroring import get_port_mirroring
 from .set_port_mirroring import set_port_mirroring
+from .delete_port_mirroring import delete_port_mirroring
