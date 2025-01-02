@@ -4,7 +4,8 @@ import urllib3
 from django.conf import settings
 from django.core.cache import cache
 
-logger = logging.getLogger('app')
+logger = logging.getLogger('app.api_helpers.token_manager')
+logger.propagate = False
 
 
 # Suppress only the specific SSL warning
