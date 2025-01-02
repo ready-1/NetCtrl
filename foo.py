@@ -1,35 +1,68 @@
+import logging
 import os
-
-from pprint import pprint
-
-from net_core.api_helpers.device_helpers import get_device_name, set_device_name, reboot_device, config_copy, save_config, get_bonjour_status, set_bonjour_status, get_lldp_remote_devices
+import json
+import time
+import django
 from net_core.api_helpers.token_manager import TokenManager
 
+# Set up Django environment
+django.setup()
 
+# Configure logging
+LOG_FILE = "script.log"
 
-SWITCH_IP=os.getenv("SWITCH_IP")
-SWITCH_USERNAME=os.getenv("SWITCH_USERNAME")
-SWITCH_PASSWORD=os.getenv("SWITCH_PASSWORD")
+# logging.basicConfig(
+#     level=logging.DEBUG,
+#     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+#     handlers=[
+#         logging.FileHandler(LOG_FILE),  # Logs to a file
+#         logging.StreamHandler()        # Logs to the console
+#     ]
+# )
 
-def test_device_info():
-    """
-    Test the get_device_info function with a valid token.
-    """
+logger = logging.getLogger("app")
+logger.propagate = False
+
+def test_helper_function():
+    print("\033[H\033[J", end="")
+    logger.info("Starting test of helper function...")
+
     try:
-        # Step 1: Obtain a valid token using TokenManager
-        token_manager = TokenManager()
-        token_manager.clear_token(SWITCH_IP)
-        token = token_manager.get_token(SWITCH_IP, SWITCH_USERNAME, SWITCH_PASSWORD)
-        print(f"Successfully obtained token: {token}")
+        # Retrieve required settings
+        switch_ip = os.getenv("SWITCH_IP", None)
+        switch_username = os.getenv("SWITCH_USERNAME", None)
+        switch_password = os.getenv("SWITCH_PASSWORD", None)
 
-        
-        result = get_lldp_remote_devices(SWITCH_IP, token)
-        pprint(result)
+        if not switch_ip or not switch_username or not switch_password:
+            raise ValueError("SWITCH_IP, SWITCH_USERNAME, and SWITCH_PASSWORD must be set in environment variables.")
+
+        logger.debug(f"Using SWITCH_IP: {switch_ip}, SWITCH_USERNAME: {switch_username}, SWITCH_PASSWORD: {switch_password}")
+
+
+
+
+        token_manager = TokenManager()
+        token_manager.clear_token(switch_ip)
+        token = token_manager.get_token(switch_ip, switch_username, switch_password)
+        logger.debug(f"Retrieved token: {token}\n\n")
+
+
+        from net_core.api_helpers.diagnostics_helpers import ping_test_start, get_ping_test_status, traceroute_start, get_traceroute_status, get_port_mirroring, set_port_mirroring, delete_port_mirroring, get_device_cable_test
+
+
+        logger.debug("Testing get_device_cable_test...")
+        result = get_device_cable_test(switch_ip, token, 50)
+        logger.debug(f"get_device_cable_test result: {result}")
+
 
 
     except Exception as e:
-        pprint(f"Error during test: {e}")
+        logger.error("Error occurred while testing helper function: %s", e)
 
-# Run the test
 if __name__ == "__main__":
-    test_device_info()
+    logger.info("Starting the script...")
+    test_helper_function()
+    logger.info("Script finished.")
+
+
+
