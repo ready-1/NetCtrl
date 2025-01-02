@@ -11,16 +11,16 @@ django.setup()
 # Configure logging
 LOG_FILE = "script.log"
 
-logging.basicConfig(
-    level=logging.DEBUG,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    handlers=[
-        logging.FileHandler(LOG_FILE),  # Logs to a file
-        logging.StreamHandler()        # Logs to the console
-    ]
-)
+# logging.basicConfig(
+#     level=logging.DEBUG,
+#     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+#     handlers=[
+#         logging.FileHandler(LOG_FILE),  # Logs to a file
+#         logging.StreamHandler()        # Logs to the console
+#     ]
+# )
 
-logger = logging.getLogger("script_logger")
+logger = logging.getLogger("app")
 logger.propagate = False
 
 def test_helper_function():
@@ -47,39 +47,12 @@ def test_helper_function():
         logger.debug(f"Retrieved token: {token}\n\n")
 
 
-        from net_core.api_helpers.diagnostics_helpers import ping_test_start, get_ping_test_status, traceroute_start, get_traceroute_status, get_port_mirroring, set_port_mirroring, delete_port_mirroring
+        from net_core.api_helpers.diagnostics_helpers import ping_test_start, get_ping_test_status, traceroute_start, get_traceroute_status, get_port_mirroring, set_port_mirroring, delete_port_mirroring, get_device_cable_test
 
 
-        logger.info("Setting port mirroring...")
-        result = set_port_mirroring(
-            switch_ip,
-            token,
-            session_num=3,
-            admin_mode="true",
-            dest_port=30,
-            src_ports=[
-                {"intfType": 0, "intfNum": 31, "direction": 1},
-                {"intfType": 0, "intfNum": 32, "direction": 1}
-            ]
-        )
-        pretty_json = json.dumps(result, indent=4)
-        logger.info(f"Port mirroring set: {result}")
-
-        logger.info("Getting the port mirroring status...")
-        result = get_port_mirroring(switch_ip, token, 3)
-        pretty_json = json.dumps(result, indent=4)
-        logger.info(f"Port mirroring status: {pretty_json}")
-
-        logger.info("Deleting the port mirroring session...")
-        result = delete_port_mirroring(switch_ip, token, 3)
-        pretty_json = json.dumps(result, indent=4)
-        logger.info(f"Port mirroring session deleted: {pretty_json}")
-
-        logger.info("Getting the port mirroring status...")
-        result = get_port_mirroring(switch_ip, token, 3)
-        pretty_json = json.dumps(result, indent=4)
-        logger.info(f"Port mirroring status: {pretty_json}")
-
+        logger.debug("Testing get_device_cable_test...")
+        result = get_device_cable_test(switch_ip, token, 50)
+        logger.debug(f"get_device_cable_test result: {result}")
 
 
 
