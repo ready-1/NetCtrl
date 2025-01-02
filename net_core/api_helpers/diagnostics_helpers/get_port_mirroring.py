@@ -128,7 +128,7 @@ def get_port_mirroring(switch_ip: str, token: str, session_num: int) -> dict:
             raise InvalidResponse(f"API Error: {resp.get('respMsg', 'Unknown error')}")
 
         # Extract and process data
-        config = response.get("switchRstpPortConfig", {})
+        config = response.get("devicePortMirroring", {})
         return {
             "session_number": config.get("sessionNum"),
             "admin_mode": config.get("sessionMode", False),
