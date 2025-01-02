@@ -70,7 +70,9 @@ def make_api_request(switch_ip, endpoint, method="GET", headers=None, data=None,
 
     Parameters:
         switch_ip (str): The IP address of the target switch.
-        endpoint (str): The API endpoint to call (e.g., 'login').
+        endpoint (str): The API endpoint to call (e.g., '/login').  
+                        Note: Do not include the "api/v1" prefix. 
+                            The helper will sanitize the leading slash, but not the prefix.
         method (str): HTTP method to use (default: 'GET').
         headers (dict, optional): Custom headers to include in the request (default: None).
         data (dict, optional): JSON payload to send with the request (default: None).
