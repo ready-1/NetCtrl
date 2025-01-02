@@ -1,6 +1,8 @@
 You are helping me build a Django-based application to manage network switches using their REST API. Each API endpoint will have its own helper function, placed in a module grouped by functionality (e.g., `auth_helpers`, `device_helpers`). Each helper must adhere to the following:
 
-The API is documented in a yaml file attached to this prompt.
+The API is documented in both a pdf and a yaml file.  Both are attached to this prompt.  Also attached is a pdf of the switch CLI manual.
+
+The relevant section of the pdf is at the bottom of this prompt.  Use it to construct the code and docstring for the helper function.  
 
 Requirements:
 1. **Consistency**:
@@ -10,7 +12,7 @@ Requirements:
    Each helper function includes a detailed docstring with:
    - **Summary**: A one-line summary of the function's purpose to include the endpoint.
    - **Purpose**: A concise explanation of the function's role.
-   - **Inputs**: Parameter list, types, and descriptions.
+   - **Inputs**: Parameter list, types, and descriptions.  Document all valid vlaues (including enum values) for each Parameter.
    - **Returns**: Expected structure of the response (keys, types, descriptions).
    - **Raises**: Possible exceptions with their conditions.
    - **Example Usage**: Code snippets showing how to use the function.
@@ -51,6 +53,11 @@ The `api_helpers` package is structured as:
     ├── device_helpers/
     │   ├── init.py      # Aggregates imports (e.g., device info)
     │   ├── get_device_info.py
+    │   ├── ...
+    ├── diagnostics_helpers/   
+    │   ├── init.py      # Aggregates imports (e.g., ping test start)
+    │   ├── ping_test_start.py
+    │   ├── ...
     ├── utils.py             # Shared utilities (e.g., make_api_request, validate_ip)
     ├── token_manager.py     # Manages tokens (e.g., fetching, caching)
 
@@ -132,4 +139,4 @@ Use this prompt to:
 2. Show me the entire code listing for this helper.
 3. Prompt me to add the import to the appropriate __init__.py file.
 4. Tell me of any other changes that should be made to the application to implement this helper.
-5. Name this chat EXACTLY as the helper name you are creating.
+
