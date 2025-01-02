@@ -1,0 +1,142 @@
+You are helping me build a Django-based application to manage network switches using their REST API. Each API endpoint will have its own helper function, placed in a module grouped by functionality (e.g., `auth_helpers`, `device_helpers`). Each helper must adhere to the following:
+
+The API is documented in both a pdf and a yaml file.  Both are attached to this prompt.  Also attached is a pdf of the switch CLI manual.
+
+The relevant section of the pdf is at the bottom of this prompt.  Use it to construct the code and docstring for the helper function.  
+
+Requirements:
+1. **Consistency**:
+   - All helper functions follow a standard style and format for maintainability.
+
+2. **Docstrings**:
+   Each helper function includes a detailed docstring with:
+   - **Summary**: A one-line summary of the function's purpose to include the endpoint.
+   - **Purpose**: A concise explanation of the function's role.
+   - **Inputs**: Parameter list, types, and descriptions.  Document all valid vlaues (including enum values) for each Parameter.
+   - **Returns**: Expected structure of the response (keys, types, descriptions).
+   - **Raises**: Possible exceptions with their conditions.
+   - **Example Usage**: Code snippets showing how to use the function.
+   - **Example Response**: A sample response from the API documentation.
+   - **JSON Response Structure**: A detailed explanation of the JSON response structure, including the resp and device_info sections, and list all fields, their data types, and descriptions (including all enum values) as outlined in the API yaml file.  This means ALL return values should be documented with their types, possible values,  and descriptions in the helper function docstring.
+
+3. **Error Handling**:
+   - Validate inputs and raise `ValueError` for invalid inputs.
+   - Validate API responses and raise `InvalidResponse` for unexpected formats or missing fields.
+   - Handle API-specific errors (e.g., `respCode` other than `0`) and log meaningful messages.
+   - Include retry logic with a configurable number of retries.
+
+4. **Response Validation**:
+   Process API responses to return only relevant data in a usable format.
+
+Background Context
+	•	The application communicates with switches using the NetCtrl REST API.
+	•	Token-based authentication is required, and tokens are managed by a TokenManager class.
+	•	API calls must be made via 'make_api_request' i 'utils.py' to ensure consistency and reusability.
+	•	The response format varies between endpoints, but all include a top-level resp object with status, respCode, and respMsg.
+
+Helper Development Expectations
+	•	Each helper function should encapsulate the logic for a specific API endpoint.
+	•	The response should be validated against the documented API response.
+	•	The function must return processed data in a format usable by the application.
+	•	Use the make_api_request function for all interactions with the API.
+	•	Include placeholders for me to paste the relevant API documentation.
+
+Project Structure:
+The `api_helpers` package is structured as:
+    net_core/
+    └── api_helpers/
+    ├── init.py          # Package definition
+    ├── auth_helpers/
+    │   ├── init.py      # Aggregates imports (e.g., login, logout)
+    │   ├── login.py         # Handles login endpoint
+    │   ├── logout.py        # Handles logout endpoint
+    ├── device_helpers/
+    │   ├── init.py      # Aggregates imports (e.g., device info)
+    │   ├── get_device_info.py
+    │   ├── ...
+    ├── diagnostics_helpers/   
+    │   ├── init.py      # Aggregates imports (e.g., ping test start)
+    │   ├── ping_test_start.py
+    │   ├── ...
+    ├── utils.py             # Shared utilities (e.g., make_api_request, validate_ip)
+    ├── token_manager.py     # Manages tokens (e.g., fetching, caching)
+
+You will need to indicate the location of the helper file based on the project structure outlined above.
+
+Helper Function Expectations:
+- Each helper is its own file (e.g., `login.py`) for modularity.
+- Grouped by related functionality (e.g., `auth_helpers` for authentication).
+- Imports are aggregated in `__init__.py` for simpler imports:
+  ```python
+  from net_core.api_helpers.auth_helpers import login, logout
+- Helper will need to receive the following inputs:
+  ```python
+  switch_ip: str
+  token: str
+- Helper will need to give make_api_request parameters and expect response and error handlingas detailed below.
+     
+make_api_request() 
+    """
+    Makes an HTTP API request to a switch with robust error handling and token management.
+
+    This function handles various error conditions, including expired or invalid tokens (stale tokens),
+    by leveraging the TokenManager to clear stale tokens and fetch new ones. If the API returns a 403
+    (Forbidden) or 401 (Unauthorized) status, indicating the token is no longer valid, the function will
+    clear the token, request a new one, and retry the API call automatically.
+
+    Parameters:
+        switch_ip (str): The IP address of the target switch.
+        endpoint (str): The API endpoint to call (e.g., 'login').
+        method (str): HTTP method to use (default: 'GET').
+        headers (dict, optional): Custom headers to include in the request (default: None).
+        data (dict, optional): JSON payload to send with the request (default: None).
+        params (dict, optional): Query parameters to include in the URL (default: None).
+        timeout (int): Timeout for the request in seconds (default: 10).
+        retries (int): Number of retry attempts for recoverable errors (default: 3).
+
+    Returns:
+        dict: Parsed JSON response from the API if successful.
+
+    Raises:
+        requests.RequestException: If the request fails after all retry attempts.
+        requests.HTTPError: If a non-recoverable HTTP error occurs.
+        ValueError: If the response cannot be parsed as JSON.
+        Exception: For unexpected errors during the API call.
+
+    Token Management:
+        - When a 403 or 401 status code is returned, the function detects the stale token condition.
+        - The `TokenManager.clear_token` method is called to invalidate the current token.
+        - The function then retries the API call, obtaining a fresh token automatically.
+        - This process ensures uninterrupted operation when tokens expire or are invalidated.
+    """
+
+Standard Module Preamble:
+"""
+Helper functions for [specific purpose of the module].
+
+This module provides functions to interact with the [specific feature or endpoint]
+of the network switch API. Each function adheres to a consistent format with detailed
+error handling and response validation.
+
+Author: Bob King (Ready-1 LLC) 
+Date: [Today's date]
+"""
+
+import logging
+import requests
+from django.conf import settings
+from net_core.api_helpers.utils import make_api_request, InvalidResponse
+
+# Configure logger for the module
+logger = logging.getLogger("app")
+
+# Constants specific to this module
+API_VERSION = "v1"
+TIMEOUT = 10  # Default timeout for API requests
+
+Use this prompt to:
+1. Tell me the name and location of this helper.
+2. Show me the entire code listing for this helper.
+3. Prompt me to add the import to the appropriate __init__.py file.
+4. Tell me of any other changes that should be made to the application to implement this helper.
+

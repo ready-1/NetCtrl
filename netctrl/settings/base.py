@@ -64,6 +64,9 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 SWITCH_USERNAME = os.getenv("SWITCH_USERNAME")
 SWITCH_PASSWORD = os.getenv("SWITCH_PASSWORD")
 
+# Use HTTPS for switch API requests
+USE_HTTPS = True #os.getenv("USE_HTTPS") # Set to True for HTTPS, False for HTTP
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", False)
@@ -124,6 +127,16 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "netctrl.wsgi.application"
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://redis:6379/1',  # Adjust to your Redis service name and database index
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        },
+    }
+}
 
 
 # Database

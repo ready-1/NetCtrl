@@ -1,0 +1,92 @@
+#!/bin/bash
+
+# Define the session name
+SESSION_NAME="my_session"
+
+# Initialize timing variables
+START_TIME=$(date +%s%3N)  # Script start time in milliseconds
+LAST_TIME=$START_TIME      # Time of the last completed step
+
+# Logging function with elapsed times in milliseconds
+log_debug() {
+    local message="$1"
+    local current_time=$(date +%s%3N)
+    local elapsed=$((current_time - START_TIME))
+    local since_last=$((current_time - LAST_TIME))
+    printf "[DEBUG] (Total: %d ms, Step: %d ms) %s\n" "$elapsed" "$since_last" "$message"
+    LAST_TIME=$current_time
+}
+
+log_debug "Starting tmux script..."
+
+# Check if the session already exists
+tmux has-session -t $SESSION_NAME 2>/dev/null
+if [ $? == 0 ]; then
+    log_debug "Session $SESSION_NAME already exists. Attaching to it."
+    tmux attach -t $SESSION_NAME
+    exit 0
+fi
+
+log_debug "Session $SESSION_NAME does not exist. Creating a new session."
+
+# Start a new TMUX session in detached mode with a single window
+log_debug "Creating new tmux session: $SESSION_NAME"
+tmux new-session -d -s $SESSION_NAME -n "Main"
+sleep 1  # Wait for session initialization
+log_debug "Session $SESSION_NAME created."
+
+# Split the window into four panes
+log_debug "Splitting panes..."
+tmux split-window -h -t $SESSION_NAME:Main
+log_debug "Pane 1 created (horizontal split)."
+sleep 0.5
+
+tmux split-window -v -t $SESSION_NAME:Main.0
+log_debug "Pane 2 created (vertical split on Pane 0)."
+sleep 0.5
+
+tmux split-window -v -t $SESSION_NAME:Main.1
+log_debug "Pane 3 created (vertical split on Pane 1)."
+sleep 0.5
+
+# Arrange panes into a tiled layout
+log_debug "Arranging panes into tiled layout."
+tmux select-layout -t $SESSION_NAME:Main tiled
+sleep 0.5
+log_debug "Panes arranged."
+
+# Debug: List panes to confirm setup
+log_debug "Listing panes:"
+tmux list-panes -t $SESSION_NAME:Main
+
+# Attach the session to ensure there is a client
+log_debug "Attaching session to send commands."
+tmux attach-session -t $SESSION_NAME &
+sleep 0.5
+
+# Send commands to each pane
+log_debug "Sending commands to panes..."
+tmux send-keys -t $SESSION_NAME:Main.0 "cd /srv/NetCtrl; ./web_shell" C-m
+log_debug "Command sent to Pane 0: cd /srv/NetCtrl; ./web_shell"
+
+tmux send-keys -t $SESSION_NAME:Main.1 "cd /srv/NetCtrl; ./zcolorized_docker_logs.sh" C-m
+log_debug "Command sent to Pane 1: cd /srv/NetCtrl; ./zcolorized_docker_logs.sh"
+
+tmux send-keys -t $SESSION_NAME:Main.2 "tio /dev/ttyUSB0" C-m
+log_debug "Command sent to Pane 2: tio /dev/ttyUSB0"
+
+tmux send-keys -t $SESSION_NAME:Main.3 "cd /srv/NetCtrl; ctop" C-m
+log_debug "Command sent to Pane 3: cd /srv/NetCtrl; ctop"
+
+# Select the last pane
+log_debug "Selecting pane 3 - ctop."
+tmux select-pane -t $SESSION_NAME:Main.3
+sleep 0.5
+
+# Reattach to the TMUX session
+log_debug "Reattaching to session $SESSION_NAME."
+tmux attach -t $SESSION_NAME
+sleep 0.5
+
+
+
