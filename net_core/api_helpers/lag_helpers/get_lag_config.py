@@ -15,14 +15,14 @@ from net_core.api_helpers.utils import make_api_request, InvalidResponse
 # Configure logger
 logger = logging.getLogger("app")
 
-def get_lag_config(switch_ip: str, token: str, lag_group: str = "ALL") -> dict:
+def get_lag_config(switch_ip: str, token: str, lag_group: int | str = "ALL") -> dict:
     """
     Retrieve Link Aggregation Group (LAG) settings from the switch.
 
     Parameters:
         switch_ip (str): The IP address of the target switch.
         token (str): Authentication token for API access.
-        lag_group (str): LAG group ID (or "ALL" to fetch all groups). Example: "1", "ALL".
+        lag_group (int | str): LAG group ID (integer) or "ALL" (string).
 
     Returns:
         dict: Parsed JSON response containing LAG settings.
@@ -33,7 +33,8 @@ def get_lag_config(switch_ip: str, token: str, lag_group: str = "ALL") -> dict:
         Exception: For unexpected errors during the API call.
 
     Example Usage:
-        response = get_lag_config("192.168.1.1", "token_string", lag_group="1")
+        response = get_lag_config("192.168.1.1", "token_string", lag_group=1)
+        response = get_lag_config("192.168.1.1", "token_string", lag_group="ALL")
 
     Example Response:
         {
@@ -67,13 +68,17 @@ def get_lag_config(switch_ip: str, token: str, lag_group: str = "ALL") -> dict:
 
     """
     endpoint = "/sw_lag_cfg"
-    params = {"lag_group": lag_group}
-
-    if not isinstance(lag_group, str) or not (lag_group.isdigit() or lag_group == "ALL"):
-        raise ValueError("Invalid lag_group. Must be a numeric string or 'ALL'.")
+    
+    # Validate and normalize lag_group
+    if isinstance(lag_group, int):
+        params = {"lag_group": str(lag_group)}  # Convert int to string for the API
+    elif isinstance(lag_group, str) and lag_group == "ALL":
+        params = {"lag_group": lag_group}
+    else:
+        raise ValueError("Invalid lag_group. Must be an integer or 'ALL'.")
 
     headers = {"Authorization": f"Bearer {token}"}
-    
+
     try:
         response = make_api_request(
             switch_ip=switch_ip,
