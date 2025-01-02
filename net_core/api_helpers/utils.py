@@ -63,31 +63,48 @@ def format_mac_address(mac):
 
 def make_api_request(switch_ip, endpoint, method="GET", headers=None, data=None, params=None, timeout=10, retries=3):
     """
-    Makes an HTTP API request to a switch with robust error handling and token management.
+    Makes an HTTP API request to a network switch with robust error handling and token management.
 
-    This function appends query parameters (`params`) to the URL, ensuring they are correctly included
-    in the API request.
+    This function handles authentication, token management, and retries for recoverable errors. 
+    It also appends query parameters to the URL and ensures proper API call formatting.
 
     Parameters:
-        switch_ip (str): The IP address of the target switch.
-        endpoint (str): The API endpoint to call (e.g., '/login').  
-                        Note: Do not include the "api/v1" prefix. 
-                            The helper will sanitize the leading slash, but not the prefix.
-        method (str): HTTP method to use (default: 'GET').
-        headers (dict, optional): Custom headers to include in the request (default: None).
-        data (dict, optional): JSON payload to send with the request (default: None).
-        params (dict, optional): Query parameters to include in the URL (default: None).
-        timeout (int): Timeout for the request in seconds (default: 10).
-        retries (int): Number of retry attempts for recoverable errors (default: 3).
+        switch_ip (str): The IP address of the target switch. Must be a valid IPv4 address.
+        endpoint (str): The API endpoint to call (e.g., '/login').
+                        The function automatically appends the "api/v1" prefix to the base URL.
+        method (str): HTTP method to use for the request (e.g., 'GET', 'POST', 'PUT', 'DELETE'). Default is 'GET'.
+        headers (dict, optional): Additional HTTP headers to include in the request. Default is None.
+        data (dict, optional): JSON payload or form data to send with the request. Default is None.
+        params (dict, optional): Query parameters to include in the URL as key-value pairs. Default is None.
+        timeout (int): Maximum time in seconds to wait for a response. Default is 10 seconds.
+        retries (int): Number of retry attempts for recoverable errors, such as timeouts or server errors. Default is 3.
 
     Returns:
-        dict: Parsed JSON response from the API if successful.
+        dict: Parsed JSON response from the API if the request is successful.
 
     Raises:
-        requests.RequestException: If the request fails after all retry attempts.
-        requests.HTTPError: If a non-recoverable HTTP error occurs.
         ValueError: If the response cannot be parsed as JSON.
-        Exception: For unexpected errors during the API call.
+        requests.RequestException: If the request fails after all retries.
+        requests.HTTPError: If a non-recoverable HTTP error occurs.
+        Exception: For any unexpected errors during the API call.
+
+    Notes:
+        - This function dynamically determines whether to use HTTPS or HTTP based on settings.
+        - Ports 8443 (HTTPS) or 80 (HTTP) are used based on the protocol.
+        - Tokens are managed by `TokenManager` and are cleared/retried upon token-related errors (401/403).
+        - SSL verification is disabled for development; ensure this is enabled in production environments.
+
+    Example:
+        >>> response = make_api_request(
+                switch_ip="192.168.1.1",
+                endpoint="/devices",
+                method="GET",
+                params={"type": "switch"},
+                timeout=15,
+                retries=5
+            )
+        >>> print(response)
+        {"devices": [{"id": 1, "name": "Switch 1"}, {"id": 2, "name": "Switch 2"}]}
     """
     # Determine protocol and port based on settings
     protocol = "https" if settings.USE_HTTPS else "http"
