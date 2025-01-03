@@ -8,7 +8,7 @@ IMPORTANT: Use the major sections of the PDF as the basis for module naming and 
 
 Use the concept of getters, setters, etc. to create the function name. (e.g. get_device_info() / get_device_info.py for the endpoint /device_info).
 
-add import statements for each helper function in the module's __init__.py.
+Add import statements for each helper function in the module's __init__.py.
 
 Each helper must adhere to the following:
 
@@ -142,4 +142,3 @@ Here is the project's Standard Module Preamble for helper development:
     TIMEOUT = 10  # Default timeout for API requests
 
 
-You are to write the helper functions for section 6. MULTITASK inside the git branch named "multitask_helpers".
