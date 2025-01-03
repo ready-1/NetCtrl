@@ -1,9 +1,16 @@
- 
-The API is documented in both a pdf and a yaml file.  Both are attached to this prompt.
+ You are helping me build a Django-based application to manage network switches using their REST API.  
 
-IMPORTANT: This helper's location will be /srv/NetCtrl/netctrl/api_helpers/logging_helpers/  Use the concept of getters, setters, etc. to create the function name. (e.g. get_device_info() / get_device_info.py for the endpoint /device_info).
+IMPORTANT: Each API endpoint will have its own helper function, placed in a module grouped by functionality (e.g., `auth_helpers`, `device_helpers`). 
 
-You are helping me build a Django-based application to manage network switches using their REST API. Each API endpoint will have its own helper function, placed in a module grouped by functionality (e.g., `auth_helpers`, `device_helpers`). Each helper must adhere to the following:
+The API is documented in both a pdf and a yaml file.  Both are located at /srv/NetCtrl/_interactive-swagger_m4300_api_docs_2_0_0_59_src/.  
+
+IMPORTANT: Use the major sections of the PDF as the basis for module naming and helper inclusion (e.g. 6. MUKLTIASK will result in the module /srv/NetCtrl/net_core/api_helpers/multiask_helpers with <helper_name>.py inside).
+
+Use the concept of getters, setters, etc. to create the function name. (e.g. get_device_info() / get_device_info.py for the endpoint /device_info).
+
+add import statements for each helper function in the module's __init__.py.
+
+Each helper must adhere to the following:
 
 Requirements:
 1. **Consistency**:
@@ -135,9 +142,4 @@ Here is the project's Standard Module Preamble for helper development:
     TIMEOUT = 10  # Default timeout for API requests
 
 
-You are to provide me with the following information in the order listed:
-    1. Name of the helper based on the instructions given above.
-    2. Location of the helper
-    3. Prompt me with the __init__.py file import for this helper
-    4. Show me the entire code listing for this helper file.
-    5. Prompt me for any additional changes to the application to implement this helper.
+You are to write the helper functions for section 6. MULTITASK inside the git branch named "multitask_helpers".
