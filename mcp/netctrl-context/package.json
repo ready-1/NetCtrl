@@ -1,0 +1,36 @@
+{
+  "name": "netctrl-context",
+  "version": "0.1.0",
+  "description": "A Model Context Protocol server",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "netctrl-context": "./build/index.js"
+  },
+  "files": [
+    "build"
+  ],
+  "scripts": {
+    "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
+    "prepare": "npm run build",
+    "watch": "tsc --watch",
+    "inspector": "npx @modelcontextprotocol/inspector build/index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "0.6.0",
+    "@types/glob": "^8.1.0",
+    "@types/mime-types": "^2.1.4",
+    "better-sqlite3": "^11.7.2",
+    "chokidar": "^4.0.3",
+    "glob": "^11.0.1",
+    "mime-types": "^2.1.35",
+    "pdf-parse": "^1.1.1",
+    "yaml": "^2.7.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/chokidar": "^1.7.5",
+    "@types/node": "^20.11.24",
+    "typescript": "^5.3.3"
+  }
+}

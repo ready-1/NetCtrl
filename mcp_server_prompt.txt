@@ -1,0 +1,102 @@
+Create an MCP server for the NetCtrl Python project to optimize token usage with the Cline VSCode extension. The server should:
+
+1. Purpose:
+   - Reduce token count in communications between Cline and Anthropic's API
+   - Cache and manage project context locally
+   - Provide efficient access to project data
+
+2. Technical Requirements:
+   - Implement in TypeScript using MCP SDK
+   - Use SQLite for persistent storage (.mcp/context.db in project root)
+   - Support YAML and PDF file content
+   - Handle Poetry project structure and virtual environments
+
+3. Core Features:
+   - File content caching with change detection
+   - Command output caching
+   - Project structure tracking
+   - Content search and indexing
+   - Automatic corruption recovery
+   - Poetry-aware tooling
+
+4. Implementation Details:
+   - SQLite for data persistence in .mcp directory
+   - File system watching for real-time updates
+   - Content processing pipeline for different file types
+   - Automatic database recovery
+   - Integration with Poetry virtual environments
+
+5. Configuration:
+   - Install to VSCode Cline extension settings
+   - Configure in cline_mcp_settings.json
+   - Set up automatic startup
+
+6. Project Structure:
+   ```
+   .mcp/               # MCP server data directory
+   ├── context.db      # SQLite database
+   ├── backups/        # Corruption recovery backups
+   └── logs/           # Server logs
+   ```
+
+7. .gitignore Configuration:
+   ```
+   # Python
+   __pycache__/
+   *.py[cod]
+   *$py.class
+   *.so
+   .Python
+   build/
+   develop-eggs/
+   dist/
+   downloads/
+   eggs/
+   .eggs/
+   lib/
+   lib64/
+   parts/
+   sdist/
+   var/
+   wheels/
+   *.egg-info/
+   .installed.cfg
+   *.egg
+   
+   # Virtual Environment
+   .env
+   .venv
+   env/
+   venv/
+   ENV/
+   
+   # IDE
+   .idea/
+   .vscode/
+   *.swp
+   *.swo
+   
+   # macOS
+   .DS_Store
+   .AppleDouble
+   .LSOverride
+   Icon
+   ._*
+   
+   # Testing
+   .coverage
+   htmlcov/
+   .pytest_cache/
+   .mypy_cache/
+   .tox/
+   
+   # MCP Server
+   .mcp/*.db
+   .mcp/*.db-journal
+   .mcp/*.db-wal
+   .mcp/*.db-shm
+   .mcp/backups/
+   .mcp/logs/
+   ```
+
+Create this server focusing on reducing token usage while maintaining full project context availability for the AI assistant. Store all server data within the project's .mcp directory, which will be ignored by git but maintained locally.
