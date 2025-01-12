@@ -104,6 +104,7 @@ Temporary Items
 media/
 static/vendor/
 *.sqlite3
+.mcp/
 
 # MCP Server
 mcp/**/build/
