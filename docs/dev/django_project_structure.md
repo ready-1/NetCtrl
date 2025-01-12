@@ -1,70 +1,114 @@
-# Network Control Web Interface Design Document
+# NetCtrl Project Structure
 
 ## Overview
-This document outlines the design decisions for the Django-based web interface that interacts with Netgear M4300 switches through their REST API.
+NetCtrl is a Django-based network device management system with the following key components:
 
-## Project Components
+### Apps
+1. **netdash**
+   - Core dashboard functionality
+   - User authentication and approval system
+   - Base templates and styling
 
-### 1. Core Project Structure
-- Project name: netctrl
-- Apps:
-  - dashboard: Main interface and overview
-  - devices: Switch management and monitoring
-  - config: Configuration management and deployment
+2. **netdevices**
+   - Device management interface
+   - Network device configuration
+   - Status monitoring
 
-### 2. Design Decisions
+### Directory Structure
+```
+netctrl/
+├── config/               # Project configuration
+│   ├── settings.py      # Django settings
+│   ├── urls.py          # Main URL routing
+│   ├── asgi.py          # ASGI configuration
+│   └── wsgi.py          # WSGI configuration
+│
+├── netdash/             # Core dashboard app
+│   ├── migrations/      # Database migrations
+│   ├── templates/       # Dashboard templates
+│   ├── admin.py         # Admin interface
+│   ├── apps.py         # App configuration
+│   ├── forms.py        # Form definitions
+│   ├── models.py       # Data models
+│   ├── urls.py         # URL patterns
+│   └── views.py        # View logic
+│
+├── netdevices/          # Device management app
+│   ├── migrations/      # Database migrations
+│   ├── templates/       # Device templates
+│   ├── admin.py        # Admin interface
+│   ├── apps.py         # App configuration
+│   ├── models.py       # Device models
+│   ├── urls.py         # URL patterns
+│   └── views.py        # View logic
+│
+├── static/             # Static files
+│   ├── css/           # Stylesheets
+│   └── js/            # JavaScript files
+│
+├── templates/          # Global templates
+│   └── base/          # Base template files
+│
+├── media/             # User-uploaded files
+│
+└── manage.py          # Django management script
+```
 
-#### Dashboard App
-- Provides system overview and status
-- Displays active switches and their states
-- Shows recent configuration changes
-- Monitoring dashboard with key metrics
+## Key Components
 
-#### Device Management
-- Interface with M4300 REST API
-- Device discovery and status monitoring
-- Configuration backup and restore
-- Firmware management interface
+### Authentication System
+- Custom User model with approval workflow
+- Staff-based user approval system
+- Login and registration views
+- Middleware for approval enforcement
 
-#### Configuration Management
-- Template-based configuration management
-- Version control for configurations
-- Bulk configuration deployment
-- Configuration validation
+### Templates
+- Base template with Bootstrap styling
+- Navigation with dynamic notifications
+- Responsive dashboard layout
+- Device management interfaces
 
-### 3. Dependencies
-- Django: Web framework for UI
-- Requests: For M4300 API interaction
-- Python-dotenv: Environment configuration
-- Bootstrap: Frontend styling
+### Static Files
+- Bootstrap CSS framework
+- Custom stylesheets
+- Bootstrap Icons
+- HTMX for dynamic updates
 
-### 4. Technical Architecture
-1. Frontend Layer:
-   - Bootstrap-based responsive design
-   - HTMX for dynamic updates
-   - Server-side rendered templates
+### Configuration
+- SQLite database (development)
+- Static/media file handling
+- Custom middleware configuration
+- Authentication settings
 
-2. Backend Layer:
-   - Django views and templates
-   - M4300 API client implementation
-   - Configuration template engine
-   - Background tasks for monitoring
+## Development Guidelines
 
-### 5. M4300 API Integration
-- REST API client implementation
-- Authentication handling
-- Error management and retry logic
-- Rate limiting and caching
+### MCP Server Integration
+- Use MCP tools for file operations
+- Monitor file changes during development
+- Use batch operations for related changes
+- Perform regex-based code analysis
 
-## Implementation Plan
-1. Set up basic Django project
-2. Implement M4300 API client
-3. Create dashboard interface
-4. Add device management features
-5. Implement configuration system
+### Documentation
+- Store all documentation in /docs/dev
+- Document system dependencies
+- Maintain current examples
+- Track system changes
 
-## Security Considerations
-- Secure credential storage
-- HTTPS enforcement
-- Session management
-- Audit logging
+### Testing
+- Write tests before implementation
+- Cover all edge cases
+- Document test cases
+- Full test coverage required
+
+### Error Handling
+- Comprehensive error handling
+- Proper validation of all inputs
+- Clear error messages
+- Recovery procedures
+
+## Future Enhancements
+1. PostgreSQL database migration
+2. Device configuration templates
+3. Automated network discovery
+4. Configuration version control
+5. Backup and restore functionality
