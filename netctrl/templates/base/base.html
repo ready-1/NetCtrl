@@ -23,24 +23,42 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'netdash:index' %}">Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'netdevices:index' %}">Devices</a>
-                    </li>
+                    {% if user.is_authenticated and user.is_approved %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'netdash:index' %}">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'netdevices:index' %}">Devices</a>
+                        </li>
+                    {% endif %}
                 </ul>
                 <ul class="navbar-nav ms-auto">
                     {% if user.is_authenticated %}
+                        {% if user.is_staff and pending_approvals_count > 0 %}
+                            <li class="nav-item">
+                                <a class="nav-link text-warning" href="{% url 'netdash:user_approval_list' %}">
+                                    <i class="bi bi-person-plus-fill"></i> Pending Approvals ({{ pending_approvals_count }})
+                                </a>
+                            </li>
+                        {% endif %}
                         <li class="nav-item">
                             <form method="post" action="{% url 'logout' %}" class="d-inline">
                                 {% csrf_token %}
-                                <button type="submit" class="btn nav-link border-0 bg-transparent">Logout</button>
+                                <button type="submit" class="btn nav-link border-0 bg-transparent">
+                                    <i class="bi bi-box-arrow-right"></i> Logout
+                                </button>
                             </form>
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'login' %}">Login</a>
+                            <a class="nav-link" href="{% url 'netdash:register' %}">
+                                <i class="bi bi-person-plus"></i> Register
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">
+                                <i class="bi bi-box-arrow-in-right"></i> Login
+                            </a>
                         </li>
                     {% endif %}
                 </ul>

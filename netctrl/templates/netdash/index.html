@@ -12,7 +12,7 @@
 
 <div class="row">
     <!-- Quick Actions -->
-    <div class="col-md-12 mb-4">
+    <div class="col-md-6 mb-4">
         <div class="card dashboard-widget">
             <div class="card-header">
                 <h5 class="card-title mb-0">Quick Actions</h5>
@@ -22,7 +22,48 @@
                     <a href="{% url 'netdevices:index' %}" class="btn btn-outline-primary">
                         <i class="bi bi-hdd-network"></i> Device Management
                     </a>
+                    {% if user.is_staff %}
+                        <a href="{% url 'netdash:user_approval_list' %}" class="btn btn-outline-warning">
+                            <i class="bi bi-person-plus-fill"></i> User Approvals
+                            {% if pending_approvals_count > 0 %}
+                                <span class="badge bg-warning text-dark">{{ pending_approvals_count }}</span>
+                            {% endif %}
+                        </a>
+                    {% endif %}
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Information -->
+    <div class="col-md-6 mb-4">
+        <div class="card dashboard-widget">
+            <div class="card-header">
+                <h5 class="card-title mb-0">System Information</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <tbody>
+                        <tr>
+                            <th scope="row">Username</th>
+                            <td>{{ user.username }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Role</th>
+                            <td>
+                                {% if user.is_staff %}
+                                    Administrator
+                                {% else %}
+                                    Operator
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Last Login</th>
+                            <td>{{ user.last_login|date:"M d, Y H:i" }}</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

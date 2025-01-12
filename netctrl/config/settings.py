@@ -24,7 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     # Local apps
-    'netdash',
+    'netdash.apps.NetdashConfig',
     'netdevices',
 ]
 
@@ -36,6 +36,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'netdash.middleware.UserApprovalMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -51,6 +52,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'netdash.context_processors.pending_approvals',
             ],
         },
     },
@@ -61,12 +63,8 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'netctrl',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
@@ -106,7 +104,17 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Authentication
+AUTH_USER_MODEL = 'netdash.User'
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'netdash:index'
 LOGOUT_REDIRECT_URL = 'login'
 LOGOUT_URL = 'logout'
+
+# URLs that don't require approval
+APPROVAL_EXEMPT_URLS = [
+    'login',
+    'logout',
+    'register',
+    'admin',
+    'pending_approval',
+]
