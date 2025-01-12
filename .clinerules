@@ -1,0 +1,123 @@
+WORKFLOW {
+    CHECK {
+        REQUIRED: Validate current state before proceeding
+        REQUIRED: Review all relevant documentation
+        REQUIRED: Test current system behavior
+        FORBIDDEN: Make assumptions about system state
+    }
+
+    PLAN {
+        REQUIRED: Identify all potential risks
+        REQUIRED: Consider full impact of changes
+        REQUIRED: Document all design decisions
+        REQUIRED: Note all system dependencies
+    }
+
+    EXECUTE {
+        REQUIRED: Make one change at a time
+        REQUIRED: Follow established test plan
+        REQUIRED: Document each change made
+    }
+
+    VERIFY {
+        REQUIRED: Run complete test suite
+        REQUIRED: Verify documentation accuracy
+        REQUIRED: Confirm expected behavior
+    }
+}
+
+VERIFICATION {
+    STRUCTURE {
+        REQUIRED: Verify data structures before operations
+        REQUIRED: Implement type system checks
+        REQUIRED: Test actual operation results
+        FORBIDDEN: Trust display output without verification
+    }
+
+    BEHAVIOR {
+        REQUIRED: Test operations before display updates
+        REQUIRED: Verify actual system functionality
+        REQUIRED: Check data integrity at each step
+        FORBIDDEN: Assume display state matches system state
+    }
+
+    FUNCTION {
+        REQUIRED: Test actual function behavior
+        REQUIRED: Verify all return types
+        REQUIRED: Check all state changes
+        FORBIDDEN: Trust error messages without verification
+    }
+
+    ERROR_HANDLING {
+        REQUIRED: Test all error conditions
+        REQUIRED: Verify error handling paths
+        REQUIRED: Document all error cases
+        FORBIDDEN: Make changes based on display output
+    }
+}
+
+IMPLEMENTATION {
+    CODE {
+        REQUIRED: Follow established project templates
+        REQUIRED: Handle all edge cases explicitly
+        REQUIRED: Include comprehensive tests
+        REQUIRED: Document all usage patterns
+        FORBIDDEN: Skip error handling implementation
+    }
+
+    MCP {
+        REQUIRED: Validate all MCP responses
+        REQUIRED: Handle all MCP errors explicitly
+        REQUIRED: Log all MCP interactions
+        FORBIDDEN: Continue operation after MCP failure
+    }
+}
+
+ERROR_HANDLING {
+    REQUIRED: Stop processing on new issues
+    REQUIRED: Document all error conditions
+    REQUIRED: Test all implemented fixes
+    REQUIRED: Verify system recovery
+    FORBIDDEN: Continue with known issues present
+}
+
+DEVELOPMENT {
+    BRANCH_NAMING {
+        FORMAT: "feature/<feature_name>"
+        EXAMPLE: "feature/error-handling"
+        REQUIRED: Follow naming format exactly
+        FORBIDDEN: Use alternative naming patterns
+    }
+
+    PROCESS {
+        REQUIRED: Create one branch per feature
+        REQUIRED: Write clear commit messages
+        REQUIRED: Complete validation before merge
+        REQUIRED: Update all documentation
+    }
+}
+
+QUALITY {
+    REQUIRED: Maintain complete type safety
+    REQUIRED: Implement comprehensive error handling
+    REQUIRED: Achieve full test coverage
+    REQUIRED: Provide clear interface definitions
+    REQUIRED: Maintain complete documentation
+    FORBIDDEN: Allow untested code in production
+}
+
+DOCUMENTATION {
+    REQUIRED: Store all documentation in /docs/dev
+    REQUIRED: Document all system dependencies
+    REQUIRED: Record all test cases
+    REQUIRED: Maintain current examples
+    REQUIRED: Track all system changes
+}
+
+TESTING {
+    REQUIRED: Write tests before implementation
+    REQUIRED: Cover all edge cases
+    REQUIRED: Validate all responses
+    REQUIRED: Document all test cases
+    FORBIDDEN: Skip any test steps
+}

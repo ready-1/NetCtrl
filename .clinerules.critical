@@ -1,0 +1,53 @@
+VALIDATION_REQUIREMENTS {
+    REQUIRED: Validate system state before each tool use
+    REQUIRED: Validate context before each command
+    REQUIRED: Validate sequence before execution
+    REQUIRED: Test with real data whenever possible
+    FORBIDDEN: Skip any validation steps
+    FORBIDDEN: Assume success without verification
+}
+
+VERSION_CONTROL_REQUIREMENTS {
+    REQUIRED: Create feature branch before any changes
+    REQUIRED: Commit changes before new modifications
+    REQUIRED: Use descriptive commit messages
+    REQUIRED: Complete all validation before merge
+    FORBIDDEN: Work on multiple features simultaneously
+    FORBIDDEN: Merge code without complete validation
+}
+
+SEQUENTIAL_CHANGE_REQUIREMENTS {
+    REQUIRED: Make only one change at a time
+    REQUIRED: Complete all tests before next change
+    REQUIRED: Document every change made
+    REQUIRED: Verify no system regression
+    FORBIDDEN: Batch multiple changes together
+    FORBIDDEN: Start new changes before current validation
+}
+
+ERROR_HANDLING_REQUIREMENTS {
+    REQUIRED: Stop all processing when new issues appear
+    REQUIRED: Document all identified issues
+    REQUIRED: Revert to last known good state
+    REQUIRED: Validate all fixes before proceeding
+    FORBIDDEN: Continue operation with known issues
+    FORBIDDEN: Attempt multiple error fixes simultaneously
+}
+
+MCP_OPERATION_REQUIREMENTS {
+    REQUIRED: Validate every MCP response
+    REQUIRED: Handle all MCP errors explicitly
+    REQUIRED: Document any MCP failures
+    REQUIRED: Stop processing on MCP errors
+    FORBIDDEN: Assume MCP operations will succeed
+    FORBIDDEN: Continue processing after MCP failure
+}
+
+DOCUMENTATION_REQUIREMENTS {
+    REQUIRED: Document all design decisions made
+    REQUIRED: Store all documentation in /docs/dev
+    REQUIRED: Include context for future reference
+    REQUIRED: Update documentation before completion
+    FORBIDDEN: Leave design decisions undocumented
+    FORBIDDEN: Skip documentation updates
+}

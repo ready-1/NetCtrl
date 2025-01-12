@@ -1,0 +1,135 @@
+/* Custom styles for NetCtrl */
+
+/* Sidebar styles */
+.sidebar {
+    min-height: calc(100vh - 56px);
+    background-color: #f8f9fa;
+    border-right: 1px solid #dee2e6;
+}
+
+/* Card customization */
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    margin-bottom: 1rem;
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+/* Status indicators */
+.status-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.status-online {
+    background-color: #28a745;
+}
+
+.status-offline {
+    background-color: #dc3545;
+}
+
+.status-warning {
+    background-color: #ffc107;
+}
+
+/* Device list styles */
+.device-list {
+    list-style: none;
+    padding: 0;
+}
+
+.device-list-item {
+    padding: 1rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.device-list-item:last-child {
+    border-bottom: none;
+}
+
+/* Configuration panel */
+.config-panel {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    padding: 1rem;
+}
+
+/* Dashboard widgets */
+.dashboard-widget {
+    height: 100%;
+    min-height: 200px;
+}
+
+/* Custom button styles */
+.btn-network {
+    color: #fff;
+    background-color: #0056b3;
+    border-color: #004085;
+}
+
+.btn-network:hover {
+    background-color: #004085;
+    border-color: #002752;
+}
+
+/* Loading indicator */
+.loading {
+    position: relative;
+    min-height: 200px;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 24px;
+    height: 24px;
+    margin: -12px 0 0 -12px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Form customization */
+.form-control:focus {
+    border-color: #0056b3;
+    box-shadow: 0 0 0 0.2rem rgba(0, 86, 179, 0.25);
+}
+
+/* Table customization */
+.table-network {
+    background-color: #fff;
+}
+
+.table-network thead {
+    background-color: #f8f9fa;
+}
+
+/* Alert customization */
+.alert {
+    margin-bottom: 1rem;
+    border: none;
+    border-radius: 0.25rem;
+}
+
+/* Navigation active state */
+.nav-link.active {
+    background-color: #0056b3;
+    color: #fff !important;
+    border-radius: 0.25rem;
+}
