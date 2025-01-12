@@ -1,20 +1,8 @@
 # NetCtrl Project Structure
 
-## Overview
-NetCtrl is a Django-based network device management system with the following key components:
+For a comprehensive overview of the system architecture, please see [architecture.md](architecture.md).
 
-### Apps
-1. **netdash**
-   - Core dashboard functionality
-   - User authentication and approval system
-   - Base templates and styling
-
-2. **netdevices**
-   - Device management interface
-   - Network device configuration
-   - Status monitoring
-
-### Directory Structure
+## Directory Structure
 ```
 netctrl/
 ├── config/               # Project configuration
@@ -42,14 +30,29 @@ netctrl/
 │   ├── urls.py         # URL patterns
 │   └── views.py        # View logic
 │
+├── netconfig/          # Configuration management app
+│   ├── migrations/     # Database migrations
+│   ├── templates/      # Config templates
+│   ├── admin.py       # Admin interface
+│   ├── apps.py        # App configuration
+│   ├── models.py      # Config models
+│   ├── urls.py        # URL patterns
+│   └── views.py       # View logic
+│
 ├── static/             # Static files
 │   ├── css/           # Stylesheets
-│   └── js/            # JavaScript files
+│   ├── js/            # JavaScript files
+│   └── vendor/        # Third-party assets
 │
 ├── templates/          # Global templates
 │   └── base/          # Base template files
 │
 ├── media/             # User-uploaded files
+│   ├── configs/       # Device configurations
+│   └── backups/       # Configuration backups
+│
+├── docs/              # Project documentation
+│   └── dev/          # Developer documentation
 │
 └── manage.py          # Django management script
 ```
