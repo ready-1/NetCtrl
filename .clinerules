@@ -71,6 +71,18 @@ IMPLEMENTATION {
         REQUIRED: Log all MCP interactions
         FORBIDDEN: Continue operation after MCP failure
     }
+
+    MCP_TOOLS {
+        REQUIRED: Use MCP tools over standard tools when available
+        REQUIRED: Check project structure via MCP before changes
+        REQUIRED: Use batch operations for related file changes
+        REQUIRED: Monitor file changes during development
+        REQUIRED: Use regex search for code analysis
+        REQUIRED: Document all MCP tool usage decisions
+        FORBIDDEN: Use standard tools when MCP tools are available
+        FORBIDDEN: Skip MCP project structure analysis
+        FORBIDDEN: Make file changes without MCP monitoring
+    }
 }
 
 ERROR_HANDLING {
