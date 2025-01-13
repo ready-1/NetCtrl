@@ -37,43 +37,81 @@ class SearchService:
         query = query.lower()
         results = []
         
-        # Get all files
-        files = File.objects.all()
+        # Search all directories and files
+        base_path = os.path.join(settings.MEDIA_ROOT, 'uploads')
         
-        for file in files:
-            file_path = os.path.join(settings.MEDIA_ROOT, file.path)
+        for root, dirs, filenames in os.walk(base_path):
+            # Search directories
+            for dirname in dirs:
+                if query in dirname.lower():
+                    rel_path = os.path.relpath(os.path.join(root, dirname), base_path)
+                    results.append({
+                        'name': dirname,
+                        'path': rel_path,  # For navigation
+                        'url': None,  # Directories don't have URLs
+                        'tags': [],
+                        'is_dir': True,
+                        'parent_path': os.path.dirname(rel_path) if rel_path else ''  # For navigation
+                    })
             
-            # Skip if file doesn't exist
-            if not os.path.exists(file_path):
-                file.delete()  # Clean up orphaned record
-                continue
+            # Search files
+            for filename in filenames:
+                if query in filename.lower():
+                    rel_path = os.path.relpath(os.path.join(root, filename), base_path)
+                    file_url = f'{settings.MEDIA_URL}uploads/{rel_path}'
+                    parent_path = os.path.dirname(rel_path)
+                    
+                    # Get file object if it exists
+                    try:
+                        file_obj = File.objects.get(path=f'uploads/{rel_path}')
+                        file_id = str(file_obj.id)
+                        tags = file_obj.tags or []
+                    except File.DoesNotExist:
+                        file_id = ''
+                        tags = []
+                    
+                    results.append({
+                        'id': file_id,
+                        'name': filename,
+                        'path': rel_path,  # For navigation
+                        'url': file_url,   # For download/preview
+                        'tags': tags,
+                        'is_dir': False,
+                        'parent_path': parent_path  # For navigation
+                    })
+                    continue
                 
-            # Check filename match
-            if query in file.name.lower():
-                results.append({
-                    'id': str(file.id),
-                    'name': file.name,
-                    'path': f'{settings.MEDIA_URL}{file.path}',
-                    'tags': file.tags or [],
-                    'match_type': 'filename'
-                })
-                continue
-            
-            # Check content match for supported file types
-            _, ext = os.path.splitext(file.name)
-            if ext.lower() in self.SUPPORTED_EXTENSIONS:
-                try:
-                    content = self._read_file_content(file_path, ext.lower())
-                    if content and query in content.lower():
-                        results.append({
-                            'id': str(file.id),
-                            'name': file.name,
-                            'path': f'{settings.MEDIA_URL}{file.path}',
-                            'tags': file.tags or [],
-                            'match_type': 'content'
-                        })
-                except Exception:
-                    continue  # Skip files that can't be read
+                # Check content match for supported file types
+                _, ext = os.path.splitext(filename)
+                if ext.lower() in self.SUPPORTED_EXTENSIONS:
+                    try:
+                        file_path = os.path.join(root, filename)
+                        content = self._read_file_content(file_path, ext.lower())
+                        if content and query in content.lower():
+                            rel_path = os.path.relpath(file_path, base_path)
+                            file_url = f'{settings.MEDIA_URL}uploads/{rel_path}'
+                            parent_path = os.path.dirname(rel_path)
+                            
+                            # Get file object if it exists
+                            try:
+                                file_obj = File.objects.get(path=f'uploads/{rel_path}')
+                                file_id = str(file_obj.id)
+                                tags = file_obj.tags or []
+                            except File.DoesNotExist:
+                                file_id = ''
+                                tags = []
+                            
+                            results.append({
+                                'id': file_id,
+                                'name': filename,
+                                'path': rel_path,  # For navigation
+                                'url': file_url,   # For download/preview
+                                'tags': tags,
+                                'is_dir': False,
+                                'parent_path': parent_path  # For navigation
+                            })
+                    except Exception:
+                        continue  # Skip files that can't be read
                     
         return results
         

@@ -106,7 +106,7 @@
 <div class="list-group">
     {% for item in items %}
         <div class="list-group-item list-group-item-action" 
-             onclick="handleItemClick('{{ item.name }}', {{ item.is_dir|yesno:'true,false' }}, '{{ item.url|default:'' }}', '{{ item.parent_path|default:'' }}')"
+             onclick="handleItemClick('{{ item.name }}', {{ item.is_dir|yesno:'true,false' }}, {% if item.name == '..' %}''{% else %}'{{ item.url|default:item.path|default:'' }}'{% endif %}, '{{ item.parent_path|default:'' }}')"
              {% if not item.is_dir %}data-file-id="{{ item.id }}" data-file-name="{{ item.name }}"{% endif %}>
             <div class="d-flex flex-column h-100">
                 <div class="item-content">
@@ -129,11 +129,11 @@
                 </div>
                 <div class="btn-group" onclick="event.stopPropagation()">
                         {% if not item.is_dir %}
-                            <a href="{{ item.url }}" class="btn btn-sm btn-outline-secondary" download>
+                            <a href="{{ item.url|default:item.path|default:'' }}" class="btn btn-sm btn-outline-secondary" download>
                                 <i class="bi bi-download"></i>
                             </a>
                         {% endif %}
-                        <button class="btn btn-sm btn-outline-secondary" onclick="moveItem('{{ item.name }}', {{ item.is_dir|yesno:'true,false' }})">
+                        <button class="btn btn-sm btn-outline-secondary" onclick="moveItem('{{ item.name }}', {{ item.is_dir|yesno:'true,false' }}, '{{ item.path|default:'' }}')">
                             <i class="bi bi-arrows-move"></i>
                         </button>
                         {% if not item.is_dir %}

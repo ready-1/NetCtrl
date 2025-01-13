@@ -4,6 +4,18 @@
 {% block title %}File Manager - NetCtrl{% endblock %}
 
 {% block extra_js %}
+<style>
+.directory-item {
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 4px 8px;
+}
+
+.directory-item:hover {
+    background-color: #f8f9fa;
+}
+</style>
+
 <script>
 // View state management
 let currentView = localStorage.getItem('cms_view') || 'list';
@@ -238,6 +250,7 @@ function searchByTags() {
         });
 }
 
+// Filename search
 function searchContent() {
     const searchInput = document.getElementById('content-search');
     const query = searchInput.value.trim();
@@ -247,11 +260,18 @@ function searchContent() {
         return;
     }
     
+    // Use backend search
     fetch(`{% url 'cms:search' %}?q=${encodeURIComponent(query)}`)
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                updateFileList(data.files);
+                // Update file list
+                if (data.files.length > 0) {
+                    updateFileList(data.files);
+                } else {
+                    const browser = document.querySelector('.file-browser');
+                    browser.innerHTML = '<div class="alert alert-info">No files or folders found matching "' + query + '"</div>';
+                }
                 
                 // Show search results info
                 const searchResults = document.getElementById('search-results');
@@ -262,7 +282,7 @@ function searchContent() {
                 
                 searchQuery.textContent = query;
                 matchType.innerHTML = data.files.map(file => 
-                    `<div>${file.name} - ${file.match_type === 'filename' ? 'matched in filename' : 'matched in content'}</div>`
+                    `<div>${file.name} - ${file.is_dir ? 'folder' : 'file'}</div>`
                 ).join('');
                 
                 searchResults.style.display = 'block';
@@ -284,38 +304,42 @@ function searchContent() {
 function updateFileList(files) {
     const browser = document.querySelector('.file-browser');
     if (files.length > 0) {
-        browser.innerHTML = files.map(file => `
-            <div class="list-group-item list-group-item-action" onclick="handleItemClick('${file.name}', false, '${file.path}')" data-file-id="${file.id}" data-file-name="${file.name}">
-                <div class="item-content">
-                    <div class="item-icon">
-                        <i class="bi bi-file-text"></i>
+        browser.innerHTML = `<div class="list-group">${files.map(file => `
+            <div class="list-group-item list-group-item-action" onclick="handleItemClick('${file.name}', ${file.is_dir}, '${file.path}', '${currentPath}')" ${file.id ? `data-file-id="${file.id}" data-file-name="${file.name}"` : ''}>
+                <div class="d-flex flex-column h-100">
+                    <div class="item-content">
+                        <div class="item-icon">
+                            <i class="bi ${file.is_dir ? 'bi-folder text-primary' : 'bi-file-text'}"></i>
+                        </div>
+                        <span class="item-name">${file.name}</span>
                     </div>
-                    <span class="item-name">${file.name}</span>
-                </div>
-                <div class="d-flex align-items-center">
-                    <div class="tags me-2">
+                    <div class="tags mt-auto mb-2">
                         ${file.tags.map(tag => `<span class="badge bg-secondary me-1">${tag}</span>`).join('')}
                     </div>
                     <div class="btn-group" onclick="event.stopPropagation()">
+                        ${file.is_dir ? '' : `
                         <a href="${file.path}" class="btn btn-sm btn-outline-secondary" download>
                             <i class="bi bi-download"></i>
                         </a>
-                        <button class="btn btn-sm btn-outline-secondary" onclick="moveItem('${file.name}', false)">
+                        `}
+                        <button class="btn btn-sm btn-outline-secondary" onclick="moveItem('${file.name}', ${file.is_dir}, '${file.path}'); event.stopPropagation();">
                             <i class="bi bi-arrows-move"></i>
                         </button>
+                        ${file.is_dir ? '' : `
                         <button class="btn btn-sm btn-outline-secondary" onclick="manageItemTags('${file.id}', '${file.name}')">
                             <i class="bi bi-tags"></i>
                         </button>
-                        <button class="btn btn-sm btn-outline-secondary" onclick="renameItem('${file.name}', false)">
+                        `}
+                        <button class="btn btn-sm btn-outline-secondary" onclick="renameItem('${file.name}', ${file.is_dir})">
                             <i class="bi bi-pencil"></i>
                         </button>
-                        <button class="btn btn-sm btn-outline-danger" onclick="deleteItem('${file.name}', false)">
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteItem('${file.name}', ${file.is_dir})">
                             <i class="bi bi-trash"></i>
                         </button>
                     </div>
                 </div>
             </div>
-        `).join('');
+        `).join('')}</div>`;
     } else {
         browser.innerHTML = '<div class="alert alert-info">No files found</div>';
     }
@@ -468,21 +492,27 @@ function renameItem(oldName, isDir) {
     });
 }
 
-function handleItemClick(name, isDir, url, parentPath) {
+function handleItemClick(name, isDir, path, parentPath) {
     if (isDir) {
         // Handle navigation
         if (name === '..') {
             // Use provided parent path for going up
             window.location.href = parentPath ? `?path=${encodeURIComponent(parentPath)}` : '?path=';
         } else {
-            // Going into directory
-            const currentPath = new URLSearchParams(window.location.search).get('path') || '';
-            const newPath = currentPath ? `${currentPath}/${name}` : name;
-            window.location.href = `?path=${encodeURIComponent(newPath)}`;
+            // For search results, use the full path directly
+            const searchResults = document.getElementById('search-results').style.display === 'block';
+            if (searchResults && path) {
+                window.location.href = `?path=${encodeURIComponent(path)}`;
+            } else {
+                // Normal directory navigation
+                const currentPath = new URLSearchParams(window.location.search).get('path') || '';
+                const newPath = currentPath ? `${currentPath}/${name}` : name;
+                window.location.href = `?path=${encodeURIComponent(newPath)}`;
+            }
         }
-    } else if (url) {
+    } else if (path) {
         // Open file in new tab
-        window.open(url, '_blank');
+        window.open(path, '_blank');
     }
 }
 
@@ -516,7 +546,105 @@ function deleteItem(name, isDir) {
         alert('Failed to delete item');
     });
 }
+
+function moveItem(name, isDir, itemPath) {
+    // Get directory tree for move destination
+    fetch(`{% url 'cms:file_manager' %}?tree=true`)
+        .then(response => response.json())
+        .then(data => {
+            const moveModal = document.getElementById('move-modal');
+            const treeContainer = document.getElementById('directory-tree');
+            
+            // Build directory tree HTML
+            function buildTreeHtml(items, level = 0) {
+                return items.map(item => `
+                    <div class="ps-${level * 3}">
+                        <div class="directory-item py-1" onclick="handleMoveSelection('${item.path}', '${name}', ${isDir}, '${itemPath}')">
+                            <i class="bi bi-folder me-1"></i>
+                            ${item.name}
+                        </div>
+                        ${item.children ? buildTreeHtml(item.children, level + 1) : ''}
+                    </div>
+                `).join('');
+            }
+            
+            treeContainer.innerHTML = `
+                <div class="directory-item py-1" onclick="handleMoveSelection('', '${name}', ${isDir}, '${itemPath}')">
+                    <i class="bi bi-folder me-1"></i>
+                    Root
+                </div>
+                ${buildTreeHtml(data.tree)}
+            `;
+            
+            moveModal.style.display = 'block';
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to load directory tree');
+        });
+}
+
+function handleMoveSelection(destinationPath, name, isDir, itemPath) {
+    if (!confirm(`Move ${isDir ? 'folder' : 'file'} "${name}" to ${destinationPath || 'root'}?`)) {
+        return;
+    }
+    
+    // For search results, use the item's full path
+    const searchResults = document.getElementById('search-results').style.display === 'block';
+    const sourcePath = searchResults && itemPath ? itemPath.split('/').slice(0, -1).join('/') : currentPath;
+    
+    fetch('{% url "cms:move" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify({
+            name: name,
+            is_dir: isDir,
+            current_path: sourcePath,
+            destination_path: destinationPath
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            closeMoveModal();
+            location.reload();
+        } else {
+            alert('Failed to move: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to move item');
+    });
+}
+
+function closeMoveModal() {
+    document.getElementById('move-modal').style.display = 'none';
+}
 </script>
+
+<!-- Move Modal -->
+<div id="move-modal" class="modal" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Select Destination</h5>
+                <button type="button" class="btn-close" onclick="closeMoveModal()"></button>
+            </div>
+            <div class="modal-body">
+                <div id="directory-tree">
+                    <!-- Directory tree will be loaded here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeMoveModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Tag Management Modal -->
 <div id="tag-modal" class="modal" style="display: none;">
@@ -593,7 +721,7 @@ function deleteItem(name, isDir) {
                                     </button>
                                 </div>
                                 <div class="input-group" style="width: 300px;">
-                                    <input type="text" id="content-search" class="form-control" placeholder="Search in files">
+                                    <input type="text" id="content-search" class="form-control" placeholder="Search by filename">
                                     <button class="btn btn-outline-secondary" onclick="searchContent()">
                                         <i class="bi bi-search"></i>
                                     </button>

@@ -92,10 +92,14 @@ def file_manager(request):
                     file_obj.save()  # Ensure UUID is generated
                     tags = []
 
+            # Build relative path for the item
+            rel_path = os.path.join(current_path, item) if current_path else item
+            
             items.append({
                 'name': item,
                 'is_dir': is_dir,
                 'url': url,
+                'path': rel_path,  # Add path for navigation/operations
                 'id': str(file_obj.id) if file_obj else None,
                 'tags': tags
             })
@@ -428,9 +432,8 @@ def get_tags(request):
         return JsonResponse({'success': False, 'error': str(e)})
 
 @login_required
-@login_required
 def search_files(request):
-    """Search files by name and content."""
+    """Search files and directories by name and content."""
     try:
         query = request.GET.get('q', '').strip()
         if not query:
@@ -438,7 +441,8 @@ def search_files(request):
             
         search_service = SearchService()
         results = search_service.search(query)
-            
+        
+        # Results already have proper URL and path formatting from search service
         return JsonResponse({
             'success': True,
             'files': results
