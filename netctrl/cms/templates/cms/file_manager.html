@@ -112,12 +112,18 @@ function renameItem(oldName, isDir) {
     });
 }
 
-function handleItemClick(name, isDir, url) {
+function handleItemClick(name, isDir, url, parentPath) {
     if (isDir) {
-        // Navigate into folder
-        const currentPath = new URLSearchParams(window.location.search).get('path') || '';
-        const newPath = currentPath ? `${currentPath}/${name}` : name;
-        window.location.href = `?path=${encodeURIComponent(newPath)}`;
+        // Handle navigation
+        if (name === '..') {
+            // Use provided parent path for going up
+            window.location.href = parentPath ? `?path=${encodeURIComponent(parentPath)}` : '?path=';
+        } else {
+            // Going into directory
+            const currentPath = new URLSearchParams(window.location.search).get('path') || '';
+            const newPath = currentPath ? `${currentPath}/${name}` : name;
+            window.location.href = `?path=${encodeURIComponent(newPath)}`;
+        }
     } else if (url) {
         // Open file in new tab
         window.open(url, '_blank');
@@ -162,7 +168,246 @@ function deleteItem(name, isDir) {
 <script>
 // Current path from server
 const currentPath = '{{ current_path }}';
+
+// Move operation state
+let moveItemName = '';
+let moveItemIsDir = false;
+let selectedDestinationPath = '';
+
+function moveItem(name, isDir) {
+    moveItemName = name;
+    moveItemIsDir = isDir;
+    
+    // Reset and show modal
+    document.getElementById('move-modal').style.display = 'block';
+    document.getElementById('move-error').style.display = 'none';
+    
+    // Load directory tree
+    loadDirectoryTree();
+}
+
+function loadDirectoryTree() {
+    const treeContainer = document.getElementById('directory-tree');
+    treeContainer.innerHTML = '<div class="text-center"><div class="spinner-border" role="status"></div></div>';
+    
+    // Normalize current path for comparison
+    const normalizedCurrentPath = currentPath.replace(/\\/g, '/');
+    
+    fetch(`?tree=true`)
+        .then(response => response.json())
+        .then(data => {
+            function renderTree(items, level = 0, parentPath = '') {
+                if (!items || items.length === 0) return '';
+                
+                let html = '<ul class="list-unstyled" style="margin-left: ' + (level * 1.5) + 'rem">';
+                
+                if (level === 0) {
+                    html += `<li>
+                        <div class="directory-item${normalizedCurrentPath === '' ? ' current' : ''}" onclick="selectDirectory('')">
+                            <i class="bi bi-folder-fill"></i> Root
+                        </div>
+                    </li>`;
+                }
+                
+                items.forEach(item => {
+                    const hasChildren = item.children && item.children.length > 0;
+                    const itemPath = parentPath ? `${parentPath}/${item.name}` : item.name;
+                    const isCurrentPath = normalizedCurrentPath === itemPath;
+                    
+                    html += `
+                        <li>
+                            <div class="directory-item${isCurrentPath ? ' current' : ''}" onclick="selectDirectory('${itemPath}')">
+                                <i class="bi bi-folder-fill"></i> ${item.name}
+                            </div>
+                            ${hasChildren ? renderTree(item.children, level + 1, itemPath) : ''}
+                        </li>`;
+                });
+                
+                html += '</ul>';
+                return html;
+            }
+            
+            treeContainer.innerHTML = renderTree(data.tree);
+            
+            // Highlight current selection if any
+            if (selectedDestinationPath !== '') {
+                const items = document.querySelectorAll('.directory-item');
+                items.forEach(item => {
+                    const onclick = item.getAttribute('onclick');
+                    const pathMatch = onclick.match(/selectDirectory\('([^']+)'\)/);
+                    if (pathMatch && pathMatch[1] === selectedDestinationPath) {
+                        item.classList.add('selected');
+                    }
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            treeContainer.innerHTML = '<div class="alert alert-danger">Failed to load directory tree</div>';
+        });
+}
+
+function createFolderInModal() {
+    const folderName = prompt('Enter new folder name:');
+    if (!folderName) return;
+    
+    const path = document.getElementById('selected-path').value;
+    
+    fetch('{% url "cms:create_folder" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify({ 
+            name: folderName,
+            path: path
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Store current selection
+            selectedDestinationPath = document.getElementById('selected-path').value;
+            // Refresh directory tree
+            loadDirectoryTree();
+        } else {
+            const errorElement = document.getElementById('move-error');
+            errorElement.textContent = data.error;
+            errorElement.style.display = 'block';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        const errorElement = document.getElementById('move-error');
+        errorElement.textContent = 'Failed to create folder';
+        errorElement.style.display = 'block';
+    });
+}
+
+function selectDirectory(path) {
+    // Highlight selected directory
+    document.querySelectorAll('.directory-item').forEach(item => {
+        item.classList.remove('selected');
+    });
+    event.currentTarget.classList.add('selected');
+    
+    // Store selected path
+    document.getElementById('selected-path').value = path;
+    selectedDestinationPath = path;
+}
+
+function closeModal() {
+    document.getElementById('move-modal').style.display = 'none';
+    selectedDestinationPath = '';
+}
+
+function handleMove() {
+    const destinationPath = document.getElementById('selected-path').value;
+    
+    // Normalize paths for consistency
+    const normalizedCurrentPath = currentPath.replace(/\\/g, '/');
+    const normalizedDestPath = destinationPath.replace(/\\/g, '/');
+    
+    fetch('{% url "cms:move" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify({
+            name: moveItemName,
+            is_dir: moveItemIsDir,
+            current_path: normalizedCurrentPath,
+            destination_path: normalizedDestPath
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            const errorElement = document.getElementById('move-error');
+            errorElement.textContent = data.error;
+            errorElement.style.display = 'block';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        const errorElement = document.getElementById('move-error');
+        errorElement.textContent = 'Failed to move item';
+        errorElement.style.display = 'block';
+    });
+}
 </script>
+
+<!-- Move Modal -->
+<div id="move-modal" class="modal" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Move Item</h5>
+                <button type="button" class="btn-close" onclick="closeModal()"></button>
+            </div>
+            <div class="modal-body">
+                <div id="move-error" class="alert alert-danger" style="display: none;"></div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="mb-0">Select Destination</h6>
+                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="createFolderInModal()">
+                        <i class="bi bi-folder-plus"></i> New Folder
+                    </button>
+                </div>
+                <div id="directory-tree"></div>
+                <input type="hidden" id="selected-path" value="">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="handleMove()">Move</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.modal-dialog {
+    margin: 2rem auto;
+    max-width: 500px;
+}
+
+.directory-item {
+    padding: 0.5rem;
+    cursor: pointer;
+    border-radius: 0.25rem;
+}
+
+.directory-item:hover {
+    background: #f8f9fa;
+}
+
+.directory-item.selected {
+    background: #e9ecef;
+}
+
+.directory-item.current {
+    border: 1px solid #0d6efd;
+}
+
+.directory-item i {
+    color: #ffc107;
+    margin-right: 0.5rem;
+}
+</style>
+
 <div class="row mb-4">
     <div class="col">
         <h1>Content Management System</h1>
