@@ -26,7 +26,243 @@ function setView(view) {
 document.addEventListener('DOMContentLoaded', () => {
     setView(currentView);
 });
+</script>
+{% endblock %}
 
+{% block content %}
+{% csrf_token %}
+<script>
+// Current path and state
+const currentPath = '{{ current_path }}';
+let currentItemId = null;
+let currentItemName = null;
+
+// Tag management functions
+function manageItemTags(itemId, itemName) {
+    if (!itemId) {
+        alert('File ID not found');
+        return;
+    }
+    
+    currentItemId = itemId;
+    currentItemName = itemName;
+    
+    // Reset and show modal
+    document.getElementById('tag-modal').style.display = 'block';
+    document.getElementById('tag-error').style.display = 'none';
+    document.getElementById('new-tag').value = '';
+    document.getElementById('tag-modal-title').textContent = itemName;
+    
+    // Load current tags
+    loadItemTags();
+}
+
+function loadItemTags() {
+    fetch(`{% url 'cms:get_tags' %}?file_id=${currentItemId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const tagsContainer = document.getElementById('current-tags');
+                tagsContainer.innerHTML = data.tags.map(tag => `
+                    <span class="badge bg-secondary me-1 mb-1">
+                        ${tag}
+                        <i class="bi bi-x-circle" onclick="removeTag('${tag}')"></i>
+                    </span>
+                `).join('');
+            } else {
+                showTagError(data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showTagError('Failed to load tags');
+        });
+}
+
+function addTag() {
+    const tagInput = document.getElementById('new-tag');
+    const tag = tagInput.value.trim();
+    
+    if (!tag) return;
+    
+    fetch('{% url "cms:add_tag" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify({
+            file_id: currentItemId,
+            tag: tag
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            tagInput.value = '';
+            loadItemTags();
+        } else {
+            showTagError(data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showTagError('Failed to add tag');
+    });
+}
+
+function removeTag(tag) {
+    fetch('{% url "cms:remove_tag" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify({
+            file_id: currentItemId,
+            tag: tag
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            loadItemTags();
+        } else {
+            showTagError(data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showTagError('Failed to remove tag');
+    });
+}
+
+function closeTagModal() {
+    document.getElementById('tag-modal').style.display = 'none';
+    currentItemId = null;
+    currentItemName = null;
+    location.reload();  // Refresh to show updated tags
+}
+
+function showTagError(message) {
+    const errorElement = document.getElementById('tag-error');
+    errorElement.textContent = message;
+    errorElement.style.display = 'block';
+}
+
+// Search functions
+function searchByTags() {
+    const searchInput = document.getElementById('tag-search');
+    const tags = searchInput.value.split(',').map(tag => tag.trim()).filter(tag => tag);
+    
+    if (!tags.length) {
+        clearTagSearch();
+        return;
+    }
+    
+    fetch(`{% url 'cms:filter_by_tags' %}?${tags.map(tag => `tags[]=${encodeURIComponent(tag)}`).join('&')}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update file browser with filtered results
+                const browser = document.querySelector('.file-browser');
+                if (data.files.length > 0) {
+                    browser.innerHTML = data.files.map(file => `
+                        <div class="list-group-item list-group-item-action" onclick="handleItemClick('${file.name}', false, '${file.path}')" data-file-id="${file.id}" data-file-name="${file.name}">
+                            <div class="item-content">
+                                <div class="item-icon">
+                                    <i class="bi bi-file-text"></i>
+                                </div>
+                                <span class="item-name">${file.name}</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="tags me-2">
+                                    ${file.tags.map(tag => `<span class="badge bg-secondary me-1">${tag}</span>`).join('')}
+                                </div>
+                                <div class="btn-group" onclick="event.stopPropagation()">
+                                    <a href="${file.path}" class="btn btn-sm btn-outline-secondary" download>
+                                        <i class="bi bi-download"></i>
+                                    </a>
+                                    <button class="btn btn-sm btn-outline-secondary" onclick="moveItem('${file.name}', false)">
+                                        <i class="bi bi-arrows-move"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-secondary" onclick="manageItemTags('${file.id}', '${file.name}')">
+                                        <i class="bi bi-tags"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-secondary" onclick="renameItem('${file.name}', false)">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="deleteItem('${file.name}', false)">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    browser.innerHTML = '<div class="alert alert-info">No files found with these tags</div>';
+                }
+                
+                // Show search results info
+                const searchResults = document.getElementById('search-results');
+                const activeTags = document.getElementById('active-tags');
+                activeTags.innerHTML = tags.map(tag => `<span class="badge bg-primary">${tag}</span>`).join(' ');
+                searchResults.style.display = 'block';
+                
+                // Show clear button
+                document.getElementById('clear-search').style.display = 'block';
+            } else {
+                alert('Search failed: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Search failed');
+        });
+}
+
+function clearTagSearch() {
+    const searchInput = document.getElementById('tag-search');
+    searchInput.value = '';
+    document.getElementById('search-results').style.display = 'none';
+    document.getElementById('clear-search').style.display = 'none';
+    location.reload();  // Reload to show all files
+}
+
+// Add event listeners
+document.addEventListener('DOMContentLoaded', () => {
+    const tagInput = document.getElementById('new-tag');
+    tagInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            addTag();
+        }
+    });
+
+    // Add enter key handler for search
+    const searchInput = document.getElementById('tag-search');
+    searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            searchByTags();
+        }
+    });
+
+    // Check if we have a newly uploaded file to tag
+    const lastUploadedFileId = sessionStorage.getItem('lastUploadedFileId');
+    if (lastUploadedFileId) {
+        sessionStorage.removeItem('lastUploadedFileId');
+        // Find the file in the list and open tag modal
+        const items = document.querySelectorAll('.list-group-item');
+        items.forEach(item => {
+            if (item.dataset.fileId === lastUploadedFileId) {
+                manageItemTags(lastUploadedFileId, item.dataset.fileName);
+            }
+        });
+    }
+});
+
+// File operations
 function handleFileUpload(files) {
     const formData = new FormData();
     formData.append('file', files[0]);
@@ -163,385 +399,34 @@ function deleteItem(name, isDir) {
     });
 }
 </script>
-{% endblock %}
 
-{% block content %}
-{% csrf_token %}
-<script>
-// Current path and state
-const currentPath = '{{ current_path }}';
-let currentItemId = null;
-let currentItemName = null;
-
-// Tag management functions
-function manageItemTags(itemId, itemName) {
-    currentItemId = itemId;
-    currentItemName = itemName;
-    
-    // Reset and show modal
-    document.getElementById('tag-modal').style.display = 'block';
-    document.getElementById('tag-error').style.display = 'none';
-    document.getElementById('new-tag').value = '';
-    
-    // Load current tags
-    loadItemTags();
-}
-
-function loadItemTags() {
-    fetch(`{% url 'cms:get_tags' %}?file_id=${currentItemId}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                const tagsContainer = document.getElementById('current-tags');
-                tagsContainer.innerHTML = data.tags.map(tag => `
-                    <span class="badge bg-secondary me-1 mb-1">
-                        ${tag}
-                        <i class="bi bi-x-circle" onclick="removeTag('${tag}')"></i>
-                    </span>
-                `).join('');
-            } else {
-                showTagError(data.error);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showTagError('Failed to load tags');
-        });
-}
-
-function addTag() {
-    const tagInput = document.getElementById('new-tag');
-    const tag = tagInput.value.trim();
-    
-    if (!tag) return;
-    
-    fetch('{% url "cms:add_tag" %}', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-        },
-        body: JSON.stringify({
-            file_id: currentItemId,
-            tag: tag
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            tagInput.value = '';
-            loadItemTags();
-        } else {
-            showTagError(data.error);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showTagError('Failed to add tag');
-    });
-}
-
-function removeTag(tag) {
-    fetch('{% url "cms:remove_tag" %}', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-        },
-        body: JSON.stringify({
-            file_id: currentItemId,
-            tag: tag
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            loadItemTags();
-        } else {
-            showTagError(data.error);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showTagError('Failed to remove tag');
-    });
-}
-
-function closeTagModal() {
-    document.getElementById('tag-modal').style.display = 'none';
-    currentItemId = null;
-    currentItemName = null;
-    location.reload();  // Refresh to show updated tags
-}
-
-function showTagError(message) {
-    const errorElement = document.getElementById('tag-error');
-    errorElement.textContent = message;
-    errorElement.style.display = 'block';
-}
-
-// Add enter key handler for tag input and check for last uploaded file
-document.addEventListener('DOMContentLoaded', () => {
-    const tagInput = document.getElementById('new-tag');
-    tagInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            addTag();
-        }
-    });
-
-    // Check if we have a newly uploaded file to tag
-    const lastUploadedFileId = sessionStorage.getItem('lastUploadedFileId');
-    if (lastUploadedFileId) {
-        sessionStorage.removeItem('lastUploadedFileId');
-        // Find the file in the list and open tag modal
-        const items = document.querySelectorAll('.list-group-item');
-        items.forEach(item => {
-            if (item.dataset.fileId === lastUploadedFileId) {
-                manageItemTags(lastUploadedFileId, item.dataset.fileName);
-            }
-        });
-    }
-});
-
-// Move operation state
-let moveItemName = '';
-let moveItemIsDir = false;
-let selectedDestinationPath = '';
-
-function moveItem(name, isDir) {
-    moveItemName = name;
-    moveItemIsDir = isDir;
-    
-    // Reset and show modal
-    document.getElementById('move-modal').style.display = 'block';
-    document.getElementById('move-error').style.display = 'none';
-    
-    // Load directory tree
-    loadDirectoryTree();
-}
-
-function loadDirectoryTree() {
-    const treeContainer = document.getElementById('directory-tree');
-    treeContainer.innerHTML = '<div class="text-center"><div class="spinner-border" role="status"></div></div>';
-    
-    // Normalize current path for comparison
-    const normalizedCurrentPath = currentPath.replace(/\\/g, '/');
-    
-    fetch(`?tree=true`)
-        .then(response => response.json())
-        .then(data => {
-            function renderTree(items, level = 0, parentPath = '') {
-                if (!items || items.length === 0) return '';
-                
-                let html = '<ul class="list-unstyled" style="margin-left: ' + (level * 1.5) + 'rem">';
-                
-                if (level === 0) {
-                    html += `<li>
-                        <div class="directory-item${normalizedCurrentPath === '' ? ' current' : ''}" onclick="selectDirectory('')">
-                            <i class="bi bi-folder-fill"></i> Root
-                        </div>
-                    </li>`;
-                }
-                
-                items.forEach(item => {
-                    const hasChildren = item.children && item.children.length > 0;
-                    const itemPath = parentPath ? `${parentPath}/${item.name}` : item.name;
-                    const isCurrentPath = normalizedCurrentPath === itemPath;
-                    
-                    html += `
-                        <li>
-                            <div class="directory-item${isCurrentPath ? ' current' : ''}" onclick="selectDirectory('${itemPath}')">
-                                <i class="bi bi-folder-fill"></i> ${item.name}
-                            </div>
-                            ${hasChildren ? renderTree(item.children, level + 1, itemPath) : ''}
-                        </li>`;
-                });
-                
-                html += '</ul>';
-                return html;
-            }
-            
-            treeContainer.innerHTML = renderTree(data.tree);
-            
-            // Highlight current selection if any
-            if (selectedDestinationPath !== '') {
-                const items = document.querySelectorAll('.directory-item');
-                items.forEach(item => {
-                    const onclick = item.getAttribute('onclick');
-                    const pathMatch = onclick.match(/selectDirectory\('([^']+)'\)/);
-                    if (pathMatch && pathMatch[1] === selectedDestinationPath) {
-                        item.classList.add('selected');
-                    }
-                });
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            treeContainer.innerHTML = '<div class="alert alert-danger">Failed to load directory tree</div>';
-        });
-}
-
-function createFolderInModal() {
-    const folderName = prompt('Enter new folder name:');
-    if (!folderName) return;
-    
-    const path = document.getElementById('selected-path').value;
-    
-    fetch('{% url "cms:create_folder" %}', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-        },
-        body: JSON.stringify({ 
-            name: folderName,
-            path: path
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Store current selection
-            selectedDestinationPath = document.getElementById('selected-path').value;
-            // Refresh directory tree
-            loadDirectoryTree();
-        } else {
-            const errorElement = document.getElementById('move-error');
-            errorElement.textContent = data.error;
-            errorElement.style.display = 'block';
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        const errorElement = document.getElementById('move-error');
-        errorElement.textContent = 'Failed to create folder';
-        errorElement.style.display = 'block';
-    });
-}
-
-function selectDirectory(path) {
-    // Highlight selected directory
-    document.querySelectorAll('.directory-item').forEach(item => {
-        item.classList.remove('selected');
-    });
-    event.currentTarget.classList.add('selected');
-    
-    // Store selected path
-    document.getElementById('selected-path').value = path;
-    selectedDestinationPath = path;
-}
-
-function closeModal() {
-    document.getElementById('move-modal').style.display = 'none';
-    selectedDestinationPath = '';
-}
-
-function handleMove() {
-    const destinationPath = document.getElementById('selected-path').value;
-    
-    // Normalize paths for consistency
-    const normalizedCurrentPath = currentPath.replace(/\\/g, '/');
-    const normalizedDestPath = destinationPath.replace(/\\/g, '/');
-    
-    fetch('{% url "cms:move" %}', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-        },
-        body: JSON.stringify({
-            name: moveItemName,
-            is_dir: moveItemIsDir,
-            current_path: normalizedCurrentPath,
-            destination_path: normalizedDestPath
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            location.reload();
-        } else {
-            const errorElement = document.getElementById('move-error');
-            errorElement.textContent = data.error;
-            errorElement.style.display = 'block';
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        const errorElement = document.getElementById('move-error');
-        errorElement.textContent = 'Failed to move item';
-        errorElement.style.display = 'block';
-    });
-}
-</script>
-
-<!-- Move Modal -->
-<div id="move-modal" class="modal" style="display: none;">
+<!-- Tag Management Modal -->
+<div id="tag-modal" class="modal" style="display: none;">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Move Item</h5>
-                <button type="button" class="btn-close" onclick="closeModal()"></button>
+                <h5 class="modal-title">Manage Tags - <span id="tag-modal-title"></span></h5>
+                <button type="button" class="btn-close" onclick="closeTagModal()"></button>
             </div>
             <div class="modal-body">
-                <div id="move-error" class="alert alert-danger" style="display: none;"></div>
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h6 class="mb-0">Select Destination</h6>
-                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="createFolderInModal()">
-                        <i class="bi bi-folder-plus"></i> New Folder
-                    </button>
+                <div id="tag-error" class="alert alert-danger" style="display: none;"></div>
+                <div class="mb-3">
+                    <label class="form-label">Add Tag</label>
+                    <div class="input-group">
+                        <input type="text" id="new-tag" class="form-control" placeholder="Enter tag name">
+                        <button class="btn btn-primary" onclick="addTag()">Add</button>
+                    </div>
                 </div>
-                <div id="directory-tree"></div>
-                <input type="hidden" id="selected-path" value="">
+                <div id="current-tags" class="mb-3">
+                    <!-- Current tags will be loaded here -->
+                </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-                <button type="button" class="btn btn-primary" onclick="handleMove()">Move</button>
+                <button type="button" class="btn btn-secondary" onclick="closeTagModal()">Close</button>
             </div>
         </div>
     </div>
 </div>
-
-<style>
-.modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-}
-
-.modal-dialog {
-    margin: 2rem auto;
-    max-width: 500px;
-}
-
-.directory-item {
-    padding: 0.5rem;
-    cursor: pointer;
-    border-radius: 0.25rem;
-}
-
-.directory-item:hover {
-    background: #f8f9fa;
-}
-
-.directory-item.selected {
-    background: #e9ecef;
-}
-
-.directory-item.current {
-    border: 1px solid #0d6efd;
-}
-
-.directory-item i {
-    color: #ffc107;
-    margin-right: 0.5rem;
-}
-</style>
 
 <div class="row mb-4">
     <div class="col">
@@ -558,16 +443,27 @@ function handleMove() {
             <div class="card-body">
                 <!-- File Manager Content -->
                 <div class="file-manager">
-                    <div class="d-flex justify-content-between mb-3">
-                        <div class="btn-group">
-                            <button class="btn btn-primary" onclick="document.getElementById('file-upload').click()">
-                                <i class="bi bi-upload"></i> Upload
-                            </button>
-                            <input type="file" id="file-upload" style="display: none" onchange="handleFileUpload(this.files)">
-                            
-                            <button class="btn btn-outline-primary" onclick="createNewFolder()">
-                                <i class="bi bi-folder-plus"></i> New Folder
-                            </button>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="d-flex gap-2">
+                            <div class="btn-group">
+                                <button class="btn btn-primary" onclick="document.getElementById('file-upload').click()">
+                                    <i class="bi bi-upload"></i> Upload
+                                </button>
+                                <input type="file" id="file-upload" style="display: none" onchange="handleFileUpload(this.files)">
+                                
+                                <button class="btn btn-outline-primary" onclick="createNewFolder()">
+                                    <i class="bi bi-folder-plus"></i> New Folder
+                                </button>
+                            </div>
+                            <div class="input-group" style="width: 300px;">
+                                <input type="text" id="tag-search" class="form-control" placeholder="Search by tags (comma separated)">
+                                <button class="btn btn-outline-secondary" onclick="searchByTags()">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                                <button class="btn btn-outline-secondary" onclick="clearTagSearch()" id="clear-search" style="display: none;">
+                                    <i class="bi bi-x-circle"></i>
+                                </button>
+                            </div>
                         </div>
                         <div class="btn-group">
                             <button class="btn btn-outline-secondary" onclick="setView('grid')" id="grid-view-btn">
@@ -577,6 +473,11 @@ function handleMove() {
                                 <i class="bi bi-list"></i>
                             </button>
                         </div>
+                    </div>
+                    
+                    <!-- Search Results -->
+                    <div id="search-results" class="alert alert-info mb-3" style="display: none;">
+                        Showing results for tags: <span id="active-tags"></span>
                     </div>
                     
                     <!-- File Browser -->

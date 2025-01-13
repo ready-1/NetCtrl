@@ -31,7 +31,21 @@ The CMS supports tagging capabilities for files, allowing for better organizatio
 - Tag display in file browser
 - Tag management modal
 - Add/remove tag interface
-- Tag filtering options
+- Tag search functionality:
+  - Search by multiple tags (comma-separated)
+  - Real-time results display
+  - Clear search option
+  - Full file operations in search results
+
+### Search Features
+- Filter files by one or more tags
+- Comma-separated tag input
+- Results show matching files with:
+  - File name and icon
+  - Associated tags
+  - All file operations (download, move, rename, delete)
+- Clear visual feedback of active search
+- Easy way to clear search and return to full view
 
 ## Move Operation
 

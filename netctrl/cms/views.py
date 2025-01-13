@@ -79,7 +79,17 @@ def file_manager(request):
                     file_obj = File.objects.get(path=rel_path)
                     tags = file_obj.tags or []
                 except File.DoesNotExist:
-                    pass
+                    # Create File record for existing file
+                    file_obj = File.objects.create(
+                        name=item,
+                        path=rel_path,
+                        size=os.path.getsize(item_path),
+                        type='OTHER',
+                        checksum='',
+                        tags=[]
+                    )
+                    file_obj.save()  # Ensure UUID is generated
+                    tags = []
 
             items.append({
                 'name': item,
@@ -135,6 +145,7 @@ def rename_item(request):
         data = json.loads(request.body)
         old_name = data.get('old_name')
         new_name = data.get('new_name')
+        is_dir = data.get('is_dir', False)
         current_path = clean_path(data.get('path', ''))
         
         if not old_name or not new_name:
@@ -148,7 +159,21 @@ def rename_item(request):
         if not verify_path(old_path, base_path) or not verify_path(new_path, base_path):
             return JsonResponse({'success': False, 'error': 'Invalid path'})
         
+        # Rename the file
         os.rename(old_path, new_path)
+        
+        # Update File record if this is a file
+        if not is_dir:
+            try:
+                rel_old_path = os.path.relpath(old_path, settings.MEDIA_ROOT)
+                rel_new_path = os.path.relpath(new_path, settings.MEDIA_ROOT)
+                file_obj = File.objects.get(path=rel_old_path)
+                file_obj.name = new_name
+                file_obj.path = rel_new_path
+                file_obj.save()
+            except File.DoesNotExist:
+                pass  # No File record exists
+        
         return JsonResponse({'success': True})
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})
@@ -175,7 +200,15 @@ def delete_item(request):
         if is_dir:
             os.rmdir(path)  # Only removes empty directories
         else:
+            # Delete the file
             os.remove(path)
+            
+            # Delete the File record if it exists
+            try:
+                rel_path = os.path.relpath(path, settings.MEDIA_ROOT)
+                File.objects.filter(path=rel_path).delete()
+            except Exception:
+                pass  # Ignore if File record doesn't exist
             
         return JsonResponse({'success': True})
     except Exception as e:
@@ -244,8 +277,19 @@ def move_item(request):
         
         # Perform move operation
         os.rename(src_path, dst_path)
-        print(f"Move successful")
         
+        # Update File record if this is a file
+        if not is_dir:
+            try:
+                rel_src_path = os.path.relpath(src_path, settings.MEDIA_ROOT)
+                rel_dst_path = os.path.relpath(dst_path, settings.MEDIA_ROOT)
+                file_obj = File.objects.get(path=rel_src_path)
+                file_obj.path = rel_dst_path
+                file_obj.save()
+            except File.DoesNotExist:
+                pass  # No File record exists
+        
+        print(f"Move successful")
         return JsonResponse({'success': True})
         
     except Exception as e:
@@ -288,6 +332,7 @@ def upload_file(request):
             checksum='',  # TODO: Calculate checksum
             tags=[]
         )
+        file_obj.save()  # Ensure UUID is generated
         
         return JsonResponse({
             'success': True,
@@ -392,9 +437,25 @@ def filter_by_tags(request):
         tag_service = TagService()
         files = tag_service.filter_by_tags(tags, 'file')
         
+        # Build full URLs for files that exist
+        file_list = []
+        for file in files:
+            file_path = os.path.join(settings.MEDIA_ROOT, file.path)
+            if os.path.exists(file_path):
+                file_url = f'{settings.MEDIA_URL}{file.path}'
+                file_list.append({
+                    'id': str(file.id),
+                    'name': file.name,
+                    'path': file_url,
+                    'tags': file.tags or []
+                })
+            else:
+                # Clean up orphaned record
+                file.delete()
+            
         return JsonResponse({
             'success': True,
-            'files': list(files.values('id', 'name', 'path', 'tags'))
+            'files': file_list
         })
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})

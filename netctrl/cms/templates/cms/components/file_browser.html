@@ -14,31 +14,57 @@
 .file-browser.grid-view .list-group-item {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
     text-align: center;
-    height: 160px;
+    height: 180px;
     margin: 0;
-    padding: 1rem 1rem 3rem 1rem;
+    padding: 1rem;
 }
 
 .file-browser.grid-view .item-content {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 100%;
+    flex: 1;
 }
 
 .file-browser.grid-view .item-icon {
-    font-size: 2rem;
+    font-size: 2.5rem;
     margin-bottom: 0.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .file-browser.grid-view .item-name {
-    margin-bottom: 0.5rem;
+    text-align: center;
     word-break: break-word;
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+}
+
+.file-browser.grid-view .tags {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.25rem;
+    padding: 0 0.5rem;
+}
+
+.file-browser.grid-view .btn-group {
+    margin-top: auto;
+    position: static;
+    display: none;
+    justify-content: center;
+    width: 100%;
+    background: none;
 }
 
 /* List view styles */
@@ -82,23 +108,26 @@
         <div class="list-group-item list-group-item-action" 
              onclick="handleItemClick('{{ item.name }}', {{ item.is_dir|yesno:'true,false' }}, '{{ item.url|default:'' }}', '{{ item.parent_path|default:'' }}')"
              {% if not item.is_dir %}data-file-id="{{ item.id }}" data-file-name="{{ item.name }}"{% endif %}>
-            <div class="item-content">
-                <div class="item-icon">
-                    {% if item.is_dir %}
-                        <i class="bi bi-folder text-primary"></i>
-                    {% else %}
-                        <i class="bi bi-file-text"></i>
+            <div class="d-flex flex-column h-100">
+                <div class="item-content">
+                    <div class="item-icon">
+                        {% if item.is_dir %}
+                            <i class="bi bi-folder text-primary"></i>
+                        {% else %}
+                            <i class="bi bi-file-text"></i>
+                        {% endif %}
+                    </div>
+                    <span class="item-name">{{ item.name }}</span>
+                    {% if not item.is_dir and item.id %}
+                        <input type="hidden" class="file-id" value="{{ item.id }}">
                     {% endif %}
                 </div>
-                <span class="item-name">{{ item.name }}</span>
-            </div>
-                <div class="d-flex align-items-center">
-                    <div class="tags me-2">
-                        {% for tag in item.tags %}
-                            <span class="badge bg-secondary me-1">{{ tag }}</span>
-                        {% endfor %}
-                    </div>
-                    <div class="btn-group" onclick="event.stopPropagation()">
+                <div class="tags mt-auto mb-2">
+                    {% for tag in item.tags %}
+                        <span class="badge bg-secondary me-1">{{ tag }}</span>
+                    {% endfor %}
+                </div>
+                <div class="btn-group" onclick="event.stopPropagation()">
                         {% if not item.is_dir %}
                             <a href="{{ item.url }}" class="btn btn-sm btn-outline-secondary" download>
                                 <i class="bi bi-download"></i>

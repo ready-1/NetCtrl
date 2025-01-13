@@ -138,9 +138,16 @@ class TagService:
         if content_type != 'file':
             raise TagValidationError("Only file content type is supported")
             
+        # Start with all files
         query = File.objects.all()
+        
+        # Filter files that have all the specified tags
         for tag in tags:
-            query = query.filter(tags__contains=[tag])
+            # Use list comprehension to filter in memory
+            files = [file for file in query if tag in (file.tags or [])]
+            # Convert back to queryset
+            query = File.objects.filter(id__in=[file.id for file in files])
+            
         return query
 
     def _validate_tag(self, tag: str) -> None:
