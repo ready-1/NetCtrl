@@ -22,6 +22,9 @@
                     <a href="{% url 'netdevices:index' %}" class="btn btn-outline-primary">
                         <i class="bi bi-hdd-network"></i> Device Management
                     </a>
+                    <a href="{% url 'cms:file_manager' %}" class="btn btn-outline-primary">
+                        <i class="bi bi-folder"></i> Content Management
+                    </a>
                     {% if user.is_staff %}
                         <a href="{% url 'netdash:user_approval_list' %}" class="btn btn-outline-warning">
                             <i class="bi bi-person-plus-fill"></i> User Approvals

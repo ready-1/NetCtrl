@@ -17,6 +17,7 @@ urlpatterns = [
     # App URLs
     path('', include('netdash.urls')),
     path('devices/', include('netdevices.urls')),
+    path('cms/', include('cms.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:

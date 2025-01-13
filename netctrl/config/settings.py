@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     # Local apps
     'netdash.apps.NetdashConfig',
     'netdevices',
+    'cms.apps.CmsConfig',
 ]
 
 MIDDLEWARE = [
