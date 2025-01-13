@@ -53,8 +53,55 @@ function manageItemTags(itemId, itemName) {
     document.getElementById('new-tag').value = '';
     document.getElementById('tag-modal-title').textContent = itemName;
     
-    // Load current tags
+    // Load current tags and tag cloud
     loadItemTags();
+    loadTagCloud();
+}
+
+function loadTagCloud() {
+    fetch(`{% url 'cms:get_tags' %}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const cloudContainer = document.getElementById('tag-cloud');
+                // Sort tags alphabetically
+                const sortedTags = [...data.tags].sort((a, b) => a.localeCompare(b));
+                cloudContainer.innerHTML = sortedTags.map(tag => `
+                    <span class="badge bg-light text-dark me-1 mb-1" style="cursor: pointer;" onclick="addExistingTag('${tag}')">
+                        ${tag}
+                    </span>
+                `).join('');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
+
+function addExistingTag(tag) {
+    fetch('{% url "cms:add_tag" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify({
+            file_id: currentItemId,
+            tag: tag
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            loadItemTags();
+        } else {
+            showTagError(data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showTagError('Failed to add tag');
+    });
 }
 
 function loadItemTags() {
@@ -101,6 +148,7 @@ function addTag() {
         if (data.success) {
             tagInput.value = '';
             loadItemTags();
+            loadTagCloud();  // Refresh tag cloud
         } else {
             showTagError(data.error);
         }
@@ -127,6 +175,7 @@ function removeTag(tag) {
     .then(data => {
         if (data.success) {
             loadItemTags();
+            loadTagCloud();  // Refresh tag cloud
         } else {
             showTagError(data.error);
         }
@@ -486,8 +535,17 @@ function deleteItem(name, isDir) {
                         <button class="btn btn-primary" onclick="addTag()">Add</button>
                     </div>
                 </div>
-                <div id="current-tags" class="mb-3">
-                    <!-- Current tags will be loaded here -->
+                <div class="mb-3">
+                    <label class="form-label">Current Tags</label>
+                    <div id="current-tags">
+                        <!-- Current tags will be loaded here -->
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Available Tags</label>
+                    <div id="tag-cloud" class="p-2 border rounded">
+                        <!-- Tag cloud will be loaded here -->
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
