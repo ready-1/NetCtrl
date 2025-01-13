@@ -164,50 +164,18 @@ function searchByTags() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // Update file browser with filtered results
-                const browser = document.querySelector('.file-browser');
-                if (data.files.length > 0) {
-                    browser.innerHTML = data.files.map(file => `
-                        <div class="list-group-item list-group-item-action" onclick="handleItemClick('${file.name}', false, '${file.path}')" data-file-id="${file.id}" data-file-name="${file.name}">
-                            <div class="item-content">
-                                <div class="item-icon">
-                                    <i class="bi bi-file-text"></i>
-                                </div>
-                                <span class="item-name">${file.name}</span>
-                            </div>
-                            <div class="d-flex align-items-center">
-                                <div class="tags me-2">
-                                    ${file.tags.map(tag => `<span class="badge bg-secondary me-1">${tag}</span>`).join('')}
-                                </div>
-                                <div class="btn-group" onclick="event.stopPropagation()">
-                                    <a href="${file.path}" class="btn btn-sm btn-outline-secondary" download>
-                                        <i class="bi bi-download"></i>
-                                    </a>
-                                    <button class="btn btn-sm btn-outline-secondary" onclick="moveItem('${file.name}', false)">
-                                        <i class="bi bi-arrows-move"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-secondary" onclick="manageItemTags('${file.id}', '${file.name}')">
-                                        <i class="bi bi-tags"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-secondary" onclick="renameItem('${file.name}', false)">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-danger" onclick="deleteItem('${file.name}', false)">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    `).join('');
-                } else {
-                    browser.innerHTML = '<div class="alert alert-info">No files found with these tags</div>';
-                }
+                updateFileList(data.files);
                 
                 // Show search results info
                 const searchResults = document.getElementById('search-results');
+                const tagResults = document.getElementById('tag-results');
+                const contentResults = document.getElementById('content-results');
                 const activeTags = document.getElementById('active-tags');
+                
                 activeTags.innerHTML = tags.map(tag => `<span class="badge bg-primary">${tag}</span>`).join(' ');
                 searchResults.style.display = 'block';
+                tagResults.style.display = 'block';
+                contentResults.style.display = 'none';
                 
                 // Show clear button
                 document.getElementById('clear-search').style.display = 'block';
@@ -221,11 +189,102 @@ function searchByTags() {
         });
 }
 
+function searchContent() {
+    const searchInput = document.getElementById('content-search');
+    const query = searchInput.value.trim();
+    
+    if (!query) {
+        clearContentSearch();
+        return;
+    }
+    
+    fetch(`{% url 'cms:search' %}?q=${encodeURIComponent(query)}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                updateFileList(data.files);
+                
+                // Show search results info
+                const searchResults = document.getElementById('search-results');
+                const tagResults = document.getElementById('tag-results');
+                const contentResults = document.getElementById('content-results');
+                const searchQuery = document.getElementById('search-query');
+                const matchType = document.getElementById('match-type');
+                
+                searchQuery.textContent = query;
+                matchType.innerHTML = data.files.map(file => 
+                    `<div>${file.name} - ${file.match_type === 'filename' ? 'matched in filename' : 'matched in content'}</div>`
+                ).join('');
+                
+                searchResults.style.display = 'block';
+                tagResults.style.display = 'none';
+                contentResults.style.display = 'block';
+                
+                // Show clear button
+                document.getElementById('clear-content-search').style.display = 'block';
+            } else {
+                alert('Search failed: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Search failed');
+        });
+}
+
+function updateFileList(files) {
+    const browser = document.querySelector('.file-browser');
+    if (files.length > 0) {
+        browser.innerHTML = files.map(file => `
+            <div class="list-group-item list-group-item-action" onclick="handleItemClick('${file.name}', false, '${file.path}')" data-file-id="${file.id}" data-file-name="${file.name}">
+                <div class="item-content">
+                    <div class="item-icon">
+                        <i class="bi bi-file-text"></i>
+                    </div>
+                    <span class="item-name">${file.name}</span>
+                </div>
+                <div class="d-flex align-items-center">
+                    <div class="tags me-2">
+                        ${file.tags.map(tag => `<span class="badge bg-secondary me-1">${tag}</span>`).join('')}
+                    </div>
+                    <div class="btn-group" onclick="event.stopPropagation()">
+                        <a href="${file.path}" class="btn btn-sm btn-outline-secondary" download>
+                            <i class="bi bi-download"></i>
+                        </a>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="moveItem('${file.name}', false)">
+                            <i class="bi bi-arrows-move"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="manageItemTags('${file.id}', '${file.name}')">
+                            <i class="bi bi-tags"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="renameItem('${file.name}', false)">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteItem('${file.name}', false)">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    } else {
+        browser.innerHTML = '<div class="alert alert-info">No files found</div>';
+    }
+}
+
 function clearTagSearch() {
     const searchInput = document.getElementById('tag-search');
     searchInput.value = '';
     document.getElementById('search-results').style.display = 'none';
     document.getElementById('clear-search').style.display = 'none';
+    location.reload();  // Reload to show all files
+}
+
+function clearContentSearch() {
+    const searchInput = document.getElementById('content-search');
+    searchInput.value = '';
+    document.getElementById('search-results').style.display = 'none';
+    document.getElementById('clear-content-search').style.display = 'none';
     location.reload();  // Reload to show all files
 }
 
@@ -239,12 +298,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Add enter key handler for search
-    const searchInput = document.getElementById('tag-search');
-    searchInput.addEventListener('keypress', (e) => {
+    // Add enter key handler for tag search
+    const tagSearchInput = document.getElementById('tag-search');
+    tagSearchInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
             searchByTags();
+        }
+    });
+
+    // Add enter key handler for content search
+    const contentSearchInput = document.getElementById('content-search');
+    contentSearchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            searchContent();
         }
     });
 
@@ -333,6 +401,7 @@ function renameItem(oldName, isDir) {
         body: JSON.stringify({ 
             old_name: oldName,
             new_name: newName,
+            is_dir: isDir,
             path: currentPath
         })
     })
@@ -455,14 +524,25 @@ function deleteItem(name, isDir) {
                                     <i class="bi bi-folder-plus"></i> New Folder
                                 </button>
                             </div>
-                            <div class="input-group" style="width: 300px;">
-                                <input type="text" id="tag-search" class="form-control" placeholder="Search by tags (comma separated)">
-                                <button class="btn btn-outline-secondary" onclick="searchByTags()">
-                                    <i class="bi bi-search"></i>
-                                </button>
-                                <button class="btn btn-outline-secondary" onclick="clearTagSearch()" id="clear-search" style="display: none;">
-                                    <i class="bi bi-x-circle"></i>
-                                </button>
+                            <div class="d-flex gap-2">
+                                <div class="input-group" style="width: 300px;">
+                                    <input type="text" id="tag-search" class="form-control" placeholder="Search by tags (comma separated)">
+                                    <button class="btn btn-outline-secondary" onclick="searchByTags()">
+                                        <i class="bi bi-search"></i>
+                                    </button>
+                                    <button class="btn btn-outline-secondary" onclick="clearTagSearch()" id="clear-search" style="display: none;">
+                                        <i class="bi bi-x-circle"></i>
+                                    </button>
+                                </div>
+                                <div class="input-group" style="width: 300px;">
+                                    <input type="text" id="content-search" class="form-control" placeholder="Search in files">
+                                    <button class="btn btn-outline-secondary" onclick="searchContent()">
+                                        <i class="bi bi-search"></i>
+                                    </button>
+                                    <button class="btn btn-outline-secondary" onclick="clearContentSearch()" id="clear-content-search" style="display: none;">
+                                        <i class="bi bi-x-circle"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         <div class="btn-group">
@@ -477,7 +557,13 @@ function deleteItem(name, isDir) {
                     
                     <!-- Search Results -->
                     <div id="search-results" class="alert alert-info mb-3" style="display: none;">
-                        Showing results for tags: <span id="active-tags"></span>
+                        <div id="tag-results" style="display: none;">
+                            Showing results for tags: <span id="active-tags"></span>
+                        </div>
+                        <div id="content-results" style="display: none;">
+                            Showing results for: "<span id="search-query"></span>"
+                            <div id="match-type" class="mt-1 small text-muted"></div>
+                        </div>
                     </div>
                     
                     <!-- File Browser -->

@@ -14,4 +14,5 @@ urlpatterns = [
     path('tags/remove/', views.remove_tag, name='remove_tag'),
     path('tags/', views.get_tags, name='get_tags'),
     path('tags/filter/', views.filter_by_tags, name='filter_by_tags'),
+    path('search/', views.search_files, name='search'),
 ]

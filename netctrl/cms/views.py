@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from django.conf import settings
 from django.views.decorators.http import require_POST
 from .services.tags import TagService, TagValidationError
+from .services.search import SearchService
 from .models import File
 
 @login_required
@@ -423,6 +424,25 @@ def get_tags(request):
             tags = tag_service.get_all_tags('file')
             
         return JsonResponse({'success': True, 'tags': list(tags)})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+
+@login_required
+@login_required
+def search_files(request):
+    """Search files by name and content."""
+    try:
+        query = request.GET.get('q', '').strip()
+        if not query:
+            return JsonResponse({'success': False, 'error': 'No search query provided'})
+            
+        search_service = SearchService()
+        results = search_service.search(query)
+            
+        return JsonResponse({
+            'success': True,
+            'files': results
+        })
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})
 
