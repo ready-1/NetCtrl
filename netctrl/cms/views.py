@@ -1,10 +1,12 @@
 import os
 import json
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.conf import settings
 from django.views.decorators.http import require_POST
+from .services.tags import TagService, TagValidationError
+from .models import File
 
 @login_required
 def file_manager(request):
@@ -69,10 +71,22 @@ def file_manager(request):
                 rel_path = os.path.relpath(item_path, settings.MEDIA_ROOT)
                 url = f'{settings.MEDIA_URL}{rel_path}'
             
+            # Get file object and tags if it's a file
+            file_obj = None
+            tags = []
+            if not is_dir:
+                try:
+                    file_obj = File.objects.get(path=rel_path)
+                    tags = file_obj.tags or []
+                except File.DoesNotExist:
+                    pass
+
             items.append({
                 'name': item,
                 'is_dir': is_dir,
-                'url': url
+                'url': url,
+                'id': str(file_obj.id) if file_obj else None,
+                'tags': tags
             })
         
         # Sort items: directories first, then files, both alphabetically
@@ -258,12 +272,32 @@ def upload_file(request):
     # Create uploads directory if it doesn't exist
     os.makedirs(upload_path, exist_ok=True)
     
-    # Save the file
-    with open(file_path, 'wb+') as destination:
-        for chunk in uploaded_file.chunks():
-            destination.write(chunk)
-    
-    return JsonResponse({'success': True})
+    try:
+        # Save the file
+        with open(file_path, 'wb+') as destination:
+            for chunk in uploaded_file.chunks():
+                destination.write(chunk)
+
+        # Create File record
+        rel_path = os.path.relpath(file_path, settings.MEDIA_ROOT)
+        file_obj = File.objects.create(
+            name=uploaded_file.name,
+            path=rel_path,
+            size=uploaded_file.size,
+            type='OTHER',  # Default type
+            checksum='',  # TODO: Calculate checksum
+            tags=[]
+        )
+        
+        return JsonResponse({
+            'success': True,
+            'file_id': str(file_obj.id)
+        })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        })
 
 @login_required
 @require_POST
@@ -276,8 +310,8 @@ def create_folder(request):
         if not folder_name:
             return JsonResponse({'success': False, 'error': 'No folder name provided'})
         
-        base_path = os.path.join(settings.MEDIA_ROOT, 'uploads')
-        folder_path = os.path.join(base_path, current_path, folder_name)
+        base_path = os.path.join(settings.MEDIA_ROOT, 'uploads', current_path)
+        folder_path = os.path.join(base_path, folder_name)
         
         # Verify path is within uploads directory
         if not verify_path(folder_path, base_path):
@@ -286,5 +320,81 @@ def create_folder(request):
         os.makedirs(folder_path, exist_ok=True)
         
         return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+
+@login_required
+@require_POST
+def add_tag(request):
+    """Add a tag to a file."""
+    try:
+        data = json.loads(request.body)
+        file_id = data.get('file_id')
+        tag = data.get('tag')
+        
+        if not file_id or not tag:
+            return JsonResponse({'success': False, 'error': 'File ID and tag are required'})
+            
+        tag_service = TagService()
+        tag_service.add_tag(file_id, tag, 'file')
+        
+        return JsonResponse({'success': True})
+    except TagValidationError as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+
+@login_required
+@require_POST
+def remove_tag(request):
+    """Remove a tag from a file."""
+    try:
+        data = json.loads(request.body)
+        file_id = data.get('file_id')
+        tag = data.get('tag')
+        
+        if not file_id or not tag:
+            return JsonResponse({'success': False, 'error': 'File ID and tag are required'})
+            
+        tag_service = TagService()
+        tag_service.remove_tag(file_id, tag, 'file')
+        
+        return JsonResponse({'success': True})
+    except TagValidationError as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+
+@login_required
+def get_tags(request):
+    """Get all tags or tags for a specific file."""
+    try:
+        file_id = request.GET.get('file_id')
+        tag_service = TagService()
+        
+        if file_id:
+            tags = tag_service.get_tags(file_id, 'file')
+        else:
+            tags = tag_service.get_all_tags('file')
+            
+        return JsonResponse({'success': True, 'tags': list(tags)})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+
+@login_required
+def filter_by_tags(request):
+    """Filter files by tags."""
+    try:
+        tags = request.GET.getlist('tags[]')
+        if not tags:
+            return JsonResponse({'success': False, 'error': 'No tags provided'})
+            
+        tag_service = TagService()
+        files = tag_service.filter_by_tags(tags, 'file')
+        
+        return JsonResponse({
+            'success': True,
+            'files': list(files.values('id', 'name', 'path', 'tags'))
+        })
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})

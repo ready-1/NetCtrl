@@ -1,4 +1,44 @@
 from django.db import models
+from django.conf import settings
+import os
+
+class FileTag(models.Model):
+    """Model for file and directory tags."""
+    name = models.CharField(max_length=50)
+    path = models.CharField(max_length=1024)  # Relative path from MEDIA_ROOT/uploads
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('name', 'path')
+        indexes = [
+            models.Index(fields=['name']),
+            models.Index(fields=['path']),
+        ]
+
+    def __str__(self):
+        return f"{self.name} ({self.path})"
+
+    def clean(self):
+        """Validate the tag."""
+        if not self.name or len(self.name) > 50:
+            raise ValidationError("Tag name must be between 1 and 50 characters")
+        if not self.name.replace("-", "").replace("_", "").isalnum():
+            raise ValidationError("Tag name must contain only letters, numbers, hyphens and underscores")
+        
+        # Ensure path is within uploads directory
+        full_path = os.path.join(settings.MEDIA_ROOT, 'uploads', self.path)
+        try:
+            real_path = os.path.realpath(full_path)
+            base_path = os.path.realpath(os.path.join(settings.MEDIA_ROOT, 'uploads'))
+            if not real_path.startswith(base_path):
+                raise ValidationError("Invalid path")
+        except Exception:
+            raise ValidationError("Invalid path")
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
 from django.core.validators import FileExtensionValidator
 from django.utils.translation import gettext_lazy as _
 import uuid
@@ -80,6 +120,11 @@ class File(models.Model):
     checksum = models.CharField(
         max_length=64,
         help_text=_("SHA-256 checksum of file content")
+    )
+    tags = models.JSONField(
+        default=list,
+        blank=True,
+        help_text=_("List of tags associated with the file")
     )
     category = models.ForeignKey(
         Category,

@@ -9,105 +9,142 @@ from typing import List, Optional, Set, Dict, Any
 from django.db import models, transaction
 from django.core.exceptions import ValidationError
 from django.db.models import Q, QuerySet
-from ..models import Device, FirmwareVersion
+from ..models import File
 
 class TagValidationError(ValidationError):
     """Custom exception for tag validation errors."""
     pass
 
 class TagService:
-    """Service class for managing content tags."""
+    """Service class for managing file tags."""
     
     def __init__(self):
         """Initialize the tag service."""
         self._tag_cache: Dict[str, Set[str]] = {}
 
     @transaction.atomic
-    def add_tag(self, content_id: int, tag: str, content_type: str) -> None:
+    def add_tag(self, file_id: str, tag: str, content_type: str = 'file') -> None:
         """
-        Add a tag to a content item.
+        Add a tag to a file.
 
         Args:
-            content_id: ID of the content item
+            file_id: ID of the file
             tag: Tag to add
-            content_type: Type of content ('device' or 'firmware')
+            content_type: Must be 'file'
 
         Raises:
             TagValidationError: If validation fails
         """
+        if content_type != 'file':
+            raise TagValidationError("Only file content type is supported")
+            
         try:
             self._validate_tag(tag)
-            self._add_tag_to_content(content_id, tag, content_type)
-            self._invalidate_cache(content_id, content_type)
+            file = File.objects.get(id=file_id)
+            tags = set(file.tags or [])
+            tags.add(tag)
+            file.tags = list(tags)
+            file.save()
+            self._invalidate_cache(file_id)
+        except File.DoesNotExist:
+            raise TagValidationError("File not found")
         except Exception as e:
             raise TagValidationError(f"Failed to add tag: {str(e)}")
 
     @transaction.atomic
-    def remove_tag(self, content_id: int, tag: str, content_type: str) -> None:
+    def remove_tag(self, file_id: str, tag: str, content_type: str = 'file') -> None:
         """
-        Remove a tag from a content item.
+        Remove a tag from a file.
 
         Args:
-            content_id: ID of the content item
+            file_id: ID of the file
             tag: Tag to remove
-            content_type: Type of content ('device' or 'firmware')
+            content_type: Must be 'file'
 
         Raises:
             TagValidationError: If validation fails
         """
+        if content_type != 'file':
+            raise TagValidationError("Only file content type is supported")
+            
         try:
-            self._remove_tag_from_content(content_id, tag, content_type)
-            self._invalidate_cache(content_id, content_type)
+            file = File.objects.get(id=file_id)
+            tags = set(file.tags or [])
+            tags.discard(tag)
+            file.tags = list(tags)
+            file.save()
+            self._invalidate_cache(file_id)
+        except File.DoesNotExist:
+            raise TagValidationError("File not found")
         except Exception as e:
             raise TagValidationError(f"Failed to remove tag: {str(e)}")
 
-    def get_tags(self, content_id: int, content_type: str) -> Set[str]:
+    def get_tags(self, file_id: str, content_type: str = 'file') -> Set[str]:
         """
-        Get all tags for a content item.
+        Get all tags for a file.
 
         Args:
-            content_id: ID of the content item
-            content_type: Type of content ('device' or 'firmware')
+            file_id: ID of the file
+            content_type: Must be 'file'
 
         Returns:
-            Set of tags associated with the content
+            Set of tags associated with the file
         """
-        cache_key = f"{content_type}_{content_id}"
+        if content_type != 'file':
+            raise TagValidationError("Only file content type is supported")
+            
+        cache_key = f"file_{file_id}"
         if cache_key in self._tag_cache:
             return self._tag_cache[cache_key]
 
-        tags = self._get_content_tags(content_id, content_type)
-        self._tag_cache[cache_key] = tags
-        return tags
+        try:
+            file = File.objects.get(id=file_id)
+            tags = set(file.tags or [])
+            self._tag_cache[cache_key] = tags
+            return tags
+        except File.DoesNotExist:
+            raise TagValidationError("File not found")
 
-    def find_by_tag(self, tag: str, content_type: str) -> QuerySet:
+    def get_all_tags(self, content_type: str = 'file') -> Set[str]:
         """
-        Find content items by tag.
+        Get all unique tags in the system.
 
         Args:
-            tag: Tag to search for
-            content_type: Type of content ('device' or 'firmware')
+            content_type: Must be 'file'
 
         Returns:
-            QuerySet of matching content items
+            Set of all unique tags
         """
-        if content_type == 'device':
-            return Device.objects.filter(tags__contains=[tag])
-        elif content_type == 'firmware':
-            return FirmwareVersion.objects.filter(tags__contains=[tag])
-        else:
-            raise TagValidationError(f"Invalid content type: {content_type}")
+        if content_type != 'file':
+            raise TagValidationError("Only file content type is supported")
+            
+        all_tags = set()
+        files = File.objects.exclude(tags=[]).values_list('tags', flat=True)
+        for tags in files:
+            all_tags.update(tags)
+        return all_tags
 
-    def _validate_tag(self, tag: str) -> None:
+    def filter_by_tags(self, tags: List[str], content_type: str = 'file') -> QuerySet:
         """
-        Validate a tag string.
+        Find files that have all specified tags.
 
         Args:
-            tag: Tag to validate
+            tags: List of tags to filter by
+            content_type: Must be 'file'
 
-        Raises:
-            TagValidationError: If validation fails
+        Returns:
+            QuerySet of matching files
         """
+        if content_type != 'file':
+            raise TagValidationError("Only file content type is supported")
+            
+        query = File.objects.all()
+        for tag in tags:
+            query = query.filter(tags__contains=[tag])
+        return query
+
+    def _validate_tag(self, tag: str) -> None:
+        """Validate a tag string."""
         if not tag or not isinstance(tag, str):
             raise TagValidationError("Tag must be a non-empty string")
         if len(tag) > 50:
@@ -115,40 +152,7 @@ class TagService:
         if not tag.replace("-", "").replace("_", "").isalnum():
             raise TagValidationError("Tag must contain only letters, numbers, hyphens and underscores")
 
-    def _add_tag_to_content(self, content_id: int, tag: str, content_type: str) -> None:
-        """Add tag to content in database."""
-        model = self._get_model(content_type)
-        content = model.objects.get(id=content_id)
-        tags = set(content.tags or [])
-        tags.add(tag)
-        content.tags = list(tags)
-        content.save()
-
-    def _remove_tag_from_content(self, content_id: int, tag: str, content_type: str) -> None:
-        """Remove tag from content in database."""
-        model = self._get_model(content_type)
-        content = model.objects.get(id=content_id)
-        tags = set(content.tags or [])
-        tags.discard(tag)
-        content.tags = list(tags)
-        content.save()
-
-    def _get_content_tags(self, content_id: int, content_type: str) -> Set[str]:
-        """Get tags from database."""
-        model = self._get_model(content_type)
-        content = model.objects.get(id=content_id)
-        return set(content.tags or [])
-
-    def _get_model(self, content_type: str) -> models.Model:
-        """Get model class for content type."""
-        if content_type == 'device':
-            return Device
-        elif content_type == 'firmware':
-            return FirmwareVersion
-        else:
-            raise TagValidationError(f"Invalid content type: {content_type}")
-
-    def _invalidate_cache(self, content_id: int, content_type: str) -> None:
-        """Invalidate cache for content item."""
-        cache_key = f"{content_type}_{content_id}"
+    def _invalidate_cache(self, file_id: str) -> None:
+        """Invalidate cache for file."""
+        cache_key = f"file_{file_id}"
         self._tag_cache.pop(cache_key, None)

@@ -1,5 +1,38 @@
 # CMS File Services
 
+## Tag Management
+
+### Overview
+The CMS supports tagging capabilities for files, allowing for better organization and searchability. Tags can be added, removed, and used to filter files.
+
+### Features
+- Add/remove tags from files
+- View all tags in the system
+- Filter files by tags
+- Tag validation and error handling
+- Cached tag operations for performance
+
+### Implementation
+- JSONField storage for flexible tag lists
+- Tag validation rules:
+  - Non-empty string
+  - Max 50 characters
+  - Alphanumeric with hyphens and underscores
+- Atomic operations for data consistency
+- Cache invalidation on updates
+
+### Security
+- User authentication required
+- Input validation
+- CSRF protection
+- Error handling for all operations
+
+### UI Components
+- Tag display in file browser
+- Tag management modal
+- Add/remove tag interface
+- Tag filtering options
+
 ## Move Operation
 
 ### Overview

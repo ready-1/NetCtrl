@@ -42,6 +42,8 @@ function handleFileUpload(files) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
+            // Store file ID temporarily if we want to add tags right after upload
+            sessionStorage.setItem('lastUploadedFileId', data.file_id);
             location.reload();
         } else {
             alert('Upload failed: ' + data.error);
@@ -166,8 +168,141 @@ function deleteItem(name, isDir) {
 {% block content %}
 {% csrf_token %}
 <script>
-// Current path from server
+// Current path and state
 const currentPath = '{{ current_path }}';
+let currentItemId = null;
+let currentItemName = null;
+
+// Tag management functions
+function manageItemTags(itemId, itemName) {
+    currentItemId = itemId;
+    currentItemName = itemName;
+    
+    // Reset and show modal
+    document.getElementById('tag-modal').style.display = 'block';
+    document.getElementById('tag-error').style.display = 'none';
+    document.getElementById('new-tag').value = '';
+    
+    // Load current tags
+    loadItemTags();
+}
+
+function loadItemTags() {
+    fetch(`{% url 'cms:get_tags' %}?file_id=${currentItemId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const tagsContainer = document.getElementById('current-tags');
+                tagsContainer.innerHTML = data.tags.map(tag => `
+                    <span class="badge bg-secondary me-1 mb-1">
+                        ${tag}
+                        <i class="bi bi-x-circle" onclick="removeTag('${tag}')"></i>
+                    </span>
+                `).join('');
+            } else {
+                showTagError(data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showTagError('Failed to load tags');
+        });
+}
+
+function addTag() {
+    const tagInput = document.getElementById('new-tag');
+    const tag = tagInput.value.trim();
+    
+    if (!tag) return;
+    
+    fetch('{% url "cms:add_tag" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify({
+            file_id: currentItemId,
+            tag: tag
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            tagInput.value = '';
+            loadItemTags();
+        } else {
+            showTagError(data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showTagError('Failed to add tag');
+    });
+}
+
+function removeTag(tag) {
+    fetch('{% url "cms:remove_tag" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify({
+            file_id: currentItemId,
+            tag: tag
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            loadItemTags();
+        } else {
+            showTagError(data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showTagError('Failed to remove tag');
+    });
+}
+
+function closeTagModal() {
+    document.getElementById('tag-modal').style.display = 'none';
+    currentItemId = null;
+    currentItemName = null;
+    location.reload();  // Refresh to show updated tags
+}
+
+function showTagError(message) {
+    const errorElement = document.getElementById('tag-error');
+    errorElement.textContent = message;
+    errorElement.style.display = 'block';
+}
+
+// Add enter key handler for tag input and check for last uploaded file
+document.addEventListener('DOMContentLoaded', () => {
+    const tagInput = document.getElementById('new-tag');
+    tagInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            addTag();
+        }
+    });
+
+    // Check if we have a newly uploaded file to tag
+    const lastUploadedFileId = sessionStorage.getItem('lastUploadedFileId');
+    if (lastUploadedFileId) {
+        sessionStorage.removeItem('lastUploadedFileId');
+        // Find the file in the list and open tag modal
+        const items = document.querySelectorAll('.list-group-item');
+        items.forEach(item => {
+            if (item.dataset.fileId === lastUploadedFileId) {
+                manageItemTags(lastUploadedFileId, item.dataset.fileName);
+            }
+        });
+    }
+});
 
 // Move operation state
 let moveItemName = '';

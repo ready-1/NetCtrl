@@ -79,7 +79,9 @@
 <!-- File Browser Component -->
 <div class="list-group">
     {% for item in items %}
-        <div class="list-group-item list-group-item-action" onclick="handleItemClick('{{ item.name }}', {{ item.is_dir|yesno:'true,false' }}, '{{ item.url|default:'' }}', '{{ item.parent_path|default:'' }}')">
+        <div class="list-group-item list-group-item-action" 
+             onclick="handleItemClick('{{ item.name }}', {{ item.is_dir|yesno:'true,false' }}, '{{ item.url|default:'' }}', '{{ item.parent_path|default:'' }}')"
+             {% if not item.is_dir %}data-file-id="{{ item.id }}" data-file-name="{{ item.name }}"{% endif %}>
             <div class="item-content">
                 <div class="item-icon">
                     {% if item.is_dir %}
@@ -90,23 +92,90 @@
                 </div>
                 <span class="item-name">{{ item.name }}</span>
             </div>
-            <div class="btn-group" onclick="event.stopPropagation()">
-                {% if not item.is_dir %}
-                    <a href="{{ item.url }}" class="btn btn-sm btn-outline-secondary" download>
-                        <i class="bi bi-download"></i>
-                    </a>
-                {% endif %}
-                <button class="btn btn-sm btn-outline-secondary" onclick="moveItem('{{ item.name }}', {{ item.is_dir|yesno:'true,false' }})">
-                    <i class="bi bi-arrows-move"></i>
-                </button>
-                <button class="btn btn-sm btn-outline-secondary" onclick="renameItem('{{ item.name }}', {{ item.is_dir|yesno:'true,false' }})">
-                    <i class="bi bi-pencil"></i>
-                </button>
-                <button class="btn btn-sm btn-outline-danger" onclick="deleteItem('{{ item.name }}', {{ item.is_dir|yesno:'true,false' }})">
-                    <i class="bi bi-trash"></i>
-                </button>
+                <div class="d-flex align-items-center">
+                    <div class="tags me-2">
+                        {% for tag in item.tags %}
+                            <span class="badge bg-secondary me-1">{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="btn-group" onclick="event.stopPropagation()">
+                        {% if not item.is_dir %}
+                            <a href="{{ item.url }}" class="btn btn-sm btn-outline-secondary" download>
+                                <i class="bi bi-download"></i>
+                            </a>
+                        {% endif %}
+                        <button class="btn btn-sm btn-outline-secondary" onclick="moveItem('{{ item.name }}', {{ item.is_dir|yesno:'true,false' }})">
+                            <i class="bi bi-arrows-move"></i>
+                        </button>
+                        {% if not item.is_dir %}
+                            <button class="btn btn-sm btn-outline-secondary" onclick="manageItemTags('{{ item.id }}', '{{ item.name }}')">
+                                <i class="bi bi-tags"></i>
+                            </button>
+                        {% endif %}
+                        <button class="btn btn-sm btn-outline-secondary" onclick="renameItem('{{ item.name }}', {{ item.is_dir|yesno:'true,false' }})">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteItem('{{ item.name }}', {{ item.is_dir|yesno:'true,false' }})">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+        </div>
+
+<!-- Tag Management Modal -->
+<div id="tag-modal" class="modal" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Manage Tags</h5>
+                <button type="button" class="btn-close" onclick="closeTagModal()"></button>
+            </div>
+            <div class="modal-body">
+                <div id="tag-error" class="alert alert-danger" style="display: none;"></div>
+                <div class="mb-3">
+                    <label class="form-label">Add Tag</label>
+                    <div class="input-group">
+                        <input type="text" id="new-tag" class="form-control" placeholder="Enter tag name">
+                        <button class="btn btn-primary" onclick="addTag()">Add</button>
+                    </div>
+                </div>
+                <div id="current-tags" class="mb-3">
+                    <!-- Current tags will be loaded here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeTagModal()">Close</button>
             </div>
         </div>
+    </div>
+</div>
+
+<style>
+/* Existing styles... */
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+
+.badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+}
+
+#current-tags .badge {
+    cursor: pointer;
+}
+
+#current-tags .badge:hover {
+    opacity: 0.8;
+}
+
+#current-tags .badge i {
+    margin-left: 0.25rem;
+}
+</style>
     {% empty %}
         <div class="list-group-item text-center text-muted">
             No files or folders yet
