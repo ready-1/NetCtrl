@@ -51,3 +51,26 @@ DOCUMENTATION_REQUIREMENTS {
     FORBIDDEN: Leave design decisions undocumented
     FORBIDDEN: Skip documentation updates
 }
+
+PROMPT_ANALYSIS_REQUIREMENTS {
+    REQUIRED: Perform exactly three analysis iterations for every prompt
+    REQUIRED: Document insights from each iteration
+    REQUIRED: Refine understanding with each iteration
+    REQUIRED: Apply learnings from previous iterations
+    REQUIRED: Validate against all rules after each iteration
+    FORBIDDEN: Proceed with implementation before completing all iterations
+    FORBIDDEN: Skip or combine iterations
+    FORBIDDEN: Reuse analysis patterns without refinement
+    FORBIDDEN: Start implementation during analysis phase
+}
+
+INTERROGATORY_PREFIX_REQUIREMENTS {
+    REQUIRED: Treat "???" prefix as interrogatory mode indicator
+    REQUIRED: Provide information and analysis only
+    REQUIRED: Maintain conversation-only mode
+    REQUIRED: Wait for explicit instruction before making changes
+    FORBIDDEN: Make any code or system changes
+    FORBIDDEN: Create or modify any files
+    FORBIDDEN: Execute any state-changing commands
+    FORBIDDEN: Exit interrogatory mode without explicit instruction
+}
