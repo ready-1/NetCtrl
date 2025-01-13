@@ -1,0 +1,762 @@
+{% load static %}
+
+<div class="bulk-operations" data-selection-enabled="false">
+    {# Selection Controls #}
+    <div class="selection-controls">
+        <div class="selection-toggle">
+            <input type="checkbox" 
+                   id="enable-selection" 
+                   class="selection-checkbox"
+                   data-action="toggle-selection">
+            <label for="enable-selection">Enable Selection</label>
+        </div>
+        
+        <div class="selection-actions" style="display: none;">
+            <div class="selection-count">
+                <span class="count">0</span> items selected
+            </div>
+            
+            <div class="selection-buttons">
+                <button class="select-all">Select All</button>
+                <button class="clear-selection">Clear</button>
+            </div>
+        </div>
+    </div>
+
+    {# Batch Actions #}
+    <div class="batch-actions" style="display: none;">
+        <div class="action-buttons">
+            {% if perms.cms.change_file %}
+                <button class="batch-btn move" data-action="move">
+                    Move Selected
+                </button>
+                <button class="batch-btn tag" data-action="tag">
+                    Tag Selected
+                </button>
+            {% endif %}
+            {% if perms.cms.delete_file %}
+                <button class="batch-btn delete" data-action="delete">
+                    Delete Selected
+                </button>
+            {% endif %}
+            <button class="batch-btn download" data-action="download">
+                Download Selected
+            </button>
+        </div>
+    </div>
+
+    {# Progress Overlay #}
+    <div class="progress-overlay" style="display: none;">
+        <div class="progress-content">
+            <h3 class="progress-title">Processing Files</h3>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+            <div class="progress-details">
+                <span class="progress-count">0/0</span>
+                <span class="progress-percentage">0%</span>
+            </div>
+            <button class="cancel-operation" style="display: none;">Cancel</button>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    class BulkOperations {
+        constructor(element) {
+            this.element = element;
+            this.selectedFiles = new Set();
+            this.inProgress = false;
+            this.setupEventListeners();
+        }
+
+        setupEventListeners() {
+            // Selection toggle
+            const toggleCheckbox = this.element.querySelector('[data-action="toggle-selection"]');
+            toggleCheckbox.addEventListener('change', (e) => {
+                this.element.dataset.selectionEnabled = e.target.checked;
+                this.toggleSelectionMode(e.target.checked);
+            });
+
+            // Select all/clear buttons
+            this.element.querySelector('.select-all').addEventListener('click', () => {
+                this.selectAll();
+            });
+
+            this.element.querySelector('.clear-selection').addEventListener('click', () => {
+                this.clearSelection();
+            });
+
+            // Batch action buttons
+            this.element.querySelectorAll('.batch-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    this.handleBatchAction(btn.dataset.action);
+                });
+            });
+
+            // Cancel operation
+            this.element.querySelector('.cancel-operation').addEventListener('click', () => {
+                this.cancelOperation();
+            });
+        }
+
+        toggleSelectionMode(enabled) {
+            const selectionActions = this.element.querySelector('.selection-actions');
+            const batchActions = this.element.querySelector('.batch-actions');
+            
+            selectionActions.style.display = enabled ? 'flex' : 'none';
+            batchActions.style.display = enabled ? 'block' : 'none';
+            
+            // Toggle file item selection mode
+            document.querySelectorAll('.file-item').forEach(item => {
+                item.classList.toggle('selectable', enabled);
+                
+                if (enabled) {
+                    item.addEventListener('click', this.handleFileClick.bind(this));
+                } else {
+                    item.removeEventListener('click', this.handleFileClick.bind(this));
+                    item.classList.remove('selected');
+                }
+            });
+            
+            if (!enabled) {
+                this.clearSelection();
+            }
+        }
+
+        handleFileClick(event) {
+            const fileItem = event.currentTarget;
+            const fileId = fileItem.dataset.id;
+            
+            if (this.selectedFiles.has(fileId)) {
+                this.selectedFiles.delete(fileId);
+                fileItem.classList.remove('selected');
+            } else {
+                this.selectedFiles.add(fileId);
+                fileItem.classList.add('selected');
+            }
+            
+            this.updateSelectionCount();
+            this.updateBatchActions();
+        }
+
+        selectAll() {
+            document.querySelectorAll('.file-item').forEach(item => {
+                const fileId = item.dataset.id;
+                this.selectedFiles.add(fileId);
+                item.classList.add('selected');
+            });
+            
+            this.updateSelectionCount();
+            this.updateBatchActions();
+        }
+
+        clearSelection() {
+            this.selectedFiles.clear();
+            document.querySelectorAll('.file-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            
+            this.updateSelectionCount();
+            this.updateBatchActions();
+        }
+
+        updateSelectionCount() {
+            const count = this.selectedFiles.size;
+            this.element.querySelector('.selection-count .count').textContent = count;
+        }
+
+        updateBatchActions() {
+            const hasSelection = this.selectedFiles.size > 0;
+            this.element.querySelectorAll('.batch-btn').forEach(btn => {
+                btn.disabled = !hasSelection;
+            });
+        }
+
+        async handleBatchAction(action) {
+            if (this.inProgress || this.selectedFiles.size === 0) return;
+
+            switch (action) {
+                case 'move':
+                    await this.handleMove();
+                    break;
+                case 'tag':
+                    await this.handleTag();
+                    break;
+                case 'delete':
+                    await this.handleDelete();
+                    break;
+                case 'download':
+                    await this.handleDownload();
+                    break;
+            }
+        }
+
+        async handleMove() {
+            const path = await this.showFolderDialog();
+            if (!path) return;
+
+            await this.processFiles('move', async (fileId) => {
+                const response = await fetch(`/api/cms/files/${fileId}/move`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': this.getCsrfToken()
+                    },
+                    body: JSON.stringify({ path })
+                });
+
+                if (!response.ok) throw new Error('Failed to move file');
+            });
+        }
+
+        async handleTag() {
+            const tags = await this.showTagDialog();
+            if (!tags) return;
+
+            await this.processFiles('tag', async (fileId) => {
+                const response = await fetch(`/api/cms/files/${fileId}/tags`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': this.getCsrfToken()
+                    },
+                    body: JSON.stringify({ tags })
+                });
+
+                if (!response.ok) throw new Error('Failed to tag file');
+            });
+        }
+
+        async handleDelete() {
+            if (!confirm(`Are you sure you want to delete ${this.selectedFiles.size} files?`)) {
+                return;
+            }
+
+            await this.processFiles('delete', async (fileId) => {
+                const response = await fetch(`/api/cms/files/${fileId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': this.getCsrfToken()
+                    }
+                });
+
+                if (!response.ok) throw new Error('Failed to delete file');
+            });
+        }
+
+        async handleDownload() {
+            const files = Array.from(this.selectedFiles);
+            if (files.length === 1) {
+                // Single file download
+                window.location.href = `/api/cms/files/${files[0]}/download`;
+            } else {
+                // Multiple files - create zip
+                await this.processFiles('download', async (fileId) => {
+                    const response = await fetch(`/api/cms/files/${fileId}/download`);
+                    if (!response.ok) throw new Error('Failed to download file');
+                    return response.blob();
+                });
+            }
+        }
+
+        async processFiles(action, processor) {
+            this.inProgress = true;
+            this.showProgress(action);
+            
+            const files = Array.from(this.selectedFiles);
+            const total = files.length;
+            let completed = 0;
+            let errors = [];
+
+            try {
+                for (const fileId of files) {
+                    if (!this.inProgress) break; // Operation cancelled
+
+                    try {
+                        await processor(fileId);
+                        completed++;
+                        this.updateProgress(completed, total);
+                    } catch (error) {
+                        errors.push({ fileId, error: error.message });
+                    }
+                }
+            } finally {
+                this.hideProgress();
+                this.inProgress = false;
+
+                if (errors.length > 0) {
+                    this.showErrors(errors);
+                } else if (completed === total) {
+                    // Refresh the file list
+                    window.location.reload();
+                }
+            }
+        }
+
+        showProgress(action) {
+            const overlay = this.element.querySelector('.progress-overlay');
+            const title = overlay.querySelector('.progress-title');
+            const cancelBtn = overlay.querySelector('.cancel-operation');
+            
+            title.textContent = `${action.charAt(0).toUpperCase() + action.slice(1)}ing Files`;
+            overlay.style.display = 'flex';
+            cancelBtn.style.display = 'block';
+        }
+
+        updateProgress(completed, total) {
+            const percentage = (completed / total) * 100;
+            const overlay = this.element.querySelector('.progress-overlay');
+            
+            overlay.querySelector('.progress-fill').style.width = `${percentage}%`;
+            overlay.querySelector('.progress-count').textContent = `${completed}/${total}`;
+            overlay.querySelector('.progress-percentage').textContent = `${Math.round(percentage)}%`;
+        }
+
+        hideProgress() {
+            const overlay = this.element.querySelector('.progress-overlay');
+            overlay.style.display = 'none';
+        }
+
+        cancelOperation() {
+            this.inProgress = false;
+        }
+
+        showErrors(errors) {
+            const dialog = document.createElement('dialog');
+            dialog.className = 'error-dialog';
+            
+            dialog.innerHTML = `
+                <div class="error-content">
+                    <h3>Operation Errors</h3>
+                    <ul class="error-list">
+                        ${errors.map(error => `
+                            <li>File ${error.fileId}: ${error.error}</li>
+                        `).join('')}
+                    </ul>
+                    <button class="close-btn">Close</button>
+                </div>
+            `;
+
+            document.body.appendChild(dialog);
+            
+            dialog.querySelector('.close-btn').addEventListener('click', () => {
+                dialog.close();
+                dialog.remove();
+            });
+
+            dialog.showModal();
+        }
+
+        async showFolderDialog() {
+            return new Promise(resolve => {
+                const dialog = document.createElement('dialog');
+                dialog.className = 'folder-dialog';
+                
+                dialog.innerHTML = `
+                    <form method="dialog">
+                        <h3>Move Files</h3>
+                        <div class="form-field">
+                            <label for="folder-path">Destination Folder:</label>
+                            <input type="text" 
+                                   id="folder-path" 
+                                   name="path" 
+                                   placeholder="/path/to/folder"
+                                   required>
+                        </div>
+                        <div class="dialog-actions">
+                            <button type="button" class="cancel-btn">Cancel</button>
+                            <button type="submit" class="confirm-btn">Move</button>
+                        </div>
+                    </form>
+                `;
+
+                document.body.appendChild(dialog);
+                
+                dialog.querySelector('.cancel-btn').addEventListener('click', () => {
+                    dialog.close();
+                    dialog.remove();
+                    resolve(null);
+                });
+
+                dialog.querySelector('form').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const path = e.target.elements.path.value;
+                    dialog.close();
+                    dialog.remove();
+                    resolve(path);
+                });
+
+                dialog.showModal();
+            });
+        }
+
+        async showTagDialog() {
+            return new Promise(resolve => {
+                const dialog = document.createElement('dialog');
+                dialog.className = 'tag-dialog';
+                
+                dialog.innerHTML = `
+                    <form method="dialog">
+                        <h3>Add Tags</h3>
+                        <div class="form-field">
+                            <label for="tags">Tags (comma separated):</label>
+                            <input type="text" 
+                                   id="tags" 
+                                   name="tags" 
+                                   placeholder="tag1, tag2, tag3"
+                                   required>
+                        </div>
+                        <div class="dialog-actions">
+                            <button type="button" class="cancel-btn">Cancel</button>
+                            <button type="submit" class="confirm-btn">Add Tags</button>
+                        </div>
+                    </form>
+                `;
+
+                document.body.appendChild(dialog);
+                
+                dialog.querySelector('.cancel-btn').addEventListener('click', () => {
+                    dialog.close();
+                    dialog.remove();
+                    resolve(null);
+                });
+
+                dialog.querySelector('form').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const tags = e.target.elements.tags.value
+                        .split(',')
+                        .map(tag => tag.trim())
+                        .filter(Boolean);
+                    dialog.close();
+                    dialog.remove();
+                    resolve(tags);
+                });
+
+                dialog.showModal();
+            });
+        }
+
+        getCsrfToken() {
+            return document.querySelector('[name=csrfmiddlewaretoken]').value;
+        }
+    }
+
+    // Initialize all bulk operations components
+    document.querySelectorAll('.bulk-operations').forEach(element => {
+        new BulkOperations(element);
+    });
+});
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.bulk-operations {
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    padding: 1rem;
+}
+
+/* Selection Controls */
+.selection-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.selection-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.selection-checkbox {
+    width: 1.2em;
+    height: 1.2em;
+}
+
+.selection-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.selection-count {
+    color: #666;
+}
+
+.selection-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.selection-buttons button {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+}
+
+.selection-buttons button:hover {
+    background: #f5f5f5;
+}
+
+/* Batch Actions */
+.batch-actions {
+    border-top: 1px solid #eee;
+    padding-top: 1rem;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.batch-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.batch-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.batch-btn.move {
+    background: #2196f3;
+    color: white;
+}
+
+.batch-btn.move:hover:not(:disabled) {
+    background: #1976d2;
+}
+
+.batch-btn.tag {
+    background: #9c27b0;
+    color: white;
+}
+
+.batch-btn.tag:hover:not(:disabled) {
+    background: #7b1fa2;
+}
+
+.batch-btn.delete {
+    background: #f44336;
+    color: white;
+}
+
+.batch-btn.delete:hover:not(:disabled) {
+    background: #d32f2f;
+}
+
+.batch-btn.download {
+    background: #4caf50;
+    color: white;
+}
+
+.batch-btn.download:hover:not(:disabled) {
+    background: #388e3c;
+}
+
+/* Progress Overlay */
+.progress-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.progress-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 4px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    width: 400px;
+    max-width: 90%;
+}
+
+.progress-title {
+    margin: 0 0 1rem;
+    font-size: 1.1rem;
+}
+
+.progress-bar {
+    height: 4px;
+    background: #eee;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #2196f3;
+    width: 0;
+    transition: width 0.3s;
+}
+
+.progress-details {
+    display: flex;
+    justify-content: space-between;
+    color: #666;
+    font-size: 0.875rem;
+}
+
+.cancel-operation {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background: none;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.cancel-operation:hover {
+    background: #f5f5f5;
+}
+
+/* Dialogs */
+dialog {
+    border: none;
+    border-radius: 4px;
+    padding: 0;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+dialog::backdrop {
+    background: rgba(0,0,0,0.5);
+}
+
+.folder-dialog,
+.tag-dialog,
+.error-dialog {
+    min-width: 400px;
+}
+
+.folder-dialog form,
+.tag-dialog form,
+.error-content {
+    padding: 1.5rem;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin: 1rem 0;
+}
+
+.form-field label {
+    font-size: 0.875rem;
+    color: #666;
+}
+
+.form-field input {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.dialog-actions button {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.cancel-btn {
+    background: none;
+    border: 1px solid #ddd;
+}
+
+.confirm-btn {
+    background: #2196f3;
+    color: white;
+    border: none;
+}
+
+.confirm-btn:hover {
+    background: #1976d2;
+}
+
+/* Error Dialog */
+.error-dialog h3 {
+    margin: 0 0 1rem;
+    color: #d32f2f;
+}
+
+.error-list {
+    margin: 0 0 1rem;
+    padding-left: 1.5rem;
+    color: #d32f2f;
+}
+
+.error-list li {
+    margin-bottom: 0.25rem;
+}
+
+.close-btn {
+    width: 100%;
+    padding: 0.5rem;
+    background: none;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    background: #f5f5f5;
+}
+
+/* File Item Selection Styles */
+.file-item.selectable {
+    cursor: pointer;
+    user-select: none;
+}
+
+.file-item.selectable::before {
+    content: '';
+    width: 1.2em;
+    height: 1.2em;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    margin-right: 0.5rem;
+}
+
+.file-item.selected::before {
+    background: #2196f3;
+    border-color: #2196f3;
+    background-image: url('{% static "cms/icons/check.svg" %}');
+    background-size: 80%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,544 @@
+{% load static %}
+
+<div class="file-upload" data-max-size="{{ max_file_size|default:'5242880' }}">
+    {# Upload Zone #}
+    <div class="upload-zone" data-action="drop-zone">
+        <input type="file" 
+               class="file-input" 
+               multiple 
+               style="display: none;"
+               data-action="file-select">
+        
+        <div class="upload-prompt">
+            <div class="upload-icon"></div>
+            <p>Drag files here or <button class="select-files-btn">select files</button></p>
+            <p class="upload-limits">Maximum file size: <span class="max-size">5MB</span></p>
+        </div>
+    </div>
+
+    {# Upload Queue #}
+    <div class="upload-queue">
+        <div class="queue-header">
+            <h3>Upload Queue</h3>
+            <button class="clear-completed" style="display: none;">Clear Completed</button>
+        </div>
+        
+        <div class="queue-items"></div>
+    </div>
+
+    {# Templates #}
+    <template id="queue-item-template">
+        <div class="queue-item" data-status="pending">
+            <div class="item-info">
+                <span class="item-name"></span>
+                <span class="item-size"></span>
+            </div>
+            
+            <div class="item-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <span class="progress-text">0%</span>
+            </div>
+            
+            <div class="item-status">
+                <span class="status-icon pending"></span>
+                <span class="status-icon success"></span>
+                <span class="status-icon error"></span>
+            </div>
+            
+            <div class="item-actions">
+                <button class="retry-btn" style="display: none;">Retry</button>
+                <button class="cancel-btn">Cancel</button>
+            </div>
+        </div>
+    </template>
+
+    {# Error Display #}
+    <div class="upload-errors" style="display: none;">
+        <h3>Upload Errors</h3>
+        <ul class="error-list"></ul>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    class FileUpload {
+        constructor(element) {
+            this.element = element;
+            this.maxSize = parseInt(element.dataset.maxSize, 10);
+            this.queue = new Map();
+            this.chunkSize = 1024 * 1024; // 1MB chunks
+            this.setupEventListeners();
+        }
+
+        setupEventListeners() {
+            const dropZone = this.element.querySelector('[data-action="drop-zone"]');
+            const fileInput = this.element.querySelector('[data-action="file-select"]');
+            const selectButton = this.element.querySelector('.select-files-btn');
+            const clearButton = this.element.querySelector('.clear-completed');
+
+            // File selection
+            selectButton.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', (e) => this.handleFiles(e.target.files));
+
+            // Drag and drop
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('drag-over');
+            });
+
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.classList.remove('drag-over');
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('drag-over');
+                this.handleFiles(e.dataTransfer.files);
+            });
+
+            // Clear completed
+            clearButton.addEventListener('click', () => {
+                const completed = this.element.querySelectorAll('.queue-item[data-status="success"]');
+                completed.forEach(item => item.remove());
+                clearButton.style.display = 'none';
+            });
+        }
+
+        handleFiles(fileList) {
+            Array.from(fileList).forEach(file => {
+                // Validate file size
+                if (file.size > this.maxSize) {
+                    this.showError(`${file.name} exceeds maximum file size`);
+                    return;
+                }
+
+                // Create queue item
+                const queueItem = this.createQueueItem(file);
+                this.queue.set(file.name, {
+                    file,
+                    element: queueItem,
+                    status: 'pending',
+                    progress: 0,
+                    chunks: Math.ceil(file.size / this.chunkSize)
+                });
+
+                // Start upload
+                this.uploadFile(file.name);
+            });
+        }
+
+        createQueueItem(file) {
+            const template = document.getElementById('queue-item-template');
+            const item = template.content.cloneNode(true).querySelector('.queue-item');
+            
+            item.querySelector('.item-name').textContent = file.name;
+            item.querySelector('.item-size').textContent = this.formatSize(file.size);
+            
+            const cancelBtn = item.querySelector('.cancel-btn');
+            cancelBtn.addEventListener('click', () => this.cancelUpload(file.name));
+            
+            const retryBtn = item.querySelector('.retry-btn');
+            retryBtn.addEventListener('click', () => this.retryUpload(file.name));
+            
+            this.element.querySelector('.queue-items').appendChild(item);
+            return item;
+        }
+
+        async uploadFile(fileName) {
+            const item = this.queue.get(fileName);
+            if (!item || item.status === 'uploading') return;
+
+            item.status = 'uploading';
+            item.element.dataset.status = 'uploading';
+            
+            try {
+                // Get upload URL and session ID
+                const initResponse = await fetch('/api/cms/upload/init', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': this.getCsrfToken()
+                    },
+                    body: JSON.stringify({
+                        filename: fileName,
+                        size: item.file.size,
+                        chunks: item.chunks
+                    })
+                });
+
+                if (!initResponse.ok) throw new Error('Failed to initialize upload');
+                const { upload_id } = await initResponse.json();
+
+                // Upload chunks
+                for (let chunk = 0; chunk < item.chunks; chunk++) {
+                    const start = chunk * this.chunkSize;
+                    const end = Math.min(start + this.chunkSize, item.file.size);
+                    const chunkBlob = item.file.slice(start, end);
+
+                    const formData = new FormData();
+                    formData.append('chunk', chunkBlob);
+                    formData.append('chunk_number', chunk);
+                    formData.append('upload_id', upload_id);
+
+                    const chunkResponse = await fetch('/api/cms/upload/chunk', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': this.getCsrfToken()
+                        },
+                        body: formData
+                    });
+
+                    if (!chunkResponse.ok) throw new Error('Chunk upload failed');
+
+                    // Update progress
+                    item.progress = (chunk + 1) / item.chunks * 100;
+                    this.updateProgress(fileName, item.progress);
+                }
+
+                // Complete upload
+                const completeResponse = await fetch('/api/cms/upload/complete', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': this.getCsrfToken()
+                    },
+                    body: JSON.stringify({ upload_id })
+                });
+
+                if (!completeResponse.ok) throw new Error('Failed to complete upload');
+
+                this.updateStatus(fileName, 'success');
+                this.element.querySelector('.clear-completed').style.display = 'block';
+            } catch (error) {
+                this.updateStatus(fileName, 'error');
+                this.showError(`Failed to upload ${fileName}: ${error.message}`);
+            }
+        }
+
+        cancelUpload(fileName) {
+            const item = this.queue.get(fileName);
+            if (!item) return;
+
+            item.status = 'cancelled';
+            item.element.dataset.status = 'cancelled';
+            item.element.remove();
+            this.queue.delete(fileName);
+        }
+
+        retryUpload(fileName) {
+            const item = this.queue.get(fileName);
+            if (!item) return;
+
+            item.status = 'pending';
+            item.progress = 0;
+            item.element.dataset.status = 'pending';
+            this.updateProgress(fileName, 0);
+            this.uploadFile(fileName);
+        }
+
+        updateProgress(fileName, progress) {
+            const item = this.queue.get(fileName);
+            if (!item) return;
+
+            const progressBar = item.element.querySelector('.progress-fill');
+            const progressText = item.element.querySelector('.progress-text');
+            
+            progressBar.style.width = `${progress}%`;
+            progressText.textContent = `${Math.round(progress)}%`;
+        }
+
+        updateStatus(fileName, status) {
+            const item = this.queue.get(fileName);
+            if (!item) return;
+
+            item.status = status;
+            item.element.dataset.status = status;
+
+            const retryBtn = item.element.querySelector('.retry-btn');
+            retryBtn.style.display = status === 'error' ? 'block' : 'none';
+        }
+
+        showError(message) {
+            const errorContainer = this.element.querySelector('.upload-errors');
+            const errorList = errorContainer.querySelector('.error-list');
+            
+            const errorItem = document.createElement('li');
+            errorItem.textContent = message;
+            errorList.appendChild(errorItem);
+            
+            errorContainer.style.display = 'block';
+            
+            // Auto-remove error after 5 seconds
+            setTimeout(() => {
+                errorItem.remove();
+                if (!errorList.children.length) {
+                    errorContainer.style.display = 'none';
+                }
+            }, 5000);
+        }
+
+        formatSize(bytes) {
+            const units = ['B', 'KB', 'MB', 'GB'];
+            let size = bytes;
+            let unitIndex = 0;
+            
+            while (size >= 1024 && unitIndex < units.length - 1) {
+                size /= 1024;
+                unitIndex++;
+            }
+            
+            return `${Math.round(size * 100) / 100} ${units[unitIndex]}`;
+        }
+
+        getCsrfToken() {
+            return document.querySelector('[name=csrfmiddlewaretoken]').value;
+        }
+    }
+
+    // Initialize all file upload components
+    document.querySelectorAll('.file-upload').forEach(element => {
+        new FileUpload(element);
+    });
+});
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.file-upload {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.upload-zone {
+    border: 2px dashed #ddd;
+    border-radius: 4px;
+    padding: 2rem;
+    text-align: center;
+    transition: border-color 0.3s, background-color 0.3s;
+}
+
+.upload-zone.drag-over {
+    border-color: #0066cc;
+    background-color: rgba(0,102,204,0.05);
+}
+
+.upload-prompt {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.upload-icon {
+    width: 48px;
+    height: 48px;
+    background-image: url('{% static "cms/icons/upload.svg" %}');
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.select-files-btn {
+    color: #0066cc;
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.upload-limits {
+    font-size: 0.875rem;
+    color: #666;
+}
+
+.upload-queue {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.queue-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: #f5f5f5;
+    border-bottom: 1px solid #ddd;
+}
+
+.queue-header h3 {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.clear-completed {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    color: #666;
+    background: none;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.clear-completed:hover {
+    background: #f0f0f0;
+}
+
+.queue-items {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.queue-item {
+    display: grid;
+    grid-template-columns: 2fr 2fr auto auto;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #eee;
+    align-items: center;
+}
+
+.item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.item-name {
+    font-weight: 500;
+}
+
+.item-size {
+    font-size: 0.875rem;
+    color: #666;
+}
+
+.item-progress {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 4px;
+    background: #eee;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #0066cc;
+    width: 0;
+    transition: width 0.3s;
+}
+
+.progress-text {
+    font-size: 0.875rem;
+    color: #666;
+    min-width: 3em;
+}
+
+.item-status {
+    display: flex;
+    align-items: center;
+}
+
+.status-icon {
+    width: 20px;
+    height: 20px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    display: none;
+}
+
+.status-icon.pending {
+    background-image: url('{% static "cms/icons/pending.svg" %}');
+}
+
+.status-icon.success {
+    background-image: url('{% static "cms/icons/success.svg" %}');
+}
+
+.status-icon.error {
+    background-image: url('{% static "cms/icons/error.svg" %}');
+}
+
+.queue-item[data-status="pending"] .status-icon.pending,
+.queue-item[data-status="success"] .status-icon.success,
+.queue-item[data-status="error"] .status-icon.error {
+    display: block;
+}
+
+.item-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.retry-btn,
+.cancel-btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.retry-btn {
+    color: #fff;
+    background: #0066cc;
+    border: none;
+}
+
+.retry-btn:hover {
+    background: #0052a3;
+}
+
+.cancel-btn {
+    color: #666;
+    background: none;
+    border: 1px solid #ddd;
+}
+
+.cancel-btn:hover {
+    background: #f0f0f0;
+}
+
+.upload-errors {
+    background: #fff3f3;
+    border: 1px solid #ffcdd2;
+    border-radius: 4px;
+    padding: 1rem;
+}
+
+.upload-errors h3 {
+    margin: 0 0 0.5rem;
+    color: #d32f2f;
+    font-size: 1rem;
+}
+
+.error-list {
+    margin: 0;
+    padding-left: 1.5rem;
+    color: #d32f2f;
+}
+
+.error-list li {
+    margin-bottom: 0.25rem;
+}
+
+.error-list li:last-child {
+    margin-bottom: 0;
+}
+</style>
+{% endblock %}

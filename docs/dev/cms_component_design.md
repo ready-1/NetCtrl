@@ -1,138 +1,187 @@
-# CMS Component Design Documentation
+# CMS Component Design
 
 ## Overview
-Implementation of a Content Management System (CMS) component for the network management system. This component handles storage and management of firmware, documentation, and network configuration files.
+The CMS interface is built using Django templates with vanilla JavaScript for interactivity. The design focuses on modularity, performance, and progressive enhancement.
 
-## Core Components
+## Components
 
-### Models (models.py)
-- **Category**: Hierarchical organization system
-  - Supports nested categories
-  - Unique naming with full path tracking
-  - Flexible organization structure
+### File Browser (`components/file_browser.html`)
+- List and grid view implementations
+- Client-side sorting and filtering
+- Breadcrumb navigation
+- Performance optimized for large file lists
+- Error handling with retry mechanisms
 
-- **File**: Core file storage model
-  - UUID-based identification
-  - Type-based classification (firmware/docs/config)
-  - Checksum verification
-  - Category association
-  - Timestamp tracking
+### File Upload (`components/file_upload.html`)
+- Drag and drop support
+- Multiple file selection
+- Progress tracking
+- Chunked upload implementation
+- Error handling with retry options
 
-- **FileVersion**: Version control implementation
-  - Links to parent file
-  - Version tracking
-  - Changelog support
-  - Checksum verification
+### Preview (`components/preview.html`)
+- Support for various file types:
+  - Images with zoom
+  - Video/audio with native players
+  - PDF with iframe viewer
+  - Text with syntax highlighting
+- Metadata display panel
+- Edit/delete capabilities
+- Error states and fallbacks
 
-- **Metadata**: Flexible file attributes
-  - JSON-based value storage
-  - Key-value structure
-  - File association
-  - Timestamp tracking
+### Bulk Operations (`components/bulk_operations.html`)
+- Selection system with toggle
+- Batch actions:
+  - Move files
+  - Tag files
+  - Delete files
+  - Download (single/zip)
+- Progress tracking
+- Error handling with detailed reporting
 
-### Storage System (storage.py)
-- **SecureCMSStorage**: Custom storage backend
-  - Secure file handling
-  - Organized directory structure
-  - Type-based path generation
-  - Unique file naming
-  - Future extensibility support
+## Integration
 
-### Permission System (permissions.py)
-- **Role-based Access Control**
-  - CMS_Admin: Full access
-  - CMS_Editor: Create/Edit/View
-  - CMS_Viewer: View only
+### Parent Template (`file_manager.html`)
+- Combines all components
+- Responsive layout
+- Mobile-first design
+- Event coordination between components
 
-- **Granular Permissions**
-  - File type specific controls
-  - Category hierarchy awareness
-  - Metadata access control
-  - Object-level permissions
+## Technical Details
 
-## Design Decisions
+### JavaScript Architecture
+- Vanilla JS with ES6+ features
+- Class-based components
+- Event-driven communication
+- Progressive enhancement
+- Error boundary implementation
 
-### File Organization
-- Files organized by type and date
-- Category-based subdirectories
-- Unique file identification
-- Checksum verification for integrity
+### CSS Architecture
+- BEM-like naming convention
+- CSS Grid for layouts
+- Flexbox for component internals
+- Mobile-first responsive design
+- CSS custom properties for theming
 
-### Security Considerations
-- Role-based access control
-- Hierarchical permission checking
-- File validation hooks
-- Secure path generation
-- Metadata access restrictions
-
-### Future Compatibility
-- Extensible storage backend
-- Flexible metadata system
-- Version control support
-- Type-based organization
-- API-ready models
-
-## Alternatives Considered
-
-### Storage Organization
-1. **Flat Structure**
-   - Rejected due to scalability concerns
-   - Would complicate category management
-
-2. **Pure Category-based**
-   - Rejected for mixed type handling
-   - Would complicate backup/restore
-
-### Permission Models
-1. **Simple Read/Write**
-   - Rejected for granular control needs
-   - Insufficient for enterprise use
-
-2. **User-based Permissions**
-   - Rejected for maintenance complexity
-   - Group-based more scalable
-
-### File Versioning
-1. **Separate Files**
-   - Chosen for simplicity
-   - Better storage management
-   - Easier backup handling
-
-2. **Delta Storage**
-   - Rejected for complexity
-   - Would complicate restoration
-   - Higher processing overhead
-
-## Implementation Notes
-
-### Database Considerations
-- Indexes on frequently accessed fields
-- Unique constraints for data integrity
-- Efficient relationship modeling
-- Proper cascade behaviors
+### Error Handling
+- Component-level error boundaries
+- Graceful degradation
+- Retry mechanisms
+- User-friendly error messages
+- Detailed error logging
 
 ### Performance Optimizations
-- Efficient path generation
-- Cached permission checks
-- Optimized file storage
-- Metadata query efficiency
+- Lazy loading for images/media
+- Debounced search/filter
+- Chunked file uploads
+- Client-side caching
+- Minimal DOM updates
 
-### Security Measures
-- File validation hooks
-- Path sanitization
-- Permission inheritance
-- Access logging support
+## Security Considerations
 
-## Future Enhancements
-1. Search functionality
-2. Batch operations
-3. API endpoints
-4. Workflow automation
-5. Integration with external systems
+### CSRF Protection
+- Django CSRF tokens for all requests
+- Secure file upload handling
+- Permission-based actions
+- Input sanitization
 
-## Testing Requirements
-1. File operations
-2. Permission checks
-3. Version control
-4. Category management
-5. Storage operations
+### File Validation
+- MIME type checking
+- Size limits
+- Malware scanning integration points
+- Secure file storage
+
+## Dependencies
+- Django templating system
+- Browser native APIs:
+  - Fetch API
+  - File API
+  - Drag and Drop API
+  - CSS Grid/Flexbox
+- SVG icons for UI elements
+
+## Future Considerations
+- Integration with device management
+- Advanced search capabilities
+- Custom preview handlers
+- Metadata extraction
+- Version control
+
+## Testing Strategy
+
+### Unit Tests
+- Component initialization
+- Event handling
+- Error scenarios
+- State management
+
+### Integration Tests
+- Component interactions
+- API integration
+- Error handling
+- Performance benchmarks
+
+### End-to-End Tests
+- User workflows
+- File operations
+- Error recovery
+- Mobile responsiveness
+
+## Accessibility
+
+### ARIA Support
+- Proper roles and labels
+- Keyboard navigation
+- Screen reader compatibility
+- Focus management
+
+### Progressive Enhancement
+- Basic functionality without JS
+- Enhanced features with JS
+- Fallback content for unsupported features
+- Mobile device support
+
+## Icons
+Located in `static/cms/icons/`:
+- check.svg: Selection indicator
+- file.svg: Generic file icon
+- folder.svg: Directory icon
+- upload.svg: Upload action icon
+
+## API Integration
+
+### Endpoints
+- `/api/cms/files/`: List and search files
+- `/api/cms/files/<id>/`: File operations
+- `/api/cms/upload/`: File upload handling
+- `/api/cms/bulk/`: Batch operations
+
+### Response Handling
+- Success/error states
+- Progress tracking
+- Error recovery
+- Optimistic updates
+
+## Development Guidelines
+
+### Component Creation
+1. Start with HTML structure
+2. Add base styling
+3. Implement JavaScript functionality
+4. Add error handling
+5. Optimize performance
+6. Test thoroughly
+
+### Code Style
+- Semantic HTML
+- BEM CSS naming
+- ES6+ JavaScript
+- Comprehensive comments
+- Error handling patterns
+
+### Documentation
+- Component purpose
+- Usage examples
+- Event handling
+- Error scenarios
+- Integration points

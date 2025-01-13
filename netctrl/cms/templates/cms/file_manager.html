@@ -1,0 +1,148 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}File Manager - CMS{% endblock %}
+
+{% block content %}
+<div class="file-manager">
+    {# Top Bar with Upload and Bulk Operations #}
+    <div class="top-bar">
+        <div class="upload-section">
+            {% include "cms/components/file_upload.html" %}
+        </div>
+        <div class="bulk-section">
+            {% include "cms/components/bulk_operations.html" %}
+        </div>
+    </div>
+
+    {# Main Content Area #}
+    <div class="content-area">
+        <div class="browser-section">
+            {% include "cms/components/file_browser.html" %}
+        </div>
+        <div class="preview-section">
+            {% include "cms/components/preview.html" %}
+        </div>
+    </div>
+</div>
+
+{% block extra_css %}
+<style>
+.file-manager {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+    height: calc(100vh - 4rem); /* Account for header/footer */
+}
+
+.top-bar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.content-area {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 1rem;
+    flex: 1;
+    min-height: 0; /* Enable scrolling */
+}
+
+.browser-section,
+.preview-section {
+    overflow: auto;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .top-bar {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 992px) {
+    .content-area {
+        grid-template-columns: 1fr;
+    }
+    
+    .preview-section {
+        display: none;
+    }
+    
+    .preview-section.active {
+        display: block;
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        max-width: 400px;
+        background: white;
+        box-shadow: -2px 0 4px rgba(0,0,0,0.1);
+        z-index: 1000;
+    }
+}
+
+@media (max-width: 576px) {
+    .file-manager {
+        padding: 0.5rem;
+    }
+    
+    .preview-section.active {
+        max-width: none;
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle file selection for preview
+    document.querySelectorAll('.file-item').forEach(item => {
+        item.addEventListener('click', (e) => {
+            // Only handle click if not in selection mode
+            if (!document.querySelector('.bulk-operations').dataset.selectionEnabled) {
+                const fileId = item.dataset.id;
+                const preview = document.querySelector('.preview-section');
+                
+                // Show preview panel on mobile
+                preview.classList.add('active');
+                
+                // Load file preview
+                fetch(`/api/cms/files/${fileId}`)
+                    .then(response => response.json())
+                    .then(file => {
+                        preview.querySelector('.file-preview').dataset.fileId = fileId;
+                        // Update preview content based on file type
+                        // This will be handled by the preview component's JS
+                    })
+                    .catch(error => {
+                        console.error('Failed to load file preview:', error);
+                    });
+            }
+        });
+    });
+
+    // Handle preview panel close on mobile
+    document.querySelector('.close-preview')?.addEventListener('click', () => {
+        document.querySelector('.preview-section').classList.remove('active');
+    });
+
+    // Handle file upload completion
+    document.querySelector('.file-upload').addEventListener('uploadComplete', () => {
+        // Refresh file browser
+        window.location.reload();
+    });
+
+    // Handle bulk operations completion
+    document.querySelector('.bulk-operations').addEventListener('operationComplete', () => {
+        // Refresh file browser
+        window.location.reload();
+    });
+});
+</script>
+{% endblock %}
+{% endblock %}

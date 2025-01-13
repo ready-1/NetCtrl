@@ -1,0 +1,521 @@
+{% load static %}
+
+<div class="file-browser" data-current-path="{{ initial_path|default:'/' }}">
+    {# Controls #}
+    <div class="file-browser-controls">
+        <button class="view-toggle" data-view="list">
+            <span class="list-view-text">Grid View</span>
+            <span class="grid-view-text" style="display: none;">List View</span>
+        </button>
+        
+        <div class="search-filter">
+            <input type="text" 
+                   class="file-search" 
+                   placeholder="Search files..."
+                   data-action="search">
+            
+            <select class="file-type-filter" data-action="filter">
+                <option value="">All Types</option>
+                <option value="folder">Folders</option>
+                <option value="file">Files</option>
+            </select>
+        </div>
+    </div>
+
+    {# Path Navigation #}
+    <div class="file-browser-path">
+        {% for segment in path_segments %}
+            <span class="path-segment" data-path="{{ segment.path }}">
+                {{ segment.name|default:'Root' }}
+            </span>
+            {% if not forloop.last %}
+                <span class="path-separator">/</span>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    {# File List/Grid #}
+    <div class="file-browser-content list-view">
+        <div class="file-list-header">
+            <div class="header-cell" data-sort="name">Name</div>
+            <div class="header-cell" data-sort="size">Size</div>
+            <div class="header-cell" data-sort="modified">Modified</div>
+        </div>
+        
+        <div class="file-list">
+            {% for file in files %}
+                <div class="file-item" 
+                     data-id="{{ file.id }}"
+                     data-type="{{ file.type }}"
+                     data-path="{{ file.path }}">
+                    <div class="file-name">
+                        {% if file.type == 'folder' %}
+                            <span class="icon folder-icon"></span>
+                        {% else %}
+                            <span class="icon file-icon"></span>
+                        {% endif %}
+                        {{ file.name }}
+                    </div>
+                    <div class="file-size">
+                        {% if file.type == 'folder' %}
+                            --
+                        {% else %}
+                            {{ file.size|filesizeformat }}
+                        {% endif %}
+                    </div>
+                    <div class="file-modified">
+                        {{ file.modified|date:"M d, Y H:i" }}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{# Error Template #}
+<template id="file-browser-error">
+    <div class="file-browser-error">
+        <h3>Error loading files</h3>
+        <p class="error-message"></p>
+        <button class="retry-button">Retry</button>
+    </div>
+</template>
+
+{# Loading Template #}
+<template id="file-browser-loading">
+    <div class="file-browser-loading">
+        <div class="loading-spinner"></div>
+        <p>Loading files...</p>
+    </div>
+</template>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    class FileBrowser {
+        constructor(element) {
+            this.element = element;
+            this.currentPath = element.dataset.currentPath;
+            this.view = 'list';
+            this.sort = { field: 'name', direction: 'asc' };
+            this.setupEventListeners();
+            this.loadFiles();
+        }
+
+        setupEventListeners() {
+            // View toggle
+            this.element.querySelector('.view-toggle').addEventListener('click', () => {
+                this.toggleView();
+            });
+
+            // Search input
+            this.element.querySelector('.file-search').addEventListener('input', 
+                debounce((e) => this.handleSearch(e.target.value), 300)
+            );
+
+            // Type filter
+            this.element.querySelector('.file-type-filter').addEventListener('change', 
+                (e) => this.handleFilter(e.target.value)
+            );
+
+            // Sort headers
+            this.element.querySelectorAll('[data-sort]').forEach(header => {
+                header.addEventListener('click', () => {
+                    this.handleSort(header.dataset.sort);
+                });
+            });
+
+            // Path navigation
+            this.element.querySelectorAll('.path-segment').forEach(segment => {
+                segment.addEventListener('click', () => {
+                    this.navigateTo(segment.dataset.path);
+                });
+            });
+        }
+
+        async loadFiles() {
+            try {
+                this.showLoading();
+                const response = await fetch(`/api/cms/files?path=${encodeURIComponent(this.currentPath)}`);
+                if (!response.ok) throw new Error('Failed to load files');
+                
+                const data = await response.json();
+                this.renderFiles(data);
+            } catch (error) {
+                this.showError(error.message);
+            }
+        }
+
+        renderFiles(files) {
+            const container = this.element.querySelector('.file-list');
+            container.innerHTML = files.map(file => this.renderFileItem(file)).join('');
+            
+            // Setup file item event listeners
+            container.querySelectorAll('.file-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    if (item.dataset.type === 'folder') {
+                        this.navigateTo(item.dataset.path);
+                    } else {
+                        this.handleFileSelect(item.dataset);
+                    }
+                });
+            });
+        }
+
+        renderFileItem(file) {
+            return `
+                <div class="file-item" 
+                     data-id="${file.id}"
+                     data-type="${file.type}"
+                     data-path="${file.path}">
+                    <div class="file-name">
+                        <span class="icon ${file.type}-icon"></span>
+                        ${file.name}
+                    </div>
+                    <div class="file-size">
+                        ${file.type === 'folder' ? '--' : this.formatFileSize(file.size)}
+                    </div>
+                    <div class="file-modified">
+                        ${this.formatDate(file.modified)}
+                    </div>
+                </div>
+            `;
+        }
+
+        toggleView() {
+            this.view = this.view === 'list' ? 'grid' : 'list';
+            const content = this.element.querySelector('.file-browser-content');
+            content.className = `file-browser-content ${this.view}-view`;
+            
+            const button = this.element.querySelector('.view-toggle');
+            button.querySelector('.list-view-text').style.display = 
+                this.view === 'list' ? 'none' : 'inline';
+            button.querySelector('.grid-view-text').style.display = 
+                this.view === 'grid' ? 'none' : 'inline';
+        }
+
+        handleSearch(query) {
+            // Implement client-side search
+            const items = this.element.querySelectorAll('.file-item');
+            items.forEach(item => {
+                const name = item.querySelector('.file-name').textContent.toLowerCase();
+                item.style.display = name.includes(query.toLowerCase()) ? '' : 'none';
+            });
+        }
+
+        handleFilter(type) {
+            const items = this.element.querySelectorAll('.file-item');
+            items.forEach(item => {
+                item.style.display = 
+                    !type || item.dataset.type === type ? '' : 'none';
+            });
+        }
+
+        handleSort(field) {
+            if (this.sort.field === field) {
+                this.sort.direction = this.sort.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                this.sort.field = field;
+                this.sort.direction = 'asc';
+            }
+
+            const items = Array.from(this.element.querySelectorAll('.file-item'));
+            const container = this.element.querySelector('.file-list');
+            
+            items.sort((a, b) => {
+                let aVal = a.querySelector(`.file-${field}`).textContent;
+                let bVal = b.querySelector(`.file-${field}`).textContent;
+                
+                if (field === 'size') {
+                    aVal = a.dataset.type === 'folder' ? -1 : this.parseFileSize(aVal);
+                    bVal = b.dataset.type === 'folder' ? -1 : this.parseFileSize(bVal);
+                }
+                
+                const modifier = this.sort.direction === 'asc' ? 1 : -1;
+                return aVal > bVal ? modifier : -modifier;
+            });
+
+            container.innerHTML = '';
+            items.forEach(item => container.appendChild(item));
+        }
+
+        async navigateTo(path) {
+            this.currentPath = path;
+            await this.loadFiles();
+            
+            // Update path segments
+            const segments = path.split('/').filter(Boolean);
+            const pathNav = this.element.querySelector('.file-browser-path');
+            
+            pathNav.innerHTML = segments.map((segment, index) => {
+                const segmentPath = '/' + segments.slice(0, index + 1).join('/');
+                return `
+                    <span class="path-segment" data-path="${segmentPath}">
+                        ${segment}
+                    </span>
+                    ${index < segments.length - 1 ? '<span class="path-separator">/</span>' : ''}
+                `;
+            }).join('');
+            
+            this.setupEventListeners();
+        }
+
+        handleFileSelect(fileData) {
+            // Dispatch custom event for file selection
+            const event = new CustomEvent('fileSelect', { 
+                detail: fileData,
+                bubbles: true 
+            });
+            this.element.dispatchEvent(event);
+        }
+
+        showLoading() {
+            const template = document.getElementById('file-browser-loading');
+            const loading = template.content.cloneNode(true);
+            this.element.querySelector('.file-browser-content').replaceWith(loading);
+        }
+
+        showError(message) {
+            const template = document.getElementById('file-browser-error');
+            const error = template.content.cloneNode(true);
+            error.querySelector('.error-message').textContent = message;
+            this.element.querySelector('.file-browser-content').replaceWith(error);
+            
+            error.querySelector('.retry-button').addEventListener('click', () => {
+                this.loadFiles();
+            });
+        }
+
+        formatFileSize(bytes) {
+            const units = ['B', 'KB', 'MB', 'GB'];
+            let size = bytes;
+            let unitIndex = 0;
+            
+            while (size >= 1024 && unitIndex < units.length - 1) {
+                size /= 1024;
+                unitIndex++;
+            }
+            
+            return `${Math.round(size * 100) / 100} ${units[unitIndex]}`;
+        }
+
+        parseFileSize(sizeStr) {
+            const [size, unit] = sizeStr.split(' ');
+            const units = { B: 1, KB: 1024, MB: 1024 ** 2, GB: 1024 ** 3 };
+            return parseFloat(size) * (units[unit] || 1);
+        }
+
+        formatDate(dateStr) {
+            return new Date(dateStr).toLocaleString();
+        }
+    }
+
+    // Utility function for debouncing
+    function debounce(func, wait) {
+        let timeout;
+        return function(...args) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(this, args), wait);
+        };
+    }
+
+    // Initialize all file browsers on the page
+    document.querySelectorAll('.file-browser').forEach(element => {
+        new FileBrowser(element);
+    });
+});
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.file-browser {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.file-browser-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.search-filter {
+    display: flex;
+    gap: 0.5rem;
+    flex: 1;
+}
+
+.file-search {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.file-type-filter {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fff;
+}
+
+.file-browser-path {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: #f5f5f5;
+    border-radius: 4px;
+}
+
+.path-segment {
+    cursor: pointer;
+    color: #0066cc;
+}
+
+.path-segment:hover {
+    text-decoration: underline;
+}
+
+.file-browser-content {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.file-list-header {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    background: #f5f5f5;
+    border-bottom: 1px solid #ddd;
+    font-weight: bold;
+}
+
+.header-cell {
+    cursor: pointer;
+}
+
+.header-cell:hover {
+    color: #0066cc;
+}
+
+.file-list {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.file-item {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+}
+
+.file-item:hover {
+    background: #f8f8f8;
+}
+
+.file-name {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.icon {
+    width: 20px;
+    height: 20px;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.folder-icon {
+    background-image: url('{% static "cms/icons/folder.svg" %}');
+}
+
+.file-icon {
+    background-image: url('{% static "cms/icons/file.svg" %}');
+}
+
+/* Grid View */
+.grid-view .file-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.grid-view .file-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 1rem;
+    border: 1px solid #eee;
+    border-radius: 4px;
+}
+
+.grid-view .file-size,
+.grid-view .file-modified {
+    font-size: 0.875rem;
+    color: #666;
+}
+
+/* Loading State */
+.file-browser-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    gap: 1rem;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #0066cc;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Error State */
+.file-browser-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    gap: 1rem;
+    text-align: center;
+}
+
+.retry-button {
+    padding: 0.5rem 1rem;
+    background: #0066cc;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.retry-button:hover {
+    background: #0052a3;
+}
+</style>
+{% endblock %}
