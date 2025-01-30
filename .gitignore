@@ -202,3 +202,10 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# Static and Media
+/staticfiles/
+/media/
+!/media/.gitkeep
+/static/admin/
+/static/rest_framework/
