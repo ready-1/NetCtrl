@@ -65,7 +65,13 @@
      - Flake8 linting
 
 10. Initialize version control
-    - Update .gitignore
-    - Create initial commit
-    - Set up branch structure
-    #context - I have initialized the repo and have been commiting by phase/step as we go along.  look at the git log to see what I have done.
+    - Update .gitignore with project-specific patterns:
+      - Media and static files (except .gitkeep)
+      - Environment files (except .env.example)
+      - Database files
+      - Cache and coverage files
+      - Editor-specific files
+      - Docker override files
+    - Create empty directories with .gitkeep
+    - Commit changes by implementation phase
+    - Document git workflow in README.md

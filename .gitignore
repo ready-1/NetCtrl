@@ -209,3 +209,33 @@ Temporary Items
 !/media/.gitkeep
 /static/admin/
 /static/rest_framework/
+
+# Project specific
+media/
+static/
+!static/.gitkeep
+*.env
+*.env.*
+!*.env.example
+*.sqlite3
+*.sqlite3-journal
+.coverage
+htmlcov/
+.pytest_cache/
+.ruff_cache/
+*.pyc
+__pycache__/
+.DS_Store
+.env.local
+.env.*.local
+
+# Editor directories and files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Docker
+docker-compose.override.yml
+.docker/
