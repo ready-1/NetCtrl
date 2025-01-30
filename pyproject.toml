@@ -9,6 +9,7 @@ readme = "README.md"
 python = "^3.12"
 django = "^5.0"
 djangorestframework = "^3.15.2"
+djangorestframework-simplejwt = "^5.3.1"
 psycopg = {extras = ["binary"], version = "^3.2.4"}
 channels = "^4.2.0"
 redis = "^5.2.1"
@@ -16,12 +17,72 @@ pytest-django = {extras = ["testing"], version = "^4.9.0"}
 django-htmx = "^1.21.0"
 gunicorn = "^23.0.0"
 uvicorn = "^0.34.0"
+pydantic = "^2.6.1"
+urllib3 = "^2.2.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.4"
+pytest-django = "^4.9.0"
+pytest-cov = "^4.1.0"
+pytest-xdist = "^3.5.0"
+pytest-sugar = "^1.0.0"
 black = "^25.1.0"
 flake8 = "^7.1.1"
+mypy = "^1.8.0"
+factory-boy = "^3.3.0"
+faker = "^22.5.1"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings"
+python_files = ["test_*.py", "*_test.py"]
+addopts = "-v --strict-markers --no-migrations --cov=. --cov-report=html --cov-report=term-missing --cov-fail-under=80"
+testpaths = ["tests"]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::UserWarning",
+]
+
+[tool.coverage.run]
+source = ["."]
+omit = [
+    "*/tests/*",
+    "*/migrations/*",
+    "manage.py",
+    "config/wsgi.py",
+    "config/asgi.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "pass",
+    "raise ImportError",
+]
+
+[tool.black]
+line-length = 88
+target-version = ["py312"]
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+  | migrations
+)/
+'''
