@@ -5,9 +5,9 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**ip_addr** | **str** | IP Address | [optional] 
-**mac_addr** | **str** | MAC Address | [optional] 
-**vlan_id** | **int** | VLAN ID | [optional] 
+**ip_addr** | **str** | IP Address | [optional]
+**mac_addr** | **str** | MAC Address | [optional]
+**vlan_id** | **int** | VLAN ID | [optional]
 
 ## Example
 
@@ -27,5 +27,3 @@ host_table_dict = host_table_instance.to_dict()
 host_table_from_dict = HostTable.from_dict(host_table_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

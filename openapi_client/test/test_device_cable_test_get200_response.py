@@ -39,8 +39,8 @@ class TestDeviceCableTestGet200Response(unittest.TestCase):
         if include_optional:
             return DeviceCableTestGet200Response(
                 resp = openapi_client.models.general_responses_code.general_responses_code(
-                    status = 'success', 
-                    resp_code = 0, 
+                    status = 'success',
+                    resp_code = 0,
                     resp_msg = 'Operation success', ),
                 cable_test_status = {"status":2,"lenKnown":1,"shortestLen":0,"longestLen":12,"cableFailureLen":0}
             )

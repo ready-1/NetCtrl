@@ -37,11 +37,11 @@ class TestPtpv2Get200Response(unittest.TestCase):
         if include_optional:
             return Ptpv2Get200Response(
                 resp = openapi_client.models.general_responses_code.general_responses_code(
-                    status = 'success', 
-                    resp_code = 0, 
+                    status = 'success',
+                    resp_code = 0,
                     resp_msg = 'Operation success', ),
                 ptpv2 = openapi_client.models.ptpv2_get.ptpv2_get(
-                    admin_mode = 'enabled', 
+                    admin_mode = 'enabled',
                     opera_mode = 'enabled', )
             )
         else:

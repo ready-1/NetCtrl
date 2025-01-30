@@ -24,5 +24,3 @@ sw_portstats_get_portid_parameter_dict = sw_portstats_get_portid_parameter_insta
 sw_portstats_get_portid_parameter_from_dict = SwPortstatsGetPortidParameter.from_dict(sw_portstats_get_portid_parameter_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

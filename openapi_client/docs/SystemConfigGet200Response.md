@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional] 
-**system_config** | [**SystemConfigGet**](SystemConfigGet.md) |  | [optional] 
+**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional]
+**system_config** | [**SystemConfigGet**](SystemConfigGet.md) |  | [optional]
 
 ## Example
 
@@ -26,5 +26,3 @@ system_config_get200_response_dict = system_config_get200_response_instance.to_d
 system_config_get200_response_from_dict = SystemConfigGet200Response.from_dict(system_config_get200_response_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

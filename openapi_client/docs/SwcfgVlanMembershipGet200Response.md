@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional] 
-**vlan_membership** | [**SwcfgVlanMembership**](SwcfgVlanMembership.md) |  | [optional] 
+**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional]
+**vlan_membership** | [**SwcfgVlanMembership**](SwcfgVlanMembership.md) |  | [optional]
 
 ## Example
 
@@ -26,5 +26,3 @@ swcfg_vlan_membership_get200_response_dict = swcfg_vlan_membership_get200_respon
 swcfg_vlan_membership_get200_response_from_dict = SwcfgVlanMembershipGet200Response.from_dict(swcfg_vlan_membership_get200_response_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

@@ -1,0 +1,20 @@
+[flake8]
+max-line-length = 88
+extend-ignore = E203,W503,W605,D100,D101,D102,D103,D104,D105,D106,D107,D200,D202,D205,D209,D400,D401,Q000,F401,F811,F841,E501,B009
+exclude =
+    .git,
+    __pycache__,
+    build,
+    dist,
+    *.egg-info,
+    migrations,
+    openapi_client,  # Auto-generated code
+    .venv,
+    .tox,
+    .pytest_cache
+
+per-file-ignores =
+    # Ignore unused imports in __init__ files
+    __init__.py:F401
+    # Ignore missing docstrings in tests
+    tests/*:D100,D101,D102,D103,D104

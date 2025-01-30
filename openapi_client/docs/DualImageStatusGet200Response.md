@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional] 
-**dual_image_status** | [**DualImageStatus**](DualImageStatus.md) |  | [optional] 
+**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional]
+**dual_image_status** | [**DualImageStatus**](DualImageStatus.md) |  | [optional]
 
 ## Example
 
@@ -26,5 +26,3 @@ dual_image_status_get200_response_dict = dual_image_status_get200_response_insta
 dual_image_status_get200_response_from_dict = DualImageStatusGet200Response.from_dict(dual_image_status_get200_response_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**priority** | **int** | Priority assigned to this class | [optional] 
-**queuemap** | **int** | Assigned queue number | [optional] 
+**priority** | **int** | Priority assigned to this class | [optional]
+**queuemap** | **int** | Assigned queue number | [optional]
 
 ## Example
 
@@ -26,5 +26,3 @@ dot1p_queue_map_inner_dict = dot1p_queue_map_inner_instance.to_dict()
 dot1p_queue_map_inner_from_dict = Dot1pQueueMapInner.from_dict(dot1p_queue_map_inner_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

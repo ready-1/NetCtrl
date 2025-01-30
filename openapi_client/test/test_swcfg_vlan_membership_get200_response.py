@@ -39,8 +39,8 @@ class TestSwcfgVlanMembershipGet200Response(unittest.TestCase):
         if include_optional:
             return SwcfgVlanMembershipGet200Response(
                 resp = openapi_client.models.general_responses_code.general_responses_code(
-                    status = 'success', 
-                    resp_code = 0, 
+                    status = 'success',
+                    resp_code = 0,
                     resp_msg = 'Operation success', ),
                 vlan_membership = {"vlanid":2,"portMembers":[{"port":1,"tagged":false},{"port":2,"tagged":false},{"port":3,"tagged":false}],"lagMembers":[{"port":4,"tagged":false},{"port":5,"tagged":false},{"port":6,"tagged":false}],"trafficPrio":6,"trafficPrioPortMem":[{"port":1},{"port":2},{"port":3}],"trafficPrioLagMem":[{"port":1},{"port":2},{"port":3}],"pvidMembers":[{"port":7},{"port":8},{"port":9}]}
             )

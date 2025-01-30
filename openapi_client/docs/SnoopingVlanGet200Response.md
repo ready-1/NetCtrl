@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional] 
-**snooping_vlans** | [**List[SnoopingVlanInner]**](SnoopingVlanInner.md) |  | [optional] 
+**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional]
+**snooping_vlans** | [**List[SnoopingVlanInner]**](SnoopingVlanInner.md) |  | [optional]
 
 ## Example
 
@@ -26,5 +26,3 @@ snooping_vlan_get200_response_dict = snooping_vlan_get200_response_instance.to_d
 snooping_vlan_get200_response_from_dict = SnoopingVlanGet200Response.from_dict(snooping_vlan_get200_response_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

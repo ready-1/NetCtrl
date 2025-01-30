@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**switch_config_lag_group** | [**SwLagCfg**](SwLagCfg.md) |  | [optional] 
+**switch_config_lag_group** | [**SwLagCfg**](SwLagCfg.md) |  | [optional]
 
 ## Example
 
@@ -25,5 +25,3 @@ sw_lag_cfg_post_request_dict = sw_lag_cfg_post_request_instance.to_dict()
 sw_lag_cfg_post_request_from_dict = SwLagCfgPostRequest.from_dict(sw_lag_cfg_post_request_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

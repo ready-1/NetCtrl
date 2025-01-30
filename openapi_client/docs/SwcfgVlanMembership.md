@@ -5,13 +5,13 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**vlanid** | **int** | VLAN ID | 
-**port_members** | **List[object]** |  | 
-**lag_members** | **List[object]** |  | 
-**traffic_prio** | **int** | Traffic Priority of VLAN | 
-**traffic_prio_port_mem** | [**List[SwcfgVlanMembershipTrafficPrioPortMemInner]**](SwcfgVlanMembershipTrafficPrioPortMemInner.md) |  | 
-**traffic_prio_lag_mem** | [**List[SwcfgVlanMembershipTrafficPrioLagMemInner]**](SwcfgVlanMembershipTrafficPrioLagMemInner.md) |  | 
-**pvid_members** | [**List[SwcfgVlanMembershipPvidMembersInner]**](SwcfgVlanMembershipPvidMembersInner.md) |  | [optional] 
+**vlanid** | **int** | VLAN ID |
+**port_members** | **List[object]** |  |
+**lag_members** | **List[object]** |  |
+**traffic_prio** | **int** | Traffic Priority of VLAN |
+**traffic_prio_port_mem** | [**List[SwcfgVlanMembershipTrafficPrioPortMemInner]**](SwcfgVlanMembershipTrafficPrioPortMemInner.md) |  |
+**traffic_prio_lag_mem** | [**List[SwcfgVlanMembershipTrafficPrioLagMemInner]**](SwcfgVlanMembershipTrafficPrioLagMemInner.md) |  |
+**pvid_members** | [**List[SwcfgVlanMembershipPvidMembersInner]**](SwcfgVlanMembershipPvidMembersInner.md) |  | [optional]
 
 ## Example
 
@@ -31,5 +31,3 @@ swcfg_vlan_membership_dict = swcfg_vlan_membership_instance.to_dict()
 swcfg_vlan_membership_from_dict = SwcfgVlanMembership.from_dict(swcfg_vlan_membership_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

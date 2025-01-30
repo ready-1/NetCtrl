@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**learned_entry_discards** | **int** | Learned entry | [optional] 
+**learned_entry_discards** | **int** | Learned entry | [optional]
 **aging_time** | **int** | Aging time in seconds. | [optional] [default to 300]
 
 ## Example
@@ -26,5 +26,3 @@ dot1d_tp_config_get_dict = dot1d_tp_config_get_instance.to_dict()
 dot1d_tp_config_get_from_dict = Dot1dTpConfigGet.from_dict(dot1d_tp_config_get_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

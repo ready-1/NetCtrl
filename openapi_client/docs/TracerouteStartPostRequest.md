@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**traceroute_start** | [**TracerouteStart**](TracerouteStart.md) |  | [optional] 
+**traceroute_start** | [**TracerouteStart**](TracerouteStart.md) |  | [optional]
 
 ## Example
 
@@ -25,5 +25,3 @@ traceroute_start_post_request_dict = traceroute_start_post_request_instance.to_d
 traceroute_start_post_request_from_dict = TracerouteStartPostRequest.from_dict(traceroute_start_post_request_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

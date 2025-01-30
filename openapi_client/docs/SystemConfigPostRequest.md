@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**system_config** | [**SystemConfigPost**](SystemConfigPost.md) |  | [optional] 
+**system_config** | [**SystemConfigPost**](SystemConfigPost.md) |  | [optional]
 
 ## Example
 
@@ -25,5 +25,3 @@ system_config_post_request_dict = system_config_post_request_instance.to_dict()
 system_config_post_request_from_dict = SystemConfigPostRequest.from_dict(system_config_post_request_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

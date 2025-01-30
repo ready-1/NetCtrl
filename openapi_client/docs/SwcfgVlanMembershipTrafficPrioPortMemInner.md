@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**portid** | **int** | Traffic priority and Port VLAN IDs (PVID) for these physical ports | [optional] 
+**portid** | **int** | Traffic priority and Port VLAN IDs (PVID) for these physical ports | [optional]
 
 ## Example
 
@@ -25,5 +25,3 @@ swcfg_vlan_membership_traffic_prio_port_mem_inner_dict = swcfg_vlan_membership_t
 swcfg_vlan_membership_traffic_prio_port_mem_inner_from_dict = SwcfgVlanMembershipTrafficPrioPortMemInner.from_dict(swcfg_vlan_membership_traffic_prio_port_mem_inner_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

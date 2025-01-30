@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**dot1q_sw_port_config** | [**Dot1qSwPortConfigPost**](Dot1qSwPortConfigPost.md) |  | [optional] 
+**dot1q_sw_port_config** | [**Dot1qSwPortConfigPost**](Dot1qSwPortConfigPost.md) |  | [optional]
 
 ## Example
 
@@ -25,5 +25,3 @@ dot1q_sw_port_config_post_request_dict = dot1q_sw_port_config_post_request_insta
 dot1q_sw_port_config_post_request_from_dict = Dot1qSwPortConfigPostRequest.from_dict(dot1q_sw_port_config_post_request_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

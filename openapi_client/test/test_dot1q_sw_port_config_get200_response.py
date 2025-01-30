@@ -39,8 +39,8 @@ class TestDot1qSwPortConfigGet200Response(unittest.TestCase):
         if include_optional:
             return Dot1qSwPortConfigGet200Response(
                 resp = openapi_client.models.general_responses_code.general_responses_code(
-                    status = 'success', 
-                    resp_code = 0, 
+                    status = 'success',
+                    resp_code = 0,
                     resp_msg = 'Operation success', ),
                 dot1q_sw_port_config = {"interface":1,"accessVlan":1,"allowedVlanList":[1,2,5,6],"dynamicallyAddedVlanList":"none","forbiddenVlanList":"none","configMode":"access","nativeVlan":1,"taggedVlanList":[201,202,203],"untaggedVlanList":[1]}
             )

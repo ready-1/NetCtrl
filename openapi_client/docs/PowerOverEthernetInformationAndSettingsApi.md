@@ -4,10 +4,10 @@ All URIs are relative to *https://127.0.0.1:8443/api/v1*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**poe_config_get**](PowerOverEthernetInformationAndSettingsApi.md#poe_config_get) | **GET** /poe_config | 
-[**poe_config_post**](PowerOverEthernetInformationAndSettingsApi.md#poe_config_post) | **POST** /poe_config | 
-[**swcfg_poe_get**](PowerOverEthernetInformationAndSettingsApi.md#swcfg_poe_get) | **GET** /swcfg_poe | 
-[**swcfg_poe_post**](PowerOverEthernetInformationAndSettingsApi.md#swcfg_poe_post) | **POST** /swcfg_poe | 
+[**poe_config_get**](PowerOverEthernetInformationAndSettingsApi.md#poe_config_get) | **GET** /poe_config |
+[**poe_config_post**](PowerOverEthernetInformationAndSettingsApi.md#poe_config_post) | **POST** /poe_config |
+[**swcfg_poe_get**](PowerOverEthernetInformationAndSettingsApi.md#swcfg_poe_get) | **GET** /swcfg_poe |
+[**swcfg_poe_post**](PowerOverEthernetInformationAndSettingsApi.md#swcfg_poe_post) | **POST** /swcfg_poe |
 
 
 # **poe_config_get**
@@ -121,7 +121,7 @@ configuration = openapi_client.Configuration(
 with openapi_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = openapi_client.PowerOverEthernetInformationAndSettingsApi(api_client)
-    poe_config_post_request = openapi_client.PoeConfigPostRequest() # PoeConfigPostRequest | 
+    poe_config_post_request = openapi_client.PoeConfigPostRequest() # PoeConfigPostRequest |
 
     try:
         api_response = api_instance.poe_config_post(poe_config_post_request)
@@ -138,7 +138,7 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **poe_config_post_request** | [**PoeConfigPostRequest**](PoeConfigPostRequest.md)|  | 
+ **poe_config_post_request** | [**PoeConfigPostRequest**](PoeConfigPostRequest.md)|  |
 
 ### Return type
 
@@ -215,7 +215,7 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **portid** | [**SwPortstatsGetPortidParameter**](.md)| Port ID Number by &#x60;&lt;port#&gt;&#x60; or &#x60;ALL&#x60; | 
+ **portid** | [**SwPortstatsGetPortidParameter**](.md)| Port ID Number by &#x60;&lt;port#&gt;&#x60; or &#x60;ALL&#x60; |
 
 ### Return type
 
@@ -277,7 +277,7 @@ with openapi_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = openapi_client.PowerOverEthernetInformationAndSettingsApi(api_client)
     portid = ALL # int | Port ID Number by `<port#>` or `ALL`
-    swcfg_poe_post_request = openapi_client.SwcfgPoePostRequest() # SwcfgPoePostRequest | 
+    swcfg_poe_post_request = openapi_client.SwcfgPoePostRequest() # SwcfgPoePostRequest |
 
     try:
         api_response = api_instance.swcfg_poe_post(portid, swcfg_poe_post_request)
@@ -294,8 +294,8 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **portid** | **int**| Port ID Number by &#x60;&lt;port#&gt;&#x60; or &#x60;ALL&#x60; | 
- **swcfg_poe_post_request** | [**SwcfgPoePostRequest**](SwcfgPoePostRequest.md)|  | 
+ **portid** | **int**| Port ID Number by &#x60;&lt;port#&gt;&#x60; or &#x60;ALL&#x60; |
+ **swcfg_poe_post_request** | [**SwcfgPoePostRequest**](SwcfgPoePostRequest.md)|  |
 
 ### Return type
 
@@ -317,4 +317,3 @@ Name | Type | Description  | Notes
 **200** | successful operation |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-

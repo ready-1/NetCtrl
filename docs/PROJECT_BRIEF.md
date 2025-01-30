@@ -137,7 +137,7 @@ class ConfigurationTemplate(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(User)
-    
+
     class Meta:
         ordering = ['-updated_at']
 
@@ -148,7 +148,7 @@ class ConfigurationVersion(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User)
     comment = models.TextField()
-    
+
     class Meta:
         unique_together = ['configuration', 'version_number']
 
@@ -159,7 +159,7 @@ class BulkPortOperation(models.Model):
         ('completed', 'Completed'),
         ('failed', 'Failed')
     ]
-    
+
     switches = models.ManyToManyField(Switch)
     port_profile = models.ForeignKey(PortProfile)
     port_numbers = ArrayField(models.IntegerField())
@@ -176,14 +176,14 @@ class Notification(models.Model):
         ('error', 'Error'),
         ('success', 'Success')
     ]
-    
+
     user = models.ForeignKey(User)
     level = models.CharField(choices=LEVEL_CHOICES)
     message = models.TextField()
     switch = models.ForeignKey(Switch, null=True)
     read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
-    
+
     class Meta:
         ordering = ['-created_at']
 
@@ -194,7 +194,7 @@ class ConfigurationRollback(models.Model):
         ('completed', 'Completed'),
         ('failed', 'Failed')
     ]
-    
+
     switch = models.ForeignKey(Switch)
     from_version = models.ForeignKey(ConfigurationVersion, related_name='rollback_from')
     to_version = models.ForeignKey(ConfigurationVersion, related_name='rollback_to')

@@ -37,8 +37,8 @@ class TestFiberOpticsGet200Response(unittest.TestCase):
         if include_optional:
             return FiberOpticsGet200Response(
                 resp = openapi_client.models.general_responses_code.general_responses_code(
-                    status = 'success', 
-                    resp_code = 0, 
+                    status = 'success',
+                    resp_code = 0,
                     resp_msg = 'Operation success', ),
                 fiber_optics = {"port":"1/0/1","temp":1,"voltage":1,"current":1,"outputPower":1,"inputPower":1,"txFault":1,"los":1,"faultStatus":"No Fault","vendorName":"NETGEAR","linkLength_50_um":0,"linkLength_62.5_um":0,"linkLength":"1M","serialNumber":"M7A05393","partNumber":"CABSFP10G1MNC","nominalBitRate":10000,"rev":"C","compliance":"DAC","Supported":true,"possibleSpeedDetected":"10G"}
             )

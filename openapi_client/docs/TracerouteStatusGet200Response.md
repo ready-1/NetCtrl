@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional] 
-**traceroute_info** | [**TracerouteStatus**](TracerouteStatus.md) |  | [optional] 
+**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional]
+**traceroute_info** | [**TracerouteStatus**](TracerouteStatus.md) |  | [optional]
 
 ## Example
 
@@ -26,5 +26,3 @@ traceroute_status_get200_response_dict = traceroute_status_get200_response_insta
 traceroute_status_get200_response_from_dict = TracerouteStatusGet200Response.from_dict(traceroute_status_get200_response_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

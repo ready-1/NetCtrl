@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional] 
-**poe_config** | [**PoeConfigGet**](PoeConfigGet.md) |  | [optional] 
+**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional]
+**poe_config** | [**PoeConfigGet**](PoeConfigGet.md) |  | [optional]
 
 ## Example
 
@@ -26,5 +26,3 @@ poe_config_get200_response_dict = poe_config_get200_response_instance.to_dict()
 poe_config_get200_response_from_dict = PoeConfigGet200Response.from_dict(poe_config_get200_response_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**costrust** | [**Costrust**](Costrust.md) |  | [optional] 
+**costrust** | [**Costrust**](Costrust.md) |  | [optional]
 
 ## Example
 
@@ -25,5 +25,3 @@ costrust_post_request_dict = costrust_post_request_instance.to_dict()
 costrust_post_request_from_dict = CostrustPostRequest.from_dict(costrust_post_request_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

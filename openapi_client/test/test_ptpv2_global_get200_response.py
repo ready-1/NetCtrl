@@ -37,8 +37,8 @@ class TestPtpv2GlobalGet200Response(unittest.TestCase):
         if include_optional:
             return Ptpv2GlobalGet200Response(
                 resp = openapi_client.models.general_responses_code.general_responses_code(
-                    status = 'success', 
-                    resp_code = 0, 
+                    status = 'success',
+                    resp_code = 0,
                     resp_msg = 'Operation success', ),
                 ptpv2_global = openapi_client.models.ptpv2_global.ptpv2_global(
                     admin_mode = 'enabled', )

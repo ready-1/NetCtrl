@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**igmp_state** | **bool** | IGMP state for the VLAN | [optional] 
+**igmp_state** | **bool** | IGMP state for the VLAN | [optional]
 
 ## Example
 
@@ -25,5 +25,3 @@ swcfg_vlan_igmp_config_dict = swcfg_vlan_igmp_config_instance.to_dict()
 swcfg_vlan_igmp_config_from_dict = SwcfgVlanIgmpConfig.from_dict(swcfg_vlan_igmp_config_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

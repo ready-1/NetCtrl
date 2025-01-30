@@ -4,8 +4,8 @@ All URIs are relative to *https://127.0.0.1:8443/api/v1*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**sw_lag_cfg_get**](LinkAggregrationGroupSettingsApi.md#sw_lag_cfg_get) | **GET** /sw_lag_cfg | 
-[**sw_lag_cfg_post**](LinkAggregrationGroupSettingsApi.md#sw_lag_cfg_post) | **POST** /sw_lag_cfg | 
+[**sw_lag_cfg_get**](LinkAggregrationGroupSettingsApi.md#sw_lag_cfg_get) | **GET** /sw_lag_cfg |
+[**sw_lag_cfg_post**](LinkAggregrationGroupSettingsApi.md#sw_lag_cfg_post) | **POST** /sw_lag_cfg |
 
 
 # **sw_lag_cfg_get**
@@ -62,7 +62,7 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **lag_group** | [**SwPortstatsGetPortidParameter**](.md)| LAG Group ID# or &#x60;ALL&#x60; | 
+ **lag_group** | [**SwPortstatsGetPortidParameter**](.md)| LAG Group ID# or &#x60;ALL&#x60; |
 
 ### Return type
 
@@ -124,7 +124,7 @@ with openapi_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = openapi_client.LinkAggregrationGroupSettingsApi(api_client)
     lag_group = 1 # int | LAG Group ID
-    sw_lag_cfg_post_request = openapi_client.SwLagCfgPostRequest() # SwLagCfgPostRequest | 
+    sw_lag_cfg_post_request = openapi_client.SwLagCfgPostRequest() # SwLagCfgPostRequest |
 
     try:
         api_response = api_instance.sw_lag_cfg_post(lag_group, sw_lag_cfg_post_request)
@@ -141,8 +141,8 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **lag_group** | **int**| LAG Group ID | 
- **sw_lag_cfg_post_request** | [**SwLagCfgPostRequest**](SwLagCfgPostRequest.md)|  | 
+ **lag_group** | **int**| LAG Group ID |
+ **sw_lag_cfg_post_request** | [**SwLagCfgPostRequest**](SwLagCfgPostRequest.md)|  |
 
 ### Return type
 
@@ -164,4 +164,3 @@ Name | Type | Description  | Notes
 **200** | successful operation |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-

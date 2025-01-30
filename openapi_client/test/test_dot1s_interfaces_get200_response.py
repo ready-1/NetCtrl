@@ -39,8 +39,8 @@ class TestDot1sInterfacesGet200Response(unittest.TestCase):
         if include_optional:
             return Dot1sInterfacesGet200Response(
                 resp = openapi_client.models.general_responses_code.general_responses_code(
-                    status = 'success', 
-                    resp_code = 0, 
+                    status = 'success',
+                    resp_code = 0,
                     resp_msg = 'Operation success', ),
                 dot1s_interfaces = [
                     [{"interface":1,"bpduFilterMode":false,"bpduFloodMode":false,"intfEdgePortMode":false,"intfGuardMode":2,"intfMode":true},{"interface":2,"bpduFilterMode":false,"bpduFloodMode":false,"intfEdgePortMode":false,"intfGuardMode":2,"intfMode":true}]

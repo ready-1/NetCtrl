@@ -39,8 +39,8 @@ class TestSnoopingInterfacesGet200Response(unittest.TestCase):
         if include_optional:
             return SnoopingInterfacesGet200Response(
                 resp = openapi_client.models.general_responses_code.general_responses_code(
-                    status = 'success', 
-                    resp_code = 0, 
+                    status = 'success',
+                    resp_code = 0,
                     resp_msg = 'Operation success', ),
                 snooping_interfaces = [{"interface":1,"fastLeaveAdminMode":"disabled","groupMembershipInterval":262,"intfMode":"disabled","proxyQuerierMode":"enabled","responseTime":12,"family":"igmp"}]
             )

@@ -4,15 +4,15 @@ All URIs are relative to *https://127.0.0.1:8443/api/v1*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**dot1d_stp_config_get**](SpanningTreeProtocolApi.md#dot1d_stp_config_get) | **GET** /dot1d_stp_config | 
-[**dot1d_stp_entries_get**](SpanningTreeProtocolApi.md#dot1d_stp_entries_get) | **GET** /dot1d_stp_entries | 
-[**dot1s_interfaces_get**](SpanningTreeProtocolApi.md#dot1s_interfaces_get) | **GET** /dot1s_interfaces | 
-[**dot1s_interfaces_post**](SpanningTreeProtocolApi.md#dot1s_interfaces_post) | **POST** /dot1s_interfaces | 
-[**msti_delete**](SpanningTreeProtocolApi.md#msti_delete) | **DELETE** /msti | 
-[**msti_get**](SpanningTreeProtocolApi.md#msti_get) | **GET** /msti | 
-[**msti_post**](SpanningTreeProtocolApi.md#msti_post) | **POST** /msti | 
-[**stp_get**](SpanningTreeProtocolApi.md#stp_get) | **GET** /stp | 
-[**stp_post**](SpanningTreeProtocolApi.md#stp_post) | **POST** /stp | 
+[**dot1d_stp_config_get**](SpanningTreeProtocolApi.md#dot1d_stp_config_get) | **GET** /dot1d_stp_config |
+[**dot1d_stp_entries_get**](SpanningTreeProtocolApi.md#dot1d_stp_entries_get) | **GET** /dot1d_stp_entries |
+[**dot1s_interfaces_get**](SpanningTreeProtocolApi.md#dot1s_interfaces_get) | **GET** /dot1s_interfaces |
+[**dot1s_interfaces_post**](SpanningTreeProtocolApi.md#dot1s_interfaces_post) | **POST** /dot1s_interfaces |
+[**msti_delete**](SpanningTreeProtocolApi.md#msti_delete) | **DELETE** /msti |
+[**msti_get**](SpanningTreeProtocolApi.md#msti_get) | **GET** /msti |
+[**msti_post**](SpanningTreeProtocolApi.md#msti_post) | **POST** /msti |
+[**stp_get**](SpanningTreeProtocolApi.md#stp_get) | **GET** /stp |
+[**stp_post**](SpanningTreeProtocolApi.md#stp_post) | **POST** /stp |
 
 
 # **dot1d_stp_config_get**
@@ -273,7 +273,7 @@ with openapi_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = openapi_client.SpanningTreeProtocolApi(api_client)
     interface = 1 # int | Port Interface Number
-    dot1s_interfaces_post_request = openapi_client.Dot1sInterfacesPostRequest() # Dot1sInterfacesPostRequest | 
+    dot1s_interfaces_post_request = openapi_client.Dot1sInterfacesPostRequest() # Dot1sInterfacesPostRequest |
 
     try:
         api_response = api_instance.dot1s_interfaces_post(interface, dot1s_interfaces_post_request)
@@ -290,8 +290,8 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **interface** | **int**| Port Interface Number | 
- **dot1s_interfaces_post_request** | [**Dot1sInterfacesPostRequest**](Dot1sInterfacesPostRequest.md)|  | 
+ **interface** | **int**| Port Interface Number |
+ **dot1s_interfaces_post_request** | [**Dot1sInterfacesPostRequest**](Dot1sInterfacesPostRequest.md)|  |
 
 ### Return type
 
@@ -368,7 +368,7 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **mstid** | **int**| MST ID | 
+ **mstid** | **int**| MST ID |
 
 ### Return type
 
@@ -502,7 +502,7 @@ configuration = openapi_client.Configuration(
 with openapi_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = openapi_client.SpanningTreeProtocolApi(api_client)
-    msti_post_request = openapi_client.MstiPostRequest() # MstiPostRequest | 
+    msti_post_request = openapi_client.MstiPostRequest() # MstiPostRequest |
     mstid = 1 # int | Multiple Spanning Tree (MST) ID (optional)
 
     try:
@@ -520,8 +520,8 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **msti_post_request** | [**MstiPostRequest**](MstiPostRequest.md)|  | 
- **mstid** | **int**| Multiple Spanning Tree (MST) ID | [optional] 
+ **msti_post_request** | [**MstiPostRequest**](MstiPostRequest.md)|  |
+ **mstid** | **int**| Multiple Spanning Tree (MST) ID | [optional]
 
 ### Return type
 
@@ -655,7 +655,7 @@ configuration = openapi_client.Configuration(
 with openapi_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = openapi_client.SpanningTreeProtocolApi(api_client)
-    stp_post_request = openapi_client.StpPostRequest() # StpPostRequest | 
+    stp_post_request = openapi_client.StpPostRequest() # StpPostRequest |
 
     try:
         api_response = api_instance.stp_post(stp_post_request)
@@ -672,7 +672,7 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **stp_post_request** | [**StpPostRequest**](StpPostRequest.md)|  | 
+ **stp_post_request** | [**StpPostRequest**](StpPostRequest.md)|  |
 
 ### Return type
 
@@ -694,4 +694,3 @@ Name | Type | Description  | Notes
 **200** | successful operation |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-

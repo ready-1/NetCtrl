@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional] 
-**dot1d_base_config** | [**Dot1dBaseConfig**](Dot1dBaseConfig.md) |  | [optional] 
+**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional]
+**dot1d_base_config** | [**Dot1dBaseConfig**](Dot1dBaseConfig.md) |  | [optional]
 
 ## Example
 
@@ -26,5 +26,3 @@ dot1d_base_config_get200_response_dict = dot1d_base_config_get200_response_insta
 dot1d_base_config_get200_response_from_dict = Dot1dBaseConfigGet200Response.from_dict(dot1d_base_config_get200_response_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

@@ -39,11 +39,11 @@ class TestDot1dTpConfigGet200Response(unittest.TestCase):
         if include_optional:
             return Dot1dTpConfigGet200Response(
                 resp = openapi_client.models.general_responses_code.general_responses_code(
-                    status = 'success', 
-                    resp_code = 0, 
+                    status = 'success',
+                    resp_code = 0,
                     resp_msg = 'Operation success', ),
                 dot1d_tp_config = openapi_client.models.dot1d_tp_config_get.dot1d_tp_config_get(
-                    learned_entry_discards = 0, 
+                    learned_entry_discards = 0,
                     aging_time = 300, )
             )
         else:

@@ -39,8 +39,8 @@ class TestDot1dStpEntriesGet200Response(unittest.TestCase):
         if include_optional:
             return Dot1dStpEntriesGet200Response(
                 resp = openapi_client.models.general_responses_code.general_responses_code(
-                    status = 'success', 
-                    resp_code = 0, 
+                    status = 'success',
+                    resp_code = 0,
                     resp_msg = 'Operation success', ),
                 dot1d_stp_entries = [{"port":1,"priority":32768,"state":"enabled","pathCost":1,"designatedRoot":"80:00:8C:3B:AD:66:C6:98","designatedCost":0,"designatedBridge":"80:00:8C:3B:AD:66:C6:98","designatedPort":4800},{"port":52,"priority":32768,"state":"enabled","pathCost":1,"designatedRoot":"80:00:8C:3B:AD:66:C6:98","designatedCost":0,"designatedBridge":"80:00:8C:3B:AD:66:C6:98","designatedPort":"00:0"}]
             )

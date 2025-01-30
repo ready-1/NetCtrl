@@ -39,8 +39,8 @@ class TestDeviceLogReaderGet200Response(unittest.TestCase):
         if include_optional:
             return DeviceLogReaderGet200Response(
                 resp = openapi_client.models.general_responses_code.general_responses_code(
-                    status = 'success', 
-                    resp_code = 0, 
+                    status = 'success',
+                    resp_code = 0,
                     resp_msg = 'Operation success', ),
                 log_reader = {"logs":["<15>1 2018-01-10T13:20:27.125+5:30Z VGC728XP-1 OpEN tRpcsrv.01000 - :openapi_logging.c(1294) 59563 %% ConfigAgent: GET /api/v1/test","<15>1 2018-01-10T13:20:27.127+5:30Z VGC728XP-1 IP dtlTask - :ip_api.c(7848) 59564 %% Received an invalid ip packet on g1: length 16384 Src ip 224.0.0.251 Src port is Null Dst ip 20.233.20.233 Dst port is Null"]}
             )

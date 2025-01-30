@@ -39,8 +39,8 @@ class TestCosQueueConfigGet200Response(unittest.TestCase):
         if include_optional:
             return CosQueueConfigGet200Response(
                 resp = openapi_client.models.general_responses_code.general_responses_code(
-                    status = 'success', 
-                    resp_code = 0, 
+                    status = 'success',
+                    resp_code = 0,
                     resp_msg = 'Operation success', ),
                 cos_queue_config = [{"id":"0","min_bw":"1","mgmt_type":"TailDrop","schedule_type":"Weighted"},{"id":"1","min_bw":"1","mgmt_type":"WRED","schedule_type":"Strict"},{"id":"2","min_bw":"1","mgmt_type":"TailDrop","schedule_type":"Weighted"},{"id":"3","min_bw":"1","mgmt_type":"WRED","schedule_type":"Strict"},{"id":"4","min_bw":"1","mgmt_type":"TailDrop","schedule_type":"Weighted"},{"id":"5","min_bw":"1","mgmt_type":"WRED","schedule_type":"Strict"},{"id":"6","min_bw":"1","mgmt_type":"TailDrop","schedule_type":"Weighted"},{"id":"7","min_bw":"1","mgmt_type":"WRED","schedule_type":"Strict"}]
             )

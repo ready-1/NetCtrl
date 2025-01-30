@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**vlan_ip** | [**VlanIp**](VlanIp.md) |  | [optional] 
+**vlan_ip** | [**VlanIp**](VlanIp.md) |  | [optional]
 
 ## Example
 
@@ -25,5 +25,3 @@ vlan_ip_post_request_dict = vlan_ip_post_request_instance.to_dict()
 vlan_ip_post_request_from_dict = VlanIpPostRequest.from_dict(vlan_ip_post_request_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

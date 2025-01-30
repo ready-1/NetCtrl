@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**state** | **int** | Traceroute Test State:   * &#x60;0&#x60; &#x3D; PT_SUCCESS   * &#x60;1&#x60; &#x3D; PT_IN_PROGRESS   * &#x60;2&#x60; &#x3D; PT_FAILURE  | [optional] 
-**traceroute_msg** | **str** | Response message for traceroute | [optional] 
+**state** | **int** | Traceroute Test State:   * &#x60;0&#x60; &#x3D; PT_SUCCESS   * &#x60;1&#x60; &#x3D; PT_IN_PROGRESS   * &#x60;2&#x60; &#x3D; PT_FAILURE  | [optional]
+**traceroute_msg** | **str** | Response message for traceroute | [optional]
 
 ## Example
 
@@ -26,5 +26,3 @@ traceroute_status_dict = traceroute_status_instance.to_dict()
 traceroute_status_from_dict = TracerouteStatus.from_dict(traceroute_status_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

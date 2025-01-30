@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**snooping_queriers** | [**SnoopingQueriersPost**](SnoopingQueriersPost.md) |  | [optional] 
+**snooping_queriers** | [**SnoopingQueriersPost**](SnoopingQueriersPost.md) |  | [optional]
 
 ## Example
 
@@ -25,5 +25,3 @@ snooping_queriers_post_request_dict = snooping_queriers_post_request_instance.to
 snooping_queriers_post_request_from_dict = SnoopingQueriersPostRequest.from_dict(snooping_queriers_post_request_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

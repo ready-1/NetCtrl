@@ -37,8 +37,8 @@ class TestFdbStatsGet200Response(unittest.TestCase):
         if include_optional:
             return FdbStatsGet200Response(
                 resp = openapi_client.models.general_responses_code.general_responses_code(
-                    status = 'success', 
-                    resp_code = 0, 
+                    status = 'success',
+                    resp_code = 0,
                     resp_msg = 'Operation success', ),
                 fdb_stats = {"staticEntries":2,"dynamicEntries":110,"maxTableEntries":16384,"currentTableEntries":112,"greatestTableEntries":133}
             )

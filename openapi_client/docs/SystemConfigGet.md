@@ -5,10 +5,10 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**sys_access_line** | **str** | System access type setting | [optional] 
-**sys_line_terminal_len** | **int** | Terminal length of an access line. | [optional] 
-**sys_serial_time_out** | **int** | Serial timeout. | [optional] 
-**sys_telnet_server_admin_mode** | **str** | Telnet server admin mode. | [optional] 
+**sys_access_line** | **str** | System access type setting | [optional]
+**sys_line_terminal_len** | **int** | Terminal length of an access line. | [optional]
+**sys_serial_time_out** | **int** | Serial timeout. | [optional]
+**sys_telnet_server_admin_mode** | **str** | Telnet server admin mode. | [optional]
 
 ## Example
 
@@ -28,5 +28,3 @@ system_config_get_dict = system_config_get_instance.to_dict()
 system_config_get_from_dict = SystemConfigGet.from_dict(system_config_get_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

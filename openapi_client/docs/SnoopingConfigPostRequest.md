@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**snooping_config** | [**SnoopingConfigPost**](SnoopingConfigPost.md) |  | [optional] 
+**snooping_config** | [**SnoopingConfigPost**](SnoopingConfigPost.md) |  | [optional]
 
 ## Example
 
@@ -25,5 +25,3 @@ snooping_config_post_request_dict = snooping_config_post_request_instance.to_dic
 snooping_config_post_request_from_dict = SnoopingConfigPostRequest.from_dict(snooping_config_post_request_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

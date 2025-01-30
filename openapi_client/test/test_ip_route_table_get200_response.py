@@ -39,8 +39,8 @@ class TestIpRouteTableGet200Response(unittest.TestCase):
         if include_optional:
             return IpRouteTableGet200Response(
                 resp = openapi_client.models.general_responses_code.general_responses_code(
-                    status = 'success', 
-                    resp_code = 0, 
+                    status = 'success',
+                    resp_code = 0,
                     resp_msg = 'Operation success', ),
                 ip_route_table = [
                     {"nextHopIntf":"vlan 1","routeMask":"0.0.0.0","nextHopAddr":"192.168.5.1","routeType":"Default","routeProto":"static","routeDest":"0.0.0.0","metric":1,"routePref":254}

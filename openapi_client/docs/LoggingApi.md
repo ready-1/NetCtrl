@@ -4,7 +4,7 @@ All URIs are relative to *https://127.0.0.1:8443/api/v1*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**device_log_reader_get**](LoggingApi.md#device_log_reader_get) | **GET** /device_log_reader | 
+[**device_log_reader_get**](LoggingApi.md#device_log_reader_get) | **GET** /device_log_reader |
 
 
 # **device_log_reader_get**
@@ -61,7 +61,7 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **num_logs** | **int**| Number of logs pulled | 
+ **num_logs** | **int**| Number of logs pulled |
 
 ### Return type
 
@@ -83,4 +83,3 @@ Name | Type | Description  | Notes
 **200** | successful operation |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-

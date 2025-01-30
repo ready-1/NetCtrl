@@ -4,14 +4,14 @@ All URIs are relative to *https://127.0.0.1:8443/api/v1*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**cos_queue_config_get**](QualityOfServiceApi.md#cos_queue_config_get) | **GET** /cos_queue_config | 
-[**cos_queue_config_post**](QualityOfServiceApi.md#cos_queue_config_post) | **POST** /cos_queue_config | 
-[**costrust_get**](QualityOfServiceApi.md#costrust_get) | **GET** /costrust | 
-[**costrust_post**](QualityOfServiceApi.md#costrust_post) | **POST** /costrust | 
-[**dot1p_queue_map_get**](QualityOfServiceApi.md#dot1p_queue_map_get) | **GET** /dot1p_queue_map | 
-[**dot1p_queue_map_post**](QualityOfServiceApi.md#dot1p_queue_map_post) | **POST** /dot1p_queue_map | 
-[**ipdscp_queue_map_get**](QualityOfServiceApi.md#ipdscp_queue_map_get) | **GET** /ipdscp_queue_map | 
-[**ipdscp_queue_map_post**](QualityOfServiceApi.md#ipdscp_queue_map_post) | **POST** /ipdscp_queue_map | 
+[**cos_queue_config_get**](QualityOfServiceApi.md#cos_queue_config_get) | **GET** /cos_queue_config |
+[**cos_queue_config_post**](QualityOfServiceApi.md#cos_queue_config_post) | **POST** /cos_queue_config |
+[**costrust_get**](QualityOfServiceApi.md#costrust_get) | **GET** /costrust |
+[**costrust_post**](QualityOfServiceApi.md#costrust_post) | **POST** /costrust |
+[**dot1p_queue_map_get**](QualityOfServiceApi.md#dot1p_queue_map_get) | **GET** /dot1p_queue_map |
+[**dot1p_queue_map_post**](QualityOfServiceApi.md#dot1p_queue_map_post) | **POST** /dot1p_queue_map |
+[**ipdscp_queue_map_get**](QualityOfServiceApi.md#ipdscp_queue_map_get) | **GET** /ipdscp_queue_map |
+[**ipdscp_queue_map_post**](QualityOfServiceApi.md#ipdscp_queue_map_post) | **POST** /ipdscp_queue_map |
 
 
 # **cos_queue_config_get**
@@ -68,7 +68,7 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **interface** | **int**| Port interface ID by &#x60;&lt;port#&gt;&#x60;, &#x60;Global&#x60;, or &#x60;ALL&#x60; | 
+ **interface** | **int**| Port interface ID by &#x60;&lt;port#&gt;&#x60;, &#x60;Global&#x60;, or &#x60;ALL&#x60; |
 
 ### Return type
 
@@ -130,7 +130,7 @@ with openapi_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = openapi_client.QualityOfServiceApi(api_client)
     interface = 56 # int | Port interface ID  by `<port#>` or `Global`
-    cos_queue_config_post_request = openapi_client.CosQueueConfigPostRequest() # CosQueueConfigPostRequest | 
+    cos_queue_config_post_request = openapi_client.CosQueueConfigPostRequest() # CosQueueConfigPostRequest |
 
     try:
         api_response = api_instance.cos_queue_config_post(interface, cos_queue_config_post_request)
@@ -147,8 +147,8 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **interface** | **int**| Port interface ID  by &#x60;&lt;port#&gt;&#x60; or &#x60;Global&#x60; | 
- **cos_queue_config_post_request** | [**CosQueueConfigPostRequest**](CosQueueConfigPostRequest.md)|  | 
+ **interface** | **int**| Port interface ID  by &#x60;&lt;port#&gt;&#x60; or &#x60;Global&#x60; |
+ **cos_queue_config_post_request** | [**CosQueueConfigPostRequest**](CosQueueConfigPostRequest.md)|  |
 
 ### Return type
 
@@ -225,7 +225,7 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **interface** | [**SwPortstatsGetPortidParameter**](.md)| Port interface ID Number by &#x60;&lt;port#&gt;&#x60;, &#x60;ALL&#x60;, or &#x60;Global&#x60; | 
+ **interface** | [**SwPortstatsGetPortidParameter**](.md)| Port interface ID Number by &#x60;&lt;port#&gt;&#x60;, &#x60;ALL&#x60;, or &#x60;Global&#x60; |
 
 ### Return type
 
@@ -287,7 +287,7 @@ with openapi_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = openapi_client.QualityOfServiceApi(api_client)
     interface = ALL # int | Port interface ID Number by `<port#>`, `ALL`, or `Global`
-    costrust_post_request = openapi_client.CostrustPostRequest() # CostrustPostRequest | 
+    costrust_post_request = openapi_client.CostrustPostRequest() # CostrustPostRequest |
 
     try:
         api_response = api_instance.costrust_post(interface, costrust_post_request)
@@ -304,8 +304,8 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **interface** | **int**| Port interface ID Number by &#x60;&lt;port#&gt;&#x60;, &#x60;ALL&#x60;, or &#x60;Global&#x60; | 
- **costrust_post_request** | [**CostrustPostRequest**](CostrustPostRequest.md)|  | 
+ **interface** | **int**| Port interface ID Number by &#x60;&lt;port#&gt;&#x60;, &#x60;ALL&#x60;, or &#x60;Global&#x60; |
+ **costrust_post_request** | [**CostrustPostRequest**](CostrustPostRequest.md)|  |
 
 ### Return type
 
@@ -382,7 +382,7 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **interface** | [**SwPortstatsGetPortidParameter**](.md)| Port interface ID Number by &#x60;&lt;port#&gt;&#x60;, &#x60;ALL&#x60;, or &#x60;Global&#x60; | 
+ **interface** | [**SwPortstatsGetPortidParameter**](.md)| Port interface ID Number by &#x60;&lt;port#&gt;&#x60;, &#x60;ALL&#x60;, or &#x60;Global&#x60; |
 
 ### Return type
 
@@ -444,7 +444,7 @@ with openapi_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = openapi_client.QualityOfServiceApi(api_client)
     interface = openapi_client.SwPortstatsGetPortidParameter() # SwPortstatsGetPortidParameter | Port interface ID Number by `<port#>` or `Global`
-    dot1p_queue_map_post_request = openapi_client.Dot1pQueueMapPostRequest() # Dot1pQueueMapPostRequest | 
+    dot1p_queue_map_post_request = openapi_client.Dot1pQueueMapPostRequest() # Dot1pQueueMapPostRequest |
 
     try:
         api_response = api_instance.dot1p_queue_map_post(interface, dot1p_queue_map_post_request)
@@ -461,8 +461,8 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **interface** | [**SwPortstatsGetPortidParameter**](.md)| Port interface ID Number by &#x60;&lt;port#&gt;&#x60; or &#x60;Global&#x60; | 
- **dot1p_queue_map_post_request** | [**Dot1pQueueMapPostRequest**](Dot1pQueueMapPostRequest.md)|  | 
+ **interface** | [**SwPortstatsGetPortidParameter**](.md)| Port interface ID Number by &#x60;&lt;port#&gt;&#x60; or &#x60;Global&#x60; |
+ **dot1p_queue_map_post_request** | [**Dot1pQueueMapPostRequest**](Dot1pQueueMapPostRequest.md)|  |
 
 ### Return type
 
@@ -596,7 +596,7 @@ configuration = openapi_client.Configuration(
 with openapi_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = openapi_client.QualityOfServiceApi(api_client)
-    ipdscp_queue_map_post_request = openapi_client.IpdscpQueueMapPostRequest() # IpdscpQueueMapPostRequest | 
+    ipdscp_queue_map_post_request = openapi_client.IpdscpQueueMapPostRequest() # IpdscpQueueMapPostRequest |
 
     try:
         api_response = api_instance.ipdscp_queue_map_post(ipdscp_queue_map_post_request)
@@ -613,7 +613,7 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **ipdscp_queue_map_post_request** | [**IpdscpQueueMapPostRequest**](IpdscpQueueMapPostRequest.md)|  | 
+ **ipdscp_queue_map_post_request** | [**IpdscpQueueMapPostRequest**](IpdscpQueueMapPostRequest.md)|  |
 
 ### Return type
 
@@ -635,4 +635,3 @@ Name | Type | Description  | Notes
 **200** | successful operation |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-

@@ -37,8 +37,8 @@ class TestDeviceInfoGet200Response(unittest.TestCase):
         if include_optional:
             return DeviceInfoGet200Response(
                 resp = openapi_client.models.general_responses_code.general_responses_code(
-                    status = 'success', 
-                    resp_code = 0, 
+                    status = 'success',
+                    resp_code = 0,
                     resp_msg = 'Operation success', ),
                 device_info = {"name":"","serialNumber":"N1MN648000T","macAddr":"10:DA:43:D7:72:F9","model":"GC110P","lanIpAddress":"10.120.166.73","swVer":"1.27.12.48","lastReboot":"hu, 09 Mar 2017 06:08:21 (UTC+05:30 IST)","numOfPorts":10,"numOfActivePorts":1,"rstpState":false,"memoryUsed":"153968 KB","memoryUsage":"64.45%","cpuUsage":"6.40%","fanState":"active","poeState":true,"upTime":"00 Days 03 Hrs 32 Mins 08 Secs","temperatureSensors":{"sensorNum":1,"sensorDesc":"MAC","sensorTemp":68,"sensorState":1},"bootVersion":"1.0.0.1","rxData":1796615,"txData":3802563,"adminPoePower":120000}
             )

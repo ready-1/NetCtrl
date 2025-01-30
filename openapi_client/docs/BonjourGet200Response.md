@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**bonjour** | [**Bonjour**](Bonjour.md) |  | [optional] 
+**bonjour** | [**Bonjour**](Bonjour.md) |  | [optional]
 
 ## Example
 
@@ -25,5 +25,3 @@ bonjour_get200_response_dict = bonjour_get200_response_instance.to_dict()
 bonjour_get200_response_from_dict = BonjourGet200Response.from_dict(bonjour_get200_response_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

@@ -50,7 +50,7 @@ class TestLldpRemoteDevices(unittest.TestCase):
                 sys_capabilities_enabled = '',
                 mgmt_addresses = [
                     openapi_client.models.lldp_remote_devices_mgmt_addresses_inner.lldp_remote_devices_mgmtAddresses_inner(
-                        type = 'IPv4', 
+                        type = 'IPv4',
                         address = '', )
                     ],
                 remote_ttl = 56

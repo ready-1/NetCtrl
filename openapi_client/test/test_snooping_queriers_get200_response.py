@@ -39,8 +39,8 @@ class TestSnoopingQueriersGet200Response(unittest.TestCase):
         if include_optional:
             return SnoopingQueriersGet200Response(
                 resp = openapi_client.models.general_responses_code.general_responses_code(
-                    status = 'success', 
-                    resp_code = 0, 
+                    status = 'success',
+                    resp_code = 0,
                     resp_msg = 'Operation success', ),
                 snooping_queriers = {"family":"igmp","address":"0.0.0.0","adminMode":"enabled","expiryInterval":120,"lastQuerierAddress":"169.254.100.100","lastQuerierVersion":1,"operMaxRespTime":10,"operState":"querier","operVersion":1,"queryInterval":81,"querierVersion":1,"vlanAddress":"0.0.0.0","vlanElectionMode":"enabled","vlanMode":"enabled"}
             )

@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**cos_queue_config** | [**List[CosQueueConfigInner]**](CosQueueConfigInner.md) |  | [optional] 
+**cos_queue_config** | [**List[CosQueueConfigInner]**](CosQueueConfigInner.md) |  | [optional]
 
 ## Example
 
@@ -25,5 +25,3 @@ cos_queue_config_post_request_dict = cos_queue_config_post_request_instance.to_d
 cos_queue_config_post_request_from_dict = CosQueueConfigPostRequest.from_dict(cos_queue_config_post_request_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

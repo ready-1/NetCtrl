@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional] 
-**ping_test_status** | [**PingTestStatus**](PingTestStatus.md) |  | [optional] 
+**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional]
+**ping_test_status** | [**PingTestStatus**](PingTestStatus.md) |  | [optional]
 
 ## Example
 
@@ -26,5 +26,3 @@ ping_test_status_get200_response_dict = ping_test_status_get200_response_instanc
 ping_test_status_get200_response_from_dict = PingTestStatusGet200Response.from_dict(ping_test_status_get200_response_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

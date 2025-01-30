@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional] 
-**dot1s_msti_entries** | [**List[MstiGetInner]**](MstiGetInner.md) |  | [optional] 
+**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional]
+**dot1s_msti_entries** | [**List[MstiGetInner]**](MstiGetInner.md) |  | [optional]
 
 ## Example
 
@@ -26,5 +26,3 @@ msti_get200_response_dict = msti_get200_response_instance.to_dict()
 msti_get200_response_from_dict = MstiGet200Response.from_dict(msti_get200_response_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

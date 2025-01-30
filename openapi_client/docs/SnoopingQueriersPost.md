@@ -5,12 +5,12 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**address** | **str** | Configured IP address of querier | 
-**admin_mode** | **str** | Enable or disable querier | 
-**expiry_interval** | **int** | Expiry interval of a snoop instance in seconds | 
-**query_interval** | **int** | Snooping query interval in seconds | 
-**querier_version** | **int** | Configured version for the querier | 
-**vlan_address** | **str** | IP address configured for the querier | 
+**address** | **str** | Configured IP address of querier |
+**admin_mode** | **str** | Enable or disable querier |
+**expiry_interval** | **int** | Expiry interval of a snoop instance in seconds |
+**query_interval** | **int** | Snooping query interval in seconds |
+**querier_version** | **int** | Configured version for the querier |
+**vlan_address** | **str** | IP address configured for the querier |
 
 ## Example
 
@@ -30,5 +30,3 @@ snooping_queriers_post_dict = snooping_queriers_post_instance.to_dict()
 snooping_queriers_post_from_dict = SnoopingQueriersPost.from_dict(snooping_queriers_post_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

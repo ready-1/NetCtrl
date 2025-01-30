@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**label** | **str** | Active image label | [optional] 
-**image_descr** | **str** | Active image description | [optional] 
+**label** | **str** | Active image label | [optional]
+**image_descr** | **str** | Active image description | [optional]
 
 ## Example
 
@@ -26,5 +26,3 @@ active_image_get_dict = active_image_get_instance.to_dict()
 active_image_get_from_dict = ActiveImageGet.from_dict(active_image_get_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

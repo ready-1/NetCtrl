@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**dhcp_status** | **bool** | VLAN DHCP Status | 
-**vlan_id** | **int** | VLAN ID | 
+**dhcp_status** | **bool** | VLAN DHCP Status |
+**vlan_id** | **int** | VLAN ID |
 **ip_mtu** | **int** | Maximum size of IP packets sent on an interface | [default to 1500]
 
 ## Example
@@ -27,5 +27,3 @@ vlan_ip_configuration_dict = vlan_ip_configuration_instance.to_dict()
 vlan_ip_configuration_from_dict = VlanIpConfiguration.from_dict(vlan_ip_configuration_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

@@ -4,8 +4,8 @@ All URIs are relative to *https://127.0.0.1:8443/api/v1*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**login_post**](AuthenticationApi.md#login_post) | **POST** /login | 
-[**logout_post**](AuthenticationApi.md#logout_post) | **POST** /logout | 
+[**login_post**](AuthenticationApi.md#login_post) | **POST** /login |
+[**logout_post**](AuthenticationApi.md#logout_post) | **POST** /logout |
 
 
 # **login_post**
@@ -36,7 +36,7 @@ configuration = openapi_client.Configuration(
 with openapi_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = openapi_client.AuthenticationApi(api_client)
-    login_post_request = openapi_client.LoginPostRequest() # LoginPostRequest | 
+    login_post_request = openapi_client.LoginPostRequest() # LoginPostRequest |
 
     try:
         api_response = api_instance.login_post(login_post_request)
@@ -53,7 +53,7 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **login_post_request** | [**LoginPostRequest**](LoginPostRequest.md)|  | 
+ **login_post_request** | [**LoginPostRequest**](LoginPostRequest.md)|  |
 
 ### Return type
 
@@ -148,4 +148,3 @@ This endpoint does not need any parameter.
 **200** | successful operation |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-

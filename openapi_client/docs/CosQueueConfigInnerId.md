@@ -25,5 +25,3 @@ cos_queue_config_inner_id_dict = cos_queue_config_inner_id_instance.to_dict()
 cos_queue_config_inner_id_from_dict = CosQueueConfigInnerId.from_dict(cos_queue_config_inner_id_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

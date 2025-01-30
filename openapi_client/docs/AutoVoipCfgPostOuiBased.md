@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**vlan_id** | **int** | Auto VoIP VLAN ID | 
+**vlan_id** | **int** | Auto VoIP VLAN ID |
 **priority** | **int** |  | [default to 5]
 **mode** | **bool** | Auto VoIP mode of the OUI base config for the specified port number | [default to False]
 
@@ -27,5 +27,3 @@ auto_voip_cfg_post_oui_based_dict = auto_voip_cfg_post_oui_based_instance.to_dic
 auto_voip_cfg_post_oui_based_from_dict = AutoVoipCfgPostOuiBased.from_dict(auto_voip_cfg_post_oui_based_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

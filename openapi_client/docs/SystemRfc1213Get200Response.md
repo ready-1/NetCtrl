@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional] 
-**system_rfc1213** | [**SystemRfc1213Get**](SystemRfc1213Get.md) |  | [optional] 
+**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional]
+**system_rfc1213** | [**SystemRfc1213Get**](SystemRfc1213Get.md) |  | [optional]
 
 ## Example
 
@@ -26,5 +26,3 @@ system_rfc1213_get200_response_dict = system_rfc1213_get200_response_instance.to
 system_rfc1213_get200_response_from_dict = SystemRfc1213Get200Response.from_dict(system_rfc1213_get200_response_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**name** | **str** |  | 
-**location** | **str** |  | [optional] 
+**name** | **str** |  |
+**location** | **str** |  | [optional]
 
 ## Example
 
@@ -26,5 +26,3 @@ device_name_dict = device_name_instance.to_dict()
 device_name_from_dict = DeviceName.from_dict(device_name_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

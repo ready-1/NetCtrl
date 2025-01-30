@@ -37,8 +37,8 @@ class TestSwcfgPoeGet200Response(unittest.TestCase):
         if include_optional:
             return SwcfgPoeGet200Response(
                 resp = openapi_client.models.general_responses_code.general_responses_code(
-                    status = 'success', 
-                    resp_code = 0, 
+                    status = 'success',
+                    resp_code = 0,
                     resp_msg = 'Operation success', ),
                 poe_port_config = {"enable":true,"powerLimitMode":1,"classification":1,"currentPower":30000,"powerLimit":30000,"status":2,"reset":false}
             )

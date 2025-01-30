@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional] 
-**log_reader** | [**DeviceLogReader**](DeviceLogReader.md) |  | [optional] 
+**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional]
+**log_reader** | [**DeviceLogReader**](DeviceLogReader.md) |  | [optional]
 
 ## Example
 
@@ -26,5 +26,3 @@ device_log_reader_get200_response_dict = device_log_reader_get200_response_insta
 device_log_reader_get200_response_from_dict = DeviceLogReaderGet200Response.from_dict(device_log_reader_get200_response_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

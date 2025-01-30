@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**diff** | **List[str]** |  | [optional] 
+**diff** | **List[str]** |  | [optional]
 
 ## Example
 
@@ -25,5 +25,3 @@ config_file_compare_dict = config_file_compare_instance.to_dict()
 config_file_compare_from_dict = ConfigFileCompare.from_dict(config_file_compare_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

@@ -5,12 +5,12 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**vlan_id** | **int** | VLAN ID | [optional] 
-**dhcp_status** | **bool** | Enable VLAN DHCP client | [optional] 
-**ip_addr** | **str** | VLAN IP address | [optional] 
-**ip_mask** | **str** | VLAN subnet mask | [optional] 
-**ip_mtu** | **int** | VLAN Maximum Transmission Unit (MTU) size | [optional] 
-**vlan_routing** | **bool** | Enable VLAN routing | [optional] 
+**vlan_id** | **int** | VLAN ID | [optional]
+**dhcp_status** | **bool** | Enable VLAN DHCP client | [optional]
+**ip_addr** | **str** | VLAN IP address | [optional]
+**ip_mask** | **str** | VLAN subnet mask | [optional]
+**ip_mtu** | **int** | VLAN Maximum Transmission Unit (MTU) size | [optional]
+**vlan_routing** | **bool** | Enable VLAN routing | [optional]
 
 ## Example
 
@@ -30,5 +30,3 @@ vlan_ip_dict = vlan_ip_instance.to_dict()
 vlan_ip_from_dict = VlanIp.from_dict(vlan_ip_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

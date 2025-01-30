@@ -27,5 +27,3 @@ swcfg_port_rtlimit_mcast_dict = swcfg_port_rtlimit_mcast_instance.to_dict()
 swcfg_port_rtlimit_mcast_from_dict = SwcfgPortRtlimitMcast.from_dict(swcfg_port_rtlimit_mcast_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

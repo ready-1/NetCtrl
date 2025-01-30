@@ -39,8 +39,8 @@ class TestSwPortmirroringGet200Response(unittest.TestCase):
         if include_optional:
             return SwPortmirroringGet200Response(
                 resp = openapi_client.models.general_responses_code.general_responses_code(
-                    status = 'success', 
-                    resp_code = 0, 
+                    status = 'success',
+                    resp_code = 0,
                     resp_msg = 'Operation success', ),
                 switch_rstp_port_config = {"sessionNum":1,"sessionMode":false,"destPort":10,"srcPort":[{"intfType":0,"intfNum":24,"direction":1},{"intfType":1,"intfNum":313,"direction":1},{"intfType":2,"intfNum":320,"direction":1}]}
             )

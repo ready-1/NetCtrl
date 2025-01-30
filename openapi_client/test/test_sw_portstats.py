@@ -65,14 +65,14 @@ class TestSwPortstats(unittest.TestCase):
                 opr_state = 0,
                 power_limit_class = 0,
                 neighbor_info = openapi_client.models.sw_portstats_neighbor_info.sw_portstats_neighborInfo(
-                    name = '', 
-                    description = '', 
-                    capabilities = '', 
-                    chassis_id = '', 
-                    chassis_id_subtype = 1, 
-                    port_id = '', 
-                    port_id_subtype = 1, 
-                    port_description = '', 
+                    name = '',
+                    description = '',
+                    capabilities = '',
+                    chassis_id = '',
+                    chassis_id_subtype = 1,
+                    port_id = '',
+                    port_id_subtype = 1,
+                    port_description = '',
                     mgmt_ip_address = '', ),
                 port_auth_state = 1
             )

@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**snooping_interfaces** | [**SnoopingInterfacesPost**](SnoopingInterfacesPost.md) |  | [optional] 
+**snooping_interfaces** | [**SnoopingInterfacesPost**](SnoopingInterfacesPost.md) |  | [optional]
 
 ## Example
 
@@ -25,5 +25,3 @@ snooping_interfaces_post_request_dict = snooping_interfaces_post_request_instanc
 snooping_interfaces_post_request_from_dict = SnoopingInterfacesPostRequest.from_dict(snooping_interfaces_post_request_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

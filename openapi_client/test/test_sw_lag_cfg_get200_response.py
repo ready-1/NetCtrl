@@ -37,8 +37,8 @@ class TestSwLagCfgGet200Response(unittest.TestCase):
         if include_optional:
             return SwLagCfgGet200Response(
                 resp = openapi_client.models.general_responses_code.general_responses_code(
-                    status = 'success', 
-                    resp_code = 0, 
+                    status = 'success',
+                    resp_code = 0,
                     resp_msg = 'Operation success', ),
                 switch_config_lag_group = {"name":"ch1","groupId":1,"adminMode":false,"type":0,"members":[3,4]}
             )

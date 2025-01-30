@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**greatest_table_entries_reset** | **bool** | Reset the greatest number of entries in the forwarding database to zero. | 
+**greatest_table_entries_reset** | **bool** | Reset the greatest number of entries in the forwarding database to zero. |
 
 ## Example
 
@@ -25,5 +25,3 @@ fdb_stats_post_dict = fdb_stats_post_instance.to_dict()
 fdb_stats_post_from_dict = FdbStatsPost.from_dict(fdb_stats_post_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

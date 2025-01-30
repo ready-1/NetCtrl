@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**poe_config** | [**PoeConfigPost**](PoeConfigPost.md) |  | [optional] 
+**poe_config** | [**PoeConfigPost**](PoeConfigPost.md) |  | [optional]
 
 ## Example
 
@@ -25,5 +25,3 @@ poe_config_post_request_dict = poe_config_post_request_instance.to_dict()
 poe_config_post_request_from_dict = PoeConfigPostRequest.from_dict(poe_config_post_request_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

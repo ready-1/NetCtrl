@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**spanning_tree** | [**Stp**](Stp.md) |  | [optional] 
+**spanning_tree** | [**Stp**](Stp.md) |  | [optional]
 
 ## Example
 
@@ -25,5 +25,3 @@ stp_post_request_dict = stp_post_request_instance.to_dict()
 stp_post_request_from_dict = StpPostRequest.from_dict(stp_post_request_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

@@ -5,12 +5,12 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**interface** | **int** | Port interface number | [optional] 
+**interface** | **int** | Port interface number | [optional]
 **bpdu_filter_mode** | **bool** | BPDU filter mode | [optional] [default to False]
 **bpdu_flood_mode** | **bool** | BPDU flood mode | [optional] [default to False]
 **intf_edge_port_mode** | **bool** | Interface edge port mode | [optional] [default to False]
-**intf_guard_mode** | **int** | STP Guard Mode:   * &#x60;0&#x60; &#x3D; Loop   * &#x60;1&#x60; &#x3D; Root   * &#x60;2&#x60; &#x3D; None  | [optional] 
-**intf_mode** | **int** | Interface mode | [optional] 
+**intf_guard_mode** | **int** | STP Guard Mode:   * &#x60;0&#x60; &#x3D; Loop   * &#x60;1&#x60; &#x3D; Root   * &#x60;2&#x60; &#x3D; None  | [optional]
+**intf_mode** | **int** | Interface mode | [optional]
 
 ## Example
 
@@ -30,5 +30,3 @@ dot1s_interfaces_get_inner_dict = dot1s_interfaces_get_inner_instance.to_dict()
 dot1s_interfaces_get_inner_from_dict = Dot1sInterfacesGetInner.from_dict(dot1s_interfaces_get_inner_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

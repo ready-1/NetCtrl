@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**device_reboot** | [**DeviceReboot**](DeviceReboot.md) |  | [optional] 
+**device_reboot** | [**DeviceReboot**](DeviceReboot.md) |  | [optional]
 
 ## Example
 
@@ -25,5 +25,3 @@ device_reboot_post_request_dict = device_reboot_post_request_instance.to_dict()
 device_reboot_post_request_from_dict = DeviceRebootPostRequest.from_dict(device_reboot_post_request_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

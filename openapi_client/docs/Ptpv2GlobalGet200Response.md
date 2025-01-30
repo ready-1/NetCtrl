@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional] 
-**ptpv2_global** | [**Ptpv2Global**](Ptpv2Global.md) |  | [optional] 
+**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional]
+**ptpv2_global** | [**Ptpv2Global**](Ptpv2Global.md) |  | [optional]
 
 ## Example
 
@@ -26,5 +26,3 @@ ptpv2_global_get200_response_dict = ptpv2_global_get200_response_instance.to_dic
 ptpv2_global_get200_response_from_dict = Ptpv2GlobalGet200Response.from_dict(ptpv2_global_get200_response_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

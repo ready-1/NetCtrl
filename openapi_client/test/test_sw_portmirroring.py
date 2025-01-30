@@ -41,8 +41,8 @@ class TestSwPortmirroring(unittest.TestCase):
                 dest_port = 56,
                 src_port = [
                     openapi_client.models.sw_portmirroring_src_port_inner.sw_portmirroring_srcPort_inner(
-                        intf_type = 0, 
-                        intf_num = 56, 
+                        intf_type = 0,
+                        intf_num = 56,
                         direction = 1, )
                     ]
             )

@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**label** | **str** | Set the activated image:   * &#x60;image1&#x60;   * &#x60;image2&#x60;  | 
+**label** | **str** | Set the activated image:   * &#x60;image1&#x60;   * &#x60;image2&#x60;  |
 
 ## Example
 
@@ -25,5 +25,3 @@ active_image_post_dict = active_image_post_instance.to_dict()
 active_image_post_from_dict = ActiveImagePost.from_dict(active_image_post_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

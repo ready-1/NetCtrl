@@ -4,14 +4,14 @@ All URIs are relative to *https://127.0.0.1:8443/api/v1*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**device_cable_test_get**](DiagnosticsApi.md#device_cable_test_get) | **GET** /device_cable_test | 
-[**ping_test_start_post**](DiagnosticsApi.md#ping_test_start_post) | **POST** /ping_test_start | 
-[**ping_test_status_get**](DiagnosticsApi.md#ping_test_status_get) | **GET** /ping_test_status | 
-[**sw_portmirroring_delete**](DiagnosticsApi.md#sw_portmirroring_delete) | **DELETE** /sw_portmirroring | 
-[**sw_portmirroring_get**](DiagnosticsApi.md#sw_portmirroring_get) | **GET** /sw_portmirroring | 
-[**sw_portmirroring_post**](DiagnosticsApi.md#sw_portmirroring_post) | **POST** /sw_portmirroring | 
-[**traceroute_start_post**](DiagnosticsApi.md#traceroute_start_post) | **POST** /traceroute_start | 
-[**traceroute_status_get**](DiagnosticsApi.md#traceroute_status_get) | **GET** /traceroute_status | 
+[**device_cable_test_get**](DiagnosticsApi.md#device_cable_test_get) | **GET** /device_cable_test |
+[**ping_test_start_post**](DiagnosticsApi.md#ping_test_start_post) | **POST** /ping_test_start |
+[**ping_test_status_get**](DiagnosticsApi.md#ping_test_status_get) | **GET** /ping_test_status |
+[**sw_portmirroring_delete**](DiagnosticsApi.md#sw_portmirroring_delete) | **DELETE** /sw_portmirroring |
+[**sw_portmirroring_get**](DiagnosticsApi.md#sw_portmirroring_get) | **GET** /sw_portmirroring |
+[**sw_portmirroring_post**](DiagnosticsApi.md#sw_portmirroring_post) | **POST** /sw_portmirroring |
+[**traceroute_start_post**](DiagnosticsApi.md#traceroute_start_post) | **POST** /traceroute_start |
+[**traceroute_status_get**](DiagnosticsApi.md#traceroute_status_get) | **GET** /traceroute_status |
 
 
 # **device_cable_test_get**
@@ -68,7 +68,7 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **portid** | **int**| Port ID | 
+ **portid** | **int**| Port ID |
 
 ### Return type
 
@@ -129,7 +129,7 @@ configuration = openapi_client.Configuration(
 with openapi_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = openapi_client.DiagnosticsApi(api_client)
-    ping_test_start_post_request = openapi_client.PingTestStartPostRequest() # PingTestStartPostRequest | 
+    ping_test_start_post_request = openapi_client.PingTestStartPostRequest() # PingTestStartPostRequest |
 
     try:
         api_response = api_instance.ping_test_start_post(ping_test_start_post_request)
@@ -146,7 +146,7 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **ping_test_start_post_request** | [**PingTestStartPostRequest**](PingTestStartPostRequest.md)|  | 
+ **ping_test_start_post_request** | [**PingTestStartPostRequest**](PingTestStartPostRequest.md)|  |
 
 ### Return type
 
@@ -296,7 +296,7 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **session_num** | **int**| Port mirring session number | 
+ **session_num** | **int**| Port mirring session number |
 
 ### Return type
 
@@ -373,7 +373,7 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **session_num** | **int**| Port mirroring session number | 
+ **session_num** | **int**| Port mirroring session number |
 
 ### Return type
 
@@ -435,7 +435,7 @@ with openapi_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = openapi_client.DiagnosticsApi(api_client)
     session_num = 1 # int | Port mirroring session number
-    sw_portmirroring_post_request = openapi_client.SwPortmirroringPostRequest() # SwPortmirroringPostRequest | 
+    sw_portmirroring_post_request = openapi_client.SwPortmirroringPostRequest() # SwPortmirroringPostRequest |
 
     try:
         api_response = api_instance.sw_portmirroring_post(session_num, sw_portmirroring_post_request)
@@ -452,8 +452,8 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **session_num** | **int**| Port mirroring session number | 
- **sw_portmirroring_post_request** | [**SwPortmirroringPostRequest**](SwPortmirroringPostRequest.md)|  | 
+ **session_num** | **int**| Port mirroring session number |
+ **sw_portmirroring_post_request** | [**SwPortmirroringPostRequest**](SwPortmirroringPostRequest.md)|  |
 
 ### Return type
 
@@ -514,7 +514,7 @@ configuration = openapi_client.Configuration(
 with openapi_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = openapi_client.DiagnosticsApi(api_client)
-    traceroute_start_post_request = openapi_client.TracerouteStartPostRequest() # TracerouteStartPostRequest | 
+    traceroute_start_post_request = openapi_client.TracerouteStartPostRequest() # TracerouteStartPostRequest |
 
     try:
         api_response = api_instance.traceroute_start_post(traceroute_start_post_request)
@@ -531,7 +531,7 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **traceroute_start_post_request** | [**TracerouteStartPostRequest**](TracerouteStartPostRequest.md)|  | 
+ **traceroute_start_post_request** | [**TracerouteStartPostRequest**](TracerouteStartPostRequest.md)|  |
 
 ### Return type
 
@@ -626,4 +626,3 @@ This endpoint does not need any parameter.
 **200** | successful operation |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-

@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional] 
-**ipdscp_queue_map** | [**List[IpdscpQueueMapGetInner]**](IpdscpQueueMapGetInner.md) |  | [optional] 
+**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional]
+**ipdscp_queue_map** | [**List[IpdscpQueueMapGetInner]**](IpdscpQueueMapGetInner.md) |  | [optional]
 
 ## Example
 
@@ -26,5 +26,3 @@ ipdscp_queue_map_get200_response_dict = ipdscp_queue_map_get200_response_instanc
 ipdscp_queue_map_get200_response_from_dict = IpdscpQueueMapGet200Response.from_dict(ipdscp_queue_map_get200_response_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

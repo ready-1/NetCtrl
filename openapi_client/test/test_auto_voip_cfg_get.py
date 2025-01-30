@@ -40,13 +40,13 @@ class TestAutoVoipCfgGet(unittest.TestCase):
                 supported_channels = 56,
                 used_channels = 56,
                 protocol_based = openapi_client.models.auto_voip_cfg_get_protocol_based.auto_voip_cfg_get_protocolBased(
-                    prioritization_type = 'traffic-class', 
-                    class_value = 0, 
-                    mode = True, 
+                    prioritization_type = 'traffic-class',
+                    class_value = 0,
+                    mode = True,
                     status = True, ),
                 oui_based = openapi_client.models.auto_voip_cfg_get_oui_based.auto_voip_cfg_get_ouiBased(
-                    priority = 0, 
-                    mode = True, 
+                    priority = 0,
+                    mode = True,
                     status = True, )
             )
         else:

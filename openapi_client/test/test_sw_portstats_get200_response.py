@@ -37,8 +37,8 @@ class TestSwPortstatsGet200Response(unittest.TestCase):
         if include_optional:
             return SwPortstatsGet200Response(
                 resp = openapi_client.models.general_responses_code.general_responses_code(
-                    status = 'success', 
-                    resp_code = 0, 
+                    status = 'success',
+                    resp_code = 0,
                     resp_msg = 'Operation success', ),
                 switch_stats_port = {"portId":47,"switchName":"S3300-52X-PoE+","myDesc":"port_47","adminMode":true,"status":0,"poeStatus":1,"mode":1,"vlans":[1,2,3],"trafficRx":4404152,"trafficTx":12178123,"rxMbps":1.0,"txMbps":1.2,"crcErrorsRx":0,"errorsRxTx":0,"dropsRxTx":0,"portMacAddress":"08:BD:43:6F:4A:86","speed":7,"duplex":65535,"frameSize":1500,"flowControl":true,"lacpMode":true,"mirrored":false,"stpStatus":false,"portState":5,"oprState":1,"powerLimitClass":0,"neighborInfo":{"name":"BLR-N-DATA-1","description":"M5300-52G3 ProSafe 48-port Gigabit L3 with 10 Gigabit Stacking, 10.0.0.53, B1.0.0.5","capabilities":"bridge, router","chassisId":"DC:EF:09:DE:A9:3D","chassisIdSubtype":4,"portId":"2/0/27","portIdSubtype":7,"portDescription":"2/0/27","mgmtIpAddress":"169.254.100.100"},"portAuthState":1}
             )

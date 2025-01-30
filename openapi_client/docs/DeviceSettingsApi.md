@@ -4,22 +4,22 @@ All URIs are relative to *https://127.0.0.1:8443/api/v1*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**active_image_get**](DeviceSettingsApi.md#active_image_get) | **GET** /active_image | 
-[**active_image_post**](DeviceSettingsApi.md#active_image_post) | **POST** /active_image | 
-[**bonjour_get**](DeviceSettingsApi.md#bonjour_get) | **GET** /bonjour | 
-[**bonjour_post**](DeviceSettingsApi.md#bonjour_post) | **POST** /bonjour | 
-[**config_copy_post**](DeviceSettingsApi.md#config_copy_post) | **POST** /config_copy | 
-[**config_file_compare_get**](DeviceSettingsApi.md#config_file_compare_get) | **GET** /config_file_compare | 
-[**device_info_get**](DeviceSettingsApi.md#device_info_get) | **GET** /device_info | 
-[**device_name_get**](DeviceSettingsApi.md#device_name_get) | **GET** /device_name | 
-[**device_name_post**](DeviceSettingsApi.md#device_name_post) | **POST** /device_name | 
-[**device_reboot_post**](DeviceSettingsApi.md#device_reboot_post) | **POST** /device_reboot | 
-[**dual_image_status_get**](DeviceSettingsApi.md#dual_image_status_get) | **GET** /dual_image_status | 
-[**lldp_remote_devices_get**](DeviceSettingsApi.md#lldp_remote_devices_get) | **GET** /lldp_remote_devices | 
-[**system_config_get**](DeviceSettingsApi.md#system_config_get) | **GET** /system_config | 
-[**system_config_post**](DeviceSettingsApi.md#system_config_post) | **POST** /system_config | 
-[**system_rfc1213_get**](DeviceSettingsApi.md#system_rfc1213_get) | **GET** /system_rfc1213 | 
-[**system_rfc1213_post**](DeviceSettingsApi.md#system_rfc1213_post) | **POST** /system_rfc1213 | 
+[**active_image_get**](DeviceSettingsApi.md#active_image_get) | **GET** /active_image |
+[**active_image_post**](DeviceSettingsApi.md#active_image_post) | **POST** /active_image |
+[**bonjour_get**](DeviceSettingsApi.md#bonjour_get) | **GET** /bonjour |
+[**bonjour_post**](DeviceSettingsApi.md#bonjour_post) | **POST** /bonjour |
+[**config_copy_post**](DeviceSettingsApi.md#config_copy_post) | **POST** /config_copy |
+[**config_file_compare_get**](DeviceSettingsApi.md#config_file_compare_get) | **GET** /config_file_compare |
+[**device_info_get**](DeviceSettingsApi.md#device_info_get) | **GET** /device_info |
+[**device_name_get**](DeviceSettingsApi.md#device_name_get) | **GET** /device_name |
+[**device_name_post**](DeviceSettingsApi.md#device_name_post) | **POST** /device_name |
+[**device_reboot_post**](DeviceSettingsApi.md#device_reboot_post) | **POST** /device_reboot |
+[**dual_image_status_get**](DeviceSettingsApi.md#dual_image_status_get) | **GET** /dual_image_status |
+[**lldp_remote_devices_get**](DeviceSettingsApi.md#lldp_remote_devices_get) | **GET** /lldp_remote_devices |
+[**system_config_get**](DeviceSettingsApi.md#system_config_get) | **GET** /system_config |
+[**system_config_post**](DeviceSettingsApi.md#system_config_post) | **POST** /system_config |
+[**system_rfc1213_get**](DeviceSettingsApi.md#system_rfc1213_get) | **GET** /system_rfc1213 |
+[**system_rfc1213_post**](DeviceSettingsApi.md#system_rfc1213_post) | **POST** /system_rfc1213 |
 
 
 # **active_image_get**
@@ -133,7 +133,7 @@ configuration = openapi_client.Configuration(
 with openapi_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = openapi_client.DeviceSettingsApi(api_client)
-    active_image_post_request = openapi_client.ActiveImagePostRequest() # ActiveImagePostRequest | 
+    active_image_post_request = openapi_client.ActiveImagePostRequest() # ActiveImagePostRequest |
 
     try:
         api_response = api_instance.active_image_post(active_image_post_request)
@@ -150,7 +150,7 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **active_image_post_request** | [**ActiveImagePostRequest**](ActiveImagePostRequest.md)|  | 
+ **active_image_post_request** | [**ActiveImagePostRequest**](ActiveImagePostRequest.md)|  |
 
 ### Return type
 
@@ -284,7 +284,7 @@ configuration = openapi_client.Configuration(
 with openapi_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = openapi_client.DeviceSettingsApi(api_client)
-    bonjour_get200_response = openapi_client.BonjourGet200Response() # BonjourGet200Response | 
+    bonjour_get200_response = openapi_client.BonjourGet200Response() # BonjourGet200Response |
 
     try:
         api_response = api_instance.bonjour_post(bonjour_get200_response)
@@ -301,7 +301,7 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **bonjour_get200_response** | [**BonjourGet200Response**](BonjourGet200Response.md)|  | 
+ **bonjour_get200_response** | [**BonjourGet200Response**](BonjourGet200Response.md)|  |
 
 ### Return type
 
@@ -361,7 +361,7 @@ configuration = openapi_client.Configuration(
 with openapi_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = openapi_client.DeviceSettingsApi(api_client)
-    directive = 'directive_example' # str | 
+    directive = 'directive_example' # str |
 
     try:
         api_response = api_instance.config_copy_post(directive)
@@ -378,7 +378,7 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **directive** | **str**|  | 
+ **directive** | **str**|  |
 
 ### Return type
 
@@ -438,7 +438,7 @@ configuration = openapi_client.Configuration(
 with openapi_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = openapi_client.DeviceSettingsApi(api_client)
-    directive = 'directive_example' # str | 
+    directive = 'directive_example' # str |
 
     try:
         api_response = api_instance.config_file_compare_get(directive)
@@ -455,7 +455,7 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **directive** | **str**|  | 
+ **directive** | **str**|  |
 
 ### Return type
 
@@ -662,7 +662,7 @@ configuration = openapi_client.Configuration(
 with openapi_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = openapi_client.DeviceSettingsApi(api_client)
-    device_name_post_request = openapi_client.DeviceNamePostRequest() # DeviceNamePostRequest | 
+    device_name_post_request = openapi_client.DeviceNamePostRequest() # DeviceNamePostRequest |
 
     try:
         api_response = api_instance.device_name_post(device_name_post_request)
@@ -679,7 +679,7 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **device_name_post_request** | [**DeviceNamePostRequest**](DeviceNamePostRequest.md)|  | 
+ **device_name_post_request** | [**DeviceNamePostRequest**](DeviceNamePostRequest.md)|  |
 
 ### Return type
 
@@ -740,7 +740,7 @@ configuration = openapi_client.Configuration(
 with openapi_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = openapi_client.DeviceSettingsApi(api_client)
-    device_reboot_post_request = openapi_client.DeviceRebootPostRequest() # DeviceRebootPostRequest | 
+    device_reboot_post_request = openapi_client.DeviceRebootPostRequest() # DeviceRebootPostRequest |
 
     try:
         api_response = api_instance.device_reboot_post(device_reboot_post_request)
@@ -757,7 +757,7 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **device_reboot_post_request** | [**DeviceRebootPostRequest**](DeviceRebootPostRequest.md)|  | 
+ **device_reboot_post_request** | [**DeviceRebootPostRequest**](DeviceRebootPostRequest.md)|  |
 
 ### Return type
 
@@ -1037,8 +1037,8 @@ configuration = openapi_client.Configuration(
 with openapi_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = openapi_client.DeviceSettingsApi(api_client)
-    access_line = 'access_line_example' # str | 
-    system_config_post_request = openapi_client.SystemConfigPostRequest() # SystemConfigPostRequest | 
+    access_line = 'access_line_example' # str |
+    system_config_post_request = openapi_client.SystemConfigPostRequest() # SystemConfigPostRequest |
 
     try:
         api_response = api_instance.system_config_post(access_line, system_config_post_request)
@@ -1055,8 +1055,8 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **access_line** | **str**|  | 
- **system_config_post_request** | [**SystemConfigPostRequest**](SystemConfigPostRequest.md)|  | 
+ **access_line** | **str**|  |
+ **system_config_post_request** | [**SystemConfigPostRequest**](SystemConfigPostRequest.md)|  |
 
 ### Return type
 
@@ -1190,7 +1190,7 @@ configuration = openapi_client.Configuration(
 with openapi_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = openapi_client.DeviceSettingsApi(api_client)
-    system_rfc1213_post_request = openapi_client.SystemRfc1213PostRequest() # SystemRfc1213PostRequest | 
+    system_rfc1213_post_request = openapi_client.SystemRfc1213PostRequest() # SystemRfc1213PostRequest |
 
     try:
         api_response = api_instance.system_rfc1213_post(system_rfc1213_post_request)
@@ -1207,7 +1207,7 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **system_rfc1213_post_request** | [**SystemRfc1213PostRequest**](SystemRfc1213PostRequest.md)|  | 
+ **system_rfc1213_post_request** | [**SystemRfc1213PostRequest**](SystemRfc1213PostRequest.md)|  |
 
 ### Return type
 
@@ -1229,4 +1229,3 @@ Name | Type | Description  | Notes
 **200** | successful operation |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-

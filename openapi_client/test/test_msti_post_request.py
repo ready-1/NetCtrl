@@ -37,7 +37,7 @@ class TestMstiPostRequest(unittest.TestCase):
         if include_optional:
             return MstiPostRequest(
                 dot1s_msti_entries = openapi_client.models.msti_post.msti_post(
-                    vlanid = 1, 
+                    vlanid = 1,
                     priority = 128, )
             )
         else:

@@ -39,11 +39,11 @@ class TestPingTestStatusGet200Response(unittest.TestCase):
         if include_optional:
             return PingTestStatusGet200Response(
                 resp = openapi_client.models.general_responses_code.general_responses_code(
-                    status = 'success', 
-                    resp_code = 0, 
+                    status = 'success',
+                    resp_code = 0,
                     resp_msg = 'Operation success', ),
                 ping_test_status = openapi_client.models.ping_test_status.ping_test_status(
-                    state = 0, 
+                    state = 0,
                     ping_msg = '....', )
             )
         else:

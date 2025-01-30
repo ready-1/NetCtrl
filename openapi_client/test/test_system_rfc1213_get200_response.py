@@ -39,8 +39,8 @@ class TestSystemRfc1213Get200Response(unittest.TestCase):
         if include_optional:
             return SystemRfc1213Get200Response(
                 resp = openapi_client.models.general_responses_code.general_responses_code(
-                    status = 'success', 
-                    resp_code = 0, 
+                    status = 'success',
+                    resp_code = 0,
                     resp_msg = 'Operation success', ),
                 system_rfc1213 = {"sysDescr":"M4300-24X ProSAFE 20-port 10GBASE-T and 4-port 10G combo, 20.36.53.1, B1.0.0.15","sysName":"M4324X","sysLocation":"San Jose","sysContact":""}
             )

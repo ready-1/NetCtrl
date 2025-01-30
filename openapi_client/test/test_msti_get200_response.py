@@ -37,8 +37,8 @@ class TestMstiGet200Response(unittest.TestCase):
         if include_optional:
             return MstiGet200Response(
                 resp = openapi_client.models.general_responses_code.general_responses_code(
-                    status = 'success', 
-                    resp_code = 0, 
+                    status = 'success',
+                    resp_code = 0,
                     resp_msg = 'Operation success', ),
                 dot1s_msti_entries = [{"mstId":0,"priority":0,"vlans":[{"id":1,"type":"Default","name":"Default"},{"id":201,"type":"Static","name":"FacultyNetwork"},{"id":202,"type":"Static","name":"GuestNetwork"}]},{"mstId":12,"priority":32768,"vlans":[{"id":4089,"type":"Auto-Video","name":"Auto-Video"}]}]
             )

@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**dot1s_interfaces** | [**Dot1sInterfacesPost**](Dot1sInterfacesPost.md) |  | [optional] 
+**dot1s_interfaces** | [**Dot1sInterfacesPost**](Dot1sInterfacesPost.md) |  | [optional]
 
 ## Example
 
@@ -25,5 +25,3 @@ dot1s_interfaces_post_request_dict = dot1s_interfaces_post_request_instance.to_d
 dot1s_interfaces_post_request_from_dict = Dot1sInterfacesPostRequest.from_dict(dot1s_interfaces_post_request_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

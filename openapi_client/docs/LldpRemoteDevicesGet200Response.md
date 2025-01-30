@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**lldp_remote_devices** | [**LldpRemoteDevices**](LldpRemoteDevices.md) |  | [optional] 
+**lldp_remote_devices** | [**LldpRemoteDevices**](LldpRemoteDevices.md) |  | [optional]
 
 ## Example
 
@@ -25,5 +25,3 @@ lldp_remote_devices_get200_response_dict = lldp_remote_devices_get200_response_i
 lldp_remote_devices_get200_response_from_dict = LldpRemoteDevicesGet200Response.from_dict(lldp_remote_devices_get200_response_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

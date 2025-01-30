@@ -27,5 +27,3 @@ auto_voip_cfg_get_oui_based_dict = auto_voip_cfg_get_oui_based_instance.to_dict(
 auto_voip_cfg_get_oui_based_from_dict = AutoVoipCfgGetOuiBased.from_dict(auto_voip_cfg_get_oui_based_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

@@ -39,8 +39,8 @@ class TestDot1pQueueMapGet200Response(unittest.TestCase):
         if include_optional:
             return Dot1pQueueMapGet200Response(
                 resp = openapi_client.models.general_responses_code.general_responses_code(
-                    status = 'success', 
-                    resp_code = 0, 
+                    status = 'success',
+                    resp_code = 0,
                     resp_msg = 'Operation success', ),
                 dot1p_queue_map = [{"priority":0,"queuemap":0},{"priority":1,"queuemap":1},{"priority":2,"queuemap":0},{"priority":3,"queuemap":1},{"priority":4,"queuemap":0},{"priority":5,"queuemap":2},{"priority":6,"queuemap":2},{"priority":7,"queuemap":3}]
             )

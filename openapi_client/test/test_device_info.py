@@ -54,9 +54,9 @@ class TestDeviceInfo(unittest.TestCase):
                 up_time = '',
                 temperature_sensors = [
                     openapi_client.models.device_info_temperature_sensors_inner.device_info_temperatureSensors_inner(
-                        sensor_num = 56, 
-                        sensor_desc = 56, 
-                        sensor_temp = '', 
+                        sensor_num = 56,
+                        sensor_desc = 56,
+                        sensor_temp = '',
                         sensor_state = '0', )
                     ],
                 boot_version = '',

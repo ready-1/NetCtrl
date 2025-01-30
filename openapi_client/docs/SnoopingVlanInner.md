@@ -5,14 +5,14 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**vlan_id** | **int** | VLAN ID | [optional] 
-**family** | **str** | Snooping family | [optional] 
-**fast_leave_mode** | **str** | Snooping fast leave mode for the specified VLAN | [optional] 
-**vlan_mode** | **str** | Snooping mode for the specified VLAN | [optional] 
-**report_supp_mode** | **str** | Snooping report suppression mode for the specified VLAN | [optional] 
-**proxy_querier_mode** | **str** | Proxy Querier Admin mode for the specified VLAN. | [optional] 
-**group_membership_interval** | **int** | IGMP/MLD snooping group membership interval for the specified VLAN. | [optional] 
-**max_response_time** | **int** | IGMP/MLD snooping maximum response time for the specified VLAN. | [optional] 
+**vlan_id** | **int** | VLAN ID | [optional]
+**family** | **str** | Snooping family | [optional]
+**fast_leave_mode** | **str** | Snooping fast leave mode for the specified VLAN | [optional]
+**vlan_mode** | **str** | Snooping mode for the specified VLAN | [optional]
+**report_supp_mode** | **str** | Snooping report suppression mode for the specified VLAN | [optional]
+**proxy_querier_mode** | **str** | Proxy Querier Admin mode for the specified VLAN. | [optional]
+**group_membership_interval** | **int** | IGMP/MLD snooping group membership interval for the specified VLAN. | [optional]
+**max_response_time** | **int** | IGMP/MLD snooping maximum response time for the specified VLAN. | [optional]
 
 ## Example
 
@@ -32,5 +32,3 @@ snooping_vlan_inner_dict = snooping_vlan_inner_instance.to_dict()
 snooping_vlan_inner_from_dict = SnoopingVlanInner.from_dict(snooping_vlan_inner_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

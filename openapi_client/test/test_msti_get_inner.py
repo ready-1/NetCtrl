@@ -40,8 +40,8 @@ class TestMstiGetInner(unittest.TestCase):
                 priority = 56,
                 vlans = [
                     openapi_client.models.msti_get_inner_vlans_inner.msti_get_inner_vlans_inner(
-                        id = 56, 
-                        type = '', 
+                        id = 56,
+                        type = '',
                         name = '', )
                     ]
             )

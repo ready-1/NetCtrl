@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional] 
-**snooping_config** | [**SnoopingConfigGet**](SnoopingConfigGet.md) |  | [optional] 
+**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional]
+**snooping_config** | [**SnoopingConfigGet**](SnoopingConfigGet.md) |  | [optional]
 
 ## Example
 
@@ -26,5 +26,3 @@ snooping_config_get200_response_dict = snooping_config_get200_response_instance.
 snooping_config_get200_response_from_dict = SnoopingConfigGet200Response.from_dict(snooping_config_get200_response_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

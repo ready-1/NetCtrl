@@ -25,5 +25,3 @@ dot1d_tp_config_post_dict = dot1d_tp_config_post_instance.to_dict()
 dot1d_tp_config_post_from_dict = Dot1dTpConfigPost.from_dict(dot1d_tp_config_post_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

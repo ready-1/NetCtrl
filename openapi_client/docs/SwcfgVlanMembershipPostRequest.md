@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**vlan_membership** | [**SwcfgVlanMembership**](SwcfgVlanMembership.md) |  | [optional] 
+**vlan_membership** | [**SwcfgVlanMembership**](SwcfgVlanMembership.md) |  | [optional]
 
 ## Example
 
@@ -25,5 +25,3 @@ swcfg_vlan_membership_post_request_dict = swcfg_vlan_membership_post_request_ins
 swcfg_vlan_membership_post_request_from_dict = SwcfgVlanMembershipPostRequest.from_dict(swcfg_vlan_membership_post_request_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

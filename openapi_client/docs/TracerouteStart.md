@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**action** | **int** | Traceroute action:   * &#x60;1&#x60; &#x3D; Start   * &#x60;0&#x60; &#x3D; Stop  | 
+**action** | **int** | Traceroute action:   * &#x60;1&#x60; &#x3D; Start   * &#x60;0&#x60; &#x3D; Stop  |
 **host** | **str** | Traceroute host or IP | [default to 'www.netgear.com']
 **size** | **int** | Size of probe packets | [optional] [default to 38]
 **ip_version** | **int** | IP address version:   * &#x60;4&#x60; &#x3D; IPv4   * &#x60;6&#x60; &#x3D; IPv6  | [optional] [default to 4]
@@ -33,5 +33,3 @@ traceroute_start_dict = traceroute_start_instance.to_dict()
 traceroute_start_from_dict = TracerouteStart.from_dict(traceroute_start_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

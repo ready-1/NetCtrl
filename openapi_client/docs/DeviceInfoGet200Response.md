@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional] 
-**device_info** | [**DeviceInfo**](DeviceInfo.md) |  | [optional] 
+**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional]
+**device_info** | [**DeviceInfo**](DeviceInfo.md) |  | [optional]
 
 ## Example
 
@@ -26,5 +26,3 @@ device_info_get200_response_dict = device_info_get200_response_instance.to_dict(
 device_info_get200_response_from_dict = DeviceInfoGet200Response.from_dict(device_info_get200_response_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

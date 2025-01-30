@@ -42,10 +42,10 @@
    ```bash
    # Create database
    docker compose exec db psql -U postgres -c "CREATE DATABASE netctrl;"
-   
+
    # Apply migrations
    docker compose exec web python manage.py migrate
-   
+
    # Create superuser
    docker compose exec web python manage.py createsuperuser
    ```

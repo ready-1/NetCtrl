@@ -39,8 +39,8 @@ class TestSnoopingVlanGet200Response(unittest.TestCase):
         if include_optional:
             return SnoopingVlanGet200Response(
                 resp = openapi_client.models.general_responses_code.general_responses_code(
-                    status = 'success', 
-                    resp_code = 0, 
+                    status = 'success',
+                    resp_code = 0,
                     resp_msg = 'Operation success', ),
                 snooping_vlans = [{"vlanId":1,"family":"igmp","fastLeaveMode":"enabled","vlanMode":"disabled","reportSuppMode":"disabled","proxyQuerierMode":"enabled","groupMembershipInterval":260,"maxResponseTime":10}]
             )

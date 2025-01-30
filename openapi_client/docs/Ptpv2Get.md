@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**admin_mode** | **str** | Port PTPv2 configuration status | 
-**opera_mode** | **str** | Port PTPv2 operational status | 
+**admin_mode** | **str** | Port PTPv2 configuration status |
+**opera_mode** | **str** | Port PTPv2 operational status |
 
 ## Example
 
@@ -26,5 +26,3 @@ ptpv2_get_dict = ptpv2_get_instance.to_dict()
 ptpv2_get_from_dict = Ptpv2Get.from_dict(ptpv2_get_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

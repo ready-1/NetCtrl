@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**login** | [**LoginRequest**](LoginRequest.md) |  | [optional] 
+**login** | [**LoginRequest**](LoginRequest.md) |  | [optional]
 
 ## Example
 
@@ -25,5 +25,3 @@ login_post_request_dict = login_post_request_instance.to_dict()
 login_post_request_from_dict = LoginPostRequest.from_dict(login_post_request_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

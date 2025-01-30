@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional] 
-**poe_port_config** | [**SwcfgPoe**](SwcfgPoe.md) |  | [optional] 
+**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional]
+**poe_port_config** | [**SwcfgPoe**](SwcfgPoe.md) |  | [optional]
 
 ## Example
 
@@ -26,5 +26,3 @@ swcfg_poe_get200_response_dict = swcfg_poe_get200_response_instance.to_dict()
 swcfg_poe_get200_response_from_dict = SwcfgPoeGet200Response.from_dict(swcfg_poe_get200_response_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

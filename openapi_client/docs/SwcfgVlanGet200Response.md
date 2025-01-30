@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional] 
-**switch_config_vlan** | [**SwcfgVlan**](SwcfgVlan.md) |  | [optional] 
+**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional]
+**switch_config_vlan** | [**SwcfgVlan**](SwcfgVlan.md) |  | [optional]
 
 ## Example
 
@@ -26,5 +26,3 @@ swcfg_vlan_get200_response_dict = swcfg_vlan_get200_response_instance.to_dict()
 swcfg_vlan_get200_response_from_dict = SwcfgVlanGet200Response.from_dict(swcfg_vlan_get200_response_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

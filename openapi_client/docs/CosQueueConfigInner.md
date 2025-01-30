@@ -5,10 +5,10 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**id** | [**CosQueueConfigInnerId**](CosQueueConfigInnerId.md) |  | [optional] 
-**min_bw** | [**CosQueueConfigInnerMinBw**](CosQueueConfigInnerMinBw.md) |  | [optional] 
-**mgmt_type** | **str** | CoS Management Type | [optional] 
-**schedule_type** | **str** | CoS Schedule Type | [optional] 
+**id** | [**CosQueueConfigInnerId**](CosQueueConfigInnerId.md) |  | [optional]
+**min_bw** | [**CosQueueConfigInnerMinBw**](CosQueueConfigInnerMinBw.md) |  | [optional]
+**mgmt_type** | **str** | CoS Management Type | [optional]
+**schedule_type** | **str** | CoS Schedule Type | [optional]
 
 ## Example
 
@@ -28,5 +28,3 @@ cos_queue_config_inner_dict = cos_queue_config_inner_instance.to_dict()
 cos_queue_config_inner_from_dict = CosQueueConfigInner.from_dict(cos_queue_config_inner_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

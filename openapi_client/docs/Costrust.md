@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**mode** | **str** | Trust mode of COS - Global/ALL/Per Interface:   * dot1p   * untrusted   * ip-dscp  | 
+**mode** | **str** | Trust mode of COS - Global/ALL/Per Interface:   * dot1p   * untrusted   * ip-dscp  |
 
 ## Example
 
@@ -25,5 +25,3 @@ costrust_dict = costrust_instance.to_dict()
 costrust_from_dict = Costrust.from_dict(costrust_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

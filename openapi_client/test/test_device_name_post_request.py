@@ -37,7 +37,7 @@ class TestDeviceNamePostRequest(unittest.TestCase):
         if include_optional:
             return DeviceNamePostRequest(
                 device_name = openapi_client.models.device_name.device_name(
-                    name = 'NGTR_SW', 
+                    name = 'NGTR_SW',
                     location = 'TBD', )
             )
         else:

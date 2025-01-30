@@ -28,5 +28,3 @@ auto_voip_cfg_get_protocol_based_dict = auto_voip_cfg_get_protocol_based_instanc
 auto_voip_cfg_get_protocol_based_from_dict = AutoVoipCfgGetProtocolBased.from_dict(auto_voip_cfg_get_protocol_based_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

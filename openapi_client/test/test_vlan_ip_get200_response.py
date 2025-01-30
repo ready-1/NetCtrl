@@ -37,8 +37,8 @@ class TestVlanIpGet200Response(unittest.TestCase):
         if include_optional:
             return VlanIpGet200Response(
                 resp = openapi_client.models.general_responses_code.general_responses_code(
-                    status = 'success', 
-                    resp_code = 0, 
+                    status = 'success',
+                    resp_code = 0,
                     resp_msg = 'Operation success', ),
                 vlan_ip = [
                     {"vlanId":1,"dhcpStatus":true,"ipAddr":"10.40.7.100","ipMask":"255.255.252.0","ipMtu":1500,"vlanRouting":true}

@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**portid** | **int** | Port VLAN IDs (PVID) assignments for these port interfaces. | [optional] 
+**portid** | **int** | Port VLAN IDs (PVID) assignments for these port interfaces. | [optional]
 
 ## Example
 
@@ -25,5 +25,3 @@ swcfg_vlan_membership_pvid_members_inner_dict = swcfg_vlan_membership_pvid_membe
 swcfg_vlan_membership_pvid_members_inner_from_dict = SwcfgVlanMembershipPvidMembersInner.from_dict(swcfg_vlan_membership_pvid_members_inner_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

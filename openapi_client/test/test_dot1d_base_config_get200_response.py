@@ -39,12 +39,12 @@ class TestDot1dBaseConfigGet200Response(unittest.TestCase):
         if include_optional:
             return Dot1dBaseConfigGet200Response(
                 resp = openapi_client.models.general_responses_code.general_responses_code(
-                    status = 'success', 
-                    resp_code = 0, 
+                    status = 'success',
+                    resp_code = 0,
                     resp_msg = 'Operation success', ),
                 dot1d_base_config = openapi_client.models.dot1d_base_config.dot1d_base_config(
-                    base_bridge_address = '8C:3B:AD:66:C6:98', 
-                    base_num_ports = 78, 
+                    base_bridge_address = '8C:3B:AD:66:C6:98',
+                    base_num_ports = 78,
                     base_type = 2, )
             )
         else:

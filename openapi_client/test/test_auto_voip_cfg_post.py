@@ -37,23 +37,23 @@ class TestAutoVoipCfgPost(unittest.TestCase):
         if include_optional:
             return AutoVoipCfgPost(
                 protocol_based = openapi_client.models.auto_voip_cfg_post_protocol_based.auto_voip_cfg_post_protocolBased(
-                    prioritization_type = 'traffic-class', 
-                    class_value = 0, 
+                    prioritization_type = 'traffic-class',
+                    class_value = 0,
                     mode = True, ),
                 oui_based = openapi_client.models.auto_voip_cfg_post_oui_based.auto_voip_cfg_post_ouiBased(
-                    vlan_id = 56, 
-                    priority = 0, 
+                    vlan_id = 56,
+                    priority = 0,
                     mode = True, )
             )
         else:
             return AutoVoipCfgPost(
                 protocol_based = openapi_client.models.auto_voip_cfg_post_protocol_based.auto_voip_cfg_post_protocolBased(
-                    prioritization_type = 'traffic-class', 
-                    class_value = 0, 
+                    prioritization_type = 'traffic-class',
+                    class_value = 0,
                     mode = True, ),
                 oui_based = openapi_client.models.auto_voip_cfg_post_oui_based.auto_voip_cfg_post_ouiBased(
-                    vlan_id = 56, 
-                    priority = 0, 
+                    vlan_id = 56,
+                    priority = 0,
                     mode = True, ),
         )
         """

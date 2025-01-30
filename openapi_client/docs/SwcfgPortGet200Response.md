@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**switch_port_config** | [**SwcfgPort**](SwcfgPort.md) |  | [optional] 
+**switch_port_config** | [**SwcfgPort**](SwcfgPort.md) |  | [optional]
 
 ## Example
 
@@ -25,5 +25,3 @@ swcfg_port_get200_response_dict = swcfg_port_get200_response_instance.to_dict()
 swcfg_port_get200_response_from_dict = SwcfgPortGet200Response.from_dict(swcfg_port_get200_response_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

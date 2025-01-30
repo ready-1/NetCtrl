@@ -5,12 +5,12 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**vlan_id** | **int** | VLAN ID | 
-**name** | **str** | VLAN Name | 
+**vlan_id** | **int** | VLAN ID |
+**name** | **str** | VLAN Name |
 **voice_vlan_state** | **bool** | Voice VLAN status | [optional] [default to False]
 **auto_voip_state** | **bool** | AutoVoIP | [optional] [default to False]
 **auto_video_state** | **bool** | Auto Video | [optional] [default to False]
-**igmp_config** | [**SwcfgVlanIgmpConfig**](SwcfgVlanIgmpConfig.md) |  | [optional] 
+**igmp_config** | [**SwcfgVlanIgmpConfig**](SwcfgVlanIgmpConfig.md) |  | [optional]
 
 ## Example
 
@@ -30,5 +30,3 @@ swcfg_vlan_dict = swcfg_vlan_instance.to_dict()
 swcfg_vlan_from_dict = SwcfgVlan.from_dict(swcfg_vlan_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

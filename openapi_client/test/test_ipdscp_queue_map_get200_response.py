@@ -39,8 +39,8 @@ class TestIpdscpQueueMapGet200Response(unittest.TestCase):
         if include_optional:
             return IpdscpQueueMapGet200Response(
                 resp = openapi_client.models.general_responses_code.general_responses_code(
-                    status = 'success', 
-                    resp_code = 0, 
+                    status = 'success',
+                    resp_code = 0,
                     resp_msg = 'Operation success', ),
                 ipdscp_queue_map = [{"dscpid":0,"dscpmap":1},{"dscpid":1,"dscpmap":1},{"dscpid":2,"dscpmap":0},{"dscpid":3,"dscpmap":1},{"dscpid":4,"dscpmap":0},{"dscpid":5,"dscpmap":2},{"dscpid":6,"dscpmap":2},{"dscpid":7,"dscpmap":3},{"dscpid":8,"dscpmap":3},{"dscpid":9,"dscpmap":0},{"dscpid":10,"dscpmap":0},{"dscpid":11,"dscpmap":0},{"dscpid":12,"dscpmap":0},{"dscpid":13,"dscpmap":0},{"dscpid":14,"dscpmap":0},{"dscpid":15,"dscpmap":0},{"dscpid":16,"dscpmap":0},{"dscpid":17,"dscpmap":0},{"dscpid":18,"dscpmap":0},{"dscpid":19,"dscpmap":0},{"dscpid":20,"dscpmap":0},{"dscpid":21,"dscpmap":0},{"dscpid":22,"dscpmap":0},{"dscpid":23,"dscpmap":0},{"dscpid":24,"dscpmap":0},{"dscpid":25,"dscpmap":0},{"dscpid":26,"dscpmap":0},{"dscpid":27,"dscpmap":0},{"dscpid":28,"dscpmap":0},{"dscpid":29,"dscpmap":0},{"dscpid":30,"dscpmap":0},{"dscpid":31,"dscpmap":0},{"dscpid":32,"dscpmap":0},{"dscpid":33,"dscpmap":0},{"dscpid":34,"dscpmap":0},{"dscpid":35,"dscpmap":0},{"dscpid":36,"dscpmap":0},{"dscpid":37,"dscpmap":0},{"dscpid":38,"dscpmap":0},{"dscpid":39,"dscpmap":0},{"dscpid":40,"dscpmap":0},{"dscpid":41,"dscpmap":0},{"dscpid":42,"dscpmap":0},{"dscpid":43,"dscpmap":0},{"dscpid":44,"dscpmap":0},{"dscpid":45,"dscpmap":0},{"dscpid":46,"dscpmap":0},{"dscpid":47,"dscpmap":0},{"dscpid":48,"dscpmap":0},{"dscpid":49,"dscpmap":0},{"dscpid":50,"dscpmap":0},{"dscpid":51,"dscpmap":0},{"dscpid":52,"dscpmap":0},{"dscpid":53,"dscpmap":0},{"dscpid":54,"dscpmap":0},{"dscpid":55,"dscpmap":0},{"dscpid":56,"dscpmap":0},{"dscpid":57,"dscpmap":0},{"dscpid":58,"dscpmap":0},{"dscpid":59,"dscpmap":0},{"dscpid":60,"dscpmap":0},{"dscpid":61,"dscpmap":0},{"dscpid":62,"dscpmap":0},{"dscpid":63,"dscpmap":0}]
             )

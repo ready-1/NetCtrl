@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**dot1d_tp_config** | [**Dot1dTpConfigPost**](Dot1dTpConfigPost.md) |  | [optional] 
+**dot1d_tp_config** | [**Dot1dTpConfigPost**](Dot1dTpConfigPost.md) |  | [optional]
 
 ## Example
 
@@ -25,5 +25,3 @@ dot1d_tp_config_post_request_dict = dot1d_tp_config_post_request_instance.to_dic
 dot1d_tp_config_post_request_from_dict = Dot1dTpConfigPostRequest.from_dict(dot1d_tp_config_post_request_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

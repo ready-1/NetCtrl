@@ -37,11 +37,11 @@ class TestActiveImageGet200Response(unittest.TestCase):
         if include_optional:
             return ActiveImageGet200Response(
                 resp = openapi_client.models.general_responses_code.general_responses_code(
-                    status = 'success', 
-                    resp_code = 0, 
+                    status = 'success',
+                    resp_code = 0,
                     resp_msg = 'Operation success', ),
                 active_image = openapi_client.models.active_image_get.active_image_get(
-                    label = 'image1', 
+                    label = 'image1',
                     image_descr = 'Test Img', )
             )
         else:

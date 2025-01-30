@@ -67,7 +67,7 @@ configuration = openapi_client.Configuration(
 with openapi_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = openapi_client.AuthenticationApi(api_client)
-    login_post_request = openapi_client.LoginPostRequest() # LoginPostRequest | 
+    login_post_request = openapi_client.LoginPostRequest() # LoginPostRequest |
 
     try:
         api_response = api_instance.login_post(login_post_request)
@@ -84,91 +84,91 @@ All URIs are relative to *https://127.0.0.1:8443/api/v1*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
-*AuthenticationApi* | [**login_post**](docs/AuthenticationApi.md#login_post) | **POST** /login | 
-*AuthenticationApi* | [**logout_post**](docs/AuthenticationApi.md#logout_post) | **POST** /logout | 
-*DeviceSettingsApi* | [**active_image_get**](docs/DeviceSettingsApi.md#active_image_get) | **GET** /active_image | 
-*DeviceSettingsApi* | [**active_image_post**](docs/DeviceSettingsApi.md#active_image_post) | **POST** /active_image | 
-*DeviceSettingsApi* | [**bonjour_get**](docs/DeviceSettingsApi.md#bonjour_get) | **GET** /bonjour | 
-*DeviceSettingsApi* | [**bonjour_post**](docs/DeviceSettingsApi.md#bonjour_post) | **POST** /bonjour | 
-*DeviceSettingsApi* | [**config_copy_post**](docs/DeviceSettingsApi.md#config_copy_post) | **POST** /config_copy | 
-*DeviceSettingsApi* | [**config_file_compare_get**](docs/DeviceSettingsApi.md#config_file_compare_get) | **GET** /config_file_compare | 
-*DeviceSettingsApi* | [**device_info_get**](docs/DeviceSettingsApi.md#device_info_get) | **GET** /device_info | 
-*DeviceSettingsApi* | [**device_name_get**](docs/DeviceSettingsApi.md#device_name_get) | **GET** /device_name | 
-*DeviceSettingsApi* | [**device_name_post**](docs/DeviceSettingsApi.md#device_name_post) | **POST** /device_name | 
-*DeviceSettingsApi* | [**device_reboot_post**](docs/DeviceSettingsApi.md#device_reboot_post) | **POST** /device_reboot | 
-*DeviceSettingsApi* | [**dual_image_status_get**](docs/DeviceSettingsApi.md#dual_image_status_get) | **GET** /dual_image_status | 
-*DeviceSettingsApi* | [**lldp_remote_devices_get**](docs/DeviceSettingsApi.md#lldp_remote_devices_get) | **GET** /lldp_remote_devices | 
-*DeviceSettingsApi* | [**system_config_get**](docs/DeviceSettingsApi.md#system_config_get) | **GET** /system_config | 
-*DeviceSettingsApi* | [**system_config_post**](docs/DeviceSettingsApi.md#system_config_post) | **POST** /system_config | 
-*DeviceSettingsApi* | [**system_rfc1213_get**](docs/DeviceSettingsApi.md#system_rfc1213_get) | **GET** /system_rfc1213 | 
-*DeviceSettingsApi* | [**system_rfc1213_post**](docs/DeviceSettingsApi.md#system_rfc1213_post) | **POST** /system_rfc1213 | 
-*DiagnosticsApi* | [**device_cable_test_get**](docs/DiagnosticsApi.md#device_cable_test_get) | **GET** /device_cable_test | 
-*DiagnosticsApi* | [**ping_test_start_post**](docs/DiagnosticsApi.md#ping_test_start_post) | **POST** /ping_test_start | 
-*DiagnosticsApi* | [**ping_test_status_get**](docs/DiagnosticsApi.md#ping_test_status_get) | **GET** /ping_test_status | 
-*DiagnosticsApi* | [**sw_portmirroring_delete**](docs/DiagnosticsApi.md#sw_portmirroring_delete) | **DELETE** /sw_portmirroring | 
-*DiagnosticsApi* | [**sw_portmirroring_get**](docs/DiagnosticsApi.md#sw_portmirroring_get) | **GET** /sw_portmirroring | 
-*DiagnosticsApi* | [**sw_portmirroring_post**](docs/DiagnosticsApi.md#sw_portmirroring_post) | **POST** /sw_portmirroring | 
-*DiagnosticsApi* | [**traceroute_start_post**](docs/DiagnosticsApi.md#traceroute_start_post) | **POST** /traceroute_start | 
-*DiagnosticsApi* | [**traceroute_status_get**](docs/DiagnosticsApi.md#traceroute_status_get) | **GET** /traceroute_status | 
-*LinkAggregrationGroupSettingsApi* | [**sw_lag_cfg_get**](docs/LinkAggregrationGroupSettingsApi.md#sw_lag_cfg_get) | **GET** /sw_lag_cfg | 
-*LinkAggregrationGroupSettingsApi* | [**sw_lag_cfg_post**](docs/LinkAggregrationGroupSettingsApi.md#sw_lag_cfg_post) | **POST** /sw_lag_cfg | 
-*LoggingApi* | [**device_log_reader_get**](docs/LoggingApi.md#device_log_reader_get) | **GET** /device_log_reader | 
-*MulticastApi* | [**snooping_config_get**](docs/MulticastApi.md#snooping_config_get) | **GET** /snooping_config | 
-*MulticastApi* | [**snooping_config_post**](docs/MulticastApi.md#snooping_config_post) | **POST** /snooping_config | 
-*MulticastApi* | [**snooping_interfaces_get**](docs/MulticastApi.md#snooping_interfaces_get) | **GET** /snooping_interfaces | 
-*MulticastApi* | [**snooping_interfaces_post**](docs/MulticastApi.md#snooping_interfaces_post) | **POST** /snooping_interfaces | 
-*MulticastApi* | [**snooping_queriers_get**](docs/MulticastApi.md#snooping_queriers_get) | **GET** /snooping_queriers | 
-*MulticastApi* | [**snooping_queriers_post**](docs/MulticastApi.md#snooping_queriers_post) | **POST** /snooping_queriers | 
-*MulticastApi* | [**snooping_vlan_get**](docs/MulticastApi.md#snooping_vlan_get) | **GET** /snooping_vlan | 
-*PortInformationAndSettingsApi* | [**device_reset_counters_post**](docs/PortInformationAndSettingsApi.md#device_reset_counters_post) | **POST** /device_reset_counters | 
-*PortInformationAndSettingsApi* | [**dot1d_base_config_get**](docs/PortInformationAndSettingsApi.md#dot1d_base_config_get) | **GET** /dot1d_base_config | 
-*PortInformationAndSettingsApi* | [**dot1d_tp_config_get**](docs/PortInformationAndSettingsApi.md#dot1d_tp_config_get) | **GET** /dot1d_tp_config | 
-*PortInformationAndSettingsApi* | [**dot1d_tp_config_post**](docs/PortInformationAndSettingsApi.md#dot1d_tp_config_post) | **POST** /dot1d_tp_config | 
-*PortInformationAndSettingsApi* | [**dot1d_tp_port_entries_get**](docs/PortInformationAndSettingsApi.md#dot1d_tp_port_entries_get) | **GET** /dot1d_tp_port_entries | 
-*PortInformationAndSettingsApi* | [**fdb_stats_get**](docs/PortInformationAndSettingsApi.md#fdb_stats_get) | **GET** /fdb_stats | 
-*PortInformationAndSettingsApi* | [**fdb_stats_post**](docs/PortInformationAndSettingsApi.md#fdb_stats_post) | **POST** /fdb_stats | 
-*PortInformationAndSettingsApi* | [**fdbs_delete**](docs/PortInformationAndSettingsApi.md#fdbs_delete) | **DELETE** /fdbs | 
-*PortInformationAndSettingsApi* | [**fdbs_get**](docs/PortInformationAndSettingsApi.md#fdbs_get) | **GET** /fdbs | 
-*PortInformationAndSettingsApi* | [**fiber_optics_get**](docs/PortInformationAndSettingsApi.md#fiber_optics_get) | **GET** /fiber_optics | 
-*PortInformationAndSettingsApi* | [**ptpv2_get**](docs/PortInformationAndSettingsApi.md#ptpv2_get) | **GET** /ptpv2 | 
-*PortInformationAndSettingsApi* | [**ptpv2_global_get**](docs/PortInformationAndSettingsApi.md#ptpv2_global_get) | **GET** /ptpv2_global | 
-*PortInformationAndSettingsApi* | [**ptpv2_global_post**](docs/PortInformationAndSettingsApi.md#ptpv2_global_post) | **POST** /ptpv2_global | 
-*PortInformationAndSettingsApi* | [**ptpv2_post**](docs/PortInformationAndSettingsApi.md#ptpv2_post) | **POST** /ptpv2 | 
-*PortInformationAndSettingsApi* | [**sw_portstats_get**](docs/PortInformationAndSettingsApi.md#sw_portstats_get) | **GET** /sw_portstats | 
-*PortInformationAndSettingsApi* | [**swcfg_port_get**](docs/PortInformationAndSettingsApi.md#swcfg_port_get) | **GET** /swcfg_port | 
-*PortInformationAndSettingsApi* | [**swcfg_port_post**](docs/PortInformationAndSettingsApi.md#swcfg_port_post) | **POST** /swcfg_port | 
-*PowerOverEthernetInformationAndSettingsApi* | [**poe_config_get**](docs/PowerOverEthernetInformationAndSettingsApi.md#poe_config_get) | **GET** /poe_config | 
-*PowerOverEthernetInformationAndSettingsApi* | [**poe_config_post**](docs/PowerOverEthernetInformationAndSettingsApi.md#poe_config_post) | **POST** /poe_config | 
-*PowerOverEthernetInformationAndSettingsApi* | [**swcfg_poe_get**](docs/PowerOverEthernetInformationAndSettingsApi.md#swcfg_poe_get) | **GET** /swcfg_poe | 
-*PowerOverEthernetInformationAndSettingsApi* | [**swcfg_poe_post**](docs/PowerOverEthernetInformationAndSettingsApi.md#swcfg_poe_post) | **POST** /swcfg_poe | 
-*QualityOfServiceApi* | [**cos_queue_config_get**](docs/QualityOfServiceApi.md#cos_queue_config_get) | **GET** /cos_queue_config | 
-*QualityOfServiceApi* | [**cos_queue_config_post**](docs/QualityOfServiceApi.md#cos_queue_config_post) | **POST** /cos_queue_config | 
-*QualityOfServiceApi* | [**costrust_get**](docs/QualityOfServiceApi.md#costrust_get) | **GET** /costrust | 
-*QualityOfServiceApi* | [**costrust_post**](docs/QualityOfServiceApi.md#costrust_post) | **POST** /costrust | 
-*QualityOfServiceApi* | [**dot1p_queue_map_get**](docs/QualityOfServiceApi.md#dot1p_queue_map_get) | **GET** /dot1p_queue_map | 
-*QualityOfServiceApi* | [**dot1p_queue_map_post**](docs/QualityOfServiceApi.md#dot1p_queue_map_post) | **POST** /dot1p_queue_map | 
-*QualityOfServiceApi* | [**ipdscp_queue_map_get**](docs/QualityOfServiceApi.md#ipdscp_queue_map_get) | **GET** /ipdscp_queue_map | 
-*QualityOfServiceApi* | [**ipdscp_queue_map_post**](docs/QualityOfServiceApi.md#ipdscp_queue_map_post) | **POST** /ipdscp_queue_map | 
-*RoutingSettingsApi* | [**host_table_get**](docs/RoutingSettingsApi.md#host_table_get) | **GET** /host_table | 
-*RoutingSettingsApi* | [**ip_route_table_get**](docs/RoutingSettingsApi.md#ip_route_table_get) | **GET** /ip_route_table | 
-*SpanningTreeProtocolApi* | [**dot1d_stp_config_get**](docs/SpanningTreeProtocolApi.md#dot1d_stp_config_get) | **GET** /dot1d_stp_config | 
-*SpanningTreeProtocolApi* | [**dot1d_stp_entries_get**](docs/SpanningTreeProtocolApi.md#dot1d_stp_entries_get) | **GET** /dot1d_stp_entries | 
-*SpanningTreeProtocolApi* | [**dot1s_interfaces_get**](docs/SpanningTreeProtocolApi.md#dot1s_interfaces_get) | **GET** /dot1s_interfaces | 
-*SpanningTreeProtocolApi* | [**dot1s_interfaces_post**](docs/SpanningTreeProtocolApi.md#dot1s_interfaces_post) | **POST** /dot1s_interfaces | 
-*SpanningTreeProtocolApi* | [**msti_delete**](docs/SpanningTreeProtocolApi.md#msti_delete) | **DELETE** /msti | 
-*SpanningTreeProtocolApi* | [**msti_get**](docs/SpanningTreeProtocolApi.md#msti_get) | **GET** /msti | 
-*SpanningTreeProtocolApi* | [**msti_post**](docs/SpanningTreeProtocolApi.md#msti_post) | **POST** /msti | 
-*SpanningTreeProtocolApi* | [**stp_get**](docs/SpanningTreeProtocolApi.md#stp_get) | **GET** /stp | 
-*SpanningTreeProtocolApi* | [**stp_post**](docs/SpanningTreeProtocolApi.md#stp_post) | **POST** /stp | 
-*VirtualLocalAreaNetworksApi* | [**dot1q_sw_port_config_get**](docs/VirtualLocalAreaNetworksApi.md#dot1q_sw_port_config_get) | **GET** /dot1q_sw_port_config | 
-*VirtualLocalAreaNetworksApi* | [**dot1q_sw_port_config_post**](docs/VirtualLocalAreaNetworksApi.md#dot1q_sw_port_config_post) | **POST** /dot1q_sw_port_config | 
-*VirtualLocalAreaNetworksApi* | [**swcfg_vlan_delete**](docs/VirtualLocalAreaNetworksApi.md#swcfg_vlan_delete) | **DELETE** /swcfg_vlan | 
-*VirtualLocalAreaNetworksApi* | [**swcfg_vlan_get**](docs/VirtualLocalAreaNetworksApi.md#swcfg_vlan_get) | **GET** /swcfg_vlan | 
-*VirtualLocalAreaNetworksApi* | [**swcfg_vlan_membership_get**](docs/VirtualLocalAreaNetworksApi.md#swcfg_vlan_membership_get) | **GET** /swcfg_vlan_membership | 
-*VirtualLocalAreaNetworksApi* | [**swcfg_vlan_membership_post**](docs/VirtualLocalAreaNetworksApi.md#swcfg_vlan_membership_post) | **POST** /swcfg_vlan_membership | 
-*VirtualLocalAreaNetworksApi* | [**swcfg_vlan_post**](docs/VirtualLocalAreaNetworksApi.md#swcfg_vlan_post) | **POST** /swcfg_vlan | 
-*VirtualLocalAreaNetworksApi* | [**vlan_ip_get**](docs/VirtualLocalAreaNetworksApi.md#vlan_ip_get) | **GET** /vlan_ip | 
-*VirtualLocalAreaNetworksApi* | [**vlan_ip_post**](docs/VirtualLocalAreaNetworksApi.md#vlan_ip_post) | **POST** /vlan_ip | 
+*AuthenticationApi* | [**login_post**](docs/AuthenticationApi.md#login_post) | **POST** /login |
+*AuthenticationApi* | [**logout_post**](docs/AuthenticationApi.md#logout_post) | **POST** /logout |
+*DeviceSettingsApi* | [**active_image_get**](docs/DeviceSettingsApi.md#active_image_get) | **GET** /active_image |
+*DeviceSettingsApi* | [**active_image_post**](docs/DeviceSettingsApi.md#active_image_post) | **POST** /active_image |
+*DeviceSettingsApi* | [**bonjour_get**](docs/DeviceSettingsApi.md#bonjour_get) | **GET** /bonjour |
+*DeviceSettingsApi* | [**bonjour_post**](docs/DeviceSettingsApi.md#bonjour_post) | **POST** /bonjour |
+*DeviceSettingsApi* | [**config_copy_post**](docs/DeviceSettingsApi.md#config_copy_post) | **POST** /config_copy |
+*DeviceSettingsApi* | [**config_file_compare_get**](docs/DeviceSettingsApi.md#config_file_compare_get) | **GET** /config_file_compare |
+*DeviceSettingsApi* | [**device_info_get**](docs/DeviceSettingsApi.md#device_info_get) | **GET** /device_info |
+*DeviceSettingsApi* | [**device_name_get**](docs/DeviceSettingsApi.md#device_name_get) | **GET** /device_name |
+*DeviceSettingsApi* | [**device_name_post**](docs/DeviceSettingsApi.md#device_name_post) | **POST** /device_name |
+*DeviceSettingsApi* | [**device_reboot_post**](docs/DeviceSettingsApi.md#device_reboot_post) | **POST** /device_reboot |
+*DeviceSettingsApi* | [**dual_image_status_get**](docs/DeviceSettingsApi.md#dual_image_status_get) | **GET** /dual_image_status |
+*DeviceSettingsApi* | [**lldp_remote_devices_get**](docs/DeviceSettingsApi.md#lldp_remote_devices_get) | **GET** /lldp_remote_devices |
+*DeviceSettingsApi* | [**system_config_get**](docs/DeviceSettingsApi.md#system_config_get) | **GET** /system_config |
+*DeviceSettingsApi* | [**system_config_post**](docs/DeviceSettingsApi.md#system_config_post) | **POST** /system_config |
+*DeviceSettingsApi* | [**system_rfc1213_get**](docs/DeviceSettingsApi.md#system_rfc1213_get) | **GET** /system_rfc1213 |
+*DeviceSettingsApi* | [**system_rfc1213_post**](docs/DeviceSettingsApi.md#system_rfc1213_post) | **POST** /system_rfc1213 |
+*DiagnosticsApi* | [**device_cable_test_get**](docs/DiagnosticsApi.md#device_cable_test_get) | **GET** /device_cable_test |
+*DiagnosticsApi* | [**ping_test_start_post**](docs/DiagnosticsApi.md#ping_test_start_post) | **POST** /ping_test_start |
+*DiagnosticsApi* | [**ping_test_status_get**](docs/DiagnosticsApi.md#ping_test_status_get) | **GET** /ping_test_status |
+*DiagnosticsApi* | [**sw_portmirroring_delete**](docs/DiagnosticsApi.md#sw_portmirroring_delete) | **DELETE** /sw_portmirroring |
+*DiagnosticsApi* | [**sw_portmirroring_get**](docs/DiagnosticsApi.md#sw_portmirroring_get) | **GET** /sw_portmirroring |
+*DiagnosticsApi* | [**sw_portmirroring_post**](docs/DiagnosticsApi.md#sw_portmirroring_post) | **POST** /sw_portmirroring |
+*DiagnosticsApi* | [**traceroute_start_post**](docs/DiagnosticsApi.md#traceroute_start_post) | **POST** /traceroute_start |
+*DiagnosticsApi* | [**traceroute_status_get**](docs/DiagnosticsApi.md#traceroute_status_get) | **GET** /traceroute_status |
+*LinkAggregrationGroupSettingsApi* | [**sw_lag_cfg_get**](docs/LinkAggregrationGroupSettingsApi.md#sw_lag_cfg_get) | **GET** /sw_lag_cfg |
+*LinkAggregrationGroupSettingsApi* | [**sw_lag_cfg_post**](docs/LinkAggregrationGroupSettingsApi.md#sw_lag_cfg_post) | **POST** /sw_lag_cfg |
+*LoggingApi* | [**device_log_reader_get**](docs/LoggingApi.md#device_log_reader_get) | **GET** /device_log_reader |
+*MulticastApi* | [**snooping_config_get**](docs/MulticastApi.md#snooping_config_get) | **GET** /snooping_config |
+*MulticastApi* | [**snooping_config_post**](docs/MulticastApi.md#snooping_config_post) | **POST** /snooping_config |
+*MulticastApi* | [**snooping_interfaces_get**](docs/MulticastApi.md#snooping_interfaces_get) | **GET** /snooping_interfaces |
+*MulticastApi* | [**snooping_interfaces_post**](docs/MulticastApi.md#snooping_interfaces_post) | **POST** /snooping_interfaces |
+*MulticastApi* | [**snooping_queriers_get**](docs/MulticastApi.md#snooping_queriers_get) | **GET** /snooping_queriers |
+*MulticastApi* | [**snooping_queriers_post**](docs/MulticastApi.md#snooping_queriers_post) | **POST** /snooping_queriers |
+*MulticastApi* | [**snooping_vlan_get**](docs/MulticastApi.md#snooping_vlan_get) | **GET** /snooping_vlan |
+*PortInformationAndSettingsApi* | [**device_reset_counters_post**](docs/PortInformationAndSettingsApi.md#device_reset_counters_post) | **POST** /device_reset_counters |
+*PortInformationAndSettingsApi* | [**dot1d_base_config_get**](docs/PortInformationAndSettingsApi.md#dot1d_base_config_get) | **GET** /dot1d_base_config |
+*PortInformationAndSettingsApi* | [**dot1d_tp_config_get**](docs/PortInformationAndSettingsApi.md#dot1d_tp_config_get) | **GET** /dot1d_tp_config |
+*PortInformationAndSettingsApi* | [**dot1d_tp_config_post**](docs/PortInformationAndSettingsApi.md#dot1d_tp_config_post) | **POST** /dot1d_tp_config |
+*PortInformationAndSettingsApi* | [**dot1d_tp_port_entries_get**](docs/PortInformationAndSettingsApi.md#dot1d_tp_port_entries_get) | **GET** /dot1d_tp_port_entries |
+*PortInformationAndSettingsApi* | [**fdb_stats_get**](docs/PortInformationAndSettingsApi.md#fdb_stats_get) | **GET** /fdb_stats |
+*PortInformationAndSettingsApi* | [**fdb_stats_post**](docs/PortInformationAndSettingsApi.md#fdb_stats_post) | **POST** /fdb_stats |
+*PortInformationAndSettingsApi* | [**fdbs_delete**](docs/PortInformationAndSettingsApi.md#fdbs_delete) | **DELETE** /fdbs |
+*PortInformationAndSettingsApi* | [**fdbs_get**](docs/PortInformationAndSettingsApi.md#fdbs_get) | **GET** /fdbs |
+*PortInformationAndSettingsApi* | [**fiber_optics_get**](docs/PortInformationAndSettingsApi.md#fiber_optics_get) | **GET** /fiber_optics |
+*PortInformationAndSettingsApi* | [**ptpv2_get**](docs/PortInformationAndSettingsApi.md#ptpv2_get) | **GET** /ptpv2 |
+*PortInformationAndSettingsApi* | [**ptpv2_global_get**](docs/PortInformationAndSettingsApi.md#ptpv2_global_get) | **GET** /ptpv2_global |
+*PortInformationAndSettingsApi* | [**ptpv2_global_post**](docs/PortInformationAndSettingsApi.md#ptpv2_global_post) | **POST** /ptpv2_global |
+*PortInformationAndSettingsApi* | [**ptpv2_post**](docs/PortInformationAndSettingsApi.md#ptpv2_post) | **POST** /ptpv2 |
+*PortInformationAndSettingsApi* | [**sw_portstats_get**](docs/PortInformationAndSettingsApi.md#sw_portstats_get) | **GET** /sw_portstats |
+*PortInformationAndSettingsApi* | [**swcfg_port_get**](docs/PortInformationAndSettingsApi.md#swcfg_port_get) | **GET** /swcfg_port |
+*PortInformationAndSettingsApi* | [**swcfg_port_post**](docs/PortInformationAndSettingsApi.md#swcfg_port_post) | **POST** /swcfg_port |
+*PowerOverEthernetInformationAndSettingsApi* | [**poe_config_get**](docs/PowerOverEthernetInformationAndSettingsApi.md#poe_config_get) | **GET** /poe_config |
+*PowerOverEthernetInformationAndSettingsApi* | [**poe_config_post**](docs/PowerOverEthernetInformationAndSettingsApi.md#poe_config_post) | **POST** /poe_config |
+*PowerOverEthernetInformationAndSettingsApi* | [**swcfg_poe_get**](docs/PowerOverEthernetInformationAndSettingsApi.md#swcfg_poe_get) | **GET** /swcfg_poe |
+*PowerOverEthernetInformationAndSettingsApi* | [**swcfg_poe_post**](docs/PowerOverEthernetInformationAndSettingsApi.md#swcfg_poe_post) | **POST** /swcfg_poe |
+*QualityOfServiceApi* | [**cos_queue_config_get**](docs/QualityOfServiceApi.md#cos_queue_config_get) | **GET** /cos_queue_config |
+*QualityOfServiceApi* | [**cos_queue_config_post**](docs/QualityOfServiceApi.md#cos_queue_config_post) | **POST** /cos_queue_config |
+*QualityOfServiceApi* | [**costrust_get**](docs/QualityOfServiceApi.md#costrust_get) | **GET** /costrust |
+*QualityOfServiceApi* | [**costrust_post**](docs/QualityOfServiceApi.md#costrust_post) | **POST** /costrust |
+*QualityOfServiceApi* | [**dot1p_queue_map_get**](docs/QualityOfServiceApi.md#dot1p_queue_map_get) | **GET** /dot1p_queue_map |
+*QualityOfServiceApi* | [**dot1p_queue_map_post**](docs/QualityOfServiceApi.md#dot1p_queue_map_post) | **POST** /dot1p_queue_map |
+*QualityOfServiceApi* | [**ipdscp_queue_map_get**](docs/QualityOfServiceApi.md#ipdscp_queue_map_get) | **GET** /ipdscp_queue_map |
+*QualityOfServiceApi* | [**ipdscp_queue_map_post**](docs/QualityOfServiceApi.md#ipdscp_queue_map_post) | **POST** /ipdscp_queue_map |
+*RoutingSettingsApi* | [**host_table_get**](docs/RoutingSettingsApi.md#host_table_get) | **GET** /host_table |
+*RoutingSettingsApi* | [**ip_route_table_get**](docs/RoutingSettingsApi.md#ip_route_table_get) | **GET** /ip_route_table |
+*SpanningTreeProtocolApi* | [**dot1d_stp_config_get**](docs/SpanningTreeProtocolApi.md#dot1d_stp_config_get) | **GET** /dot1d_stp_config |
+*SpanningTreeProtocolApi* | [**dot1d_stp_entries_get**](docs/SpanningTreeProtocolApi.md#dot1d_stp_entries_get) | **GET** /dot1d_stp_entries |
+*SpanningTreeProtocolApi* | [**dot1s_interfaces_get**](docs/SpanningTreeProtocolApi.md#dot1s_interfaces_get) | **GET** /dot1s_interfaces |
+*SpanningTreeProtocolApi* | [**dot1s_interfaces_post**](docs/SpanningTreeProtocolApi.md#dot1s_interfaces_post) | **POST** /dot1s_interfaces |
+*SpanningTreeProtocolApi* | [**msti_delete**](docs/SpanningTreeProtocolApi.md#msti_delete) | **DELETE** /msti |
+*SpanningTreeProtocolApi* | [**msti_get**](docs/SpanningTreeProtocolApi.md#msti_get) | **GET** /msti |
+*SpanningTreeProtocolApi* | [**msti_post**](docs/SpanningTreeProtocolApi.md#msti_post) | **POST** /msti |
+*SpanningTreeProtocolApi* | [**stp_get**](docs/SpanningTreeProtocolApi.md#stp_get) | **GET** /stp |
+*SpanningTreeProtocolApi* | [**stp_post**](docs/SpanningTreeProtocolApi.md#stp_post) | **POST** /stp |
+*VirtualLocalAreaNetworksApi* | [**dot1q_sw_port_config_get**](docs/VirtualLocalAreaNetworksApi.md#dot1q_sw_port_config_get) | **GET** /dot1q_sw_port_config |
+*VirtualLocalAreaNetworksApi* | [**dot1q_sw_port_config_post**](docs/VirtualLocalAreaNetworksApi.md#dot1q_sw_port_config_post) | **POST** /dot1q_sw_port_config |
+*VirtualLocalAreaNetworksApi* | [**swcfg_vlan_delete**](docs/VirtualLocalAreaNetworksApi.md#swcfg_vlan_delete) | **DELETE** /swcfg_vlan |
+*VirtualLocalAreaNetworksApi* | [**swcfg_vlan_get**](docs/VirtualLocalAreaNetworksApi.md#swcfg_vlan_get) | **GET** /swcfg_vlan |
+*VirtualLocalAreaNetworksApi* | [**swcfg_vlan_membership_get**](docs/VirtualLocalAreaNetworksApi.md#swcfg_vlan_membership_get) | **GET** /swcfg_vlan_membership |
+*VirtualLocalAreaNetworksApi* | [**swcfg_vlan_membership_post**](docs/VirtualLocalAreaNetworksApi.md#swcfg_vlan_membership_post) | **POST** /swcfg_vlan_membership |
+*VirtualLocalAreaNetworksApi* | [**swcfg_vlan_post**](docs/VirtualLocalAreaNetworksApi.md#swcfg_vlan_post) | **POST** /swcfg_vlan |
+*VirtualLocalAreaNetworksApi* | [**vlan_ip_get**](docs/VirtualLocalAreaNetworksApi.md#vlan_ip_get) | **GET** /vlan_ip |
+*VirtualLocalAreaNetworksApi* | [**vlan_ip_post**](docs/VirtualLocalAreaNetworksApi.md#vlan_ip_post) | **POST** /vlan_ip |
 
 
 ## Documentation For Models
@@ -356,7 +356,3 @@ Authentication schemes defined for the API:
 
 
 ## Author
-
-
-
-

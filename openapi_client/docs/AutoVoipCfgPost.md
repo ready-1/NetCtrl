@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**protocol_based** | [**AutoVoipCfgPostProtocolBased**](AutoVoipCfgPostProtocolBased.md) |  | 
-**oui_based** | [**AutoVoipCfgPostOuiBased**](AutoVoipCfgPostOuiBased.md) |  | 
+**protocol_based** | [**AutoVoipCfgPostProtocolBased**](AutoVoipCfgPostProtocolBased.md) |  |
+**oui_based** | [**AutoVoipCfgPostOuiBased**](AutoVoipCfgPostOuiBased.md) |  |
 
 ## Example
 
@@ -26,5 +26,3 @@ auto_voip_cfg_post_dict = auto_voip_cfg_post_instance.to_dict()
 auto_voip_cfg_post_from_dict = AutoVoipCfgPost.from_dict(auto_voip_cfg_post_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

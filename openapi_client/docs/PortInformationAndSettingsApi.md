@@ -4,23 +4,23 @@ All URIs are relative to *https://127.0.0.1:8443/api/v1*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**device_reset_counters_post**](PortInformationAndSettingsApi.md#device_reset_counters_post) | **POST** /device_reset_counters | 
-[**dot1d_base_config_get**](PortInformationAndSettingsApi.md#dot1d_base_config_get) | **GET** /dot1d_base_config | 
-[**dot1d_tp_config_get**](PortInformationAndSettingsApi.md#dot1d_tp_config_get) | **GET** /dot1d_tp_config | 
-[**dot1d_tp_config_post**](PortInformationAndSettingsApi.md#dot1d_tp_config_post) | **POST** /dot1d_tp_config | 
-[**dot1d_tp_port_entries_get**](PortInformationAndSettingsApi.md#dot1d_tp_port_entries_get) | **GET** /dot1d_tp_port_entries | 
-[**fdb_stats_get**](PortInformationAndSettingsApi.md#fdb_stats_get) | **GET** /fdb_stats | 
-[**fdb_stats_post**](PortInformationAndSettingsApi.md#fdb_stats_post) | **POST** /fdb_stats | 
-[**fdbs_delete**](PortInformationAndSettingsApi.md#fdbs_delete) | **DELETE** /fdbs | 
-[**fdbs_get**](PortInformationAndSettingsApi.md#fdbs_get) | **GET** /fdbs | 
-[**fiber_optics_get**](PortInformationAndSettingsApi.md#fiber_optics_get) | **GET** /fiber_optics | 
-[**ptpv2_get**](PortInformationAndSettingsApi.md#ptpv2_get) | **GET** /ptpv2 | 
-[**ptpv2_global_get**](PortInformationAndSettingsApi.md#ptpv2_global_get) | **GET** /ptpv2_global | 
-[**ptpv2_global_post**](PortInformationAndSettingsApi.md#ptpv2_global_post) | **POST** /ptpv2_global | 
-[**ptpv2_post**](PortInformationAndSettingsApi.md#ptpv2_post) | **POST** /ptpv2 | 
-[**sw_portstats_get**](PortInformationAndSettingsApi.md#sw_portstats_get) | **GET** /sw_portstats | 
-[**swcfg_port_get**](PortInformationAndSettingsApi.md#swcfg_port_get) | **GET** /swcfg_port | 
-[**swcfg_port_post**](PortInformationAndSettingsApi.md#swcfg_port_post) | **POST** /swcfg_port | 
+[**device_reset_counters_post**](PortInformationAndSettingsApi.md#device_reset_counters_post) | **POST** /device_reset_counters |
+[**dot1d_base_config_get**](PortInformationAndSettingsApi.md#dot1d_base_config_get) | **GET** /dot1d_base_config |
+[**dot1d_tp_config_get**](PortInformationAndSettingsApi.md#dot1d_tp_config_get) | **GET** /dot1d_tp_config |
+[**dot1d_tp_config_post**](PortInformationAndSettingsApi.md#dot1d_tp_config_post) | **POST** /dot1d_tp_config |
+[**dot1d_tp_port_entries_get**](PortInformationAndSettingsApi.md#dot1d_tp_port_entries_get) | **GET** /dot1d_tp_port_entries |
+[**fdb_stats_get**](PortInformationAndSettingsApi.md#fdb_stats_get) | **GET** /fdb_stats |
+[**fdb_stats_post**](PortInformationAndSettingsApi.md#fdb_stats_post) | **POST** /fdb_stats |
+[**fdbs_delete**](PortInformationAndSettingsApi.md#fdbs_delete) | **DELETE** /fdbs |
+[**fdbs_get**](PortInformationAndSettingsApi.md#fdbs_get) | **GET** /fdbs |
+[**fiber_optics_get**](PortInformationAndSettingsApi.md#fiber_optics_get) | **GET** /fiber_optics |
+[**ptpv2_get**](PortInformationAndSettingsApi.md#ptpv2_get) | **GET** /ptpv2 |
+[**ptpv2_global_get**](PortInformationAndSettingsApi.md#ptpv2_global_get) | **GET** /ptpv2_global |
+[**ptpv2_global_post**](PortInformationAndSettingsApi.md#ptpv2_global_post) | **POST** /ptpv2_global |
+[**ptpv2_post**](PortInformationAndSettingsApi.md#ptpv2_post) | **POST** /ptpv2 |
+[**sw_portstats_get**](PortInformationAndSettingsApi.md#sw_portstats_get) | **GET** /sw_portstats |
+[**swcfg_port_get**](PortInformationAndSettingsApi.md#swcfg_port_get) | **GET** /swcfg_port |
+[**swcfg_port_post**](PortInformationAndSettingsApi.md#swcfg_port_post) | **POST** /swcfg_port |
 
 
 # **device_reset_counters_post**
@@ -77,7 +77,7 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **portid** | [**SwPortstatsGetPortidParameter**](.md)| Port ID Number by &#x60;&lt;port#&gt;&#x60; or &#x60;ALL&#x60; | 
+ **portid** | [**SwPortstatsGetPortidParameter**](.md)| Port ID Number by &#x60;&lt;port#&gt;&#x60; or &#x60;ALL&#x60; |
 
 ### Return type
 
@@ -284,7 +284,7 @@ configuration = openapi_client.Configuration(
 with openapi_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = openapi_client.PortInformationAndSettingsApi(api_client)
-    dot1d_tp_config_post_request = openapi_client.Dot1dTpConfigPostRequest() # Dot1dTpConfigPostRequest | 
+    dot1d_tp_config_post_request = openapi_client.Dot1dTpConfigPostRequest() # Dot1dTpConfigPostRequest |
 
     try:
         api_response = api_instance.dot1d_tp_config_post(dot1d_tp_config_post_request)
@@ -301,7 +301,7 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **dot1d_tp_config_post_request** | [**Dot1dTpConfigPostRequest**](Dot1dTpConfigPostRequest.md)|  | 
+ **dot1d_tp_config_post_request** | [**Dot1dTpConfigPostRequest**](Dot1dTpConfigPostRequest.md)|  |
 
 ### Return type
 
@@ -508,7 +508,7 @@ configuration = openapi_client.Configuration(
 with openapi_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = openapi_client.PortInformationAndSettingsApi(api_client)
-    fdb_stats_post_request = openapi_client.FdbStatsPostRequest() # FdbStatsPostRequest | 
+    fdb_stats_post_request = openapi_client.FdbStatsPostRequest() # FdbStatsPostRequest |
 
     try:
         api_response = api_instance.fdb_stats_post(fdb_stats_post_request)
@@ -525,7 +525,7 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **fdb_stats_post_request** | [**FdbStatsPostRequest**](FdbStatsPostRequest.md)|  | 
+ **fdb_stats_post_request** | [**FdbStatsPostRequest**](FdbStatsPostRequest.md)|  |
 
 ### Return type
 
@@ -602,7 +602,7 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **mac** | **str**| Delete all learned MAC entries in the forwarding database | 
+ **mac** | **str**| Delete all learned MAC entries in the forwarding database |
 
 ### Return type
 
@@ -825,7 +825,7 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **portid** | **str**| Port interface ID number by &#x60;&lt;port#&gt;&#x60; or &#x60;All&#x60; | 
+ **portid** | **str**| Port interface ID number by &#x60;&lt;port#&gt;&#x60; or &#x60;All&#x60; |
 
 ### Return type
 
@@ -959,7 +959,7 @@ configuration = openapi_client.Configuration(
 with openapi_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = openapi_client.PortInformationAndSettingsApi(api_client)
-    ptpv2_global_post_request = openapi_client.Ptpv2GlobalPostRequest() # Ptpv2GlobalPostRequest | 
+    ptpv2_global_post_request = openapi_client.Ptpv2GlobalPostRequest() # Ptpv2GlobalPostRequest |
 
     try:
         api_response = api_instance.ptpv2_global_post(ptpv2_global_post_request)
@@ -976,7 +976,7 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **ptpv2_global_post_request** | [**Ptpv2GlobalPostRequest**](Ptpv2GlobalPostRequest.md)|  | 
+ **ptpv2_global_post_request** | [**Ptpv2GlobalPostRequest**](Ptpv2GlobalPostRequest.md)|  |
 
 ### Return type
 
@@ -1038,7 +1038,7 @@ with openapi_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = openapi_client.PortInformationAndSettingsApi(api_client)
     portid = 'portid_example' # str | Port interface ID
-    ptpv2_post_request = openapi_client.Ptpv2PostRequest() # Ptpv2PostRequest | 
+    ptpv2_post_request = openapi_client.Ptpv2PostRequest() # Ptpv2PostRequest |
 
     try:
         api_response = api_instance.ptpv2_post(portid, ptpv2_post_request)
@@ -1055,8 +1055,8 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **portid** | **str**| Port interface ID | 
- **ptpv2_post_request** | [**Ptpv2PostRequest**](Ptpv2PostRequest.md)|  | 
+ **portid** | **str**| Port interface ID |
+ **ptpv2_post_request** | [**Ptpv2PostRequest**](Ptpv2PostRequest.md)|  |
 
 ### Return type
 
@@ -1133,7 +1133,7 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **portid** | [**SwPortstatsGetPortidParameter**](.md)| Port ID Number by &#x60;&lt;port#&gt;&#x60; or &#x60;ALL&#x60; | 
+ **portid** | [**SwPortstatsGetPortidParameter**](.md)| Port ID Number by &#x60;&lt;port#&gt;&#x60; or &#x60;ALL&#x60; |
 
 ### Return type
 
@@ -1210,7 +1210,7 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **portid** | **int**| Port ID Number | 
+ **portid** | **int**| Port ID Number |
 
 ### Return type
 
@@ -1272,7 +1272,7 @@ with openapi_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = openapi_client.PortInformationAndSettingsApi(api_client)
     portid = 1 # int | Port ID Number
-    swcfg_port_get200_response = openapi_client.SwcfgPortGet200Response() # SwcfgPortGet200Response | 
+    swcfg_port_get200_response = openapi_client.SwcfgPortGet200Response() # SwcfgPortGet200Response |
 
     try:
         api_response = api_instance.swcfg_port_post(portid, swcfg_port_get200_response)
@@ -1289,8 +1289,8 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **portid** | **int**| Port ID Number | 
- **swcfg_port_get200_response** | [**SwcfgPortGet200Response**](SwcfgPortGet200Response.md)|  | 
+ **portid** | **int**| Port ID Number |
+ **swcfg_port_get200_response** | [**SwcfgPortGet200Response**](SwcfgPortGet200Response.md)|  |
 
 ### Return type
 
@@ -1312,4 +1312,3 @@ Name | Type | Description  | Notes
 **200** | successful operation |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-

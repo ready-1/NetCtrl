@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**admin_mode** | **str** | Switch&#39;s PTPv2 service status | 
+**admin_mode** | **str** | Switch&#39;s PTPv2 service status |
 
 ## Example
 
@@ -25,5 +25,3 @@ ptpv2_global_dict = ptpv2_global_instance.to_dict()
 ptpv2_global_from_dict = Ptpv2Global.from_dict(ptpv2_global_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

@@ -5,10 +5,10 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**sys_descr** | **str** | Description of the system | [optional] 
-**sys_name** | **str** | Name of the system | [optional] 
-**sys_location** | **str** | Physical location of the system | [optional] 
-**sys_contact** | **str** | System administrator contact information | [optional] 
+**sys_descr** | **str** | Description of the system | [optional]
+**sys_name** | **str** | Name of the system | [optional]
+**sys_location** | **str** | Physical location of the system | [optional]
+**sys_contact** | **str** | System administrator contact information | [optional]
 
 ## Example
 
@@ -28,5 +28,3 @@ system_rfc1213_get_dict = system_rfc1213_get_instance.to_dict()
 system_rfc1213_get_from_dict = SystemRfc1213Get.from_dict(system_rfc1213_get_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

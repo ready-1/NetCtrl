@@ -37,7 +37,7 @@ class TestLoginPostRequest(unittest.TestCase):
         if include_optional:
             return LoginPostRequest(
                 login = openapi_client.models.login_request.login_request(
-                    username = 'admin', 
+                    username = 'admin',
                     password = 'Password1!', )
             )
         else:

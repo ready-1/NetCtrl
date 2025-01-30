@@ -39,8 +39,8 @@ class TestDot1dTpPortEntriesGet200Response(unittest.TestCase):
         if include_optional:
             return Dot1dTpPortEntriesGet200Response(
                 resp = openapi_client.models.general_responses_code.general_responses_code(
-                    status = 'success', 
-                    resp_code = 0, 
+                    status = 'success',
+                    resp_code = 0,
                     resp_msg = 'Operation success', ),
                 dot1d_tp_port_entries = [{"port":1,"maxInfo":1518,"inFrames":2668593,"outFrames":2739683,"inDiscards":0},{"port":2,"maxInfo":1518,"inFrames":0,"outFrames":0,"inDiscards":0},{"port":3,"maxInfo":1518,"inFrames":56970,"outFrames":71314,"inDiscards":0}]
             )

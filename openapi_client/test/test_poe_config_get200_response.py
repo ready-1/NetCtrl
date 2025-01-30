@@ -37,8 +37,8 @@ class TestPoeConfigGet200Response(unittest.TestCase):
         if include_optional:
             return PoeConfigGet200Response(
                 resp = openapi_client.models.general_responses_code.general_responses_code(
-                    status = 'success', 
-                    resp_code = 0, 
+                    status = 'success',
+                    resp_code = 0,
                     resp_msg = 'Operation success', ),
                 poe_config = {"firmwareVersion":"11.6.10.6","pseMainOperationStatus":false,"totalPowerConsumedWatts":0.0,"powerManagmentMode":"Static","traps":"enable","powerDetectionMode":3}
             )

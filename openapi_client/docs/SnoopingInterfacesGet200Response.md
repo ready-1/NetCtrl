@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional] 
-**snooping_interfaces** | [**List[SnoopingInterfacesGetInner]**](SnoopingInterfacesGetInner.md) |  | [optional] 
+**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional]
+**snooping_interfaces** | [**List[SnoopingInterfacesGetInner]**](SnoopingInterfacesGetInner.md) |  | [optional]
 
 ## Example
 
@@ -26,5 +26,3 @@ snooping_interfaces_get200_response_dict = snooping_interfaces_get200_response_i
 snooping_interfaces_get200_response_from_dict = SnoopingInterfacesGet200Response.from_dict(snooping_interfaces_get200_response_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

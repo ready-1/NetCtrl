@@ -5,10 +5,10 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**session_num** | **int** | Port mirroring session number | 
-**session_mode** | **bool** | Port mirroring admin mode configuration | 
-**dest_port** | **int** | Destination or probe port ID. No ports selected when set to &#x60;0&#x60;. | 
-**src_port** | [**List[SwPortmirroringSrcPortInner]**](SwPortmirroringSrcPortInner.md) |  | [optional] 
+**session_num** | **int** | Port mirroring session number |
+**session_mode** | **bool** | Port mirroring admin mode configuration |
+**dest_port** | **int** | Destination or probe port ID. No ports selected when set to &#x60;0&#x60;. |
+**src_port** | [**List[SwPortmirroringSrcPortInner]**](SwPortmirroringSrcPortInner.md) |  | [optional]
 
 ## Example
 
@@ -28,5 +28,3 @@ sw_portmirroring_dict = sw_portmirroring_instance.to_dict()
 sw_portmirroring_from_dict = SwPortmirroring.from_dict(sw_portmirroring_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

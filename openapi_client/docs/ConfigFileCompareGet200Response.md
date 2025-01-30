@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional] 
-**config_file_compare** | [**ConfigFileCompare**](ConfigFileCompare.md) |  | [optional] 
+**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional]
+**config_file_compare** | [**ConfigFileCompare**](ConfigFileCompare.md) |  | [optional]
 
 ## Example
 
@@ -26,5 +26,3 @@ config_file_compare_get200_response_dict = config_file_compare_get200_response_i
 config_file_compare_get200_response_from_dict = ConfigFileCompareGet200Response.from_dict(config_file_compare_get200_response_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

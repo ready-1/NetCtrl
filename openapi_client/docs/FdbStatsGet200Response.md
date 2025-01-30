@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional] 
-**fdb_stats** | [**FdbStatsGet**](FdbStatsGet.md) |  | [optional] 
+**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional]
+**fdb_stats** | [**FdbStatsGet**](FdbStatsGet.md) |  | [optional]
 
 ## Example
 
@@ -26,5 +26,3 @@ fdb_stats_get200_response_dict = fdb_stats_get200_response_instance.to_dict()
 fdb_stats_get200_response_from_dict = FdbStatsGet200Response.from_dict(fdb_stats_get200_response_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

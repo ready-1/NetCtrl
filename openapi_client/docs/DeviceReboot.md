@@ -25,5 +25,3 @@ device_reboot_dict = device_reboot_instance.to_dict()
 device_reboot_from_dict = DeviceReboot.from_dict(device_reboot_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional] 
-**login** | [**LoginToken**](LoginToken.md) |  | [optional] 
+**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional]
+**login** | [**LoginToken**](LoginToken.md) |  | [optional]
 
 ## Example
 
@@ -26,5 +26,3 @@ login_post200_response_dict = login_post200_response_instance.to_dict()
 login_post200_response_from_dict = LoginPost200Response.from_dict(login_post200_response_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

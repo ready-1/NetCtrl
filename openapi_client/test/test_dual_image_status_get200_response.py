@@ -39,8 +39,8 @@ class TestDualImageStatusGet200Response(unittest.TestCase):
         if include_optional:
             return DualImageStatusGet200Response(
                 resp = openapi_client.models.general_responses_code.general_responses_code(
-                    status = 'success', 
-                    resp_code = 0, 
+                    status = 'success',
+                    resp_code = 0,
                     resp_msg = 'Operation success', ),
                 dual_image_status = {"image1Label":"image1","image1Descr":"","image1Version":"3.28.0.1","image2Label":"image2","image2Descr":"","image2Version":"3.30.11.1","activatedImgLabel":"image2"}
             )

@@ -25,5 +25,3 @@ cos_queue_config_inner_min_bw_dict = cos_queue_config_inner_min_bw_instance.to_d
 cos_queue_config_inner_min_bw_from_dict = CosQueueConfigInnerMinBw.from_dict(cos_queue_config_inner_min_bw_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

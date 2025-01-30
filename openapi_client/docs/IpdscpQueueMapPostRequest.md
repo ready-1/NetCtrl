@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**ipdscp_queue_map** | [**List[IpdscpQueueMapGetInner]**](IpdscpQueueMapGetInner.md) |  | [optional] 
+**ipdscp_queue_map** | [**List[IpdscpQueueMapGetInner]**](IpdscpQueueMapGetInner.md) |  | [optional]
 
 ## Example
 
@@ -25,5 +25,3 @@ ipdscp_queue_map_post_request_dict = ipdscp_queue_map_post_request_instance.to_d
 ipdscp_queue_map_post_request_from_dict = IpdscpQueueMapPostRequest.from_dict(ipdscp_queue_map_post_request_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

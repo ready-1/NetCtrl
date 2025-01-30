@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional] 
-**cos_queue_config** | [**List[CosQueueConfigInner]**](CosQueueConfigInner.md) |  | [optional] 
+**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional]
+**cos_queue_config** | [**List[CosQueueConfigInner]**](CosQueueConfigInner.md) |  | [optional]
 
 ## Example
 
@@ -26,5 +26,3 @@ cos_queue_config_get200_response_dict = cos_queue_config_get200_response_instanc
 cos_queue_config_get200_response_from_dict = CosQueueConfigGet200Response.from_dict(cos_queue_config_get200_response_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

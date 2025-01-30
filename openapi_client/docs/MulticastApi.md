@@ -4,13 +4,13 @@ All URIs are relative to *https://127.0.0.1:8443/api/v1*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**snooping_config_get**](MulticastApi.md#snooping_config_get) | **GET** /snooping_config | 
-[**snooping_config_post**](MulticastApi.md#snooping_config_post) | **POST** /snooping_config | 
-[**snooping_interfaces_get**](MulticastApi.md#snooping_interfaces_get) | **GET** /snooping_interfaces | 
-[**snooping_interfaces_post**](MulticastApi.md#snooping_interfaces_post) | **POST** /snooping_interfaces | 
-[**snooping_queriers_get**](MulticastApi.md#snooping_queriers_get) | **GET** /snooping_queriers | 
-[**snooping_queriers_post**](MulticastApi.md#snooping_queriers_post) | **POST** /snooping_queriers | 
-[**snooping_vlan_get**](MulticastApi.md#snooping_vlan_get) | **GET** /snooping_vlan | 
+[**snooping_config_get**](MulticastApi.md#snooping_config_get) | **GET** /snooping_config |
+[**snooping_config_post**](MulticastApi.md#snooping_config_post) | **POST** /snooping_config |
+[**snooping_interfaces_get**](MulticastApi.md#snooping_interfaces_get) | **GET** /snooping_interfaces |
+[**snooping_interfaces_post**](MulticastApi.md#snooping_interfaces_post) | **POST** /snooping_interfaces |
+[**snooping_queriers_get**](MulticastApi.md#snooping_queriers_get) | **GET** /snooping_queriers |
+[**snooping_queriers_post**](MulticastApi.md#snooping_queriers_post) | **POST** /snooping_queriers |
+[**snooping_vlan_get**](MulticastApi.md#snooping_vlan_get) | **GET** /snooping_vlan |
 
 
 # **snooping_config_get**
@@ -67,7 +67,7 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **family** | **str**| Snooping family | 
+ **family** | **str**| Snooping family |
 
 ### Return type
 
@@ -129,7 +129,7 @@ with openapi_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = openapi_client.MulticastApi(api_client)
     family = 'igmp' # str | Snooping family
-    snooping_config_post_request = openapi_client.SnoopingConfigPostRequest() # SnoopingConfigPostRequest | 
+    snooping_config_post_request = openapi_client.SnoopingConfigPostRequest() # SnoopingConfigPostRequest |
 
     try:
         api_response = api_instance.snooping_config_post(family, snooping_config_post_request)
@@ -146,8 +146,8 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **family** | **str**| Snooping family | 
- **snooping_config_post_request** | [**SnoopingConfigPostRequest**](SnoopingConfigPostRequest.md)|  | 
+ **family** | **str**| Snooping family |
+ **snooping_config_post_request** | [**SnoopingConfigPostRequest**](SnoopingConfigPostRequest.md)|  |
 
 ### Return type
 
@@ -224,7 +224,7 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **family** | **str**| Snooping family | 
+ **family** | **str**| Snooping family |
 
 ### Return type
 
@@ -286,7 +286,7 @@ with openapi_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = openapi_client.MulticastApi(api_client)
     interface = 1 # int | Port interface ID
-    snooping_interfaces_post_request = openapi_client.SnoopingInterfacesPostRequest() # SnoopingInterfacesPostRequest | 
+    snooping_interfaces_post_request = openapi_client.SnoopingInterfacesPostRequest() # SnoopingInterfacesPostRequest |
 
     try:
         api_response = api_instance.snooping_interfaces_post(interface, snooping_interfaces_post_request)
@@ -303,8 +303,8 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **interface** | **int**| Port interface ID | 
- **snooping_interfaces_post_request** | [**SnoopingInterfacesPostRequest**](SnoopingInterfacesPostRequest.md)|  | 
+ **interface** | **int**| Port interface ID |
+ **snooping_interfaces_post_request** | [**SnoopingInterfacesPostRequest**](SnoopingInterfacesPostRequest.md)|  |
 
 ### Return type
 
@@ -382,8 +382,8 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **family** | **str**| Snooping family | 
- **vlanid** | **int**| VLAN ID | 
+ **family** | **str**| Snooping family |
+ **vlanid** | **int**| VLAN ID |
 
 ### Return type
 
@@ -446,7 +446,7 @@ with openapi_client.ApiClient(configuration) as api_client:
     api_instance = openapi_client.MulticastApi(api_client)
     family = 'igmp' # str | Snooping family
     vlanid = 1 # int | VLAN ID
-    snooping_queriers_post_request = openapi_client.SnoopingQueriersPostRequest() # SnoopingQueriersPostRequest | 
+    snooping_queriers_post_request = openapi_client.SnoopingQueriersPostRequest() # SnoopingQueriersPostRequest |
 
     try:
         api_response = api_instance.snooping_queriers_post(family, vlanid, snooping_queriers_post_request)
@@ -463,9 +463,9 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **family** | **str**| Snooping family | 
- **vlanid** | **int**| VLAN ID | 
- **snooping_queriers_post_request** | [**SnoopingQueriersPostRequest**](SnoopingQueriersPostRequest.md)|  | 
+ **family** | **str**| Snooping family |
+ **vlanid** | **int**| VLAN ID |
+ **snooping_queriers_post_request** | [**SnoopingQueriersPostRequest**](SnoopingQueriersPostRequest.md)|  |
 
 ### Return type
 
@@ -542,7 +542,7 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **family** | **str**| Snooping family | 
+ **family** | **str**| Snooping family |
 
 ### Return type
 
@@ -564,4 +564,3 @@ Name | Type | Description  | Notes
 **200** | successful operation |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-

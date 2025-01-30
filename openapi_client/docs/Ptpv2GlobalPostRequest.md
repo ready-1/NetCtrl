@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**ptpv2_global** | [**Ptpv2Global**](Ptpv2Global.md) |  | [optional] 
+**ptpv2_global** | [**Ptpv2Global**](Ptpv2Global.md) |  | [optional]
 
 ## Example
 
@@ -25,5 +25,3 @@ ptpv2_global_post_request_dict = ptpv2_global_post_request_instance.to_dict()
 ptpv2_global_post_request_from_dict = Ptpv2GlobalPostRequest.from_dict(ptpv2_global_post_request_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional] 
-**costrust** | [**Costrust**](Costrust.md) |  | [optional] 
+**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional]
+**costrust** | [**Costrust**](Costrust.md) |  | [optional]
 
 ## Example
 
@@ -26,5 +26,3 @@ costrust_get200_response_dict = costrust_get200_response_instance.to_dict()
 costrust_get200_response_from_dict = CostrustGet200Response.from_dict(costrust_get200_response_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

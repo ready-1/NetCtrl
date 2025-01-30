@@ -27,5 +27,3 @@ auto_voip_cfg_post_protocol_based_dict = auto_voip_cfg_post_protocol_based_insta
 auto_voip_cfg_post_protocol_based_from_dict = AutoVoipCfgPostProtocolBased.from_dict(auto_voip_cfg_post_protocol_based_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

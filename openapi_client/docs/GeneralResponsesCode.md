@@ -5,9 +5,9 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**status** | **str** |  | [optional] 
-**resp_code** | **int** |  | [optional] 
-**resp_msg** | **str** |  | [optional] 
+**status** | **str** |  | [optional]
+**resp_code** | **int** |  | [optional]
+**resp_msg** | **str** |  | [optional]
 
 ## Example
 
@@ -27,5 +27,3 @@ general_responses_code_dict = general_responses_code_instance.to_dict()
 general_responses_code_from_dict = GeneralResponsesCode.from_dict(general_responses_code_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

@@ -5,9 +5,9 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**mst_id** | **int** | MST Instance | [optional] 
-**priority** | **int** | Instance priority | [optional] 
-**vlans** | [**List[MstiGetInnerVlansInner]**](MstiGetInnerVlansInner.md) |  | [optional] 
+**mst_id** | **int** | MST Instance | [optional]
+**priority** | **int** | Instance priority | [optional]
+**vlans** | [**List[MstiGetInnerVlansInner]**](MstiGetInnerVlansInner.md) |  | [optional]
 
 ## Example
 
@@ -27,5 +27,3 @@ msti_get_inner_dict = msti_get_inner_instance.to_dict()
 msti_get_inner_from_dict = MstiGetInner.from_dict(msti_get_inner_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

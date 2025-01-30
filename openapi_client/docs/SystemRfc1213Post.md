@@ -5,9 +5,9 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**sys_name** | **str** | Name of the system | 
-**sys_location** | **str** | Location of the system | 
-**sys_contact** | **str** | Contact of the system | 
+**sys_name** | **str** | Name of the system |
+**sys_location** | **str** | Location of the system |
+**sys_contact** | **str** | Contact of the system |
 
 ## Example
 
@@ -27,5 +27,3 @@ system_rfc1213_post_dict = system_rfc1213_post_instance.to_dict()
 system_rfc1213_post_from_dict = SystemRfc1213Post.from_dict(system_rfc1213_post_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

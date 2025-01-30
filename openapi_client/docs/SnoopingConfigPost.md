@@ -5,10 +5,10 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**family** | **str** | Snooping family | 
-**admin_mode** | **str** | IGMP/MLD Admin mode | 
-**proxy_querier_admin_mode** | **str** | IGMP/MLD Proxy Querier Admin Mode | 
-**flood_all_unknown_port** | **str** | Flood unknown multicast traffic to all ports. | 
+**family** | **str** | Snooping family |
+**admin_mode** | **str** | IGMP/MLD Admin mode |
+**proxy_querier_admin_mode** | **str** | IGMP/MLD Proxy Querier Admin Mode |
+**flood_all_unknown_port** | **str** | Flood unknown multicast traffic to all ports. |
 
 ## Example
 
@@ -28,5 +28,3 @@ snooping_config_post_dict = snooping_config_post_instance.to_dict()
 snooping_config_post_from_dict = SnoopingConfigPost.from_dict(snooping_config_post_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

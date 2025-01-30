@@ -4,8 +4,8 @@ All URIs are relative to *https://127.0.0.1:8443/api/v1*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**host_table_get**](RoutingSettingsApi.md#host_table_get) | **GET** /host_table | 
-[**ip_route_table_get**](RoutingSettingsApi.md#ip_route_table_get) | **GET** /ip_route_table | 
+[**host_table_get**](RoutingSettingsApi.md#host_table_get) | **GET** /host_table |
+[**ip_route_table_get**](RoutingSettingsApi.md#ip_route_table_get) | **GET** /ip_route_table |
 
 
 # **host_table_get**
@@ -153,4 +153,3 @@ This endpoint does not need any parameter.
 **200** | successful operation |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-

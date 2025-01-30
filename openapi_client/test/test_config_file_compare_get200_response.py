@@ -39,8 +39,8 @@ class TestConfigFileCompareGet200Response(unittest.TestCase):
         if include_optional:
             return ConfigFileCompareGet200Response(
                 resp = openapi_client.models.general_responses_code.general_responses_code(
-                    status = 'success', 
-                    resp_code = 0, 
+                    status = 'success',
+                    resp_code = 0,
                     resp_msg = 'Operation success', ),
                 config_file_compare = openapi_client.models.config_file_compare.config_file_compare(
                     diff = [

@@ -37,13 +37,13 @@ class TestHostTableGet200Response(unittest.TestCase):
         if include_optional:
             return HostTableGet200Response(
                 resp = openapi_client.models.general_responses_code.general_responses_code(
-                    status = 'success', 
-                    resp_code = 0, 
+                    status = 'success',
+                    resp_code = 0,
                     resp_msg = 'Operation success', ),
                 host_table = [
                     openapi_client.models.host_table.host_table(
-                        ip_addr = '10.120.166.108', 
-                        mac_addr = 'B0:39:56:8D:2D:E4', 
+                        ip_addr = '10.120.166.108',
+                        mac_addr = 'B0:39:56:8D:2D:E4',
                         vlan_id = 3, )
                     ]
             )

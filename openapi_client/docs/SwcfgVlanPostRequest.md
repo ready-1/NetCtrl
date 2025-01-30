@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**switch_config_vlan** | [**SwcfgVlan**](SwcfgVlan.md) |  | [optional] 
+**switch_config_vlan** | [**SwcfgVlan**](SwcfgVlan.md) |  | [optional]
 
 ## Example
 
@@ -25,5 +25,3 @@ swcfg_vlan_post_request_dict = swcfg_vlan_post_request_instance.to_dict()
 swcfg_vlan_post_request_from_dict = SwcfgVlanPostRequest.from_dict(swcfg_vlan_post_request_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

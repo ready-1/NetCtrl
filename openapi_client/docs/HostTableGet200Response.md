@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional] 
-**host_table** | [**List[HostTable]**](HostTable.md) |  | [optional] 
+**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional]
+**host_table** | [**List[HostTable]**](HostTable.md) |  | [optional]
 
 ## Example
 
@@ -26,5 +26,3 @@ host_table_get200_response_dict = host_table_get200_response_instance.to_dict()
 host_table_get200_response_from_dict = HostTableGet200Response.from_dict(host_table_get200_response_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

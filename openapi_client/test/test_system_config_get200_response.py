@@ -39,13 +39,13 @@ class TestSystemConfigGet200Response(unittest.TestCase):
         if include_optional:
             return SystemConfigGet200Response(
                 resp = openapi_client.models.general_responses_code.general_responses_code(
-                    status = 'success', 
-                    resp_code = 0, 
+                    status = 'success',
+                    resp_code = 0,
                     resp_msg = 'Operation success', ),
                 system_config = openapi_client.models.system_config_get.system_config_get(
-                    sys_access_line = 'console', 
-                    sys_line_terminal_len = 56, 
-                    sys_serial_time_out = 56, 
+                    sys_access_line = 'console',
+                    sys_line_terminal_len = 56,
+                    sys_serial_time_out = 56,
                     sys_telnet_server_admin_mode = 'enabled', )
             )
         else:

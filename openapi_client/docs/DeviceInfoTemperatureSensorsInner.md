@@ -5,10 +5,10 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**sensor_num** | **int** | Temperature sensor SKU | [optional] 
-**sensor_desc** | **int** | Description of the temperature sensor | [optional] 
-**sensor_temp** | **str** | Temperature sensor temperature in Celcius | [optional] 
-**sensor_state** | **str** | Temperature sensor state:   * &#x60;0&#x60; &#x3D; NONE   * &#x60;1&#x60; &#x3D; NORMAL   * &#x60;2&#x60; &#x3D; WARNING   * &#x60;3&#x60; &#x3D; CRITICAL   * &#x60;4&#x60; &#x3D; SHUTDOWN   * &#x60;5&#x60; &#x3D; NOT PRESENT   * &#x60;6&#x60; &#x3D; NOT OPERATIONAL  | [optional] 
+**sensor_num** | **int** | Temperature sensor SKU | [optional]
+**sensor_desc** | **int** | Description of the temperature sensor | [optional]
+**sensor_temp** | **str** | Temperature sensor temperature in Celcius | [optional]
+**sensor_state** | **str** | Temperature sensor state:   * &#x60;0&#x60; &#x3D; NONE   * &#x60;1&#x60; &#x3D; NORMAL   * &#x60;2&#x60; &#x3D; WARNING   * &#x60;3&#x60; &#x3D; CRITICAL   * &#x60;4&#x60; &#x3D; SHUTDOWN   * &#x60;5&#x60; &#x3D; NOT PRESENT   * &#x60;6&#x60; &#x3D; NOT OPERATIONAL  | [optional]
 
 ## Example
 
@@ -28,5 +28,3 @@ device_info_temperature_sensors_inner_dict = device_info_temperature_sensors_inn
 device_info_temperature_sensors_inner_from_dict = DeviceInfoTemperatureSensorsInner.from_dict(device_info_temperature_sensors_inner_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

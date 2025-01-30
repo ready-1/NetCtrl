@@ -5,9 +5,9 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**id** | **int** | VLAN ID WRT Instance | [optional] 
-**type** | **str** | VLAN Type | [optional] 
-**name** | **str** | VLAN Name | [optional] 
+**id** | **int** | VLAN ID WRT Instance | [optional]
+**type** | **str** | VLAN Type | [optional]
+**name** | **str** | VLAN Name | [optional]
 
 ## Example
 
@@ -27,5 +27,3 @@ msti_get_inner_vlans_inner_dict = msti_get_inner_vlans_inner_instance.to_dict()
 msti_get_inner_vlans_inner_from_dict = MstiGetInnerVlansInner.from_dict(msti_get_inner_vlans_inner_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

@@ -37,8 +37,8 @@ class TestFdbsGet200Response(unittest.TestCase):
         if include_optional:
             return FdbsGet200Response(
                 resp = openapi_client.models.general_responses_code.general_responses_code(
-                    status = 'success', 
-                    resp_code = 0, 
+                    status = 'success',
+                    resp_code = 0,
                     resp_msg = 'Operation success', ),
                 fdb_stats = [{"interface":1,"vlanId":1,"mac":"00:17:61:11:0D:4E","entryType":1},{"interface":1,"vlanId":1,"mac":"00:17:61:11:AF:E8","entryType":1},{"interface":1,"vlanId":1,"mac":"00:26:6C:1E:78:EB","entryType":1}]
             )

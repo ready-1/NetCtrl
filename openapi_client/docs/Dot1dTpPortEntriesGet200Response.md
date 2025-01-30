@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional] 
-**dot1d_tp_port_entries** | [**List[Dot1dTpPortEntriesInner]**](Dot1dTpPortEntriesInner.md) |  | [optional] 
+**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional]
+**dot1d_tp_port_entries** | [**List[Dot1dTpPortEntriesInner]**](Dot1dTpPortEntriesInner.md) |  | [optional]
 
 ## Example
 
@@ -26,5 +26,3 @@ dot1d_tp_port_entries_get200_response_dict = dot1d_tp_port_entries_get200_respon
 dot1d_tp_port_entries_get200_response_from_dict = Dot1dTpPortEntriesGet200Response.from_dict(dot1d_tp_port_entries_get200_response_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

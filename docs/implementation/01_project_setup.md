@@ -48,12 +48,24 @@
    - Add test requirements
 
 9. Configure development tools
-   - Set up Black code formatter
-   - Configure flake8 linting
-   - Add pre-commit hooks
-   - Configure pytest coverage reporting
+   - Set up Black code formatter with line length of 88
+   - Configure flake8 linting with:
+     - Line length matching Black (88)
+     - Ignore common Django patterns (unused imports in __init__.py)
+     - Exclude auto-generated code and build artifacts
+     - Relax docstring requirements during initial development
+   - Add pre-commit hooks for:
+     - Trailing whitespace removal
+     - End-of-file fixes
+     - YAML/TOML validation
+     - Large file checks
+     - Debug statement checks
+     - Mixed line ending fixes
+     - Black formatting
+     - Flake8 linting
 
 10. Initialize version control
     - Update .gitignore
     - Create initial commit
     - Set up branch structure
+    #context - I have initialized the repo and have been commiting by phase/step as we go along.  look at the git log to see what I have done.

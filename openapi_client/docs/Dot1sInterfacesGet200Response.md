@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional] 
-**dot1s_interfaces** | [**List[Dot1sInterfacesGetInner]**](Dot1sInterfacesGetInner.md) |  | [optional] 
+**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional]
+**dot1s_interfaces** | [**List[Dot1sInterfacesGetInner]**](Dot1sInterfacesGetInner.md) |  | [optional]
 
 ## Example
 
@@ -26,5 +26,3 @@ dot1s_interfaces_get200_response_dict = dot1s_interfaces_get200_response_instanc
 dot1s_interfaces_get200_response_from_dict = Dot1sInterfacesGet200Response.from_dict(dot1s_interfaces_get200_response_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

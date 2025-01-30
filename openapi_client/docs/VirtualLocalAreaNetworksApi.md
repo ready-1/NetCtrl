@@ -4,15 +4,15 @@ All URIs are relative to *https://127.0.0.1:8443/api/v1*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**dot1q_sw_port_config_get**](VirtualLocalAreaNetworksApi.md#dot1q_sw_port_config_get) | **GET** /dot1q_sw_port_config | 
-[**dot1q_sw_port_config_post**](VirtualLocalAreaNetworksApi.md#dot1q_sw_port_config_post) | **POST** /dot1q_sw_port_config | 
-[**swcfg_vlan_delete**](VirtualLocalAreaNetworksApi.md#swcfg_vlan_delete) | **DELETE** /swcfg_vlan | 
-[**swcfg_vlan_get**](VirtualLocalAreaNetworksApi.md#swcfg_vlan_get) | **GET** /swcfg_vlan | 
-[**swcfg_vlan_membership_get**](VirtualLocalAreaNetworksApi.md#swcfg_vlan_membership_get) | **GET** /swcfg_vlan_membership | 
-[**swcfg_vlan_membership_post**](VirtualLocalAreaNetworksApi.md#swcfg_vlan_membership_post) | **POST** /swcfg_vlan_membership | 
-[**swcfg_vlan_post**](VirtualLocalAreaNetworksApi.md#swcfg_vlan_post) | **POST** /swcfg_vlan | 
-[**vlan_ip_get**](VirtualLocalAreaNetworksApi.md#vlan_ip_get) | **GET** /vlan_ip | 
-[**vlan_ip_post**](VirtualLocalAreaNetworksApi.md#vlan_ip_post) | **POST** /vlan_ip | 
+[**dot1q_sw_port_config_get**](VirtualLocalAreaNetworksApi.md#dot1q_sw_port_config_get) | **GET** /dot1q_sw_port_config |
+[**dot1q_sw_port_config_post**](VirtualLocalAreaNetworksApi.md#dot1q_sw_port_config_post) | **POST** /dot1q_sw_port_config |
+[**swcfg_vlan_delete**](VirtualLocalAreaNetworksApi.md#swcfg_vlan_delete) | **DELETE** /swcfg_vlan |
+[**swcfg_vlan_get**](VirtualLocalAreaNetworksApi.md#swcfg_vlan_get) | **GET** /swcfg_vlan |
+[**swcfg_vlan_membership_get**](VirtualLocalAreaNetworksApi.md#swcfg_vlan_membership_get) | **GET** /swcfg_vlan_membership |
+[**swcfg_vlan_membership_post**](VirtualLocalAreaNetworksApi.md#swcfg_vlan_membership_post) | **POST** /swcfg_vlan_membership |
+[**swcfg_vlan_post**](VirtualLocalAreaNetworksApi.md#swcfg_vlan_post) | **POST** /swcfg_vlan |
+[**vlan_ip_get**](VirtualLocalAreaNetworksApi.md#vlan_ip_get) | **GET** /vlan_ip |
+[**vlan_ip_post**](VirtualLocalAreaNetworksApi.md#vlan_ip_post) | **POST** /vlan_ip |
 
 
 # **dot1q_sw_port_config_get**
@@ -69,7 +69,7 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **interface** | **int**| Port Interface ID | 
+ **interface** | **int**| Port Interface ID |
 
 ### Return type
 
@@ -131,7 +131,7 @@ with openapi_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = openapi_client.VirtualLocalAreaNetworksApi(api_client)
     interface = 1 # int | Port Interface ID
-    dot1q_sw_port_config_post_request = openapi_client.Dot1qSwPortConfigPostRequest() # Dot1qSwPortConfigPostRequest | 
+    dot1q_sw_port_config_post_request = openapi_client.Dot1qSwPortConfigPostRequest() # Dot1qSwPortConfigPostRequest |
 
     try:
         api_response = api_instance.dot1q_sw_port_config_post(interface, dot1q_sw_port_config_post_request)
@@ -148,8 +148,8 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **interface** | **int**| Port Interface ID | 
- **dot1q_sw_port_config_post_request** | [**Dot1qSwPortConfigPostRequest**](Dot1qSwPortConfigPostRequest.md)|  | 
+ **interface** | **int**| Port Interface ID |
+ **dot1q_sw_port_config_post_request** | [**Dot1qSwPortConfigPostRequest**](Dot1qSwPortConfigPostRequest.md)|  |
 
 ### Return type
 
@@ -226,7 +226,7 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **vlanid** | **int**| VLAN ID | 
+ **vlanid** | **int**| VLAN ID |
 
 ### Return type
 
@@ -303,7 +303,7 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **vlanid** | **int**| VLAN ID | 
+ **vlanid** | **int**| VLAN ID |
 
 ### Return type
 
@@ -380,7 +380,7 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **vlanid** | **int**| VLAN ID | 
+ **vlanid** | **int**| VLAN ID |
 
 ### Return type
 
@@ -441,7 +441,7 @@ configuration = openapi_client.Configuration(
 with openapi_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = openapi_client.VirtualLocalAreaNetworksApi(api_client)
-    swcfg_vlan_membership_post_request = openapi_client.SwcfgVlanMembershipPostRequest() # SwcfgVlanMembershipPostRequest | 
+    swcfg_vlan_membership_post_request = openapi_client.SwcfgVlanMembershipPostRequest() # SwcfgVlanMembershipPostRequest |
 
     try:
         api_response = api_instance.swcfg_vlan_membership_post(swcfg_vlan_membership_post_request)
@@ -458,7 +458,7 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **swcfg_vlan_membership_post_request** | [**SwcfgVlanMembershipPostRequest**](SwcfgVlanMembershipPostRequest.md)|  | 
+ **swcfg_vlan_membership_post_request** | [**SwcfgVlanMembershipPostRequest**](SwcfgVlanMembershipPostRequest.md)|  |
 
 ### Return type
 
@@ -520,7 +520,7 @@ with openapi_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = openapi_client.VirtualLocalAreaNetworksApi(api_client)
     vlanid = 1 # int | VLAN ID
-    swcfg_vlan_post_request = openapi_client.SwcfgVlanPostRequest() # SwcfgVlanPostRequest | 
+    swcfg_vlan_post_request = openapi_client.SwcfgVlanPostRequest() # SwcfgVlanPostRequest |
 
     try:
         api_response = api_instance.swcfg_vlan_post(vlanid, swcfg_vlan_post_request)
@@ -537,8 +537,8 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **vlanid** | **int**| VLAN ID | 
- **swcfg_vlan_post_request** | [**SwcfgVlanPostRequest**](SwcfgVlanPostRequest.md)|  | 
+ **vlanid** | **int**| VLAN ID |
+ **swcfg_vlan_post_request** | [**SwcfgVlanPostRequest**](SwcfgVlanPostRequest.md)|  |
 
 ### Return type
 
@@ -672,7 +672,7 @@ configuration = openapi_client.Configuration(
 with openapi_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = openapi_client.VirtualLocalAreaNetworksApi(api_client)
-    vlan_ip_post_request = openapi_client.VlanIpPostRequest() # VlanIpPostRequest | 
+    vlan_ip_post_request = openapi_client.VlanIpPostRequest() # VlanIpPostRequest |
 
     try:
         api_response = api_instance.vlan_ip_post(vlan_ip_post_request)
@@ -689,7 +689,7 @@ with openapi_client.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **vlan_ip_post_request** | [**VlanIpPostRequest**](VlanIpPostRequest.md)|  | 
+ **vlan_ip_post_request** | [**VlanIpPostRequest**](VlanIpPostRequest.md)|  |
 
 ### Return type
 
@@ -711,4 +711,3 @@ Name | Type | Description  | Notes
 **200** | successful operation |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-

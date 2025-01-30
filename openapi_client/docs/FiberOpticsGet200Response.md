@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional] 
-**fiber_optics** | [**FiberOptics**](FiberOptics.md) |  | [optional] 
+**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional]
+**fiber_optics** | [**FiberOptics**](FiberOptics.md) |  | [optional]
 
 ## Example
 
@@ -26,5 +26,3 @@ fiber_optics_get200_response_dict = fiber_optics_get200_response_instance.to_dic
 fiber_optics_get200_response_from_dict = FiberOpticsGet200Response.from_dict(fiber_optics_get200_response_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

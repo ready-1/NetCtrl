@@ -25,5 +25,3 @@ voice_vlan_glb_cfg_dict = voice_vlan_glb_cfg_instance.to_dict()
 voice_vlan_glb_cfg_from_dict = VoiceVlanGlbCfg.from_dict(voice_vlan_glb_cfg_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

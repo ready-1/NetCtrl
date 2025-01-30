@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**state** | **int** | Ping Test State:   * &#x60;0&#x60; &#x3D; PT_SUCCESS   * &#x60;1&#x60; &#x3D; PT_IN_PROGRESS   * &#x60;2&#x60; &#x3D; PT_FAILURE  | [optional] 
-**ping_msg** | **str** | Response for Ping message. | [optional] 
+**state** | **int** | Ping Test State:   * &#x60;0&#x60; &#x3D; PT_SUCCESS   * &#x60;1&#x60; &#x3D; PT_IN_PROGRESS   * &#x60;2&#x60; &#x3D; PT_FAILURE  | [optional]
+**ping_msg** | **str** | Response for Ping message. | [optional]
 
 ## Example
 
@@ -26,5 +26,3 @@ ping_test_status_dict = ping_test_status_instance.to_dict()
 ping_test_status_from_dict = PingTestStatus.from_dict(ping_test_status_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

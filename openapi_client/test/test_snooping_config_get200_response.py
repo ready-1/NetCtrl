@@ -39,8 +39,8 @@ class TestSnoopingConfigGet200Response(unittest.TestCase):
         if include_optional:
             return SnoopingConfigGet200Response(
                 resp = openapi_client.models.general_responses_code.general_responses_code(
-                    status = 'success', 
-                    resp_code = 0, 
+                    status = 'success',
+                    resp_code = 0,
                     resp_msg = 'Operation success', ),
                 snooping_config = {"adminMode":"disabled","proxyQuerierAdminMode":"disable","family":"igmp","controlFrames":0,"forwardedFrames":0,"floodAllUnknownPort":"enable"}
             )

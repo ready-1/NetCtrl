@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**poe_port_config** | [**SwcfgPoe**](SwcfgPoe.md) |  | [optional] 
+**poe_port_config** | [**SwcfgPoe**](SwcfgPoe.md) |  | [optional]
 
 ## Example
 
@@ -25,5 +25,3 @@ swcfg_poe_post_request_dict = swcfg_poe_post_request_instance.to_dict()
 swcfg_poe_post_request_from_dict = SwcfgPoePostRequest.from_dict(swcfg_poe_post_request_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

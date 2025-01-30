@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**switch_rstp_port_config** | [**SwPortmirroring**](SwPortmirroring.md) |  | [optional] 
+**switch_rstp_port_config** | [**SwPortmirroring**](SwPortmirroring.md) |  | [optional]
 
 ## Example
 
@@ -25,5 +25,3 @@ sw_portmirroring_post_request_dict = sw_portmirroring_post_request_instance.to_d
 sw_portmirroring_post_request_from_dict = SwPortmirroringPostRequest.from_dict(sw_portmirroring_post_request_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

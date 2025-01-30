@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**admin_mode** | **str** | Toggle port PTPv2 | 
+**admin_mode** | **str** | Toggle port PTPv2 |
 
 ## Example
 
@@ -25,5 +25,3 @@ ptpv2_post_dict = ptpv2_post_instance.to_dict()
 ptpv2_post_from_dict = Ptpv2Post.from_dict(ptpv2_post_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

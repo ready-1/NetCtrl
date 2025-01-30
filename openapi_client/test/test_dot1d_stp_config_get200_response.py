@@ -39,8 +39,8 @@ class TestDot1dStpConfigGet200Response(unittest.TestCase):
         if include_optional:
             return Dot1dStpConfigGet200Response(
                 resp = openapi_client.models.general_responses_code.general_responses_code(
-                    status = 'success', 
-                    resp_code = 0, 
+                    status = 'success',
+                    resp_code = 0,
                     resp_msg = 'Operation success', ),
                 dot1d_stp_config = {"protocolSpecification":"dot1d","priority":32768,"timeSinceTopologyChange":24140900,"topChanges":0,"designatedRoot":"80:00:8C:3B:AD:66:C6:98","rootCost":0,"rootPort":0,"maxAge":20,"helloTime":2,"holdTime":6,"forwardDelay":15,"bridgeMaxAge":20,"bridgeHelloTime":2,"bridgeForwardDelay":15}
             )

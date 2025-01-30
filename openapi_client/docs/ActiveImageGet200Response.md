@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional] 
-**active_image** | [**ActiveImageGet**](ActiveImageGet.md) |  | [optional] 
+**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional]
+**active_image** | [**ActiveImageGet**](ActiveImageGet.md) |  | [optional]
 
 ## Example
 
@@ -26,5 +26,3 @@ active_image_get200_response_dict = active_image_get200_response_instance.to_dic
 active_image_get200_response_from_dict = ActiveImageGet200Response.from_dict(active_image_get200_response_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

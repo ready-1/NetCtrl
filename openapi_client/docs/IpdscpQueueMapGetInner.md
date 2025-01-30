@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**dscpid** | **int** | Class identifier for this DSCP | [optional] 
-**dscpmap** | **int** | Assigned queue number | [optional] 
+**dscpid** | **int** | Class identifier for this DSCP | [optional]
+**dscpmap** | **int** | Assigned queue number | [optional]
 
 ## Example
 
@@ -26,5 +26,3 @@ ipdscp_queue_map_get_inner_dict = ipdscp_queue_map_get_inner_instance.to_dict()
 ipdscp_queue_map_get_inner_from_dict = IpdscpQueueMapGetInner.from_dict(ipdscp_queue_map_get_inner_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

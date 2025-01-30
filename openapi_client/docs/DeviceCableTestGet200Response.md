@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional] 
-**cable_test_status** | [**DeviceCableTest**](DeviceCableTest.md) |  | [optional] 
+**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional]
+**cable_test_status** | [**DeviceCableTest**](DeviceCableTest.md) |  | [optional]
 
 ## Example
 
@@ -26,5 +26,3 @@ device_cable_test_get200_response_dict = device_cable_test_get200_response_insta
 device_cable_test_get200_response_from_dict = DeviceCableTestGet200Response.from_dict(device_cable_test_get200_response_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-

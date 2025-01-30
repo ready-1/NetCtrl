@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional] 
-**ip_route_table** | [**List[IpRouteTable]**](IpRouteTable.md) |  | [optional] 
+**resp** | [**GeneralResponsesCode**](GeneralResponsesCode.md) |  | [optional]
+**ip_route_table** | [**List[IpRouteTable]**](IpRouteTable.md) |  | [optional]
 
 ## Example
 
@@ -26,5 +26,3 @@ ip_route_table_get200_response_dict = ip_route_table_get200_response_instance.to
 ip_route_table_get200_response_from_dict = IpRouteTableGet200Response.from_dict(ip_route_table_get200_response_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
-
-
