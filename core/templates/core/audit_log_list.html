@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card bg-dark text-light">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">{% trans "Audit Logs" %}</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Filters -->
+                    <form method="get" class="row g-3 mb-4">
+                        <div class="col-md-3">
+                            <label for="action" class="form-label">{% trans "Action Type" %}</label>
+                            <select name="action" id="action" class="form-select bg-dark text-light">
+                                <option value="">{% trans "All Actions" %}</option>
+                                {% for value, label in action_choices %}
+                                <option value="{{ value }}" {% if request.GET.action == value %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="start_date" class="form-label">{% trans "Start Date" %}</label>
+                            <input type="date" class="form-control bg-dark text-light" id="start_date" name="start_date"
+                                value="{{ request.GET.start_date }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="end_date" class="form-label">{% trans "End Date" %}</label>
+                            <input type="date" class="form-control bg-dark text-light" id="end_date" name="end_date"
+                                value="{{ request.GET.end_date }}">
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary">{% trans "Filter" %}</button>
+                            <a href="{% url 'core:audit_logs' %}" class="btn btn-secondary ms-2">{% trans "Reset" %}</a>
+                        </div>
+                    </form>
+
+                    <!-- Logs Table -->
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover">
+                            <thead>
+                                <tr>
+                                    <th>{% trans "Timestamp" %}</th>
+                                    <th>{% trans "User" %}</th>
+                                    <th>{% trans "Action" %}</th>
+                                    <th>{% trans "Description" %}</th>
+                                    <th>{% trans "IP Address" %}</th>
+                                    <th>{% trans "Details" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for log in audit_logs %}
+                                <tr>
+                                    <td>{{ log.timestamp|date:"Y-m-d H:i:s" }}</td>
+                                    <td>{{ log.user|default:"-" }}</td>
+                                    <td>{{ log.get_action_display }}</td>
+                                    <td>{{ log.description }}</td>
+                                    <td>{{ log.ip_address|default:"-" }}</td>
+                                    <td>
+                                        {% if log.changes or log.metadata %}
+                                        <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal"
+                                            data-bs-target="#logModal{{ log.id }}">
+                                            <i class="fas fa-info-circle"></i>
+                                        </button>
+
+                                        <!-- Details Modal -->
+                                        <div class="modal fade" id="logModal{{ log.id }}" tabindex="-1">
+                                            <div class="modal-dialog modal-lg">
+                                                <div class="modal-content bg-dark">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">{% trans "Log Details" %}</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        {% if log.changes %}
+                                                        <h6>{% trans "Changes" %}</h6>
+                                                        <pre class="text-light">{{ log.changes|pprint }}</pre>
+                                                        {% endif %}
+
+                                                        {% if log.metadata %}
+                                                        <h6>{% trans "Metadata" %}</h6>
+                                                        <pre class="text-light">{{ log.metadata|pprint }}</pre>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center">{% trans "No audit logs found." %}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    {% if is_paginated %}
+                    <nav>
+                        <ul class="pagination justify-content-center">
+                            {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                                    {% trans "Previous" %}
+                                </a>
+                            </li>
+                            {% endif %}
+
+                            {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ num }}</span>
+                            </li>
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                                    {{ num }}
+                                </a>
+                            </li>
+                            {% endif %}
+                            {% endfor %}
+
+                            {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                                    {% trans "Next" %}
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

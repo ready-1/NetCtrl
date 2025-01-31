@@ -1,8 +1,9 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-
-# Create your models here.
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericForeignKey
+import json
 
 
 class User(AbstractUser):
@@ -67,3 +68,131 @@ class User(AbstractUser):
     def role_display(self):
         """Get the display name of the user's role"""
         return dict(self.ROLE_CHOICES).get(self.role, self.role)
+
+
+class AuditLog(models.Model):
+    """
+    Audit log for tracking all system actions.
+    Uses generic foreign keys to link to any model instance.
+    """
+
+    # Action types
+    ACTION_CREATE = "create"
+    ACTION_UPDATE = "update"
+    ACTION_DELETE = "delete"
+    ACTION_VIEW = "view"
+    ACTION_LOGIN = "login"
+    ACTION_LOGOUT = "logout"
+    ACTION_API = "api"
+    ACTION_OTHER = "other"
+
+    ACTION_CHOICES = [
+        (ACTION_CREATE, _("Create")),
+        (ACTION_UPDATE, _("Update")),
+        (ACTION_DELETE, _("Delete")),
+        (ACTION_VIEW, _("View")),
+        (ACTION_LOGIN, _("Login")),
+        (ACTION_LOGOUT, _("Logout")),
+        (ACTION_API, _("API Access")),
+        (ACTION_OTHER, _("Other")),
+    ]
+
+    # Core fields
+    timestamp = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_("Timestamp"),
+        help_text=_("When the action occurred"),
+    )
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="audit_logs",
+        verbose_name=_("User"),
+        help_text=_("User who performed the action"),
+    )
+    action = models.CharField(
+        max_length=20,
+        choices=ACTION_CHOICES,
+        verbose_name=_("Action"),
+        help_text=_("Type of action performed"),
+    )
+    description = models.TextField(
+        verbose_name=_("Description"), help_text=_("Description of the action")
+    )
+    ip_address = models.GenericIPAddressField(
+        null=True,
+        blank=True,
+        verbose_name=_("IP Address"),
+        help_text=_("IP address of the user"),
+    )
+
+    # Target object fields (using generic foreign key)
+    content_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        verbose_name=_("Content Type"),
+        help_text=_("Type of the target object"),
+    )
+    object_id = models.TextField(
+        null=True,
+        blank=True,
+        verbose_name=_("Object ID"),
+        help_text=_("ID of the target object"),
+    )
+    target = GenericForeignKey("content_type", "object_id")
+
+    # Additional data
+    changes = models.JSONField(
+        null=True,
+        blank=True,
+        verbose_name=_("Changes"),
+        help_text=_("JSON representation of the changes made"),
+    )
+    metadata = models.JSONField(
+        null=True,
+        blank=True,
+        verbose_name=_("Metadata"),
+        help_text=_("Additional metadata about the action"),
+    )
+
+    class Meta:
+        verbose_name = _("Audit Log")
+        verbose_name_plural = _("Audit Logs")
+        ordering = ["-timestamp"]
+        indexes = [
+            models.Index(fields=["-timestamp"]),
+            models.Index(fields=["user"]),
+            models.Index(fields=["action"]),
+            models.Index(fields=["content_type", "object_id"]),
+        ]
+
+    def __str__(self):
+        return f"{self.get_action_display()} by {self.user} at {self.timestamp}"
+
+    def set_changes(self, old_data, new_data):
+        """
+        Compare old and new data to generate a changes dictionary
+        """
+        if not old_data or not new_data:
+            self.changes = {"old": old_data, "new": new_data}
+            return
+
+        changes = {"modified": {}}
+        for key in set(old_data) | set(new_data):
+            old_value = old_data.get(key)
+            new_value = new_data.get(key)
+            if old_value != new_value:
+                changes["modified"][key] = {"old": old_value, "new": new_value}
+        self.changes = changes
+
+    def add_metadata(self, **kwargs):
+        """
+        Add additional metadata to the audit log
+        """
+        if not self.metadata:
+            self.metadata = {}
+        self.metadata.update(kwargs)
