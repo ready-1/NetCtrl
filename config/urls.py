@@ -19,10 +19,16 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from authentication.views import LoginView, LogoutView
 
 urlpatterns = [
+    path("", include("core.urls")),
     path("admin/", admin.site.urls),
     path("api/", include("switches.urls", namespace="api")),
+    path("auth/", include("authentication.urls", namespace="auth")),
+    # Convenience URLs
+    path("login/", LoginView.as_view(), name="login"),
+    path("logout/", LogoutView.as_view(), name="logout"),
 ]
 
 if settings.DEBUG:
