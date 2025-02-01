@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "channels",
     "django_htmx",
     "whitenoise",  # Add whitenoise to installed apps
+    "netctrl",
     # Local apps
     "core.apps.CoreConfig",
     "switches.apps.SwitchesConfig",
@@ -156,12 +157,19 @@ STATICFILES_DIRS = [
 ]
 
 # Whitenoise configuration
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-WHITENOISE_MAX_AGE = 31536000  # 1 year in seconds
-WHITENOISE_MANIFEST_STRICT = True
+STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
+WHITENOISE_MANIFEST_STRICT = False
 WHITENOISE_USE_FINDERS = True
-WHITENOISE_COMPRESS_ENABLED = True
-WHITENOISE_MODERN_BROWSERS_ONLY = True
+WHITENOISE_COMPRESS = True
+WHITENOISE_GZIP = True
+WHITENOISE_MAX_AGE = 31536000  # 1 year in seconds
+
+
+def is_immutable_file(path, url):
+    return path.startswith("vendor/")
+
+
+WHITENOISE_IMMUTABLE_FILE_TEST = is_immutable_file
 
 # Media files (User uploaded files)
 MEDIA_URL = "/media/"
@@ -220,6 +228,14 @@ LOGGING = {
         "level": "INFO",
     },
 }
+
+
+# Database Router
+def get_primary_replica_router():
+    return "netctrl.routers.PrimaryReplicaRouter"
+
+
+DATABASE_ROUTERS = [get_primary_replica_router]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

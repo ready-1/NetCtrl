@@ -1,8 +1,13 @@
-{% with dismissible=dismissible|default:True type=type|default:'info' %}
-<div class="alert alert-{{ type }} {% if dismissible %}alert-dismissible fade show{% endif %}" role="alert">
-    {{ message }}
-    {% if dismissible %}
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+<div class="alert alert-{{ type }} alert-dismissible fade show" role="alert">
+    {% if type == 'success' %}
+    <i class="fas fa-check-circle-fill me-2"></i>
+    {% elif type == 'danger' or type == 'error' %}
+    <i class="fas fa-exclamation-triangle-fill me-2"></i>
+    {% elif type == 'warning' %}
+    <i class="fas fa-exclamation-circle-fill me-2"></i>
+    {% else %}
+    <i class="fas fa-info-circle-fill me-2"></i>
     {% endif %}
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
-{% endwith %}

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+  <h2>Switches</h2>
+  <a href="{% url 'netctrl:switch-add' %}" class="btn btn-primary mb-3">Add Switch</a>
+  <div id="switch-list">
+    {% include "switch/list_partial.html" %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+  <h2>Delete Switch</h2>
+  <p>Are you sure you want to delete switch "{{ switch.name }}"?</p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a href="{% url 'netctrl:switch-list' %}" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+{% endblock %}

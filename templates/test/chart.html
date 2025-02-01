@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+  <div class="col-md-6">
+    <div class="nc-card">
+      <div class="nc-card-header">
+        <div class="nc-card-header-title">Port Status</div>
+      </div>
+      <div class="nc-card-body">
+        <canvas id="portStatusChart"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="nc-card">
+      <div class="nc-card-header">
+        <div class="nc-card-header-title">Traffic Overview</div>
+      </div>
+      <div class="nc-card-body">
+        <canvas id="trafficChart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Port Status Chart
+  const portStatusCtx = document.getElementById('portStatusChart').getContext('2d');
+  new Chart(portStatusCtx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Active', 'Inactive', 'Error'],
+      datasets: [{
+        data: [12, 3, 1],
+        backgroundColor: [
+          'var(--nc-success)',
+          'var(--nc-secondary)',
+          'var(--nc-danger)'
+        ]
+      }]
+    }
+  });
+
+  // Traffic Chart
+  const trafficCtx = document.getElementById('trafficChart').getContext('2d');
+  new Chart(trafficCtx, {
+    type: 'line',
+    data: {
+      labels: ['1m', '5m', '15m', '30m', '1h'],
+      datasets: [{
+        label: 'Inbound',
+        data: [65, 59, 80, 81, 56],
+        borderColor: 'var(--nc-primary)',
+        fill: false
+      }, {
+        label: 'Outbound',
+        data: [28, 48, 40, 19, 86],
+        borderColor: 'var(--nc-secondary)',
+        fill: false
+      }]
+    }
+  });
+});
+</script>
+{% endblock %}

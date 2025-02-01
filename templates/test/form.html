@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+  <div class="nc-card">
+    <div class="nc-card-header">
+      <div class="nc-card-header-title">Test Form</div>
+    </div>
+    <div class="nc-card-body">
+      <form hx-post="{% url 'netctrl:test-form' %}" hx-target="#form-result" novalidate>
+        <div class="mb-3">
+          <label for="required_field" class="form-label">Required Field</label>
+          <input type="text"
+                 class="form-control"
+                 id="required_field"
+                 name="required_field"
+                 required
+                 aria-required="true"
+                 aria-describedby="required_field_help">
+          <div class="invalid-feedback" role="alert" id="required_field_help">This field is required</div>
+        </div>
+        <div class="mb-3">
+          <label for="optional_field" class="form-label">Optional Field</label>
+          <input type="text"
+                 class="form-control"
+                 id="optional_field"
+                 name="optional_field"
+                 aria-describedby="optional_field_help">
+          <div class="form-text" id="optional_field_help">This field is optional</div>
+        </div>
+        <button type="submit" class="nc-btn nc-btn-primary" role="button">Submit</button>
+      </form>
+      <div id="form-result" class="mt-3" role="status" aria-live="polite"></div>
+    </div>
+  </div>
+</div>
+{% endblock %}

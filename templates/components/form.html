@@ -1,0 +1,39 @@
+{% comment %}
+Form component template
+{% endcomment %}
+
+<form class="nc-form">
+    <!-- Required field -->
+    <div class="nc-form-group">
+        <label for="required-field" class="form-label">Required Field</label>
+        <input type="text" class="form-control" id="required-field" required aria-required="true">
+        <div class="invalid-feedback">
+            This field is required
+        </div>
+        <div class="valid-feedback">
+            Looks good!
+        </div>
+    </div>
+
+    <!-- Email field -->
+    <div class="nc-form-group">
+        <label for="email-field" class="form-label">Email</label>
+        <input type="email" class="form-control" id="email-field" required aria-required="true">
+        <div class="invalid-feedback">
+            Please enter a valid email address
+        </div>
+    </div>
+
+    <!-- Password field -->
+    <div class="nc-form-group">
+        <label for="password-field" class="form-label">Password</label>
+        <input type="password" class="form-control" id="password-field" required aria-required="true"
+               minlength="8" pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$">
+        <div class="invalid-feedback">
+            Password must be at least 8 characters long and contain at least one letter and one number
+        </div>
+    </div>
+
+    <!-- Submit button -->
+    <button type="submit" class="nc-btn nc-btn-primary">Submit</button>
+</form>

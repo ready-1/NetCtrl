@@ -4,6 +4,15 @@
 const defaultChartConfig = {
     responsive: true,
     maintainAspectRatio: false,
+    darkMode: true,
+    interaction: {
+        mode: 'index',
+        intersect: false,
+    },
+    animation: {
+        duration: 400,
+        easing: 'easeOutQuart',
+    },
     plugins: {
         legend: {
             labels: {

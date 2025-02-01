@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container nc-dark-theme">
+  <div class="nc-card">
+    <div class="nc-card-header">
+      Dark Theme Components
+    </div>
+    <div class="nc-card-body">
+      <div class="nc-bg-primary p-3 mb-3">Primary Background</div>
+      <div class="nc-bg-secondary p-3 mb-3">Secondary Background</div>
+      <div class="nc-bg-tertiary p-3 mb-3">Tertiary Background</div>
+
+      <div class="nc-text-primary mb-3">Primary Text</div>
+      <div class="nc-text-secondary mb-3">Secondary Text</div>
+      <div class="nc-text-muted mb-3">Muted Text</div>
+
+      <button class="nc-btn nc-btn-primary">Primary Button</button>
+      <button class="nc-btn nc-btn-secondary">Secondary Button</button>
+
+      <div class="alert alert-info mt-3">
+        Info Alert
+      </div>
+
+      <div class="loading-spinner mt-3">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+
+      <div class="nc-d-sm-none d-block">Mobile Only Content</div>
+      <div class="d-none nc-d-md-block">Desktop Only Content</div>
+      <div class="nc-d-lg-none d-block">Hide on Large Screens</div>
+      <div class="d-none nc-d-xl-block">Show on Extra Large Screens</div>
+    </div>
+  </div>
+</div>
+{% endblock %}

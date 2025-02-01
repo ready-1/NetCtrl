@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title mb-0">User Profile</h5>
+        </div>
+        <div class="card-body">
+          <h6>Username: {{ user.username }}</h6>
+          <p>Email: {{ user.email }}</p>
+          <p>Last login: {{ user.last_login }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

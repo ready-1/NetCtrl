@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+  <h2>{{ switch.name }}</h2>
+  <div class="card mb-3">
+    <div class="card-body">
+      <h5 class="card-title">Switch Details</h5>
+      <p class="card-text">IP Address: {{ switch.ip_address }}</p>
+      <p class="card-text">Username: {{ switch.username }}</p>
+      <div class="btn-group">
+        <a href="{% url 'netctrl:switch-edit' switch.id %}" class="btn btn-primary">Edit</a>
+        <a href="{% url 'netctrl:switch-delete' switch.id %}" class="btn btn-danger">Delete</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h5 class="card-title mb-0">Statistics</h5>
+    </div>
+    <div class="card-body" id="stats-container">
+      {% include "switch/stats_partial.html" %}
+    </div>
+  </div>
+</div>
+{% endblock %}

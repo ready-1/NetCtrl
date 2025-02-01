@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+  <div class="nc-card">
+    <div class="nc-card-header">
+      <h1 class="nc-card-header-title">Welcome to NetCtrl</h1>
+    </div>
+    <div class="nc-card-body">
+      <div class="row g-4">
+        <div class="col-md-6">
+          <div class="nc-card h-100">
+            <div class="nc-card-body">
+              <h2 class="h4 nc-text-primary">Switch Management</h2>
+              <p class="nc-text-secondary">View and manage your network switches</p>
+              <a href="{% url 'netctrl:switch-list' %}" class="nc-btn nc-btn-primary" role="button">
+                Go to Switches
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="nc-card h-100">
+            <div class="nc-card-body">
+              <h2 class="h4 nc-text-primary">Network Monitoring</h2>
+              <p class="nc-text-secondary">Real-time network statistics and charts</p>
+              <a href="{% url 'netctrl:test-chart' %}" class="nc-btn nc-btn-secondary" role="button">
+                View Charts
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

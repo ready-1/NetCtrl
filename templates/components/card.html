@@ -1,0 +1,21 @@
+{% comment %}
+Card component template
+{% endcomment %}
+
+<div class="nc-card">
+    {% if title %}
+    <div class="nc-card-header">
+        <h5 class="nc-card-title">{{ title }}</h5>
+    </div>
+    {% endif %}
+
+    <div class="nc-card-body">
+        {{ content|safe }}
+    </div>
+
+    {% if footer %}
+    <div class="nc-card-footer">
+        {{ footer|safe }}
+    </div>
+    {% endif %}
+</div>

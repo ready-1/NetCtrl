@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+  <h1>Network Dashboard</h1>
+  <div class="row">
+    {% for switch in switches %}
+    <div class="col-md-6 mb-3">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title mb-0">{{ switch.name }}</h5>
+        </div>
+        <div class="card-body" hx-get="{% url 'netctrl:switch_stats' switch.pk %}" hx-trigger="load">
+          <div class="loading-spinner">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  htmx.on('htmx:afterRequest', function(event) {
+    if (event.detail.successful) {
+      var charts = event.detail.target.querySelectorAll('.stat-chart');
+      charts.forEach(function(canvas) {
+        new Chart(canvas.getContext('2d'), {
+          type: 'line',
+          data: {
+            labels: ['1m', '5m', '15m', '30m', '1h'],
+            datasets: [{
+              label: canvas.dataset.label,
+              data: JSON.parse(canvas.dataset.values),
+              borderColor: 'rgb(75, 192, 192)',
+              tension: 0.1
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false
+          }
+        });
+      });
+    }
+  });
+});
+</script>
+{% endblock %}

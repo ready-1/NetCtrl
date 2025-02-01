@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+  <div class="nc-card">
+    <div class="nc-card-header">
+      <div class="nc-card-header-title">Test Alert</div>
+    </div>
+    <div class="nc-card-body">
+      <div id="alert-container">
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          Initial success alert
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      </div>
+      <button class="nc-btn nc-btn-success" hx-post="{% url 'netctrl:test-alert' %}" hx-target="#alert-container">
+        Show Success Alert
+      </button>
+      <button class="nc-btn nc-btn-danger" hx-post="{% url 'netctrl:test-alert' %}" hx-target="#alert-container" hx-vals='{"error": "true"}'>
+        Show Error Alert
+      </button>
+    </div>
+  </div>
+</div>
+{% endblock %}

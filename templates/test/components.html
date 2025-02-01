@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="nc-dark-theme">
+    <!-- Test all components in dark theme -->
+    <div class="nc-container">
+        <!-- Responsive classes -->
+        <div class="nc-d-sm-none nc-d-md-block nc-d-lg-flex">
+            <!-- Alert -->
+            {% include "components/alerts.html" with type="success" message="Success message" %}
+
+            <!-- Loading -->
+            {% include "components/loading.html" %}
+
+            <!-- Card -->
+            {% include "components/card.html" with title="Test Card" content="Card content" footer="Card footer" %}
+
+            <!-- Buttons -->
+            {% include "components/buttons.html" %}
+
+            <!-- Form -->
+            {% include "components/form.html" %}
+        </div>
+
+        <!-- Test responsive margins/padding -->
+        <div class="nc-m-sm-0 nc-p-md-0">
+            <p>Testing responsive spacing</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,35 +1,61 @@
-/* CSS Variables for dark theme */
 :root {
-    /* Colors */
-    --nc-bg-primary: #1a1d21;
-    --nc-bg-secondary: #242a30;
-    --nc-bg-tertiary: #2d353d;
+  /* Light Theme Colors */
+  --nc-primary: #0d6efd;
+  --nc-secondary: #6c757d;
+  --nc-success: #198754;
+  --nc-danger: #dc3545;
+  --nc-warning: #ffc107;
+  --nc-info: #0dcaf0;
+  --nc-light: #f8f9fa;
+  --nc-dark: #343a40;
+  --nc-muted: #6c757d;
 
-    --nc-text-primary: #e9ecef;
-    --nc-text-secondary: #adb5bd;
-    --nc-text-muted: #6c757d;
+  /* Light Theme Backgrounds */
+  --nc-bg-primary: #ffffff;
+  --nc-bg-secondary: #f8f9fa;
+  --nc-bg-tertiary: #e9ecef;
 
-    --nc-border-color: #343a40;
+  /* Light Theme Text */
+  --nc-text-primary: #212529;
+  --nc-text-secondary: #6c757d;
+  --nc-text-muted: #adb5bd;
 
-    --nc-primary: #0d6efd;
-    --nc-success: #198754;
-    --nc-info: #0dcaf0;
-    --nc-warning: #ffc107;
-    --nc-danger: #dc3545;
-
-    /* Spacing */
-    --nc-spacing-xs: 0.25rem;
-    --nc-spacing-sm: 0.5rem;
-    --nc-spacing-md: 1rem;
-    --nc-spacing-lg: 1.5rem;
-    --nc-spacing-xl: 2rem;
-
-    /* Border radius */
-    --nc-border-radius-sm: 0.25rem;
-    --nc-border-radius: 0.375rem;
-    --nc-border-radius-lg: 0.5rem;
-
-    /* Transitions */
-    --nc-transition-speed: 0.15s;
-    --nc-transition-timing: ease-in-out;
+  /* Light Theme Borders */
+  --nc-border-color: #dee2e6;
+  --nc-border-radius: 0.375rem;
+  --nc-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
 }
+
+/* Dark Theme */
+.nc-dark-theme {
+  /* Dark Theme Colors */
+  --nc-primary: #0d6efd;
+  --nc-secondary: #6c757d;
+  --nc-success: #198754;
+  --nc-danger: #dc3545;
+  --nc-warning: #ffc107;
+  --nc-info: #0dcaf0;
+  --nc-light: #f8f9fa;
+  --nc-dark: #212529;
+  --nc-muted: #6c757d;
+
+  /* Dark Theme Backgrounds */
+  --nc-bg-primary: #212529;
+  --nc-bg-secondary: #343a40;
+  --nc-bg-tertiary: #495057;
+
+  /* Dark Theme Text */
+  --nc-text-primary: #f8f9fa;
+  --nc-text-secondary: #e9ecef;
+  --nc-text-muted: #adb5bd;
+
+  /* Dark Theme Borders */
+  --nc-border-color: #495057;
+  --nc-border-radius: 0.375rem;
+  --nc-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.5);
+}
+
+/* Background utilities */
+.nc-bg-primary { background-color: var(--nc-bg-primary) !important; }
+.nc-bg-secondary { background-color: var(--nc-bg-secondary) !important; }
+.nc-bg-tertiary { background-color: var(--nc-bg-tertiary) !important; }
