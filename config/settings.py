@@ -149,14 +149,14 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [
-    BASE_DIR / 'static',
+    BASE_DIR / "static",
 ]
 
 # Whitenoise configuration
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 WHITENOISE_MAX_AGE = 31536000  # 1 year in seconds
 WHITENOISE_MANIFEST_STRICT = True
 WHITENOISE_USE_FINDERS = True

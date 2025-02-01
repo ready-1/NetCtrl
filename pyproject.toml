@@ -19,6 +19,7 @@ gunicorn = "^23.0.0"
 uvicorn = "^0.34.0"
 pydantic = "^2.6.1"
 urllib3 = "^2.2.0"
+whitenoise = "^6.8.2"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.4"
