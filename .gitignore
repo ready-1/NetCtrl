@@ -212,8 +212,6 @@ Temporary Items
 
 # Project specific
 media/
-static/
-!static/.gitkeep
 *.env
 *.env.*
 !*.env.example
