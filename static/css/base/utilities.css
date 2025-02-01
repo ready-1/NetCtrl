@@ -1,0 +1,48 @@
+/* Utility classes */
+
+/* Spacing utilities */
+.nc-m-0 { margin: 0 !important; }
+.nc-mt-0 { margin-top: 0 !important; }
+.nc-mb-0 { margin-bottom: 0 !important; }
+.nc-ml-0 { margin-left: 0 !important; }
+.nc-mr-0 { margin-right: 0 !important; }
+
+.nc-p-0 { padding: 0 !important; }
+.nc-pt-0 { padding-top: 0 !important; }
+.nc-pb-0 { padding-bottom: 0 !important; }
+.nc-pl-0 { padding-left: 0 !important; }
+.nc-pr-0 { padding-right: 0 !important; }
+
+/* Text utilities */
+.nc-text-primary { color: var(--nc-text-primary) !important; }
+.nc-text-secondary { color: var(--nc-text-secondary) !important; }
+.nc-text-muted { color: var(--nc-text-muted) !important; }
+
+/* Background utilities */
+.nc-bg-primary { background-color: var(--nc-bg-primary) !important; }
+.nc-bg-secondary { background-color: var(--nc-bg-secondary) !important; }
+.nc-bg-tertiary { background-color: var(--nc-bg-tertiary) !important; }
+
+/* Border utilities */
+.nc-border { border: 1px solid var(--nc-border-color) !important; }
+.nc-border-top { border-top: 1px solid var(--nc-border-color) !important; }
+.nc-border-bottom { border-bottom: 1px solid var(--nc-border-color) !important; }
+.nc-border-left { border-left: 1px solid var(--nc-border-color) !important; }
+.nc-border-right { border-right: 1px solid var(--nc-border-color) !important; }
+
+/* Display utilities */
+.nc-d-none { display: none !important; }
+.nc-d-block { display: block !important; }
+.nc-d-inline { display: inline !important; }
+.nc-d-inline-block { display: inline-block !important; }
+.nc-d-flex { display: flex !important; }
+
+/* Flex utilities */
+.nc-flex-row { flex-direction: row !important; }
+.nc-flex-column { flex-direction: column !important; }
+.nc-justify-content-start { justify-content: flex-start !important; }
+.nc-justify-content-center { justify-content: center !important; }
+.nc-justify-content-end { justify-content: flex-end !important; }
+.nc-align-items-start { align-items: flex-start !important; }
+.nc-align-items-center { align-items: center !important; }
+.nc-align-items-end { align-items: flex-end !important; }
