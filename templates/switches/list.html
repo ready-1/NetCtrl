@@ -5,61 +5,57 @@
     <div class="nc-card-header d-flex justify-content-between align-items-center">
       <h1 class="nc-card-header-title">Network Switches</h1>
       {% if perms.netctrl.add_switch %}
-      <a href="{% url 'netctrl:switch-add' %}" class="nc-btn nc-btn-primary">
+      <a href="{% url 'switches:switch-add' %}" class="nc-btn nc-btn-primary">
         <i class="bi bi-plus-lg"></i> Add Switch
       </a>
       {% endif %}
     </div>
     <div class="nc-card-body">
       {% if switches %}
-      <div class="table-responsive">
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>IP Address</th>
-              <th>Status</th>
-              <th>Last Seen</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for switch in switches %}
-            <tr>
-              <td>{{ switch.name }}</td>
-              <td>{{ switch.ip_address }}</td>
-              <td>
+      <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for switch in switches %}
+        <div class="col">
+          <div class="nc-card h-100">
+            <div class="nc-card-body">
+              <h5 class="nc-card-title">{{ switch.name }}</h5>
+              <div class="status-badge mb-3">
                 <span class="badge {% if switch.status == 'active' %}bg-success{% else %}bg-danger{% endif %}">
                   {{ switch.status|title }}
                 </span>
-              </td>
-              <td>{{ switch.last_seen|default:"Never"|date:"Y-m-d H:i" }}</td>
-              <td>
-                <div class="btn-group">
-                  <a href="{% url 'netctrl:switch-detail' pk=switch.pk %}" class="nc-btn nc-btn-sm nc-btn-secondary">
-                    <i class="bi bi-info-circle"></i>
-                  </a>
-                  <a href="{% url 'netctrl:switch-config' pk=switch.pk %}" class="nc-btn nc-btn-sm nc-btn-secondary">
-                    <i class="bi bi-gear"></i>
-                  </a>
-                  <a href="{% url 'netctrl:switch-ports' pk=switch.pk %}" class="nc-btn nc-btn-sm nc-btn-secondary">
-                    <i class="bi bi-ethernet"></i>
-                  </a>
-                  <a href="{% url 'netctrl:switch-backup' pk=switch.pk %}" class="nc-btn nc-btn-sm nc-btn-secondary">
-                    <i class="bi bi-cloud-download"></i>
-                  </a>
-                </div>
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+                <small class="text-muted d-block mt-1">Last seen: {{ switch.last_seen|default:"Never"|date:"Y-m-d H:i" }}</small>
+              </div>
+              <div class="d-grid gap-2">
+                <a href="http://{{ switch.in_band_ip }}:49151" target="_blank" class="nc-btn nc-btn-primary">
+                  <i class="bi bi-box-arrow-up-right"></i> In-Band Management
+                </a>
+                <a href="http://{{ switch.out_band_ip }}:49151" target="_blank" class="nc-btn nc-btn-secondary">
+                  <i class="bi bi-box-arrow-up-right"></i> Out-Band Management
+                </a>
+              </div>
+              <div class="mt-3 d-flex justify-content-between">
+                <a href="{% url 'switches:switch-edit' pk=switch.pk %}" class="nc-btn nc-btn-sm nc-btn-light">
+                  <i class="bi bi-info-circle"></i>
+                </a>
+                <button class="nc-btn nc-btn-sm nc-btn-light" disabled>
+                  <i class="bi bi-gear"></i>
+                </button>
+                <button class="nc-btn nc-btn-sm nc-btn-light" disabled>
+                  <i class="bi bi-ethernet"></i>
+                </button>
+                <button class="nc-btn nc-btn-sm nc-btn-light" disabled>
+                  <i class="bi bi-cloud-download"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
       </div>
       {% else %}
       <div class="text-center py-4">
         <p class="text-muted">No switches have been added yet.</p>
         {% if perms.netctrl.add_switch %}
-        <a href="{% url 'netctrl:switch-add' %}" class="nc-btn nc-btn-primary">
+        <a href="{% url 'switches:switch-add' %}" class="nc-btn nc-btn-primary">
           <i class="bi bi-plus-lg"></i> Add Your First Switch
         </a>
         {% endif %}

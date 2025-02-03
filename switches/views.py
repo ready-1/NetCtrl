@@ -71,7 +71,7 @@ class SwitchListView(LoginRequiredMixin, ListView):
     """View for listing switches."""
 
     model = Switch
-    template_name = "switches/switch_list.html"
+    template_name = "switches/list.html"
     context_object_name = "switches"
 
 
@@ -80,8 +80,9 @@ class SwitchCreateView(LoginRequiredMixin, CreateView):
 
     model = Switch
     template_name = "switches/switch_form.html"
-    fields = ["name", "ip_address", "username"]
+    fields = ["name", "in_band_ip", "out_band_ip"]
     success_url = reverse_lazy("switches:switch-list")
+    template_name = "switches/switch_form.html"
 
 
 class SwitchUpdateView(LoginRequiredMixin, UpdateView):
@@ -89,8 +90,9 @@ class SwitchUpdateView(LoginRequiredMixin, UpdateView):
 
     model = Switch
     template_name = "switches/switch_form.html"
-    fields = ["name", "ip_address", "username"]
+    fields = ["name", "in_band_ip", "out_band_ip"]
     success_url = reverse_lazy("switches:switch-list")
+    template_name = "switches/switch_form.html"
 
 
 class SwitchDetailView(LoginRequiredMixin, DetailView):
