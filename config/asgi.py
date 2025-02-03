@@ -1,5 +1,5 @@
 """
-ASGI config for config project.
+ASGI config for NetCtrl project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -12,12 +12,13 @@ import os
 from django.core.asgi import get_asgi_application
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
+from switches.routing import websocket_urlpatterns
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 
 application = ProtocolTypeRouter(
     {
         "http": get_asgi_application(),
-        # WebSocket handler will be added later
+        "websocket": AuthMiddlewareStack(URLRouter(websocket_urlpatterns)),
     }
 )
