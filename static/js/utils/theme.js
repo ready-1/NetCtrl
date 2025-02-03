@@ -60,6 +60,13 @@ function applyTheme(isDark) {
     }
 }
 
+function toggleTheme() {
+    const body = document.body;
+    body.classList.toggle('nc-dark-theme');
+    const theme = body.classList.contains('nc-dark-theme') ? 'dark' : 'light';
+    localStorage.setItem('theme', theme);
+}
+
 // Initialize theme on page load
 document.addEventListener('DOMContentLoaded', () => {
     applyTheme(getThemePreference());
@@ -70,4 +77,9 @@ document.addEventListener('DOMContentLoaded', () => {
             applyTheme(e.matches);
         }
     });
+
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        document.body.classList.toggle('nc-dark-theme', savedTheme === 'dark');
+    }
 });

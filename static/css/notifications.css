@@ -1,0 +1,39 @@
+/* Notification Styles */
+.notification-dropdown {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.notification-list .dropdown-item {
+    white-space: normal;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.notification-list .dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.notification-list .dropdown-item.read {
+    background-color: rgba(0,0,0,0.02);
+}
+
+.notification-list .dropdown-item:hover {
+    background-color: rgba(0,0,0,0.05);
+}
+
+.notification-message {
+    margin-bottom: 0.25rem;
+    font-size: 0.9rem;
+}
+
+.notification-list .text-muted {
+    font-size: 0.8rem;
+}
+
+#notifications-badge {
+    font-size: 0.65rem;
+    padding: 0.25rem 0.4rem;
+    margin-left: -0.5rem;
+    margin-top: -0.5rem;
+}
