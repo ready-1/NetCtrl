@@ -115,3 +115,27 @@ def get_notifications(request):
             ]
         }
     )
+
+
+@login_required
+def profile(request):
+    """User profile view."""
+    if request.method == "POST":
+        # Handle profile update
+        pass
+    return render(
+        request, "core/profile.html", {"title": _("Profile"), "user": request.user}
+    )
+
+
+@login_required
+def preferences(request):
+    """User preferences view."""
+    if request.method == "POST":
+        # Handle preferences update
+        pass
+    return render(
+        request,
+        "core/preferences.html",
+        {"title": _("Preferences"), "user": request.user},
+    )

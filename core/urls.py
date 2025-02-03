@@ -5,6 +5,8 @@ app_name = "core"
 
 urlpatterns = [
     path("", views.DashboardView.as_view(), name="dashboard"),
+    path("profile/", views.profile, name="profile"),
+    path("preferences/", views.preferences, name="preferences"),
     path("audit-logs/", views.AuditLogListView.as_view(), name="audit_logs"),
     path("notifications/", views.get_notifications, name="notifications"),
     path(

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+  <div class="nc-card">
+    <div class="nc-card-header d-flex justify-content-between align-items-center">
+      <h1 class="nc-card-header-title">Network Switches</h1>
+      {% if perms.netctrl.add_switch %}
+      <a href="{% url 'netctrl:switch-add' %}" class="nc-btn nc-btn-primary">
+        <i class="bi bi-plus-lg"></i> Add Switch
+      </a>
+      {% endif %}
+    </div>
+    <div class="nc-card-body">
+      {% if switches %}
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>IP Address</th>
+              <th>Status</th>
+              <th>Last Seen</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for switch in switches %}
+            <tr>
+              <td>{{ switch.name }}</td>
+              <td>{{ switch.ip_address }}</td>
+              <td>
+                <span class="badge {% if switch.status == 'active' %}bg-success{% else %}bg-danger{% endif %}">
+                  {{ switch.status|title }}
+                </span>
+              </td>
+              <td>{{ switch.last_seen|default:"Never"|date:"Y-m-d H:i" }}</td>
+              <td>
+                <div class="btn-group">
+                  <a href="{% url 'netctrl:switch-detail' pk=switch.pk %}" class="nc-btn nc-btn-sm nc-btn-secondary">
+                    <i class="bi bi-info-circle"></i>
+                  </a>
+                  <a href="{% url 'netctrl:switch-config' pk=switch.pk %}" class="nc-btn nc-btn-sm nc-btn-secondary">
+                    <i class="bi bi-gear"></i>
+                  </a>
+                  <a href="{% url 'netctrl:switch-ports' pk=switch.pk %}" class="nc-btn nc-btn-sm nc-btn-secondary">
+                    <i class="bi bi-ethernet"></i>
+                  </a>
+                  <a href="{% url 'netctrl:switch-backup' pk=switch.pk %}" class="nc-btn nc-btn-sm nc-btn-secondary">
+                    <i class="bi bi-cloud-download"></i>
+                  </a>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="text-center py-4">
+        <p class="text-muted">No switches have been added yet.</p>
+        {% if perms.netctrl.add_switch %}
+        <a href="{% url 'netctrl:switch-add' %}" class="nc-btn nc-btn-primary">
+          <i class="bi bi-plus-lg"></i> Add Your First Switch
+        </a>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

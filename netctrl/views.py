@@ -43,7 +43,8 @@ def switch_add(request):
             switch = create_switch(data)
             return redirect("netctrl:switch-list")
         return JsonResponse({"errors": form.errors}, status=400)
-    return render(request, "switch/add.html")
+    form = SwitchForm()
+    return render(request, "switches/add.html", {"form": form})
 
 
 @login_required
