@@ -1,0 +1,373 @@
+{% extends "styleguide/base.html" %}
+{% load i18n %}
+
+{% block styleguide_content %}
+<div class="row">
+    <!-- Basic Form Elements -->
+    <div class="col-12 mb-4">
+        <h2>{% trans "Basic Form Elements" %}</h2>
+        <p>{% trans "Standard form controls supported in NetCtrl." %}</p>
+
+        <div class="alert alert-info">
+            <h5>{% trans "Best Practices" %}</h5>
+            <ul>
+                <li>{% trans "Always use labels with form controls for accessibility" %}</li>
+                <li>{% trans "Include placeholder text when the expected input format needs clarification" %}</li>
+                <li>{% trans "Use helper text to provide additional context or requirements" %}</li>
+                <li>{% trans "Group related form controls using fieldset and legend elements" %}</li>
+            </ul>
+        </div>
+
+        <div class="component-demo">
+            <form class="mb-4">
+                <div class="mb-3">
+                    <label for="exampleInput1" class="form-label">{% trans "Text Input" %}</label>
+                    <input type="text" class="form-control" id="exampleInput1" placeholder="{% trans 'Enter text' %}">
+                    <div class="form-text">{% trans "Helper text for the input field." %}</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="exampleInput2" class="form-label">{% trans "Email Input" %}</label>
+                    <input type="email" class="form-control" id="exampleInput2" placeholder="name@example.com">
+                </div>
+
+                <div class="mb-3">
+                    <label for="exampleSelect1" class="form-label">{% trans "Select Menu" %}</label>
+                    <select class="form-select" id="exampleSelect1">
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="exampleTextarea1" class="form-label">{% trans "Textarea" %}</label>
+                    <textarea class="form-control" id="exampleTextarea1" rows="3"></textarea>
+                </div>
+            </form>
+        </div>
+
+        <div class="code-snippet">
+            <pre><code class="language-django">{% verbatim %}
+<form>
+    <!-- Text input with helper text -->
+    <div class="mb-3">
+        <label for="textInput" class="form-label">{% trans "Text Input" %}</label>
+        <input type="text" class="form-control" id="textInput" placeholder="{% trans 'Enter text' %}">
+        <div class="form-text">{% trans "Helper text for the input field." %}</div>
+    </div>
+
+    <!-- Email input -->
+    <div class="mb-3">
+        <label for="emailInput" class="form-label">{% trans "Email Input" %}</label>
+        <input type="email" class="form-control" id="emailInput" placeholder="name@example.com">
+    </div>
+
+    <!-- Select menu -->
+    <div class="mb-3">
+        <label for="selectMenu" class="form-label">{% trans "Select Menu" %}</label>
+        <select class="form-select" id="selectMenu">
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+        </select>
+    </div>
+
+    <!-- Textarea -->
+    <div class="mb-3">
+        <label for="textArea" class="form-label">{% trans "Textarea" %}</label>
+        <textarea class="form-control" id="textArea" rows="3"></textarea>
+    </div>
+</form>{% endverbatim %}</code></pre>
+        </div>
+    </div>
+
+    <!-- Form Validation -->
+    <div class="col-12 mb-4">
+        <h2>{% trans "Form Validation" %}</h2>
+        <p>{% trans "Examples of form validation states and feedback." %}</p>
+
+        <div class="alert alert-info">
+            <h5>{% trans "Validation Guidelines" %}</h5>
+            <ul>
+                <li>{% trans "Provide immediate feedback when possible" %}</li>
+                <li>{% trans "Use clear and specific error messages" %}</li>
+                <li>{% trans "Indicate both valid and invalid states" %}</li>
+                <li>{% trans "Use server-side validation as the source of truth" %}</li>
+            </ul>
+        </div>
+
+        <div class="component-demo">
+            <form class="mb-4" novalidate>
+                <div class="mb-3">
+                    <label for="validInput1" class="form-label">{% trans "Valid Input" %}</label>
+                    <input type="text" class="form-control is-valid" id="validInput1" value="Mark" required>
+                    <div class="valid-feedback">
+                        {% trans "Looks good!" %}
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="invalidInput1" class="form-label">{% trans "Invalid Input" %}</label>
+                    <input type="text" class="form-control is-invalid" id="invalidInput1" required>
+                    <div class="invalid-feedback">
+                        {% trans "Please provide a valid value." %}
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="emailValidation" class="form-label">{% trans "Email Validation" %}</label>
+                    <div class="input-group has-validation">
+                        <span class="input-group-text">@</span>
+                        <input type="email" class="form-control is-invalid" id="emailValidation" required>
+                        <div class="invalid-feedback">
+                            {% trans "Please enter a valid email address." %}
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="code-snippet">
+            <pre><code class="language-django">{% verbatim %}
+<form novalidate>
+    <!-- Valid input -->
+    <div class="mb-3">
+        <label for="validInput" class="form-label">{% trans "Valid Input" %}</label>
+        <input type="text" class="form-control is-valid" id="validInput" required>
+        <div class="valid-feedback">
+            {% trans "Looks good!" %}
+        </div>
+    </div>
+
+    <!-- Invalid input -->
+    <div class="mb-3">
+        <label for="invalidInput" class="form-label">{% trans "Invalid Input" %}</label>
+        <input type="text" class="form-control is-invalid" id="invalidInput" required>
+        <div class="invalid-feedback">
+            {% trans "Please provide a valid value." %}
+        </div>
+    </div>
+
+    <!-- Email validation with input group -->
+    <div class="mb-3">
+        <label for="emailValidation" class="form-label">{% trans "Email" %}</label>
+        <div class="input-group has-validation">
+            <span class="input-group-text">@</span>
+            <input type="email" class="form-control is-invalid" id="emailValidation" required>
+            <div class="invalid-feedback">
+                {% trans "Please enter a valid email address." %}
+            </div>
+        </div>
+    </div>
+</form>{% endverbatim %}</code></pre>
+        </div>
+
+        <div class="alert alert-warning mt-3">
+            <h5>{% trans "Server-side Validation" %}</h5>
+            <p>{% trans "Always implement server-side validation in your Django views:" %}</p>
+            <div class="code-snippet">
+                <pre><code class="language-python">
+def form_view(request):
+    if request.method == 'POST':
+        form = MyForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, _('Form submitted successfully!'))
+            return redirect('success_url')
+    else:
+        form = MyForm()
+    return render(request, 'template.html', {'form': form})</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- Input Groups -->
+    <div class="col-12 mb-4">
+        <h2>{% trans "Input Groups" %}</h2>
+        <p>{% trans "Extend form controls with custom text or buttons." %}</p>
+
+        <div class="alert alert-info">
+            <h5>{% trans "Usage Guidelines" %}</h5>
+            <ul>
+                <li>{% trans "Use input groups to provide context for form inputs" %}</li>
+                <li>{% trans "Keep addons short and clear" %}</li>
+                <li>{% trans "Consider using icons for better visual cues" %}</li>
+            </ul>
+        </div>
+
+        <div class="component-demo">
+            <div class="mb-3">
+                <label for="usernameGroup" class="form-label">{% trans "Username" %}</label>
+                <div class="input-group">
+                    <span class="input-group-text">@</span>
+                    <input type="text" class="form-control" id="usernameGroup" placeholder="{% trans 'Username' %}">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="searchGroup" class="form-label">{% trans "Search" %}</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="searchGroup" placeholder="{% trans 'Search' %}">
+                    <button class="btn btn-outline-secondary" type="button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="priceGroup" class="form-label">{% trans "Price" %}</label>
+                <div class="input-group">
+                    <span class="input-group-text">$</span>
+                    <input type="number" class="form-control" id="priceGroup">
+                    <span class="input-group-text">.00</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="code-snippet">
+            <pre><code class="language-django">{% verbatim %}
+<!-- Username input group -->
+<div class="input-group">
+    <span class="input-group-text">@</span>
+    <input type="text" class="form-control" placeholder="{% trans 'Username' %}">
+</div>
+
+<!-- Search input group with button -->
+<div class="input-group">
+    <input type="text" class="form-control" placeholder="{% trans 'Search' %}">
+    <button class="btn btn-outline-secondary" type="button">
+        <i class="fas fa-search"></i>
+    </button>
+</div>
+
+<!-- Price input group -->
+<div class="input-group">
+    <span class="input-group-text">$</span>
+    <input type="number" class="form-control">
+    <span class="input-group-text">.00</span>
+</div>{% endverbatim %}</code></pre>
+        </div>
+    </div>
+
+    <!-- Switches and Checkboxes -->
+    <div class="col-12 mb-4">
+        <h2>{% trans "Switches and Checkboxes" %}</h2>
+        <p>{% trans "Toggle controls and checkbox inputs for binary choices." %}</p>
+
+        <div class="alert alert-info">
+            <h5>{% trans "Best Practices" %}</h5>
+            <ul>
+                <li>{% trans "Use switches for immediate toggle actions" %}</li>
+                <li>{% trans "Use checkboxes for multiple selection options" %}</li>
+                <li>{% trans "Provide clear labels that describe the action" %}</li>
+                <li>{% trans "Consider using switch when the action has an immediate effect" %}</li>
+            </ul>
+        </div>
+
+        <div class="component-demo">
+            <fieldset class="mb-3">
+                <legend class="h6">{% trans "Switch Examples" %}</legend>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+                    <label class="form-check-label" for="flexSwitchCheckDefault">
+                        {% trans "Default switch checkbox input" %}
+                    </label>
+                </div>
+
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" checked>
+                    <label class="form-check-label" for="flexSwitchCheckChecked">
+                        {% trans "Checked switch checkbox input" %}
+                    </label>
+                </div>
+
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckDisabled" disabled>
+                    <label class="form-check-label" for="flexSwitchCheckDisabled">
+                        {% trans "Disabled switch checkbox input" %}
+                    </label>
+                </div>
+            </fieldset>
+
+            <fieldset class="mb-3">
+                <legend class="h6">{% trans "Checkbox Examples" %}</legend>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                    <label class="form-check-label" for="flexCheckDefault">
+                        {% trans "Default checkbox" %}
+                    </label>
+                </div>
+
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
+                    <label class="form-check-label" for="flexCheckChecked">
+                        {% trans "Checked checkbox" %}
+                    </label>
+                </div>
+
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="flexCheckIndeterminate">
+                    <label class="form-check-label" for="flexCheckIndeterminate">
+                        {% trans "Indeterminate checkbox" %}
+                    </label>
+                </div>
+            </fieldset>
+        </div>
+
+        <div class="code-snippet">
+            <pre><code class="language-django">{% verbatim %}
+<!-- Switch examples -->
+<div class="form-check form-switch">
+    <input class="form-check-input" type="checkbox" id="switchDefault">
+    <label class="form-check-label" for="switchDefault">
+        {% trans "Default switch" %}
+    </label>
+</div>
+
+<div class="form-check form-switch">
+    <input class="form-check-input" type="checkbox" id="switchChecked" checked>
+    <label class="form-check-label" for="switchChecked">
+        {% trans "Checked switch" %}
+    </label>
+</div>
+
+<!-- Checkbox examples -->
+<div class="form-check">
+    <input class="form-check-input" type="checkbox" id="checkDefault">
+    <label class="form-check-label" for="checkDefault">
+        {% trans "Default checkbox" %}
+    </label>
+</div>
+
+<div class="form-check">
+    <input class="form-check-input" type="checkbox" id="checkChecked" checked>
+    <label class="form-check-label" for="checkChecked">
+        {% trans "Checked checkbox" %}
+    </label>
+</div>{% endverbatim %}</code></pre>
+        </div>
+
+        <div class="alert alert-warning mt-3">
+            <h5>{% trans "JavaScript for Indeterminate State" %}</h5>
+            <div class="code-snippet">
+                <pre><code class="language-javascript">
+// Set checkbox to indeterminate state
+document.getElementById('flexCheckIndeterminate').indeterminate = true;</code></pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+{{ block.super }}
+<script>
+    // Set indeterminate state for demo checkbox
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('flexCheckIndeterminate').indeterminate = true;
+    });
+</script>
+{% endblock %}
+{% endblock %}

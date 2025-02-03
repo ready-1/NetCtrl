@@ -1,0 +1,35 @@
+{% extends "styleguide/base.html" %}
+{% load i18n %}
+
+{% block styleguide_content %}
+<div class="row">
+    <div class="col-12">
+        <h2>{% trans "Welcome to the NetCtrl Style Guide" %}</h2>
+        <p class="lead">
+            {% trans "This style guide provides a comprehensive overview of UI components, forms, charts, and themes used throughout the NetCtrl application." %}
+        </p>
+
+        <h3>{% trans "Purpose" %}</h3>
+        <p>
+            {% trans "The style guide serves as a living document and reference for developers to maintain consistency in the user interface. It includes:" %}
+        </p>
+        <ul>
+            <li>{% trans "Common UI components and their usage" %}</li>
+            <li>{% trans "Form elements and validation patterns" %}</li>
+            <li>{% trans "Chart components and data visualization" %}</li>
+            <li>{% trans "Dark theme implementation" %}</li>
+        </ul>
+
+        <h3>{% trans "Getting Started" %}</h3>
+        <p>
+            {% trans "Use the navigation menu on the left to explore different sections of the style guide. Each section contains:" %}
+        </p>
+        <ul>
+            <li>{% trans "Live examples of components" %}</li>
+            <li>{% trans "Usage guidelines" %}</li>
+            <li>{% trans "Code snippets" %}</li>
+            <li>{% trans "Best practices" %}</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

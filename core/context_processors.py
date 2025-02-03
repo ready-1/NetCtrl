@@ -25,3 +25,8 @@ def notifications(request):
     ).count()
 
     return {"notifications": notifications, "unread_notifications_count": unread_count}
+
+
+def dark_mode(request):
+    """Context processor that provides dark mode state."""
+    return {"dark_mode": False}

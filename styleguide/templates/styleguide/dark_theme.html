@@ -1,0 +1,115 @@
+{% extends "styleguide/base.html" %}
+{% load i18n %}
+
+{% block styleguide_content %}
+<div class="row">
+    <div class="col-12 mb-4">
+        <h2>{% trans "Dark Theme" %}</h2>
+        <p>{% trans "Toggle between light and dark themes to see how components adapt." %}</p>
+
+        <div class="mb-3">
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="darkModeToggle">
+                <label class="form-check-label" for="darkModeToggle">{% trans "Toggle Dark Mode" %}</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Example Components in Dark Mode -->
+    <div class="col-12 mb-4">
+        <h3>{% trans "Cards" %}</h3>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{% trans "Dark Mode Card" %}</h5>
+                        <p class="card-text">{% trans "This card adapts to the current theme." %}</p>
+                        <button class="btn btn-primary">{% trans "Action" %}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 mb-4">
+        <h3>{% trans "Alerts" %}</h3>
+        <div class="alert alert-primary" role="alert">
+            {% trans "Primary alert in current theme" %}
+        </div>
+        <div class="alert alert-secondary" role="alert">
+            {% trans "Secondary alert in current theme" %}
+        </div>
+    </div>
+
+    <div class="col-12 mb-4">
+        <h3>{% trans "Forms" %}</h3>
+        <form>
+            <div class="mb-3">
+                <label for="darkThemeInput" class="form-label">{% trans "Input Field" %}</label>
+                <input type="text" class="form-control" id="darkThemeInput" placeholder="{% trans 'Type something...' %}">
+            </div>
+            <div class="mb-3">
+                <label for="darkThemeSelect" class="form-label">{% trans "Select Menu" %}</label>
+                <select class="form-select" id="darkThemeSelect">
+                    <option>{% trans "Option 1" %}</option>
+                    <option>{% trans "Option 2" %}</option>
+                    <option>{% trans "Option 3" %}</option>
+                </select>
+            </div>
+        </form>
+    </div>
+
+    <div class="col-12 mb-4">
+        <h3>{% trans "Tables" %}</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">{% trans "Header" %}</th>
+                    <th scope="col">{% trans "Header" %}</th>
+                    <th scope="col">{% trans "Header" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">1</th>
+                    <td>{% trans "Cell" %}</td>
+                    <td>{% trans "Cell" %}</td>
+                    <td>{% trans "Cell" %}</td>
+                </tr>
+                <tr>
+                    <th scope="row">2</th>
+                    <td>{% trans "Cell" %}</td>
+                    <td>{% trans "Cell" %}</td>
+                    <td>{% trans "Cell" %}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    const body = document.body;
+
+    // Check if dark mode is enabled in localStorage
+    if (localStorage.getItem('darkMode') === 'enabled') {
+        body.classList.add('dark-mode');
+        darkModeToggle.checked = true;
+    }
+
+    darkModeToggle.addEventListener('change', function() {
+        if (this.checked) {
+            body.classList.add('dark-mode');
+            localStorage.setItem('darkMode', 'enabled');
+        } else {
+            body.classList.remove('dark-mode');
+            localStorage.setItem('darkMode', null);
+        }
+    });
+});
+</script>
+{% endblock %}
+{% endblock %}

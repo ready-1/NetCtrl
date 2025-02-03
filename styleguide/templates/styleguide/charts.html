@@ -1,0 +1,116 @@
+{% extends "styleguide/base.html" %}
+{% load i18n %}
+
+{% block styleguide_content %}
+<div class="container">
+    <div class="row">
+        <!-- Best Practices -->
+        <div class="col-12 mb-4">
+            <div class="alert alert-info">
+                <h5>{% trans "Chart.js Best Practices" %}</h5>
+                <ul>
+                    <li>{% trans "Use appropriate chart types for your data" %}</li>
+                    <li>{% trans "Keep charts simple and focused" %}</li>
+                    <li>{% trans "Provide clear labels and legends" %}</li>
+                    <li>{% trans "Use consistent colors across the application" %}</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Line Chart Example -->
+        <div class="col-12 mb-4">
+            <h2>{% trans "Line Chart" %}</h2>
+            <div class="card">
+                <div class="card-body">
+                    <canvas id="lineChart"></canvas>
+                </div>
+            </div>
+            <div class="code-snippet mt-3">
+                <pre><code class="language-javascript">
+const lineConfig = {
+    type: 'line',
+    data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+        datasets: [{
+            label: 'Network Traffic',
+            data: [65, 59, 80, 81, 56],
+            borderColor: 'rgb(75, 192, 192)'
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            title: { text: 'Network Traffic' }
+        }
+    }
+};</code></pre>
+            </div>
+        </div>
+
+        <!-- Bar Chart Example -->
+        <div class="col-12 mb-4">
+            <h2>{% trans "Bar Chart" %}</h2>
+            <div class="card">
+                <div class="card-body">
+                    <canvas id="barChart"></canvas>
+                </div>
+            </div>
+            <div class="code-snippet mt-3">
+                <pre><code class="language-javascript">
+const barConfig = {
+    type: 'bar',
+    data: {
+        labels: ['Port 1', 'Port 2', 'Port 3'],
+        datasets: [{
+            label: 'Port Usage',
+            data: [12, 19, 3],
+            backgroundColor: 'rgba(54, 162, 235, 0.2)'
+        }]
+    }
+};</code></pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Line Chart
+    const lineCtx = document.getElementById('lineChart').getContext('2d');
+    new Chart(lineCtx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+            datasets: [{
+                label: 'Network Traffic',
+                data: [65, 59, 80, 81, 56],
+                borderColor: 'rgb(75, 192, 192)'
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                title: { text: 'Network Traffic' }
+            }
+        }
+    });
+
+    // Bar Chart
+    const barCtx = document.getElementById('barChart').getContext('2d');
+    new Chart(barCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Port 1', 'Port 2', 'Port 3'],
+            datasets: [{
+                label: 'Port Usage',
+                data: [12, 19, 3],
+                backgroundColor: 'rgba(54, 162, 235, 0.2)'
+            }]
+        }
+    });
+});
+</script>
+{% endblock %}
+{% endblock %}

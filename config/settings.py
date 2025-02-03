@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "django_htmx",
     "whitenoise",  # Add whitenoise to installed apps
     "netctrl",
+    "styleguide",
     # Local apps
     "core.apps.CoreConfig",
     "switches.apps.SwitchesConfig",
@@ -80,6 +81,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "core.context_processors.notifications",
+                "core.context_processors.dark_mode",
                 "netctrl.context_processors.breadcrumbs",
             ],
         },

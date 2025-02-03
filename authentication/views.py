@@ -1,7 +1,9 @@
 from django.contrib.auth import login, logout
+from django.contrib.auth.views import LoginView
 from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
 from django.views.generic import View
-from django.contrib.auth.forms import AuthenticationForm
+from .forms import LoginForm
 from django.contrib import messages
 from rest_framework import status
 from rest_framework.views import APIView
@@ -11,31 +13,20 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
 
 
-class LoginView(View):
+class CustomLoginView(LoginView):
+    form_class = LoginForm
     template_name = "authentication/login.html"
+    redirect_authenticated_user = True
 
-    def get(self, request):
-        if request.user.is_authenticated:
-            return redirect("core:dashboard")
-        form = AuthenticationForm()
-        return render(request, self.template_name, {"form": form})
-
-    def post(self, request):
-        form = AuthenticationForm(data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
-            login(request, user)
-            messages.success(request, f"Welcome back, {user.username}!")
-            return redirect("core:dashboard")
-        return render(request, self.template_name, {"form": form})
+    def get_success_url(self):
+        messages.success(self.request, f"Welcome back, {self.request.user.username}!")
+        return reverse_lazy("core:dashboard")
 
 
-class LogoutView(View):
-    def get(self, request):
-        if request.user.is_authenticated:
-            logout(request)
-            messages.info(request, "You have been logged out.")
-        return redirect("authentication:login")
+def logout_view(request):
+    logout(request)
+    messages.info(request, "You have been logged out.")
+    return redirect("authentication:login")
 
 
 class TokenObtainView(TokenObtainPairView):

@@ -19,7 +19,7 @@
     <link href="/static/css/components/navbar.css" rel="stylesheet">
     {% block extra_css %}{% endblock %}
 </head>
-<body class="d-flex flex-column min-vh-100 {% if dark_mode %}nc-dark-theme{% endif %}">
+<body class="d-flex flex-column min-vh-100 {% block body_class %}{% endblock %}">
     {% include "components/navbar.html" %}
 
     <div class="content container py-4 flex-grow-1">

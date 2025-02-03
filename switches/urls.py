@@ -4,25 +4,32 @@ from django.urls import path, re_path
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from . import views
 
-app_name = "api"
+app_name = "switches"
 
 urlpatterns = [
+    # Web interface URLs
+    path("", views.SwitchListView.as_view(), name="switch-list"),
+    path("add/", views.SwitchCreateView.as_view(), name="switch-add"),
+    path("<int:pk>/edit/", views.SwitchUpdateView.as_view(), name="switch-edit"),
+    path("<int:pk>/", views.SwitchDetailView.as_view(), name="switch-detail"),
     # Authentication endpoints
-    path("token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
-    path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
-    # User endpoints
-    path("user/", views.UserDetailView.as_view(), name="user-detail"),
-    # Switch endpoints
-    path("switches/", views.SwitchListCreateView.as_view(), name="switch-list"),
-    path("switches/<int:pk>/", views.SwitchDetailView.as_view(), name="switch-detail"),
-    # Port endpoints
+    path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    # API URLs
+    path("api/users/me/", views.UserDetailView.as_view(), name="user-detail"),
     path(
-        "switches/<int:switch_id>/ports/",
+        "api/switches/", views.SwitchListCreateView.as_view(), name="switch-list-create"
+    ),
+    path(
+        "api/switches/<int:pk>/", views.SwitchDetailView.as_view(), name="switch-detail"
+    ),
+    path(
+        "api/switches/<int:switch_id>/ports/",
         views.PortListView.as_view(),
         name="port-list",
     ),
     re_path(
-        r"^switches/(?P<switch_id>\d+)/ports/(?P<n>[\w/]+)/$",
+        r"^api/switches/(?P<switch_id>\d+)/ports/(?P<n>[\w/]+)/$",
         views.PortDetailView.as_view(),
         name="port-detail",
     ),

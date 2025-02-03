@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>{% trans "Network Switches" %}</h1>
+        <a href="{% url 'switches:switch-add' %}" class="btn btn-primary">
+            {% trans "Add Switch" %}
+        </a>
+    </div>
+
+    {% if switches %}
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>{% trans "Name" %}</th>
+                        <th>{% trans "IP Address" %}</th>
+                        <th>{% trans "Status" %}</th>
+                        <th>{% trans "Actions" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for switch in switches %}
+                    <tr>
+                        <td>{{ switch.name }}</td>
+                        <td>{{ switch.ip_address }}</td>
+                        <td>
+                            <span class="badge {% if switch.status == 'up' %}bg-success{% elif switch.status == 'down' %}bg-danger{% else %}bg-warning{% endif %}">
+                                {{ switch.get_status_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="http://{{ switch.ip_address }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                {% trans "Web Interface" %}
+                            </a>
+                            <a href="{% url 'switches:switch-detail' switch.pk %}" class="btn btn-sm btn-outline-secondary">
+                                {% trans "Details" %}
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            {% trans "No switches found. Add one to get started!" %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

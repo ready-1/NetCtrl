@@ -1,0 +1,220 @@
+{% extends "styleguide/base.html" %}
+{% load i18n %}
+
+{% block styleguide_content %}
+<div class="row">
+    <!-- Alerts -->
+    <div class="col-12 mb-4">
+        <h2>{% trans "Alerts" %}</h2>
+        <p>{% trans "Use alerts to provide feedback messages to users." %}</p>
+
+        <div class="component-demo">
+            <div class="alert alert-primary" role="alert">
+                {% trans "This is a primary alert — check it out!" %}
+            </div>
+            <div class="alert alert-success" role="alert">
+                {% trans "This is a success alert — check it out!" %}
+            </div>
+            <div class="alert alert-danger" role="alert">
+                {% trans "This is a danger alert — check it out!" %}
+            </div>
+            <div class="alert alert-warning" role="alert">
+                {% trans "This is a warning alert — check it out!" %}
+            </div>
+        </div>
+
+        <div class="code-snippet">
+            <pre><code class="language-django">{% verbatim %}
+<div class="alert alert-primary" role="alert">
+    {% trans "This is a primary alert" %}
+</div>
+<div class="alert alert-success" role="alert">
+    {% trans "This is a success alert" %}
+</div>
+<div class="alert alert-danger" role="alert">
+    {% trans "This is a danger alert" %}
+</div>
+<div class="alert alert-warning" role="alert">
+    {% trans "This is a warning alert" %}
+</div>{% endverbatim %}</code></pre>
+        </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="col-12 mb-4">
+        <h2>{% trans "Buttons" %}</h2>
+        <p>{% trans "Use these button styles for actions in forms, dialogs, and more." %}</p>
+
+        <div class="component-demo">
+            <div class="mb-3">
+                <button type="button" class="btn btn-primary">{% trans "Primary" %}</button>
+                <button type="button" class="btn btn-secondary">{% trans "Secondary" %}</button>
+                <button type="button" class="btn btn-success">{% trans "Success" %}</button>
+                <button type="button" class="btn btn-danger">{% trans "Danger" %}</button>
+                <button type="button" class="btn btn-warning">{% trans "Warning" %}</button>
+            </div>
+
+            <div class="mb-3">
+                <button type="button" class="btn btn-outline-primary">{% trans "Primary" %}</button>
+                <button type="button" class="btn btn-outline-secondary">{% trans "Secondary" %}</button>
+                <button type="button" class="btn btn-outline-success">{% trans "Success" %}</button>
+                <button type="button" class="btn btn-outline-danger">{% trans "Danger" %}</button>
+                <button type="button" class="btn btn-outline-warning">{% trans "Warning" %}</button>
+            </div>
+        </div>
+
+        <div class="code-snippet">
+            <pre><code class="language-django">{% verbatim %}
+<!-- Solid buttons -->
+<button type="button" class="btn btn-primary">{% trans "Primary" %}</button>
+<button type="button" class="btn btn-secondary">{% trans "Secondary" %}</button>
+<button type="button" class="btn btn-success">{% trans "Success" %}</button>
+<button type="button" class="btn btn-danger">{% trans "Danger" %}</button>
+<button type="button" class="btn btn-warning">{% trans "Warning" %}</button>
+
+<!-- Outline buttons -->
+<button type="button" class="btn btn-outline-primary">{% trans "Primary" %}</button>
+<button type="button" class="btn btn-outline-secondary">{% trans "Secondary" %}</button>
+<button type="button" class="btn btn-outline-success">{% trans "Success" %}</button>
+<button type="button" class="btn btn-outline-danger">{% trans "Danger" %}</button>
+<button type="button" class="btn btn-outline-warning">{% trans "Warning" %}</button>{% endverbatim %}</code></pre>
+        </div>
+    </div>
+
+    <!-- Cards -->
+    <div class="col-12 mb-4">
+        <h2>{% trans "Cards" %}</h2>
+        <p>{% trans "Cards are used to group and display content in a flexible and extensible container." %}</p>
+
+        <div class="component-demo">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{% trans "Card title" %}</h5>
+                            <p class="card-text">{% trans "Some quick example text to build on the card title and make up the bulk of the card's content." %}</p>
+                            <a href="#" class="btn btn-primary">{% trans "Go somewhere" %}</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            {% trans "Featured" %}
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">{% trans "Special title treatment" %}</h5>
+                            <p class="card-text">{% trans "With supporting text below as a natural lead-in to additional content." %}</p>
+                            <a href="#" class="btn btn-primary">{% trans "Go somewhere" %}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="code-snippet">
+            <pre><code class="language-django">{% verbatim %}
+<!-- Basic card -->
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">{% trans "Card title" %}</h5>
+        <p class="card-text">{% trans "Card text here" %}</p>
+        <a href="#" class="btn btn-primary">{% trans "Action" %}</a>
+    </div>
+</div>
+
+<!-- Card with header -->
+<div class="card">
+    <div class="card-header">
+        {% trans "Featured" %}
+    </div>
+    <div class="card-body">
+        <h5 class="card-title">{% trans "Special title" %}</h5>
+        <p class="card-text">{% trans "Card text here" %}</p>
+        <a href="#" class="btn btn-primary">{% trans "Action" %}</a>
+    </div>
+</div>{% endverbatim %}</code></pre>
+        </div>
+    </div>
+
+    <!-- Loading Spinners -->
+    <div class="col-12 mb-4">
+        <h2>{% trans "Loading Spinners" %}</h2>
+        <p>{% trans "Use spinners for loading states in your projects." %}</p>
+
+        <div class="component-demo">
+            <div class="mb-3">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">{% trans "Loading..." %}</span>
+                </div>
+                <div class="spinner-border text-secondary" role="status">
+                    <span class="visually-hidden">{% trans "Loading..." %}</span>
+                </div>
+                <div class="spinner-border text-success" role="status">
+                    <span class="visually-hidden">{% trans "Loading..." %}</span>
+                </div>
+            </div>
+
+            <div>
+                <div class="spinner-grow text-primary" role="status">
+                    <span class="visually-hidden">{% trans "Loading..." %}</span>
+                </div>
+                <div class="spinner-grow text-secondary" role="status">
+                    <span class="visually-hidden">{% trans "Loading..." %}</span>
+                </div>
+                <div class="spinner-grow text-success" role="status">
+                    <span class="visually-hidden">{% trans "Loading..." %}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="code-snippet">
+            <pre><code class="language-django">{% verbatim %}
+<!-- Border spinner -->
+<div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">{% trans "Loading..." %}</span>
+</div>
+
+<!-- Growing spinner -->
+<div class="spinner-grow text-primary" role="status">
+    <span class="visually-hidden">{% trans "Loading..." %}</span>
+</div>{% endverbatim %}</code></pre>
+        </div>
+    </div>
+
+    <!-- Badges -->
+    <div class="col-12 mb-4">
+        <h2>{% trans "Badges" %}</h2>
+        <p>{% trans "Use badges to add counts, labels, or status indicators to elements." %}</p>
+
+        <div class="component-demo">
+            <div class="mb-3">
+                <span class="badge bg-primary">{% trans "Primary" %}</span>
+                <span class="badge bg-secondary">{% trans "Secondary" %}</span>
+                <span class="badge bg-success">{% trans "Success" %}</span>
+                <span class="badge bg-danger">{% trans "Danger" %}</span>
+                <span class="badge bg-warning text-dark">{% trans "Warning" %}</span>
+            </div>
+
+            <div>
+                <button type="button" class="btn btn-primary">
+                    {% trans "Notifications" %} <span class="badge bg-secondary">4</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="code-snippet">
+            <pre><code class="language-django">{% verbatim %}
+<!-- Basic badges -->
+<span class="badge bg-primary">{% trans "Primary" %}</span>
+<span class="badge bg-secondary">{% trans "Secondary" %}</span>
+
+<!-- Badge in button -->
+<button type="button" class="btn btn-primary">
+    {% trans "Notifications" %} <span class="badge bg-secondary">4</span>
+</button>{% endverbatim %}</code></pre>
+        </div>
+    </div>
+</div>
+{% endblock %}

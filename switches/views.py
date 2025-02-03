@@ -9,6 +9,9 @@ from .serializers import (
     SwitchSerializer,
     PortSerializer,
 )
+from django.views.generic import ListView, CreateView, UpdateView, DetailView
+from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 class UserDetailView(generics.RetrieveAPIView):
@@ -62,3 +65,36 @@ class PortDetailView(generics.RetrieveUpdateAPIView):
         """Return ports for a specific switch."""
         switch_id = self.kwargs["switch_id"]
         return Port.objects.filter(switch_id=switch_id)
+
+
+class SwitchListView(LoginRequiredMixin, ListView):
+    """View for listing switches."""
+
+    model = Switch
+    template_name = "switches/switch_list.html"
+    context_object_name = "switches"
+
+
+class SwitchCreateView(LoginRequiredMixin, CreateView):
+    """View for creating a new switch."""
+
+    model = Switch
+    template_name = "switches/switch_form.html"
+    fields = ["name", "ip_address", "username"]
+    success_url = reverse_lazy("switches:switch-list")
+
+
+class SwitchUpdateView(LoginRequiredMixin, UpdateView):
+    """View for updating an existing switch."""
+
+    model = Switch
+    template_name = "switches/switch_form.html"
+    fields = ["name", "ip_address", "username"]
+    success_url = reverse_lazy("switches:switch-list")
+
+
+class SwitchDetailView(LoginRequiredMixin, DetailView):
+    """View for viewing switch details."""
+
+    model = Switch
+    template_name = "switches/switch_detail.html"

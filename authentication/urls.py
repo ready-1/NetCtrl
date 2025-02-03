@@ -6,8 +6,8 @@ app_name = "authentication"
 
 urlpatterns = [
     # Web interface authentication
-    path("login/", views.LoginView.as_view(), name="login"),
-    path("logout/", views.LogoutView.as_view(), name="logout"),
+    path("login/", views.CustomLoginView.as_view(), name="login"),
+    path("logout/", views.logout_view, name="logout"),
     # API token authentication
     path("api/token/", views.TokenObtainView.as_view(), name="token_obtain"),
     path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
