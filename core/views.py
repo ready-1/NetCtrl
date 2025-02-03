@@ -1,9 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
+from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView, ListView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.utils.translation import gettext_lazy as _
-from .models import AuditLog
+from django.utils import timezone
+from .models import AuditLog, Notification
 
 # Create your views here.
 
@@ -71,3 +73,45 @@ class AuditLogListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         context["title"] = _("Audit Logs")
         context["action_choices"] = AuditLog.ACTION_CHOICES
         return context
+
+
+@login_required
+def mark_notification_read(request, notification_id):
+    """Mark a notification as read."""
+    notification = get_object_or_404(
+        Notification, id=notification_id, user=request.user
+    )
+    notification.mark_as_read()
+    return JsonResponse({"status": "success"})
+
+
+@login_required
+def mark_all_notifications_read(request):
+    """Mark all notifications as read."""
+    Notification.objects.filter(user=request.user, read_at__isnull=True).update(
+        read_at=timezone.now()
+    )
+    return JsonResponse({"status": "success"})
+
+
+@login_required
+def get_notifications(request):
+    """Get recent notifications for the current user."""
+    notifications = Notification.objects.filter(user=request.user).order_by(
+        "-created_at"
+    )[:5]
+    return JsonResponse(
+        {
+            "notifications": [
+                {
+                    "id": n.id,
+                    "message": n.message,
+                    "url": n.url,
+                    "type": n.type,
+                    "read": n.read_at is not None,
+                    "created_at": n.created_at.isoformat(),
+                }
+                for n in notifications
+            ]
+        }
+    )

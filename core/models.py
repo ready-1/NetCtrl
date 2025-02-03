@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 import json
+from django.utils import timezone
 
 
 class User(AbstractUser):
@@ -29,7 +30,7 @@ class User(AbstractUser):
         choices=ROLE_CHOICES,
         default=ROLE_NON_PRIVILEGED,
         verbose_name=_("Role"),
-        help_text=_("User role determines access permissions"),
+        help_text=_("User's role in the system"),
     )
     last_activity = models.DateTimeField(
         null=True,
@@ -196,3 +197,46 @@ class AuditLog(models.Model):
         if not self.metadata:
             self.metadata = {}
         self.metadata.update(kwargs)
+
+
+class Notification(models.Model):
+    """Model for system notifications."""
+
+    TYPE_CHOICES = [
+        ("success", "Success"),
+        ("warning", "Warning"),
+        ("error", "Error"),
+        ("info", "Information"),
+    ]
+
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="notifications"
+    )
+    message = models.TextField()
+    url = models.CharField(max_length=255, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    read_at = models.DateTimeField(null=True, blank=True)
+    type = models.CharField(max_length=10, choices=TYPE_CHOICES, default="info")
+
+    class Meta:
+        ordering = ["-created_at"]
+        indexes = [
+            models.Index(fields=["user", "-created_at"]),
+            models.Index(fields=["user", "read_at"]),
+        ]
+
+    def __str__(self):
+        return f"{self.user} - {self.message[:50]}"
+
+    def mark_as_read(self):
+        """Mark the notification as read."""
+        if not self.read_at:
+            self.read_at = timezone.now()
+            self.save(update_fields=["read_at"])
+
+    @classmethod
+    def create_for_user(cls, user, message, notification_type="info", url=""):
+        """Create a notification for a specific user."""
+        return cls.objects.create(
+            user=user, message=message, type=notification_type, url=url
+        )
