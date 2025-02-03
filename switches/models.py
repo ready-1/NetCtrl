@@ -6,10 +6,23 @@ from django.core.validators import (
     MaxValueValidator,
     validate_ipv4_address,
 )
+from django.utils import timezone
 
 
 class Switch(models.Model):
     """Model representing a network switch."""
+
+    STATUS_UP = "up"
+    STATUS_DOWN = "down"
+    STATUS_DEGRADED = "degraded"
+    STATUS_UNKNOWN = "unknown"
+
+    STATUS_CHOICES = [
+        (STATUS_UP, "Up"),
+        (STATUS_DOWN, "Down"),
+        (STATUS_DEGRADED, "Degraded"),
+        (STATUS_UNKNOWN, "Unknown"),
+    ]
 
     name = models.CharField(max_length=255)
     ip_address = models.GenericIPAddressField(
@@ -18,18 +31,39 @@ class Switch(models.Model):
     username = models.CharField(max_length=255)
     password = models.CharField(max_length=255)
     description = models.TextField(blank=True)
+    status = models.CharField(
+        max_length=20, choices=STATUS_CHOICES, default=STATUS_UNKNOWN
+    )
+    last_seen = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        """Return a string representation of the switch."""
-        return f"{self.name} ({self.ip_address})"
 
     class Meta:
         """Meta class for Switch model."""
 
         verbose_name_plural = "switches"
         ordering = ["name"]
+
+    def __str__(self):
+        """Return a string representation of the switch."""
+        return f"{self.name} ({self.ip_address})"
+
+    def update_status(self, new_status):
+        """Update switch status and last seen time."""
+        old_status = self.status
+        self.status = new_status
+        self.last_seen = timezone.now()
+        self.save(update_fields=["status", "last_seen"])
+        return old_status
+
+    @property
+    def is_online(self):
+        """Check if switch is considered online based on last_seen time."""
+        if not self.last_seen:
+            return False
+        return (
+            timezone.now() - self.last_seen
+        ).total_seconds() < 30  # 30 seconds threshold
 
 
 class Port(models.Model):
