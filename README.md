@@ -64,87 +64,99 @@ poetry run flake8
 
 ### Prerequisites
 
-- Ubuntu server with:
-  - Docker and Docker Compose installed
-  - Nginx installed and running
-  - Existing PostgreSQL database
-  - Git installed
+- Fresh Debian installation (Debian 11+ or Ubuntu 22.04+)
+- Root or sudo access
+- Git installed (`apt-get install git`)
 
 ### Deployment Files
 
-- `docker-compose.prod.yml` - Production Docker Compose configuration
-- `.env.example` - Template for environment variables
-- `deploy.sh` - Deployment script
-- `nginx.conf.example` - Example Nginx configuration
+- `setup.sh` - System preparation script
+- `deploy.sh` - Application deployment script
+- `docker-compose.prod.yml` - Production Docker configuration
+- `.env.example` - Environment variables template
+- `nginx.conf.example` - Nginx configuration template
 
-### Deployment Steps
+### Initial Server Setup
 
-1. Clone the repository on your server:
+1. Install Git and clone the repository:
 ```bash
+sudo apt-get update
+sudo apt-get install -y git
 git clone <repository-url>
 cd netctrl
 ```
 
-2. Make the deployment script executable:
+2. Make scripts executable and run setup:
 ```bash
-chmod +x deploy.sh
+chmod +x setup.sh deploy.sh
+./setup.sh
+```
+The setup script will:
+- Update system packages
+- Install Docker and Docker Compose
+- Create required directories
+- Generate SSL certificate
+- Configure system permissions
+
+3. Log out and back in for Docker permissions to take effect:
+```bash
+exit
+# Log back in
 ```
 
-3. Run the deployment script:
+### Application Deployment
+
+1. Run the deployment script:
 ```bash
+cd netctrl
 ./deploy.sh
 ```
 The script will:
-- Pull the latest changes
-- Set up environment variables (first run only)
+- Configure environment variables
 - Build and start Docker containers
-- Run database migrations
-- Collect static files
+- Initialize database
+- Set up Nginx proxy
+- Deploy the application
 
-4. Configure Nginx:
-```bash
-# Copy and modify the Nginx configuration
-sudo cp nginx.conf.example /etc/nginx/sites-available/netctrl
-sudo nano /etc/nginx/sites-available/netctrl
+The application will be available at:
+- http://your-domain/netctrl
+- https://your-domain/netctrl
 
-# Create symlink and test configuration
-sudo ln -s /etc/nginx/sites-available/netctrl /etc/nginx/sites-enabled/
-sudo nginx -t
+### Environment Configuration
 
-# Reload Nginx
-sudo systemctl reload nginx
-```
-
-### Environment Variables
-
-Required environment variables in `.env`:
-- `DB_NAME` - PostgreSQL database name
-- `DB_USER` - Database username
-- `DB_PASSWORD` - Database password
-- `DB_HOST` - Database host
-- `DJANGO_SECRET_KEY` - Django secret key
-- `DJANGO_ALLOWED_HOSTS` - Comma-separated list of allowed hosts
+The deployment script will prompt for:
+- Database name (default: netctrl)
+- Database user (default: netctrl)
+- Database password
+- Domain name or IP address
 
 ### Updating the Application
 
 To update to the latest version:
 ```bash
+cd netctrl
+git pull
 ./deploy.sh
 ```
 
 ### Troubleshooting
 
-1. Check container logs:
+1. View container logs:
 ```bash
-docker-compose -f docker-compose.prod.yml logs web
+docker-compose -f docker-compose.prod.yml logs
 ```
 
-2. Check Nginx logs:
-```bash
-sudo tail -f /var/log/nginx/netctrl_error.log
-```
-
-3. Check container status:
+2. Check container status:
 ```bash
 docker-compose -f docker-compose.prod.yml ps
+```
+
+3. Restart services:
+```bash
+docker-compose -f docker-compose.prod.yml restart
+```
+
+4. View application logs:
+```bash
+docker-compose -f docker-compose.prod.yml logs web
 ```
