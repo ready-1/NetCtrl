@@ -1,16 +1,19 @@
 from django.contrib.auth import login, logout
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.views.generic import View
-from .forms import LoginForm
+from django.views.generic import View, TemplateView
 from django.contrib import messages
+from django.utils.translation import gettext as _
 from rest_framework import status
-from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
+from .forms import LoginForm
+from .models import UserSettings
 
 
 class CustomLoginView(LoginView):
@@ -23,10 +26,65 @@ class CustomLoginView(LoginView):
         return reverse_lazy("core:dashboard")
 
 
+class LoginView(LoginView):
+    """Custom login view."""
+
+    template_name = "authentication/login.html"
+    form_class = LoginForm
+    success_url = reverse_lazy("netctrl:dashboard")
+
+
+class LogoutView(LogoutView):
+    """Custom logout view."""
+
+    next_page = reverse_lazy("authentication:login")
+
+
 def logout_view(request):
     logout(request)
     messages.info(request, "You have been logged out.")
     return redirect("authentication:login")
+
+
+class ProfileView(LoginRequiredMixin, TemplateView):
+    """User profile view."""
+
+    template_name = "authentication/profile.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = [
+            {"title": "Profile", "url": reverse_lazy("authentication:profile")}
+        ]
+        return context
+
+
+class SettingsView(LoginRequiredMixin, TemplateView):
+    """User settings view."""
+
+    template_name = "authentication/settings.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = [
+            {"title": "Settings", "url": reverse_lazy("authentication:settings")}
+        ]
+        # Get or create user settings
+        settings, created = UserSettings.objects.get_or_create(user=self.request.user)
+        context["user_settings"] = settings
+        return context
+
+    def post(self, request, *args, **kwargs):
+        settings, created = UserSettings.objects.get_or_create(user=request.user)
+        settings.dark_mode = request.POST.get("dark_mode") == "on"
+        settings.email_notifications = request.POST.get("email_notifications") == "on"
+        settings.browser_notifications = (
+            request.POST.get("browser_notifications") == "on"
+        )
+        settings.save()
+
+        messages.success(request, _("Settings updated successfully."))
+        return redirect("authentication:settings")
 
 
 class TokenObtainView(TokenObtainPairView):
