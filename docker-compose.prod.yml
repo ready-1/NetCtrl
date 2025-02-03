@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    restart: always
+    volumes:
+      - static_files:/app/staticfiles
+      - media_files:/app/media
+    environment:
+      - DJANGO_SETTINGS_MODULE=config.settings
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_HOST=${DB_HOST}
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:latest
+    restart: always
+    volumes:
+      - redis_data:/data
+
+volumes:
+  static_files:
+  media_files:
+  redis_data:
