@@ -1,34 +1,113 @@
 {% load static %}
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
   <div class="container-fluid">
-    <a class="navbar-brand" href="{% url 'netctrl:dashboard' %}">NetCtrl</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <a class="navbar-brand d-flex align-items-center" href="{% url 'netctrl:home' %}">
+      <i class="bi bi-hdd-network me-2"></i>
+      NetCtrl
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto">
         <li class="nav-item">
-          <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'netctrl:dashboard' %}">Dashboard</a>
+          <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+             href="{% url 'netctrl:dashboard' %}">
+            <i class="bi bi-graph-up me-1"></i>
+            Dashboard
+          </a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link {% if request.resolver_match.url_name == 'switch_list' %}active{% endif %}" href="{% url 'netctrl:switch_list' %}">Switches</a>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle {% if 'switch' in request.resolver_match.url_name %}active{% endif %}"
+             href="#" id="switchDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-router me-1"></i>
+            Switches
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="switchDropdown">
+            <li><a class="dropdown-item" href="{% url 'netctrl:switch-list' %}">View All</a></li>
+            {% if perms.netctrl.add_switch %}
+            <li><a class="dropdown-item" href="{% url 'netctrl:switch-add' %}">Add Switch</a></li>
+            {% endif %}
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{% url 'netctrl:switch-list' %}?status=active">Active Switches</a></li>
+            <li><a class="dropdown-item" href="{% url 'netctrl:switch-list' %}?status=inactive">Inactive Switches</a></li>
+          </ul>
         </li>
+        {% if user.is_staff %}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button"
+             data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-gear me-1"></i>
+            Administration
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+            <li><a class="dropdown-item" href="{% url 'admin:index' %}">Admin Panel</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{% url 'core:audit_logs' %}">Audit Logs</a></li>
+          </ul>
+        </li>
+        {% endif %}
       </ul>
       <ul class="navbar-nav">
         {% if user.is_authenticated %}
+        <!-- Notifications -->
+        <li class="nav-item">
+          <a class="nav-link position-relative" href="#" id="notificationsDropdown" role="button"
+             data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-bell"></i>
+            <span id="notifications-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                  style="display: {% if unread_notifications_count > 0 %}block{% else %}none{% endif %}">
+              {{ unread_notifications_count|default:"0" }}
+            </span>
+          </a>
+          <div class="dropdown-menu dropdown-menu-end notification-dropdown" aria-labelledby="notificationsDropdown" style="min-width: 300px;">
+            <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom">
+              <h6 class="mb-0">Notifications</h6>
+              <button id="mark-all-notifications-read" class="btn btn-link btn-sm text-decoration-none p-0">Mark all as read</button>
+            </div>
+            <div class="notification-list">
+              {% for notification in notifications %}
+              <a href="{{ notification.url|default:'#' }}" class="dropdown-item {% if notification.read_at %}read{% endif %}">
+                <div class="d-flex align-items-center">
+                  <i class="bi bi-{% if notification.type == 'success' %}check-circle{% elif notification.type == 'warning' %}exclamation-triangle{% elif notification.type == 'error' %}x-circle{% else %}info-circle{% endif %} me-2"></i>
+                  <div>
+                    <div class="notification-message">{{ notification.message }}</div>
+                    <small class="text-muted">{{ notification.created_at|date:"Y-m-d H:i" }}</small>
+                  </div>
+                </div>
+              </a>
+              {% empty %}
+              <span class="dropdown-item">No new notifications</span>
+              {% endfor %}
+            </div>
+          </div>
+        </li>
+        <!-- User Menu -->
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+             data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-person me-1"></i>
             {{ user.username }}
           </a>
-          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="{% url 'netctrl:profile' %}">Profile</a></li>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+            <li><a class="dropdown-item" href="{% url 'core:profile' %}">
+              <i class="bi bi-person-circle me-2"></i>Profile
+            </a></li>
+            <li><a class="dropdown-item" href="{% url 'core:preferences' %}">
+              <i class="bi bi-sliders me-2"></i>Preferences
+            </a></li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+            <li><a class="dropdown-item" href="{% url 'authentication:logout' %}">
+              <i class="bi bi-box-arrow-right me-2"></i>Logout
+            </a></li>
           </ul>
         </li>
         {% else %}
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'login' %}">Login</a>
+          <a class="nav-link" href="{% url 'authentication:login' %}">
+            <i class="bi bi-box-arrow-in-right me-1"></i>Login
+          </a>
         </li>
         {% endif %}
       </ul>

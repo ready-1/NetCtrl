@@ -4,23 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token }}">
-    <title>NetCtrl</title>
+    <title>{% block title %}NetCtrl{% endblock %}</title>
     <!-- Bootstrap 5 CSS -->
-    <link href="/static/vendor/bootstrap/bootstrap-5.3.2-dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
-    <link href="/static/vendor/fontawesome/fontawesome-free-6.0.0-web/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <!-- Custom CSS -->
     <link href="/static/css/base/variables.css" rel="stylesheet">
     <link href="/static/css/base/utilities.css" rel="stylesheet">
-    <link href="/static/css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/notifications.css">
     <link href="/static/css/components/buttons.css" rel="stylesheet">
     <link href="/static/css/components/cards.css" rel="stylesheet">
+    <link href="/static/css/components/navbar.css" rel="stylesheet">
     {% block extra_css %}{% endblock %}
 </head>
 <body class="d-flex flex-column min-vh-100 {% if dark_mode %}nc-dark-theme{% endif %}">
-    {% block header %}{% endblock %}
+    {% include "components/navbar.html" %}
 
     <div class="content container py-4 flex-grow-1">
+        {% if breadcrumbs %}
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                {% for breadcrumb in breadcrumbs %}
+                    {% if not forloop.last %}
+                        <li class="breadcrumb-item"><a href="{{ breadcrumb.url }}">{{ breadcrumb.title }}</a></li>
+                    {% else %}
+                        <li class="breadcrumb-item active" aria-current="page">{{ breadcrumb.title }}</li>
+                    {% endif %}
+                {% endfor %}
+            </ol>
+        </nav>
+        {% endif %}
+
         {% if messages %}
         <div class="messages">
             {% for message in messages %}
@@ -38,7 +54,7 @@
     {% include "components/loading.html" %}
 
     <!-- Bootstrap 5 JS Bundle -->
-    <script src="/static/vendor/bootstrap/bootstrap-5.3.2-dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <!-- HTMX -->
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     <!-- Chart.js -->
@@ -47,6 +63,7 @@
     <script src="/static/js/utils/htmx-config.js"></script>
     <script src="/static/js/utils/charts.js"></script>
     <script src="/static/js/utils/websocket.js"></script>
+    <script src="/static/js/utils/notifications.js"></script>
     <script src="/static/js/main.js"></script>
     {% block extra_js %}{% endblock %}
 </body>

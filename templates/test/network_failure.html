@@ -1,19 +1,16 @@
 {% extends "base.html" %}
+
 {% block content %}
-<div class="container">
-  <div class="nc-card">
-    <div class="nc-card-header">
-      <div class="nc-card-header-title">Test Network Failure</div>
+<div class="container mt-3">
+    <div id="error-message" class="alert alert-danger network-error" style="display: none;">
+        Request too large
     </div>
-    <div class="nc-card-body">
-      <form hx-post="{% url 'netctrl:test-network-failure' %}" hx-target="#failure-result">
-        <input type="hidden" name="data" value="{{ "x" * 2097152 }}">
-        <button type="submit" class="nc-btn nc-btn-danger" role="button">
-          Trigger Large Request
-        </button>
-      </form>
-      <div id="failure-result" class="mt-3" role="status" aria-live="polite"></div>
-    </div>
-  </div>
+    <form hx-post="/tests/network-failure/" hx-trigger="submit" hx-on:error="document.getElementById('error-message').style.display = 'block';">
+        <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <textarea class="form-control" id="name" name="name" rows="10"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary nc-btn nc-btn-primary">Submit</button>
+    </form>
 </div>
 {% endblock %}

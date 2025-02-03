@@ -46,7 +46,9 @@ class TokenObtainView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
         if response.status_code == status.HTTP_200_OK:
-            user = self.user
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            user = serializer.user
             response.data["user_role"] = (
                 "superuser"
                 if user.is_superuser
