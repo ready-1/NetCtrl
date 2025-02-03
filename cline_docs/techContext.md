@@ -84,20 +84,32 @@
 
 ## Deployment
 1. Container Setup
-   - Docker for containerization
-   - Docker Compose for orchestration
-   - Nginx for reverse proxy
-   - Gunicorn for WSGI server
+   - Docker containers for all services:
+     * Web application (Django + Gunicorn)
+     * PostgreSQL database
+     * Redis for caching/async
+     * Nginx reverse proxy
+   - Docker Compose orchestration
+   - Self-signed SSL certificates
+   - Volume management for persistence
 
 2. Environment Configuration
-   - Environment variables
-   - Django settings modules
-   - Production configurations
+   - Automated setup script (setup.sh)
+   - Deployment script (deploy.sh)
+   - Environment variables via .env
+   - Docker-based configuration
 
-3. Monitoring
-   - Django logging
-   - System metrics
-   - Error tracking
+3. System Requirements
+   - Debian 11+ or Ubuntu 22.04+
+   - Docker and Docker Compose (auto-installed)
+   - 2GB RAM minimum
+   - 20GB disk space recommended
+
+4. Monitoring & Health
+   - Container health checks
+   - Nginx status monitoring
+   - Database connection monitoring
+   - Application error logging
 
 ## Security Requirements
 1. Authentication

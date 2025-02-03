@@ -1,45 +1,52 @@
 # Active Context
 
 ## Current Focus
-Implementing switch management MVP with basic functionality:
-- Switch list view with card-based interface
-- Basic switch management (add/edit switches)
-- Direct access to switch management interfaces
+1. Production Deployment Infrastructure
+   - Automated deployment from fresh Debian installation
+   - Containerized services (web, database, Redis, Nginx)
+   - SSL/TLS support with self-signed certificates
+   - Environment configuration management
+
+2. Switch Management MVP
+   - Card-based switch interface
+   - In-band and out-band management
+   - Basic switch editing capabilities
+   - Disabled features for future implementation
 
 ## Recent Changes
-1. Switch List View (Latest)
-   - Converted table view to responsive card layout
-   - Added in-band and out-band management links (HTTP port 49151)
-   - Disabled unimplemented features (config, ports, backup)
-   - Added edit functionality via info button
+1. Deployment Infrastructure (Latest)
+   - Created setup.sh for system preparation
+   - Updated docker-compose.prod.yml with all services
+   - Added Nginx configuration for Docker
+   - Updated deployment documentation
 
-2. Switch Model Updates
-   - Renamed ip_address to in_band_ip
-   - Added out_band_ip field
-   - Created migration for IP field changes
+2. Switch Management Updates
+   - Card-based switch list view
+   - HTTP management links on port 49151
+   - In-band and out-band IP support
+   - Basic switch editing
 
-3. Switch Edit Form
-   - Created switch_form.html template
-   - Implemented edit view for switch details
-   - Fields: name, in_band_ip, out_band_ip
+3. Infrastructure Changes
+   - Containerized all services
+   - Added SSL/TLS support
+   - Automated environment setup
+   - Improved deployment process
 
 ## Next Steps
-1. Configuration Management
-   - Implement configuration backup/restore
-   - Add version control for configurations
-   - Create configuration templates
+1. Production Hardening
+   - Implement proper SSL certificate management
+   - Add backup and restore procedures
+   - Implement monitoring and alerts
+   - Add health checks
 
-2. Port Management
-   - Implement port status view
-   - Add port configuration interface
-   - Create port profile management
-
-3. Monitoring Dashboard
-   - Add real-time status monitoring
-   - Implement status history
-   - Create system health metrics
+2. Feature Implementation
+   - Configuration management
+   - Port management interface
+   - Monitoring dashboard
+   - Backup functionality
 
 ## Current Issues
-- Configuration management features disabled (pending implementation)
-- Port management features disabled (pending implementation)
-- Backup functionality disabled (pending implementation)
+- Using self-signed certificates (needs proper SSL)
+- Basic health checks only
+- No automated backup system
+- Monitoring system pending
