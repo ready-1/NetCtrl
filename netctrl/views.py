@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_http_methods
 from django.template.loader import render_to_string
 from django.core.exceptions import ValidationError
@@ -11,16 +11,19 @@ from asgiref.sync import sync_to_async
 
 
 def home(request):
+    """Home page view."""
     return render(request, "home.html")
 
 
 @login_required
 def dashboard(request):
+    """Dashboard view showing switch status overview."""
     return render(request, "dashboard.html")
 
 
 @login_required
 def switch_list(request):
+    """List all managed switches."""
     switches = Switch.objects.all()
     return render(request, "switches/list.html", {"switches": switches})
 
@@ -45,6 +48,7 @@ def switch_add(request):
 
 @login_required
 def switch_detail(request, switch_id):
+    """Show detailed information for a specific switch."""
     switch = Switch.objects.get(pk=switch_id)
     return render(request, "switch/detail.html", {"switch": switch})
 
@@ -72,6 +76,30 @@ def switch_delete(request, switch_id):
 def switch_stats(request, switch_id):
     switch = Switch.objects.get(pk=switch_id)
     return render(request, "switch/stats_partial.html", {"switch": switch})
+
+
+@login_required
+def switch_config(request, pk):
+    """Show and edit switch configuration."""
+    return render(request, "switch/config.html")
+
+
+@login_required
+def switch_ports(request, pk):
+    """Show and manage switch ports."""
+    return render(request, "switch/ports.html")
+
+
+@login_required
+def switch_backup(request, pk):
+    """Manage switch configuration backups."""
+    return render(request, "switch/backup.html")
+
+
+@login_required
+def audit_logs(request):
+    """Show system audit logs."""
+    return render(request, "audit_logs.html")
 
 
 @require_http_methods(["GET", "POST"])
@@ -126,12 +154,8 @@ def test_loading(request):
 
 def test_network_failure(request):
     if request.method == "POST":
-        if request.content_length > 1024 * 1024:  # 1MB limit
-            return render(
-                request,
-                "components/alert.html",
-                {"type": "danger", "message": "Request too large"},
-                status=400,
-            )
-        return JsonResponse({"status": "ok"})
+        content = request.body.decode("utf-8")
+        if len(content) > 1024 * 1024:  # 1MB limit
+            return HttpResponseBadRequest("Request too large")
+        return render(request, "test/network_failure.html")
     return render(request, "test/network_failure.html")

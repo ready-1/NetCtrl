@@ -1,21 +1,16 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 
 app_name = "netctrl"
 
 urlpatterns = [
-    path("", views.home, name="home"),
+    path("", views.dashboard, name="home"),  # Make dashboard the home page
+    path("dashboard/", views.dashboard, name="dashboard"),
     path("switches/", views.switch_list, name="switch-list"),
-    path("switches/add/", views.switch_add, name="switch-add"),
     path("switches/<int:pk>/", views.switch_detail, name="switch-detail"),
-    path("switches/<int:pk>/edit/", views.switch_edit, name="switch-edit"),
-    path("switches/<int:pk>/delete/", views.switch_delete, name="switch-delete"),
-    path("test/alert/", views.test_alert, name="test-alert"),
-    path("test/button/", views.test_button, name="test-button"),
-    path("test/form/", views.test_form, name="test-form"),
-    path("test/loading/", views.test_loading, name="test-loading"),
-    path(
-        "test/network-failure/", views.test_network_failure, name="test-network-failure"
-    ),
-    path("test/chart/", views.test_chart, name="test-chart"),
+    path("switches/<int:pk>/config/", views.switch_config, name="switch-config"),
+    path("switches/<int:pk>/ports/", views.switch_ports, name="switch-ports"),
+    path("switches/<int:pk>/backup/", views.switch_backup, name="switch-backup"),
+    path("audit-logs/", views.audit_logs, name="audit-logs"),
+    path("tests/", include("netctrl.tests.urls")),  # Include test URLs under /tests/
 ]

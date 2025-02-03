@@ -3,6 +3,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
+from django.urls import reverse
 
 
 @require_http_methods(["GET"])
@@ -14,13 +15,10 @@ def dark_theme_components(request):
 @require_http_methods(["GET"])
 def alert_component(request):
     """Test alert component."""
+    alert_type = request.GET.get("type", "info")
+    message = request.GET.get("message", "This is a test alert")
     return render(
-        request,
-        "test/alert.html",
-        {
-            "alert_type": request.GET.get("type", "success"),
-            "message": "Test alert message",
-        },
+        request, "test/alert.html", {"alert_type": alert_type, "message": message}
     )
 
 
@@ -39,7 +37,7 @@ def mobile_responsive(request):
 @require_http_methods(["GET"])
 def button_component(request):
     """Test button component."""
-    return render(request, "test/buttons.html")
+    return render(request, "test/button.html")
 
 
 @require_http_methods(["GET"])
@@ -57,4 +55,9 @@ def form_component(request):
 @require_http_methods(["GET"])
 def all_components(request):
     """Test all components together."""
-    return render(request, "test/components.html")
+    context = {
+        "dark_theme": True,
+        "alert_type": "info",
+        "message": "This is a test alert",
+    }
+    return render(request, "test/all.html", context)

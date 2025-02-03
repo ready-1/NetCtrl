@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+  <div class="alert alert-{{ alert_type }}" role="alert">
+    {{ message }}
+    <a href="{% url 'tests:test_alert' %}?type=success" class="alert-link">Success</a>
+    <a href="{% url 'tests:test_alert' %}?type=info" class="alert-link">Info</a>
+    <a href="{% url 'tests:test_alert' %}?type=warning" class="alert-link">Warning</a>
+    <a href="{% url 'tests:test_alert' %}?type=danger" class="alert-link">Danger</a>
+  </div>
+</div>
+{% endblock %}
