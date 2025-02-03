@@ -26,7 +26,8 @@ class SwitchSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "name",
-            "ip_address",
+            "in_band_ip",
+            "out_band_ip",
             "username",
             "password",
             "description",

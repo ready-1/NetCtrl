@@ -25,8 +25,17 @@ class Switch(models.Model):
     ]
 
     name = models.CharField(max_length=255)
-    ip_address = models.GenericIPAddressField(
-        protocol="IPv4", validators=[validate_ipv4_address]
+    in_band_ip = models.GenericIPAddressField(
+        protocol="IPv4",
+        validators=[validate_ipv4_address],
+        verbose_name="In-Band IP",
+        help_text="In-band management IP address",
+    )
+    out_band_ip = models.GenericIPAddressField(
+        protocol="IPv4",
+        validators=[validate_ipv4_address],
+        verbose_name="Out-Band IP",
+        help_text="Out-of-band management IP address",
     )
     username = models.CharField(max_length=255)
     password = models.CharField(max_length=255)
@@ -46,7 +55,7 @@ class Switch(models.Model):
 
     def __str__(self):
         """Return a string representation of the switch."""
-        return f"{self.name} ({self.ip_address})"
+        return f"{self.name} ({self.in_band_ip})"
 
     def update_status(self, new_status):
         """Update switch status and last seen time."""
