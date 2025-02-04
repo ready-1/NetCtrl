@@ -184,17 +184,17 @@ USE_I18N = True
 USE_TZ = True
 
 # URL Configuration
-FORCE_SCRIPT_NAME = "/netctrl"
+FORCE_SCRIPT_NAME = None
 
 # Static files (CSS, JavaScript, Images)
-STATIC_URL = "/netctrl/static/"
+STATIC_URL = "/static/"
 STATIC_ROOT = os.environ.get("STATIC_ROOT", BASE_DIR / "staticfiles")
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
 # Media files
-MEDIA_URL = "/netctrl/media/"
+MEDIA_URL = "/media/"
 
 # Whitenoise configuration
 STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"

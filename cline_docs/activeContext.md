@@ -1,35 +1,26 @@
 # Active Development Context
 
 ## Current Work
-- Simplified navigation and UI
-- Improved switch management interface
-- Fixed data persistence in deployment
-- Optimized switch list layout
+- Removed /netctrl/ URL prefix
+- Updated Nginx configuration for root path
+- Modified Django settings for direct serving
 
 ## Recent Changes
-1. Navigation:
-   - Removed monitoring features
-   - Simplified menu structure
-   - Focused on switch management
-   - Removed notifications
+1. URL Structure:
+   - Removed /netctrl/ prefix from all URLs
+   - Updated Nginx locations to serve from root
+   - Modified Django FORCE_SCRIPT_NAME to None
 
-2. Switch List:
-   - Smaller, more compact cards
-   - 3-column responsive grid
-   - Better information density
-   - Improved mobile layout
+2. Static/Media URLs:
+   - Changed STATIC_URL to /static/
+   - Changed MEDIA_URL to /media/
+   - Updated Nginx static/media locations
 
-3. Deployment:
-   - Preserved database volume
-   - Maintained data across updates
-   - Fixed environment handling
-   - Added deployment notes
-
-4. Features Removed:
-   - Dashboard
-   - Network monitoring
-   - Status monitoring
-   - Active/inactive filters
+3. Previous Changes:
+   - Simplified navigation and UI
+   - Improved switch management interface
+   - Fixed data persistence in deployment
+   - Optimized switch list layout
 
 ## Next Steps
 1. Test switch import with CSV
@@ -42,3 +33,4 @@
 - Focus on switch management only
 - Simplified user interface
 - Improved data density
+- Application now served from root URL

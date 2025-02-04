@@ -11,7 +11,7 @@ server {
     add_header X-XSS-Protection "1; mode=block";
 
     # Proxy settings
-    location /netctrl/ {
+    location / {
         proxy_pass http://web:8000/;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -25,14 +25,14 @@ server {
     }
 
     # Static files
-    location /netctrl/static/ {
+    location /static/ {
         alias /usr/share/nginx/static/;
         expires 1h;
         add_header Cache-Control "public, no-transform";
     }
 
     # Media files
-    location /netctrl/media/ {
+    location /media/ {
         alias /usr/share/nginx/media/;
         expires 1h;
         add_header Cache-Control "public, no-transform";
@@ -66,7 +66,7 @@ server {
     add_header X-XSS-Protection "1; mode=block";
 
     # Proxy settings
-    location /netctrl/ {
+    location / {
         proxy_pass http://web:8000/;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -80,14 +80,14 @@ server {
     }
 
     # Static files
-    location /netctrl/static/ {
+    location /static/ {
         alias /usr/share/nginx/static/;
         expires 1h;
         add_header Cache-Control "public, no-transform";
     }
 
     # Media files
-    location /netctrl/media/ {
+    location /media/ {
         alias /usr/share/nginx/media/;
         expires 1h;
         add_header Cache-Control "public, no-transform";
