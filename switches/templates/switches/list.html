@@ -29,10 +29,10 @@
                             </span>
                         </div>
                     </div>
-                    <div class="btn-group btn-group-sm w-100">
-                        <a href="{% url 'switches:switch-detail' switch.pk %}" class="btn btn-outline-primary">Details</a>
-                        <a href="{% url 'switches:switch-edit' switch.pk %}" class="btn btn-outline-secondary">Edit</a>
-                        <a href="{% url 'switches:switch-delete' switch.pk %}" class="btn btn-outline-danger">Delete</a>
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'switches:switch-detail' switch.pk %}" class="btn btn-outline-primary flex-grow-1">Details</a>
+                        <a href="{% url 'switches:switch-edit' switch.pk %}" class="btn btn-outline-secondary flex-grow-1">Edit</a>
+                        <a href="{% url 'switches:switch-delete' switch.pk %}" class="btn btn-outline-danger flex-grow-1">Delete</a>
                     </div>
                 </div>
             </div>

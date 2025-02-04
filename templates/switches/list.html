@@ -24,11 +24,11 @@
                 </span>
                 <small class="text-muted d-block mt-1">Last seen: {{ switch.last_seen|default:"Never"|date:"Y-m-d H:i" }}</small>
               </div>
-              <div class="d-grid gap-2">
-                <a href="http://{{ switch.in_band_ip }}:49151" target="_blank" class="nc-btn nc-btn-primary">
+              <div class="d-flex gap-2 mb-3">
+                <a href="http://{{ switch.in_band_ip }}:49151" target="_blank" class="nc-btn nc-btn-primary flex-grow-1">
                   <i class="bi bi-box-arrow-up-right"></i> in band
                 </a>
-                <a href="http://{{ switch.out_band_ip }}:49151" target="_blank" class="nc-btn nc-btn-secondary">
+                <a href="http://{{ switch.out_band_ip }}:49151" target="_blank" class="nc-btn nc-btn-secondary flex-grow-1">
                   <i class="bi bi-box-arrow-up-right"></i> out band
                 </a>
               </div>
