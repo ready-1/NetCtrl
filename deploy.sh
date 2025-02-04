@@ -51,26 +51,26 @@ cp nginx.conf.example nginx.conf
 
 # Stop any running containers
 echo "Stopping existing containers..."
-docker-compose -f docker-compose.prod.yml down || true
+docker compose -f docker-compose.prod.yml down || true
 
 # Build and start containers
 echo "Building and starting containers..."
-docker-compose -f docker-compose.prod.yml up --build -d
+docker compose -f docker-compose.prod.yml up --build -d
 
 # Wait for database to be ready
 echo "Waiting for database to be ready..."
-until docker-compose -f docker-compose.prod.yml exec -T db pg_isready -U ${db_user} -d ${db_name}; do
+until docker compose -f docker-compose.prod.yml exec -T db pg_isready -U ${db_user} -d ${db_name}; do
     echo "Database is unavailable - sleeping"
     sleep 1
 done
 
 # Run migrations
 echo "Running database migrations..."
-docker-compose -f docker-compose.prod.yml exec -T web poetry run python manage.py migrate
+docker compose -f docker-compose.prod.yml exec -T web poetry run python manage.py migrate
 
 # Collect static files
 echo "Collecting static files..."
-docker-compose -f docker-compose.prod.yml exec -T web poetry run python manage.py collectstatic --noinput
+docker compose -f docker-compose.prod.yml exec -T web poetry run python manage.py collectstatic --noinput
 
 echo "Deployment completed successfully!"
 echo "Your application should now be available at:"

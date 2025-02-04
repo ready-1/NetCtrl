@@ -84,11 +84,11 @@
 
 ## Deployment
 1. Container Setup
-   - Docker containers for all services:
+   - Docker Engine 24.0+ with Compose V2:
      * Web application (Django + Gunicorn)
-     * PostgreSQL database
-     * Redis for caching/async
-     * Nginx reverse proxy
+     * PostgreSQL 15 database
+     * Redis Alpine for caching/async
+     * Nginx Alpine reverse proxy
    - Docker Compose orchestration
    - Self-signed SSL certificates
    - Volume management for persistence
@@ -101,9 +101,10 @@
 
 3. System Requirements
    - Debian 11+ or Ubuntu 22.04+
-   - Docker and Docker Compose (auto-installed)
+   - Docker Engine 24.0+ with Compose V2
    - 2GB RAM minimum
    - 20GB disk space recommended
+   - Git (latest version)
 
 4. Monitoring & Health
    - Container health checks

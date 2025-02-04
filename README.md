@@ -143,20 +143,28 @@ git pull
 
 1. View container logs:
 ```bash
-docker-compose -f docker-compose.prod.yml logs
+docker compose -f docker-compose.prod.yml logs
 ```
 
 2. Check container status:
 ```bash
-docker-compose -f docker-compose.prod.yml ps
+docker compose -f docker-compose.prod.yml ps
 ```
 
 3. Restart services:
 ```bash
-docker-compose -f docker-compose.prod.yml restart
+docker compose -f docker-compose.prod.yml restart
 ```
 
 4. View application logs:
 ```bash
-docker-compose -f docker-compose.prod.yml logs web
+docker compose -f docker-compose.prod.yml logs web
 ```
+
+### System Requirements
+
+- Debian 11+ or Ubuntu 22.04+
+- 2GB RAM minimum
+- 20GB disk space recommended
+- Git (installed automatically)
+- Docker Engine 24.0+ (installed automatically)
