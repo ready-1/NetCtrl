@@ -1,7 +1,7 @@
 {% load static %}
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
   <div class="container-fluid">
-    <a class="navbar-brand d-flex align-items-center" href="{% url 'netctrl:home' %}">
+    <a class="navbar-brand d-flex align-items-center" href="{% url 'switches:switch-list' %}">
       <i class="bi bi-hdd-network me-2"></i>
       NetCtrl
     </a>
@@ -11,13 +11,6 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto">
-        <li class="nav-item">
-          <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
-             href="{% url 'netctrl:dashboard' %}">
-            <i class="bi bi-graph-up me-1"></i>
-            Dashboard
-          </a>
-        </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle {% if 'switch' in request.resolver_match.url_name %}active{% endif %}"
              href="#" id="switchDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -25,13 +18,10 @@
             Switches
           </a>
           <ul class="dropdown-menu" aria-labelledby="switchDropdown">
-            <li><a class="dropdown-item" href="{% url 'netctrl:switch-list' %}">View All</a></li>
-            {% if perms.netctrl.add_switch %}
-            <li><a class="dropdown-item" href="{% url 'netctrl:switch-add' %}">Add Switch</a></li>
+            <li><a class="dropdown-item" href="{% url 'switches:switch-list' %}">View All</a></li>
+            {% if perms.switches.add_switch %}
+            <li><a class="dropdown-item" href="{% url 'switches:switch-add' %}">Add Switch</a></li>
             {% endif %}
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="{% url 'netctrl:switch-list' %}?status=active">Active Switches</a></li>
-            <li><a class="dropdown-item" href="{% url 'netctrl:switch-list' %}?status=inactive">Inactive Switches</a></li>
           </ul>
         </li>
         {% if user.is_staff %}
@@ -43,38 +33,12 @@
           </a>
           <ul class="dropdown-menu" aria-labelledby="adminDropdown">
             <li><a class="dropdown-item" href="{% url 'admin:index' %}">Admin Panel</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="{% url 'core:audit_logs' %}">Audit Logs</a></li>
           </ul>
         </li>
         {% endif %}
       </ul>
       <ul class="navbar-nav">
         {% if user.is_authenticated %}
-        <!-- Notifications -->
-        <li class="nav-item">
-          <a class="nav-link position-relative" href="#" id="notificationsDropdown" role="button"
-             data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="bi bi-bell"></i>
-            {% if unread_notifications_count > 0 %}
-            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-              {{ unread_notifications_count }}
-            </span>
-            {% endif %}
-          </a>
-          <div class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationsDropdown">
-            {% if notifications %}
-              {% for notification in notifications %}
-              <a class="dropdown-item" href="#">
-                {{ notification.message }}
-                <small class="text-muted d-block">{{ notification.created_at|timesince }} ago</small>
-              </a>
-              {% endfor %}
-            {% else %}
-              <div class="dropdown-item text-muted">No new notifications</div>
-            {% endif %}
-          </div>
-        </li>
         <!-- User Menu -->
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
