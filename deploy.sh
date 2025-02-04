@@ -20,6 +20,14 @@ if [ ! -d "${APP_DIR}" ]; then
 fi
 cd "${APP_DIR}"
 
+# Clean up any unmerged state
+echo "Cleaning up git state..."
+if [ -n "$(git status --porcelain)" ]; then
+    echo "Resetting git state..."
+    git reset --hard HEAD
+    git clean -fd
+fi
+
 # Backup local deployment files
 echo "Checking for local changes..."
 for file in deploy.sh docker-compose.prod.yml .env.example; do
@@ -31,10 +39,8 @@ done
 
 # Update repository
 echo "Updating application..."
-if ! git pull origin main; then
-    echo "Error: Failed to update from repository"
-    exit 1
-fi
+git fetch origin main
+git reset --hard origin/main
 
 # Restore local deployment files
 echo "Restoring local deployment files..."
