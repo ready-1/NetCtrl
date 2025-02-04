@@ -27,10 +27,11 @@ if [ ! -f .env ]; then
     secret_key=$(openssl rand -base64 64)
 
     # Update .env file with secure defaults
-    sed -i "s/DB_NAME=.*/DB_NAME=netctrl/" .env
-    sed -i "s/DB_USER=.*/DB_USER=netctrl/" .env
-    sed -i "s/DB_PASSWORD=.*/DB_PASSWORD=$db_password/" .env
-    sed -i "s/DB_HOST=.*/DB_HOST=db/" .env
+    sed -i "s/POSTGRES_DB=.*/POSTGRES_DB=netctrl/" .env
+    sed -i "s/POSTGRES_USER=.*/POSTGRES_USER=netctrl/" .env
+    sed -i "s/POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=$db_password/" .env
+    sed -i "s/POSTGRES_HOST=.*/POSTGRES_HOST=db/" .env
+    sed -i "s/POSTGRES_PORT=.*/POSTGRES_PORT=5432/" .env
     sed -i "s/DJANGO_SECRET_KEY=.*/DJANGO_SECRET_KEY=$secret_key/" .env
     sed -i "s/DJANGO_DEBUG=.*/DJANGO_DEBUG=False/" .env
     sed -i "s/DJANGO_ALLOWED_HOSTS=.*/DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1/" .env
@@ -94,7 +95,7 @@ docker compose -f docker-compose.prod.yml up --build -d
 
 # Wait for database to be ready
 echo "Waiting for database to be ready..."
-until docker compose -f docker-compose.prod.yml exec -T db pg_isready -U ${db_user} -d ${db_name}; do
+until docker compose -f docker-compose.prod.yml exec -T db pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}; do
     echo "Database is unavailable - sleeping"
     sleep 1
 done
@@ -109,5 +110,7 @@ docker compose -f docker-compose.prod.yml exec -T web poetry run python manage.p
 
 echo "Deployment completed successfully!"
 echo "Your application should now be available at:"
-echo "  http://${domain_name}/netctrl"
-echo "  https://${domain_name}/netctrl"
+for host in ${DJANGO_ALLOWED_HOSTS//,/ }; do
+    echo "  http://${host}/netctrl"
+    echo "  https://${host}/netctrl"
+done
