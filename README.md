@@ -151,10 +151,30 @@ The environment is automatically configured with secure defaults:
 - Database name: netctrl
 - Database user: netctrl
 - Database password: auto-generated (displayed during setup)
-- Domain: localhost,127.0.0.1 (update for production)
 - Debug mode: disabled
 - Secret key: auto-generated
 - Static/Media paths: configured for production
+
+#### Host Configuration
+
+The application is configured to accept requests from:
+- localhost
+- 127.0.0.1
+- Docker network IPs
+- All hosts (*) for development
+
+For production, you should update DJANGO_ALLOWED_HOSTS in .env to list your specific domains:
+```bash
+# Example for production
+DJANGO_ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com
+```
+
+#### Docker Network Access
+
+The application can be accessed through:
+- Host machine: http://localhost/netctrl
+- Docker network: http://<container-ip>/netctrl
+- Production domain: https://yourdomain.com/netctrl
 
 To modify these settings:
 ```bash
