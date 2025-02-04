@@ -20,33 +20,31 @@ if [ ! -d "${APP_DIR}" ]; then
 fi
 cd "${APP_DIR}"
 
-# Handle local changes
+# Backup local deployment files
 echo "Checking for local changes..."
-if git status --porcelain | grep -q '^.M \(deploy\.sh\|docker-compose\.prod\.yml\|\.env\.example\)$'; then
-    echo "Found local changes in deployment files..."
-    echo "Stashing changes before update..."
-    git stash push -m "pre-deployment-stash" -- deploy.sh docker-compose.prod.yml .env.example
-fi
+for file in deploy.sh docker-compose.prod.yml .env.example; do
+    if [ -f "$file" ]; then
+        echo "Backing up $file..."
+        cp "$file" "${file}.local"
+    fi
+done
 
 # Update repository
 echo "Updating application..."
 if ! git pull origin main; then
     echo "Error: Failed to update from repository"
-    if [ -n "$(git stash list | grep pre-deployment-stash)" ]; then
-        echo "Restoring local changes..."
-        git stash pop
-    fi
     exit 1
 fi
 
-# Restore local changes if any were stashed
-if [ -n "$(git stash list | grep pre-deployment-stash)" ]; then
-    echo "Restoring local changes..."
-    if ! git stash pop; then
-        echo "Warning: Failed to restore local changes. Please check git stash list"
-        exit 1
+# Restore local deployment files
+echo "Restoring local deployment files..."
+for file in deploy.sh docker-compose.prod.yml .env.example; do
+    if [ -f "${file}.local" ]; then
+        echo "Restoring $file..."
+        cp "${file}.local" "$file"
+        rm "${file}.local"
     fi
-fi
+done
 
 # Check for .env.example
 if [ ! -f .env.example ]; then
