@@ -33,7 +33,32 @@ else:
     hosts = os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
     ALLOWED_HOSTS = [host.strip() for host in hosts if host.strip()]
     # Always allow Docker network IPs
-    ALLOWED_HOSTS.extend(["0.0.0.0", "172.16.0.0/12", "192.168.0.0/16"])
+    ALLOWED_HOSTS.extend(
+        [
+            "0.0.0.0",
+            "172.16.0.0",
+            "172.17.0.0",
+            "172.18.0.0",
+            "172.19.0.0",
+            "172.20.0.0",
+            "172.21.0.0",
+            "172.22.0.0",
+            "172.23.0.0",
+            "172.24.0.0",
+            "172.25.0.0",
+            "172.26.0.0",
+            "172.27.0.0",
+            "172.28.0.0",
+            "172.29.0.0",
+            "172.30.0.0",
+            "172.31.0.0",
+            "192.168.0.0",
+        ]
+    )
+    # Add specific Docker container IP
+    container_ip = "172.29.10.99"  # Add the specific IP causing the error
+    if container_ip not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(container_ip)
 
 # Application definition
 INSTALLED_APPS = [

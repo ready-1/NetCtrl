@@ -75,7 +75,7 @@ if [ ! -d "/opt/netctrl/app/.git" ]; then
     sed -i "s/POSTGRES_PORT=.*/POSTGRES_PORT=5432/" .env
     sed -i "s/DJANGO_SECRET_KEY=.*/DJANGO_SECRET_KEY=$secret_key/" .env
     sed -i "s/DJANGO_DEBUG=.*/DJANGO_DEBUG=False/" .env
-    sed -i "s/DJANGO_ALLOWED_HOSTS=.*/DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0,172.16.0.0\/12,192.168.0.0\/16/" .env
+    sed -i "s/DJANGO_ALLOWED_HOSTS=.*/DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0,172.16.0.0,172.17.0.0,172.18.0.0,172.19.0.0,172.20.0.0,172.21.0.0,172.22.0.0,172.23.0.0,172.24.0.0,172.25.0.0,172.26.0.0,172.27.0.0,172.28.0.0,172.29.0.0,172.30.0.0,172.31.0.0,192.168.0.0/" .env
     sed -i "s|STATIC_ROOT=.*|STATIC_ROOT=/opt/static|" .env
     sed -i "s|MEDIA_ROOT=.*|MEDIA_ROOT=/opt/media|" .env
     sed -i "s|LOG_DIR=.*|LOG_DIR=/opt/logs|" .env
