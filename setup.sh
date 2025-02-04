@@ -32,10 +32,12 @@ echo "Docker Compose is included with Docker Engine..."
 echo "Adding user to docker group..."
 sudo usermod -aG docker $USER
 
-# Create required directories
+# Create required directories with proper permissions
 echo "Creating project directories..."
 sudo mkdir -p /opt/netctrl/{app,static,media,certs}
 sudo chown -R $USER:$USER /opt/netctrl
+sudo chmod 755 /opt/netctrl
+sudo chmod 777 /opt/netctrl/{static,media}
 
 # Generate self-signed SSL certificate (for development)
 echo "Generating self-signed SSL certificate..."
