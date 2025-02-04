@@ -59,13 +59,34 @@ if systemctl is-active --quiet nginx; then
     sudo systemctl stop nginx
 fi
 
+# Stop and remove all project containers
+echo "Stopping and removing project containers..."
+project_containers=$(docker ps -a --filter name=netctrl -q)
+if [ ! -z "$project_containers" ]; then
+    echo "Found existing project containers, removing..."
+    docker stop $project_containers
+    docker rm $project_containers
+fi
+
+# Remove project networks
+echo "Removing project networks..."
+project_networks=$(docker network ls --filter name=netctrl -q)
+if [ ! -z "$project_networks" ]; then
+    echo "Found project networks, removing..."
+    docker network rm $project_networks || true
+fi
+
+# Remove project volumes (optional, comment out to preserve data)
+# echo "Removing project volumes..."
+# project_volumes=$(docker volume ls --filter name=netctrl -q)
+# if [ ! -z "$project_volumes" ]; then
+#     echo "Found project volumes, removing..."
+#     docker volume rm $project_volumes || true
+# fi
+
 # Stop any running containers
 echo "Stopping existing containers..."
-docker compose -f docker-compose.prod.yml down || true
-
-# Clean up any stale containers
-echo "Cleaning up containers..."
-docker rm -f $(docker ps -aq) 2>/dev/null || true
+docker compose -f docker-compose.prod.yml down --remove-orphans || true
 
 # Build and start containers
 echo "Building and starting containers..."

@@ -132,10 +132,14 @@ cd /opt/netctrl/app
 ```
 The script will:
 - Configure environment variables
-- Build and start Docker containers
+- Stop and remove existing project containers
+- Clean up project networks
+- Build and start fresh Docker containers
 - Initialize database
 - Set up Nginx proxy
 - Deploy the application
+
+Note: By default, the script preserves database volumes. To perform a complete cleanup including volumes, uncomment the volume removal section in deploy.sh.
 
 The application will be available at:
 - http://your-domain/netctrl
