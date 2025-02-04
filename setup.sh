@@ -20,6 +20,14 @@ sudo apt-get install -y \
     lsb-release \
     git
 
+# Stop and disable system Nginx if installed
+echo "Checking system Nginx..."
+if dpkg -l | grep -q nginx; then
+    echo "Stopping and disabling system Nginx..."
+    sudo systemctl stop nginx
+    sudo systemctl disable nginx
+fi
+
 # Install Docker
 echo "Installing Docker..."
 curl -fsSL https://get.docker.com -o get-docker.sh

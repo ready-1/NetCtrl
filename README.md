@@ -113,6 +113,7 @@ The setup script will:
 - Set up environment variables
 - Generate secure passwords
 - Display initial credentials
+- Stop and disable system Nginx (if installed)
 
 IMPORTANT: Save the displayed database password and other credentials securely after setup.
 
@@ -160,6 +161,16 @@ nano /opt/netctrl/app/.env
 docker compose -f docker-compose.prod.yml restart
 ```
 
+### Port Requirements
+
+The application requires the following ports:
+- 80 (HTTP): Must be free for Nginx container
+- 443 (HTTPS): Must be free for Nginx container
+- 6379 (Redis): Internal use only
+- 5432 (PostgreSQL): Internal use only
+
+Note: The setup script will automatically stop and disable any existing Nginx service to prevent port conflicts. If you have other services using ports 80 or 443, please stop them before deployment.
+
 ### Updating the Application
 
 To update to the latest version:
@@ -171,17 +182,28 @@ git pull
 
 ### Troubleshooting
 
-1. View container logs:
+1. Port Conflicts:
+```bash
+# Check if ports are in use
+sudo lsof -i :80
+sudo lsof -i :443
+
+# Stop system Nginx if running
+sudo systemctl stop nginx
+sudo systemctl disable nginx
+```
+
+2. View container logs:
 ```bash
 docker compose -f docker-compose.prod.yml logs
 ```
 
-2. Check container status and health:
+3. Check container status and health:
 ```bash
 docker compose -f docker-compose.prod.yml ps
 ```
 
-3. Check service health details:
+4. Check service health details:
 ```bash
 # Database health
 docker compose -f docker-compose.prod.yml exec db pg_isready -U ${DB_USER} -d ${DB_NAME}
@@ -190,12 +212,12 @@ docker compose -f docker-compose.prod.yml exec db pg_isready -U ${DB_USER} -d ${
 docker compose -f docker-compose.prod.yml exec redis redis-cli ping
 ```
 
-4. Restart services:
+5. Restart services:
 ```bash
 docker compose -f docker-compose.prod.yml restart
 ```
 
-5. View application logs:
+6. View application logs:
 ```bash
 # All container logs
 docker compose -f docker-compose.prod.yml logs
@@ -230,6 +252,7 @@ Health check configurations:
 - 20GB disk space recommended
 - Git (installed automatically)
 - Docker Engine 24.0+ (installed automatically)
+- Ports 80 and 443 must be available
 
 ### Directory Structure
 
@@ -252,4 +275,3 @@ tail -f /opt/netctrl/logs/netctrl.log
 For container logs, use:
 ```bash
 docker compose -f docker-compose.prod.yml logs -f
-```

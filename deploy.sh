@@ -52,9 +52,20 @@ chmod 777 /opt/netctrl/{static,media,logs}
 echo "Setting up Nginx configuration..."
 cp nginx.conf.example /opt/netctrl/app/nginx.conf
 
+# Stop system Nginx if running
+echo "Checking system Nginx..."
+if systemctl is-active --quiet nginx; then
+    echo "Stopping system Nginx..."
+    sudo systemctl stop nginx
+fi
+
 # Stop any running containers
 echo "Stopping existing containers..."
 docker compose -f docker-compose.prod.yml down || true
+
+# Clean up any stale containers
+echo "Cleaning up containers..."
+docker rm -f $(docker ps -aq) 2>/dev/null || true
 
 # Build and start containers
 echo "Building and starting containers..."
