@@ -1,107 +1,80 @@
 # System Patterns
 
-## Core Patterns
+## Authentication System
 
-### Deployment Pattern
-The system uses a robust deployment pattern with data persistence:
+### Switch Authentication
+1. Token-Based Authentication:
+   - Uses JWT tokens from switch API
+   - Tokens stored in Switch model with expiration time
+   - Automatic refresh before expiration (15-minute buffer)
+   - Background thread for token maintenance
 
-1. Environment Handling:
-   - .env.example as template
-   - Local file preservation
-   - Environment validation
-   - Secure secret generation
+2. SSL/TLS Configuration:
+   - Uses SSLv23 protocol for backward compatibility
+   - Minimal SSL restrictions for legacy switch support
+   - Custom SSL context with all ciphers enabled
+   - Certificate verification disabled for self-signed certs
 
-2. Database Management:
-   - Persistent volume storage
-   - Automatic initialization
-   - Migration handling
-   - Data preservation
+3. Error Handling:
+   - Handles both JSON and plain text responses
+   - Detailed logging of all authentication steps
+   - Graceful handling of connection issues
+   - Status tracking in Switch model
 
-3. File Structure:
-   ```
-   /opt/netctrl/
-   ├── app/          # Application code
-   ├── static/       # Static files
-   ├── media/        # User uploads
-   ├── certs/        # SSL certificates
-   └── logs/         # Application logs
-   ```
+4. Background Tasks:
+   - TokenRefreshThread for automatic token management
+   - Runs only in production environment
+   - 5-minute check interval
+   - Daemon thread for clean shutdown
 
-### Authentication Pattern
-The system uses Django's authentication with fixed credentials:
-
-1. User Management:
-   - Custom User model
-   - Fixed superuser credentials
-   - Role-based access
-   - Simplified permissions
-
-2. Default Superuser:
-   ```
-   Username: admin
-   Email: admin@example.com
-   Password: FuseFuse123!
+### API Communication
+1. Request Format:
+   ```json
+   {
+     "login": {
+       "username": "admin",
+       "password": "password"
+     }
+   }
    ```
 
-### URL Pattern
-The system uses a consistent URL structure:
+2. Response Format:
+   ```json
+   {
+     "login": {
+       "token": "...",
+       "expire": "86400"
+     },
+     "resp": {
+       "status": "success",
+       "respCode": 0,
+       "respMsg": "Operation success"
+     }
+   }
+   ```
 
-1. Base Configuration:
-   - FORCE_SCRIPT_NAME = '/netctrl'
-   - All URLs prefixed
-   - Static/media URLs adjusted
+3. Error Handling:
+   - HTTP 200 with error message for auth failures
+   - JSON response validation
+   - Required field verification
+   - SSL/TLS error recovery
 
-2. Nginx Configuration:
-   - Proxy pass stripping
-   - Static file serving
-   - URL rewriting
+## Database Models
 
-## Data Patterns
+### Switch Model
+- Authentication fields:
+  - auth_token: Current JWT token
+  - token_expires: Token expiration timestamp
+  - auth_status: Current authentication state
+  - username/password: Switch credentials
 
-### Switch Management Pattern
-The system uses a simplified switch management pattern:
+### Status Tracking
+- AUTH_STATUS_AUTHENTICATED: Successfully logged in
+- AUTH_STATUS_UNAUTHENTICATED: No active session
+- AUTH_STATUS_ERROR: Authentication failed
 
-1. Data Model:
-   - Basic switch properties
-   - IP address validation
-   - Status tracking
-   - Description field
-
-2. Operations:
-   - CRUD operations
-   - CSV import
-   - Batch updates
-   - Data validation
-
-### File Handling Pattern
-The system uses a consistent file handling pattern:
-
-1. Static Files:
-   - Collected to /opt/static
-   - Served through Nginx
-   - Prefixed URLs
-
-2. Media Files:
-   - Stored in /opt/media
-   - Served through Nginx
-   - Prefixed URLs
-
-3. Local Changes:
-   - Preserved during deployment
-   - Backed up before updates
-   - Restored after updates
-
-### Data Persistence Pattern
-The system ensures data persistence across deployments:
-
-1. Volume Management:
-   - Named volumes for databases
-   - Preserved during updates
-   - Backup support
-   - Data integrity
-
-2. Deployment Safety:
-   - Database volume preserved
-   - Configuration preserved
-   - Credentials maintained
-   - Migration handling
+## Background Tasks
+- Daemon threads for maintenance tasks
+- Production-only execution
+- Error logging and recovery
+- Clean shutdown handling

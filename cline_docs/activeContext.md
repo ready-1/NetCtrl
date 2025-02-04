@@ -1,36 +1,27 @@
-# Active Development Context
+# Active Context
 
-## Current Work
-- Removed /netctrl/ URL prefix
-- Updated Nginx configuration for root path
-- Modified Django settings for direct serving
+## Current Task
+Implementing and improving switch authentication system with token management.
 
 ## Recent Changes
-1. URL Structure:
-   - Removed /netctrl/ prefix from all URLs
-   - Updated Nginx locations to serve from root
-   - Modified Django FORCE_SCRIPT_NAME to None
+1. Fixed SSL/TLS issues in switch authentication:
+   - Using SSLv23 protocol for flexible negotiation
+   - Proper error handling for both JSON and non-JSON responses
+   - Detailed logging for troubleshooting
 
-2. Static/Media URLs:
-   - Changed STATIC_URL to /static/
-   - Changed MEDIA_URL to /media/
-   - Updated Nginx static/media locations
+2. Implemented comprehensive token management:
+   - Token validation with 15-minute expiration buffer
+   - Automatic token refresh mechanism
+   - Background thread for token maintenance
+   - Error handling and logging
 
-3. Previous Changes:
-   - Simplified navigation and UI
-   - Improved switch management interface
-   - Fixed data persistence in deployment
-   - Optimized switch list layout
+3. Added TokenRefreshThread in switches/apps.py:
+   - Runs every 5 minutes in production
+   - Automatically refreshes tokens nearing expiration
+   - Daemon thread for clean application shutdown
 
 ## Next Steps
-1. Test switch import with CSV
-2. Verify data persistence
-3. Test switch deletion
-4. Document simplified workflow
-
-## Notes
-- Database persists across deployments
-- Focus on switch management only
-- Simplified user interface
-- Improved data density
-- Application now served from root URL
+1. Test token refresh mechanism in production environment
+2. Monitor token refresh logs for any issues
+3. Consider adding metrics/alerts for failed token refreshes
+4. Document API endpoints that require authentication
