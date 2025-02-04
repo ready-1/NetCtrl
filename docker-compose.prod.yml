@@ -24,6 +24,7 @@ services:
       - /opt/netctrl/app:/app:ro
       - /opt/netctrl/static:/opt/static
       - /opt/netctrl/media:/opt/media
+      - /opt/netctrl/logs:/opt/logs
     environment:
       - DJANGO_SETTINGS_MODULE=config.settings
       - POSTGRES_DB=${DB_NAME}
@@ -33,6 +34,7 @@ services:
       - REDIS_HOST=redis
       - STATIC_ROOT=/opt/static
       - MEDIA_ROOT=/opt/media
+      - LOG_DIR=/opt/logs
     depends_on:
       db:
         condition: service_healthy

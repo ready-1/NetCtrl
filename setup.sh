@@ -34,10 +34,10 @@ sudo usermod -aG docker $USER
 
 # Create required directories with proper permissions
 echo "Creating project directories..."
-sudo mkdir -p /opt/netctrl/{app,static,media,certs}
+sudo mkdir -p /opt/netctrl/{app,static,media,certs,logs}
 sudo chown -R $USER:$USER /opt/netctrl
 sudo chmod 755 /opt/netctrl
-sudo chmod 777 /opt/netctrl/{static,media}
+sudo chmod 777 /opt/netctrl/{static,media,logs}
 
 # Generate self-signed SSL certificate (for development)
 echo "Generating self-signed SSL certificate..."

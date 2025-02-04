@@ -213,21 +213,38 @@ LOGIN_REDIRECT_URL = "core:dashboard"
 LOGOUT_REDIRECT_URL = "authentication:login"
 
 # Logging configuration
+LOG_DIR = os.environ.get("LOG_DIR", str(BASE_DIR / "logs"))
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
+            "style": "{",
+        },
+    },
     "handlers": {
         "console": {
             "class": "logging.StreamHandler",
+            "formatter": "verbose",
         },
         "file": {
             "class": "logging.FileHandler",
-            "filename": BASE_DIR / "logs" / "netctrl.log",
+            "filename": os.path.join(LOG_DIR, "netctrl.log"),
+            "formatter": "verbose",
         },
     },
     "root": {
         "handlers": ["console", "file"],
         "level": "INFO",
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console", "file"],
+            "level": "INFO",
+            "propagate": False,
+        },
     },
 }
 
