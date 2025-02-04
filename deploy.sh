@@ -112,6 +112,14 @@ fi
 #     docker volume rm $project_volumes || true
 # fi
 
+# Load environment variables
+echo "Loading environment variables..."
+if [ ! -f .env ]; then
+    echo "Error: .env file not found"
+    exit 1
+fi
+export $(cat .env | grep -v '^#' | xargs)
+
 # Stop any running containers
 echo "Stopping existing containers..."
 docker compose -f docker-compose.prod.yml down --remove-orphans || true
@@ -122,7 +130,7 @@ docker compose -f docker-compose.prod.yml up --build -d
 
 # Wait for database to be ready
 echo "Waiting for database to be ready..."
-until docker compose -f docker-compose.prod.yml exec -T db pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}; do
+until docker compose -f docker-compose.prod.yml exec -T db pg_isready -U "${POSTGRES_USER}" -d "${POSTGRES_DB}"; do
     echo "Database is unavailable - sleeping"
     sleep 1
 done
