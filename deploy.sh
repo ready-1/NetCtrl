@@ -22,29 +22,31 @@ if [ ! -f .env ]; then
     echo "Creating .env file..."
     cp .env.example .env
 
-    # Prompt for environment variables
-    read -p "Database Name (default: netctrl): " db_name
-    db_name=${db_name:-netctrl}
+    # Generate secure passwords
+    db_password=$(openssl rand -base64 32)
+    secret_key=$(openssl rand -base64 64)
 
-    read -p "Database User (default: netctrl): " db_user
-    db_user=${db_user:-netctrl}
-
-    read -sp "Database Password: " db_password
-    echo
-
-    read -p "Domain Name (or IP address): " domain_name
-    domain_name=${domain_name:-localhost}
-
-    # Generate a secure secret key
-    secret_key=$(python3 -c 'from secrets import token_urlsafe; print(token_urlsafe(50))')
-
-    # Update .env file
-    sed -i "s/DB_NAME=.*/DB_NAME=$db_name/" .env
-    sed -i "s/DB_USER=.*/DB_USER=$db_user/" .env
+    # Update .env file with secure defaults
+    sed -i "s/DB_NAME=.*/DB_NAME=netctrl/" .env
+    sed -i "s/DB_USER=.*/DB_USER=netctrl/" .env
     sed -i "s/DB_PASSWORD=.*/DB_PASSWORD=$db_password/" .env
+    sed -i "s/DB_HOST=.*/DB_HOST=db/" .env
     sed -i "s/DJANGO_SECRET_KEY=.*/DJANGO_SECRET_KEY=$secret_key/" .env
-    sed -i "s/DJANGO_ALLOWED_HOSTS=.*/DJANGO_ALLOWED_HOSTS=$domain_name,localhost/" .env
+    sed -i "s/DJANGO_DEBUG=.*/DJANGO_DEBUG=False/" .env
+    sed -i "s/DJANGO_ALLOWED_HOSTS=.*/DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1/" .env
+    sed -i "s|STATIC_ROOT=.*|STATIC_ROOT=/opt/static|" .env
+    sed -i "s|MEDIA_ROOT=.*|MEDIA_ROOT=/opt/media|" .env
+    sed -i "s|LOG_DIR=.*|LOG_DIR=/opt/logs|" .env
+
+    echo "Environment file created with secure defaults"
+    echo "Database password: $db_password"
+    echo "Please save these credentials securely"
 fi
+
+# Ensure directories exist and have correct permissions
+echo "Setting up directories..."
+mkdir -p /opt/netctrl/{static,media,logs}
+chmod 777 /opt/netctrl/{static,media,logs}
 
 # Copy and configure Nginx
 echo "Setting up Nginx configuration..."

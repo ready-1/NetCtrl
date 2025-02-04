@@ -51,6 +51,29 @@ if [ ! -d "/opt/netctrl/app/.git" ]; then
     echo "Cloning repository..."
     git clone "$PWD" /opt/netctrl/app
     cd /opt/netctrl/app
+
+    # Copy environment file
+    cp .env.example .env
+
+    # Generate secure passwords
+    db_password=$(openssl rand -base64 32)
+    secret_key=$(openssl rand -base64 64)
+
+    # Update .env file with secure defaults
+    sed -i "s/DB_NAME=.*/DB_NAME=netctrl/" .env
+    sed -i "s/DB_USER=.*/DB_USER=netctrl/" .env
+    sed -i "s/DB_PASSWORD=.*/DB_PASSWORD=$db_password/" .env
+    sed -i "s/DB_HOST=.*/DB_HOST=db/" .env
+    sed -i "s/DJANGO_SECRET_KEY=.*/DJANGO_SECRET_KEY=$secret_key/" .env
+    sed -i "s/DJANGO_DEBUG=.*/DJANGO_DEBUG=False/" .env
+    sed -i "s/DJANGO_ALLOWED_HOSTS=.*/DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1/" .env
+    sed -i "s|STATIC_ROOT=.*|STATIC_ROOT=/opt/static|" .env
+    sed -i "s|MEDIA_ROOT=.*|MEDIA_ROOT=/opt/media|" .env
+    sed -i "s|LOG_DIR=.*|LOG_DIR=/opt/logs|" .env
+
+    echo "Environment file created with secure defaults"
+    echo "Database password: $db_password"
+    echo "Please save these credentials securely"
 fi
 
 echo "Setup completed successfully!"

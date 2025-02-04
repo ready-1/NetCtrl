@@ -110,6 +110,11 @@ The setup script will:
 - Clone repository to /opt/netctrl/app
 - Generate SSL certificate
 - Configure system permissions
+- Set up environment variables
+- Generate secure passwords
+- Display initial credentials
+
+IMPORTANT: Save the displayed database password and other credentials securely after setup.
 
 3. Log out and back in for Docker permissions to take effect:
 ```bash
@@ -137,11 +142,23 @@ The application will be available at:
 
 ### Environment Configuration
 
-The deployment script will prompt for:
-- Database name (default: netctrl)
-- Database user (default: netctrl)
-- Database password
-- Domain name or IP address
+The environment is automatically configured with secure defaults:
+- Database name: netctrl
+- Database user: netctrl
+- Database password: auto-generated (displayed during setup)
+- Domain: localhost,127.0.0.1 (update for production)
+- Debug mode: disabled
+- Secret key: auto-generated
+- Static/Media paths: configured for production
+
+To modify these settings:
+```bash
+# Edit environment variables
+nano /opt/netctrl/app/.env
+
+# Restart services after changes
+docker compose -f docker-compose.prod.yml restart
+```
 
 ### Updating the Application
 
