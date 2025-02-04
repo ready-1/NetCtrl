@@ -20,9 +20,33 @@ if [ ! -d "${APP_DIR}" ]; then
 fi
 cd "${APP_DIR}"
 
-# Update repository first to get latest .env.example
+# Handle local changes
+echo "Checking for local changes..."
+if git status --porcelain | grep -q '^.M \(deploy\.sh\|docker-compose\.prod\.yml\|\.env\.example\)$'; then
+    echo "Found local changes in deployment files..."
+    echo "Stashing changes before update..."
+    git stash push -m "pre-deployment-stash" -- deploy.sh docker-compose.prod.yml .env.example
+fi
+
+# Update repository
 echo "Updating application..."
-git pull origin main
+if ! git pull origin main; then
+    echo "Error: Failed to update from repository"
+    if [ -n "$(git stash list | grep pre-deployment-stash)" ]; then
+        echo "Restoring local changes..."
+        git stash pop
+    fi
+    exit 1
+fi
+
+# Restore local changes if any were stashed
+if [ -n "$(git stash list | grep pre-deployment-stash)" ]; then
+    echo "Restoring local changes..."
+    if ! git stash pop; then
+        echo "Warning: Failed to restore local changes. Please check git stash list"
+        exit 1
+    fi
+fi
 
 # Check for .env.example
 if [ ! -f .env.example ]; then
