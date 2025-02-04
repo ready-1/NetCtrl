@@ -21,8 +21,8 @@ services:
     expose:
       - "8000"
     volumes:
-      - /opt/netctrl/static:/app/staticfiles
-      - /opt/netctrl/media:/app/media
+      - /opt/netctrl/static:/app/staticfiles:rw
+      - /opt/netctrl/media:/app/media:rw
       - /opt/netctrl/app:/app:ro
     environment:
       - DJANGO_SETTINGS_MODULE=config.settings
