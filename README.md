@@ -159,20 +159,52 @@ git pull
 docker compose -f docker-compose.prod.yml logs
 ```
 
-2. Check container status:
+2. Check container status and health:
 ```bash
 docker compose -f docker-compose.prod.yml ps
 ```
 
-3. Restart services:
+3. Check service health details:
+```bash
+# Database health
+docker compose -f docker-compose.prod.yml exec db pg_isready -U ${DB_USER} -d ${DB_NAME}
+
+# Redis health
+docker compose -f docker-compose.prod.yml exec redis redis-cli ping
+```
+
+4. Restart services:
 ```bash
 docker compose -f docker-compose.prod.yml restart
 ```
 
-4. View application logs:
+5. View application logs:
 ```bash
+# All container logs
+docker compose -f docker-compose.prod.yml logs
+
+# Specific service logs
 docker compose -f docker-compose.prod.yml logs web
+docker compose -f docker-compose.prod.yml logs db
+docker compose -f docker-compose.prod.yml logs nginx
+
+# Application log file
+tail -f /opt/netctrl/logs/netctrl.log
 ```
+
+### Service Health Monitoring
+
+The deployment includes built-in health checks for:
+- Database: Checks PostgreSQL readiness
+- Redis: Verifies Redis connection
+- Web: Monitored through Nginx
+- Static/Media files: Served through Nginx
+
+Health check configurations:
+- Interval: 5 seconds
+- Timeout: 5 seconds
+- Retries: 5
+- Start period: 10 seconds
 
 ### System Requirements
 
