@@ -180,9 +180,8 @@ export POSTGRES_PORT=5432
 echo "Stopping existing containers..."
 docker compose -f docker-compose.prod.yml down --remove-orphans || true
 
-# Remove existing volumes to ensure clean state
-echo "Removing database volume..."
-docker volume rm netctrl_postgres_data || true
+# Note: Database volume is preserved across deployments
+echo "Preserving database volume for data persistence..."
 
 # Build and start containers
 echo "Building and starting containers..."
