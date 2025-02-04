@@ -24,7 +24,16 @@ SECRET_KEY = os.environ.get(
     "django-insecure-^z9dt11(@07re!q(tkc$oiiax^s%z35kng+zc)+c!=&q614g-m",
 )
 DEBUG = os.environ.get("DJANGO_DEBUG", "True").lower() == "true"
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+
+# Allow all hosts in development, specific hosts in production
+if DEBUG:
+    ALLOWED_HOSTS = ["*"]
+else:
+    # Split and clean the hosts list
+    hosts = os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+    ALLOWED_HOSTS = [host.strip() for host in hosts if host.strip()]
+    # Always allow Docker network IPs
+    ALLOWED_HOSTS.extend(["0.0.0.0", "172.16.0.0/12", "192.168.0.0/16"])
 
 # Application definition
 INSTALLED_APPS = [
