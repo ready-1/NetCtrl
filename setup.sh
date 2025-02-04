@@ -54,21 +54,24 @@ sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
     -out /opt/netctrl/certs/fullchain.pem \
     -subj "/C=US/ST=State/L=City/O=Organization/CN=localhost"
 
-# Ensure we're in the correct directory
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-cd "$SCRIPT_DIR"
+# Get absolute path to source directory
+SOURCE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+APP_DIR="/opt/netctrl/app"
+
+echo "Setting up application in ${APP_DIR}..."
 
 # Clone repository if not exists
-if [ ! -d "/opt/netctrl/app/.git" ]; then
+if [ ! -d "${APP_DIR}/.git" ]; then
     echo "Cloning repository..."
-    git clone "$PWD" /opt/netctrl/app
-    cd /opt/netctrl/app
+    git clone "${SOURCE_DIR}" "${APP_DIR}"
+    cd "${APP_DIR}"
 
-    # Copy required files
-    echo "Copying configuration files..."
-    cp "$SCRIPT_DIR/.env.example" .env
-    cp "$SCRIPT_DIR/deploy.sh" .
-    cp "$SCRIPT_DIR/docker-compose.prod.yml" .
+    # Copy configuration files
+    echo "Setting up configuration files..."
+    cp "${SOURCE_DIR}/.env.example" .env
+    cp "${SOURCE_DIR}/deploy.sh" .
+    cp "${SOURCE_DIR}/docker-compose.prod.yml" .
+    chmod +x deploy.sh
 
     # Generate secure passwords
     db_password=$(openssl rand -base64 32)

@@ -29,17 +29,14 @@ services:
       - /opt/netctrl/media:/opt/media
       - /opt/netctrl/logs:/opt/logs
     env_file:
-      - /opt/netctrl/app/.env
+      - .env
     environment:
+      # Fixed values that shouldn't come from .env
       DJANGO_SETTINGS_MODULE: config.settings
       POSTGRES_HOST: db
       STATIC_ROOT: /opt/static
       MEDIA_ROOT: /opt/media
       LOG_DIR: /opt/logs
-      # Export variables for scripts
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     depends_on:
       db:
         condition: service_healthy
@@ -52,9 +49,9 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     env_file:
-      - /opt/netctrl/app/.env
+      - .env
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 5s
       timeout: 5s
       retries: 5

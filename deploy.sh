@@ -12,64 +12,47 @@ if [ ! -d "/opt/netctrl/app" ]; then
     exit 1
 fi
 
-# Ensure we're in the correct directory
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-cd "$SCRIPT_DIR"
+# Ensure we're in the app directory
+APP_DIR="/opt/netctrl/app"
+if [ ! -d "${APP_DIR}" ]; then
+    echo "Error: ${APP_DIR} not found. Please run setup.sh first."
+    exit 1
+fi
+cd "${APP_DIR}"
 
-# Copy files to app directory
-echo "Copying files to app directory..."
-cp .env.example /opt/netctrl/app/.env.example
-cp deploy.sh /opt/netctrl/app/
-cp docker-compose.prod.yml /opt/netctrl/app/
-
-# Change to app directory and update
-echo "Updating application..."
-cd /opt/netctrl/app
-git pull origin main
-
-# Create .env file if not exists
-if [ ! -f .env ]; then
-    echo "Creating .env file..."
-    if [ ! -f .env.example ]; then
-        echo "Error: .env.example not found in /opt/netctrl/app"
+# Check for required files
+for file in ".env" "docker-compose.prod.yml"; do
+    if [ ! -f "${file}" ]; then
+        echo "Error: ${file} not found in ${APP_DIR}"
+        echo "Please run setup.sh to properly initialize the application"
         exit 1
     fi
-    cp .env.example .env
+done
 
-    # Generate secure passwords
-    db_password=$(openssl rand -base64 32)
-    secret_key=$(openssl rand -base64 64)
+# Load environment variables
+echo "Loading environment variables..."
+set -a  # automatically export all variables
+source .env
+set +a
 
-    # Convert any old DB_ prefixes to POSTGRES_
-    sed -i "s/DB_\([A-Z]*\)=/POSTGRES_\1=/g" .env
+# Verify required variables
+echo "Verifying environment variables..."
+required_vars=(
+    "POSTGRES_DB" "POSTGRES_USER" "POSTGRES_PASSWORD" "POSTGRES_HOST" "POSTGRES_PORT"
+    "DJANGO_SECRET_KEY" "DJANGO_DEBUG" "DJANGO_ALLOWED_HOSTS"
+    "STATIC_ROOT" "MEDIA_ROOT" "LOG_DIR"
+)
+for var in "${required_vars[@]}"; do
+    if [ -z "${!var}" ]; then
+        echo "Error: ${var} is not set in .env file"
+        exit 1
+    fi
+done
 
-    # Update .env file with secure defaults
-    sed -i "s/POSTGRES_DB=.*/POSTGRES_DB=netctrl/" .env
-    sed -i "s/POSTGRES_USER=.*/POSTGRES_USER=netctrl/" .env
-    sed -i "s/POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=$db_password/" .env
-    sed -i "s/POSTGRES_HOST=.*/POSTGRES_HOST=db/" .env
-    sed -i "s/POSTGRES_PORT=.*/POSTGRES_PORT=5432/" .env
-    sed -i "s/DJANGO_SECRET_KEY=.*/DJANGO_SECRET_KEY=$secret_key/" .env
-    sed -i "s/DJANGO_DEBUG=.*/DJANGO_DEBUG=False/" .env
-    sed -i "s|DJANGO_ALLOWED_HOSTS=.*|DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0,172.29.10.99,172.16.0.0,172.17.0.0,172.18.0.0,172.19.0.0,172.20.0.0,172.21.0.0,172.22.0.0,172.23.0.0,172.24.0.0,172.25.0.0,172.26.0.0,172.27.0.0,172.28.0.0,172.29.0.0,172.30.0.0,172.31.0.0,192.168.0.0|" .env
-    sed -i "s|STATIC_ROOT=.*|STATIC_ROOT=/opt/static|" .env
-    sed -i "s|MEDIA_ROOT=.*|MEDIA_ROOT=/opt/media|" .env
-    sed -i "s|LOG_DIR=.*|LOG_DIR=/opt/logs|" .env
+# Update repository
+echo "Updating application..."
+git pull origin main
 
-    # Verify environment variables
-    echo "Verifying environment variables..."
-    required_vars=("POSTGRES_DB" "POSTGRES_USER" "POSTGRES_PASSWORD" "POSTGRES_HOST" "DJANGO_SECRET_KEY" "DJANGO_ALLOWED_HOSTS" "STATIC_ROOT" "MEDIA_ROOT" "LOG_DIR")
-    for var in "${required_vars[@]}"; do
-        if ! grep -q "^$var=" .env; then
-            echo "Error: $var is not set in .env file"
-            exit 1
-        fi
-    done
-
-    echo "Environment file created with secure defaults"
-    echo "Database password: $db_password"
-    echo "Please save these credentials securely"
-fi
 
 # Ensure directories exist and have correct permissions
 echo "Setting up directories..."
@@ -112,13 +95,6 @@ fi
 #     docker volume rm $project_volumes || true
 # fi
 
-# Load environment variables
-echo "Loading environment variables..."
-if [ ! -f .env ]; then
-    echo "Error: .env file not found"
-    exit 1
-fi
-export $(cat .env | grep -v '^#' | xargs)
 
 # Stop any running containers
 echo "Stopping existing containers..."
