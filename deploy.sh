@@ -168,13 +168,29 @@ fi
 # fi
 
 
+# Export environment variables for Docker Compose
+echo "Exporting environment variables..."
+export POSTGRES_DB=netctrl
+export POSTGRES_USER=netctrl
+export POSTGRES_PASSWORD="$db_password"
+export POSTGRES_HOST=db
+export POSTGRES_PORT=5432
+
 # Stop any running containers
 echo "Stopping existing containers..."
 docker compose -f docker-compose.prod.yml down --remove-orphans || true
 
+# Remove existing volumes to ensure clean state
+echo "Removing database volume..."
+docker volume rm netctrl_postgres_data || true
+
 # Build and start containers
 echo "Building and starting containers..."
 docker compose -f docker-compose.prod.yml up --build -d
+
+# Wait longer for database initialization
+echo "Waiting for database initialization..."
+sleep 10
 
 # Wait for database to be ready
 echo "Waiting for database to be ready..."
