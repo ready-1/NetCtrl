@@ -20,14 +20,57 @@ if [ ! -d "${APP_DIR}" ]; then
 fi
 cd "${APP_DIR}"
 
-# Check for required files
-for file in ".env" "docker-compose.prod.yml"; do
-    if [ ! -f "${file}" ]; then
-        echo "Error: ${file} not found in ${APP_DIR}"
-        echo "Please run setup.sh to properly initialize the application"
-        exit 1
+# Update repository first to get latest .env.example
+echo "Updating application..."
+git pull origin main
+
+# Check for .env.example
+if [ ! -f .env.example ]; then
+    echo "Error: .env.example not found"
+    exit 1
+fi
+
+# Create/update environment file
+echo "Setting up environment..."
+
+# Generate new secrets
+db_password=$(openssl rand -base64 32)
+secret_key=$(openssl rand -base64 64)
+
+if [ ! -f .env ]; then
+    echo "Creating new .env file..."
+    cp .env.example .env
+else
+    echo "Updating existing .env file..."
+    # Backup existing passwords
+    old_db_password=$(grep "^POSTGRES_PASSWORD=" .env | cut -d'=' -f2-)
+    old_secret_key=$(grep "^DJANGO_SECRET_KEY=" .env | cut -d'=' -f2-)
+
+    # Use existing passwords if they exist
+    if [ ! -z "$old_db_password" ]; then
+        db_password=$old_db_password
     fi
-done
+    if [ ! -z "$old_secret_key" ]; then
+        secret_key=$old_secret_key
+    fi
+fi
+
+# Update .env file
+echo "Configuring environment variables..."
+sed -i "s/POSTGRES_DB=.*/POSTGRES_DB=netctrl/" .env
+sed -i "s/POSTGRES_USER=.*/POSTGRES_USER=netctrl/" .env
+sed -i "s/POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=$db_password/" .env
+sed -i "s/POSTGRES_HOST=.*/POSTGRES_HOST=db/" .env
+sed -i "s/POSTGRES_PORT=.*/POSTGRES_PORT=5432/" .env
+sed -i "s/DJANGO_SECRET_KEY=.*/DJANGO_SECRET_KEY=$secret_key/" .env
+sed -i "s/DJANGO_DEBUG=.*/DJANGO_DEBUG=False/" .env
+sed -i "s|DJANGO_ALLOWED_HOSTS=.*|DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0,172.29.10.99,172.16.0.0,172.17.0.0,172.18.0.0,172.19.0.0,172.20.0.0,172.21.0.0,172.22.0.0,172.23.0.0,172.24.0.0,172.25.0.0,172.26.0.0,172.27.0.0,172.28.0.0,172.29.0.0,172.30.0.0,172.31.0.0,192.168.0.0|" .env
+sed -i "s|STATIC_ROOT=.*|STATIC_ROOT=/opt/static|" .env
+sed -i "s|MEDIA_ROOT=.*|MEDIA_ROOT=/opt/media|" .env
+sed -i "s|LOG_DIR=.*|LOG_DIR=/opt/logs|" .env
+
+# Convert any old DB_ prefixes to POSTGRES_
+sed -i "s/DB_\([A-Z]*\)=/POSTGRES_\1=/g" .env
 
 # Load environment variables
 echo "Loading environment variables..."
@@ -49,9 +92,10 @@ for var in "${required_vars[@]}"; do
     fi
 done
 
-# Update repository
-echo "Updating application..."
-git pull origin main
+if [ ! -f docker-compose.prod.yml ]; then
+    echo "Error: docker-compose.prod.yml not found"
+    exit 1
+fi
 
 
 # Ensure directories exist and have correct permissions

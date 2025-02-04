@@ -29,7 +29,7 @@ services:
       - /opt/netctrl/media:/opt/media
       - /opt/netctrl/logs:/opt/logs
     env_file:
-      - .env
+      - /opt/netctrl/app/.env
     environment:
       # Fixed values that shouldn't come from .env
       DJANGO_SETTINGS_MODULE: config.settings
@@ -49,7 +49,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     env_file:
-      - .env
+      - /opt/netctrl/app/.env
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 5s
