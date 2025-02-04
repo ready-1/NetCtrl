@@ -84,9 +84,23 @@ git clone <repository-url> netctrl
 cd netctrl
 ```
 
-2. Make scripts executable and run setup:
+2. Make scripts executable:
 ```bash
-chmod +x setup.sh deploy.sh
+chmod +x cleanup.sh setup.sh deploy.sh
+```
+
+3. Clean up system (if needed):
+```bash
+./cleanup.sh
+```
+The cleanup script will:
+- Remove any conflicting repositories
+- Clean package manager cache
+- Remove old Docker containers and volumes
+- Clean up old installation directories
+
+4. Run system setup:
+```bash
 ./setup.sh
 ```
 The setup script will:
