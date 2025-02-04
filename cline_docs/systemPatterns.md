@@ -1,109 +1,147 @@
 # System Patterns
 
 ## Architecture Overview
-1. Backend Framework
-   - Django 5.0+ for core application
-   - Django REST Framework for API endpoints
-   - Channels for async tasks
-   - PostgreSQL (production) / SQLite (development)
 
-2. Frontend Architecture
-   - Server-side rendered templates
-   - Bootstrap 5 for responsive layout
-   - HTMX for dynamic updates
-   - Chart.js for metrics visualization
+### Container Architecture
+1. Web Service (Django)
+   - Python 3.12
+   - Django 5.1.5
+   - Poetry for dependency management
+   - Gunicorn with Uvicorn workers
+   - Mounted volumes for static/media/logs
 
-3. Authentication & Authorization
-   - Django's built-in authentication
-   - Custom User model with role-based permissions
-   - JWT tokens for API authentication
-   - Session-based auth for web interface
+2. Database Service (PostgreSQL)
+   - PostgreSQL 15
+   - Persistent volume storage
+   - Health checks
+   - Automated initialization
+   - Environment-based configuration
 
-## Key Design Patterns
-1. Model-View-Template (MVT)
-   - Models: Django ORM for data structure
-   - Views: Class-based views for logic
-   - Templates: Django templates for presentation
+3. Cache Service (Redis)
+   - Redis Alpine
+   - Persistent volume storage
+   - Health monitoring
+   - Used for Django channels
 
-2. Service Layer
-   - Switch management services
-   - Configuration management services
-   - Port management services
-   - Monitoring services
+4. Proxy Service (Nginx)
+   - Nginx Alpine
+   - SSL/TLS termination
+   - Static file serving
+   - Load balancing
+   - Health checks
 
-3. Repository Pattern
-   - Switch repository
-   - Configuration repository
-   - Port profile repository
-   - Audit log repository
+### Directory Structure
+```
+/opt/netctrl/
+├── app/              # Application code
+├── static/           # Static files
+├── media/           # Media files
+├── logs/            # Application logs
+└── certs/           # SSL certificates
+```
 
-## Code Organization
-1. Core Apps
-   - core: Base functionality and shared components
-   - authentication: User management and auth
-   - switches: Switch management
-   - netctrl: Network control features
+### Environment Configuration
+1. Database Settings
+   - POSTGRES_DB: Database name
+   - POSTGRES_USER: Database user
+   - POSTGRES_PASSWORD: Auto-generated password
+   - POSTGRES_HOST: Container hostname
+   - POSTGRES_PORT: Database port
 
-2. Directory Structure
-   ```
-   ├── core/
-   │   ├── models.py      # Base models
-   │   ├── views.py       # Core views
-   │   └── utils/         # Shared utilities
-   ├── switches/
-   │   ├── models.py      # Switch models
-   │   ├── views.py       # Switch views
-   │   └── templates/     # Switch templates
-   └── templates/
-       ├── base.html      # Base template
-       └── components/    # Shared components
-   ```
+2. Django Settings
+   - DJANGO_SETTINGS_MODULE: Config module
+   - DJANGO_SECRET_KEY: Auto-generated key
+   - DJANGO_DEBUG: Debug mode flag
+   - DJANGO_ALLOWED_HOSTS: Host whitelist
 
-## Implementation Patterns
-1. View Patterns
-   - Class-based views for consistency
-   - Mixins for shared functionality
-   - Permission mixins for access control
+3. File Paths
+   - STATIC_ROOT: Static file directory
+   - MEDIA_ROOT: Media file directory
+   - LOG_DIR: Log file directory
 
-2. Model Patterns
-   - Abstract base classes for common fields
-   - Model managers for complex queries
-   - Custom model methods for business logic
+### Network Configuration
+1. Host Access
+   - localhost/127.0.0.1: Local access
+   - Docker network IPs: Container access
+   - Production domains: External access
+   - Wildcard support for development
 
-3. Template Patterns
-   - Base template inheritance
-   - Component-based structure
-   - Consistent naming conventions
+2. Port Mapping
+   - 80: HTTP traffic
+   - 443: HTTPS traffic
+   - 5432: PostgreSQL (internal)
+   - 6379: Redis (internal)
 
-## Security Patterns
-1. Authentication
-   - Token-based API auth
-   - Session-based web auth
-   - Role-based access control
+### Security Patterns
+1. SSL/TLS
+   - Self-signed certificates for development
+   - Proper SSL support planned for production
+   - Certificate volume mounting
 
-2. Data Protection
-   - Form validation
-   - Input sanitization
-   - CSRF protection
+2. Environment Security
+   - Auto-generated secure passwords
+   - Auto-generated secret keys
+   - Environment-based configuration
+   - No hardcoded credentials
 
-3. Audit Trail
-   - Comprehensive logging
-   - Action tracking
-   - User activity monitoring
+3. File Permissions
+   - Read-only application code
+   - Writable logs directory
+   - Writable media directory
+   - Writable static directory
 
-## Testing Patterns
-1. Test Organization
-   - Unit tests per app
-   - Integration tests
-   - End-to-end tests
+### Deployment Patterns
+1. System Preparation
+   - Package updates
+   - Docker installation
+   - Directory creation
+   - Permission setup
+   - SSL certificate generation
 
-2. Test Types
-   - Model tests
-   - View tests
-   - Form tests
-   - API tests
+2. Container Management
+   - Container cleanup before deploy
+   - Network cleanup
+   - Volume preservation
+   - Health check verification
+   - Dependency ordering
 
-3. Test Data
-   - Factories for test data
-   - Fixtures for common scenarios
-   - Mock objects for external services
+3. Database Management
+   - Automatic initialization
+   - Migration handling
+   - Health monitoring
+   - Connection verification
+
+4. Static File Handling
+   - Automatic collection
+   - Nginx serving
+   - Compression
+   - Cache control
+
+### Monitoring Patterns
+1. Health Checks
+   - Database connectivity
+   - Redis connectivity
+   - Web service status
+   - Static file access
+   - Regular interval checks
+
+2. Logging
+   - Application logs
+   - Container logs
+   - Nginx access logs
+   - Error tracking
+   - Structured logging
+
+### Development Patterns
+1. Local Development
+   - SQLite for development
+   - Debug mode support
+   - Local static serving
+   - Auto-reload capability
+
+2. Production Deployment
+   - PostgreSQL database
+   - Redis caching
+   - Nginx proxy
+   - SSL termination
+   - Health monitoring
