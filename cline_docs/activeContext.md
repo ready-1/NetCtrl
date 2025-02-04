@@ -1,60 +1,40 @@
-# Active Context
+# Active Development Context
 
-## Current Focus
-1. Production Deployment Infrastructure
-   - Automated deployment from fresh Debian installation
-   - Containerized services (web, database, Redis, Nginx)
-   - SSL/TLS support with self-signed certificates
-   - Environment configuration management
-   - Docker network and host access configuration
-
-2. Switch Management MVP
-   - Card-based switch interface
-   - In-band and out-band management
-   - Basic switch editing capabilities
-   - Disabled features for future implementation
+## Current Work
+- Fixed URL prefix handling with /netctrl
+- Added superuser creation to deployment
+- Fixed static file serving
+- Fixed environment variable handling
 
 ## Recent Changes
-1. Deployment Infrastructure (Latest)
-   - Fixed Docker network host access
-   - Updated environment variable configuration
-   - Added PostgreSQL database support
-   - Improved container cleanup
-   - Added health monitoring
-   - Fixed logging configuration
+1. URL Prefix:
+   - Added FORCE_SCRIPT_NAME in Django settings
+   - Updated Nginx configuration
+   - Fixed static/media URLs
+   - Updated templates to use {% static %}
 
-2. Environment Configuration Updates
-   - Renamed DB_ prefixes to POSTGRES_
-   - Added POSTGRES_PORT variable
-   - Updated ALLOWED_HOSTS for Docker networks
-   - Fixed static/media/logs paths
-   - Added secure defaults generation
+2. Environment:
+   - Improved file handling in deploy.sh
+   - Added proper environment exports
+   - Fixed database initialization
+   - Added better error handling
 
-3. Infrastructure Changes
-   - Added container cleanup in deployment
-   - Fixed port conflict handling
-   - Added health check configurations
-   - Improved error handling
-   - Updated documentation
+3. Superuser:
+   - Added superuser creation to deploy.sh
+   - Set fixed credentials:
+     * Username: admin
+     * Email: admin@example.com
+     * Password: FuseFuse123!
+   - Added idempotent creation
 
 ## Next Steps
-1. Production Hardening
-   - Implement proper SSL certificate management
-   - Add backup and restore procedures
-   - Implement monitoring and alerts
-   - Enhance health checks
-   - Add database backup system
+1. Test deployment process end-to-end
+2. Verify superuser login works
+3. Verify static files are served correctly
+4. Document deployment process
 
-2. Feature Implementation
-   - Configuration management
-   - Port management interface
-   - Monitoring dashboard
-   - Backup functionality
-
-## Current Issues
-- Using self-signed certificates (needs proper SSL)
-- Basic health checks only
-- No automated backup system
-- Monitoring system pending
-- Need to implement proper domain configuration for production
-- Database backup strategy needed
+## Notes
+- Superuser is created after migrations
+- Static files use /netctrl prefix
+- Environment variables are properly exported
+- Local changes are preserved during deployment
