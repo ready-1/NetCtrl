@@ -9,7 +9,13 @@ from .serializers import (
     SwitchSerializer,
     PortSerializer,
 )
-from django.views.generic import ListView, CreateView, UpdateView, DetailView
+from django.views.generic import (
+    ListView,
+    CreateView,
+    UpdateView,
+    DetailView,
+    DeleteView,
+)
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -100,3 +106,11 @@ class SwitchDetailView(LoginRequiredMixin, DetailView):
 
     model = Switch
     template_name = "switches/switch_detail.html"
+
+
+class SwitchDeleteView(LoginRequiredMixin, DeleteView):
+    """View for deleting a switch."""
+
+    model = Switch
+    template_name = "switches/switch_confirm_delete.html"
+    success_url = reverse_lazy("switches:switch-list")

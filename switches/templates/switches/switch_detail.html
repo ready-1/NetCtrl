@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">{{ object.name }}</h5>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <p class="mb-1"><strong>In-Band IP:</strong> {{ object.in_band_ip }}</p>
+                    <p class="mb-1"><strong>Out-Band IP:</strong> {{ object.out_band_ip }}</p>
+                    <p class="mb-1"><strong>Status:</strong> <span class="badge {% if object.status == 'up' %}bg-success{% elif object.status == 'down' %}bg-danger{% else %}bg-warning{% endif %}">{{ object.status|title }}</span></p>
+                    {% if object.last_seen %}
+                    <p class="mb-1"><strong>Last Seen:</strong> {{ object.last_seen }}</p>
+                    {% endif %}
+                </div>
+                <div class="col-md-6">
+                    <p class="mb-1"><strong>Created:</strong> {{ object.created_at }}</p>
+                    <p class="mb-1"><strong>Updated:</strong> {{ object.updated_at }}</p>
+                    {% if object.description %}
+                    <p class="mb-1"><strong>Description:</strong> {{ object.description }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="btn-group">
+                <a href="{% url 'switches:switch-edit' object.pk %}" class="btn btn-primary">Edit</a>
+                <a href="{% url 'switches:switch-delete' object.pk %}" class="btn btn-danger">Delete</a>
+                <a href="{% url 'switches:switch-list' %}" class="btn btn-secondary">Back to List</a>
+            </div>
+        </div>
+    </div>
+
+    {% if object.ports.exists %}
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Ports</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Status</th>
+                            <th>VLAN</th>
+                            <th>Speed</th>
+                            <th>Duplex</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for port in object.ports.all %}
+                        <tr>
+                            <td>{{ port.name }}</td>
+                            <td>
+                                <span class="badge {% if port.admin_status == 'up' %}bg-success{% else %}bg-danger{% endif %}">
+                                    {{ port.admin_status|title }}
+                                </span>
+                            </td>
+                            <td>{{ port.vlan }}</td>
+                            <td>{{ port.speed }}</td>
+                            <td>{{ port.duplex|title }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -11,6 +11,7 @@ urlpatterns = [
     path("", views.SwitchListView.as_view(), name="switch-list"),
     path("add/", views.SwitchCreateView.as_view(), name="switch-add"),
     path("<int:pk>/edit/", views.SwitchUpdateView.as_view(), name="switch-edit"),
+    path("<int:pk>/delete/", views.SwitchDeleteView.as_view(), name="switch-delete"),
     path("<int:pk>/", views.SwitchDetailView.as_view(), name="switch-detail"),
     # Authentication endpoints
     path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
