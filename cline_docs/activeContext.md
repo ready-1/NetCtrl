@@ -1,40 +1,44 @@
 # Active Development Context
 
 ## Current Work
-- Fixed URL prefix handling with /netctrl
-- Added superuser creation to deployment
-- Fixed static file serving
-- Fixed environment variable handling
+- Simplified navigation and UI
+- Improved switch management interface
+- Fixed data persistence in deployment
+- Optimized switch list layout
 
 ## Recent Changes
-1. URL Prefix:
-   - Added FORCE_SCRIPT_NAME in Django settings
-   - Updated Nginx configuration
-   - Fixed static/media URLs
-   - Updated templates to use {% static %}
+1. Navigation:
+   - Removed monitoring features
+   - Simplified menu structure
+   - Focused on switch management
+   - Removed notifications
 
-2. Environment:
-   - Improved file handling in deploy.sh
-   - Added proper environment exports
-   - Fixed database initialization
-   - Added better error handling
+2. Switch List:
+   - Smaller, more compact cards
+   - 3-column responsive grid
+   - Better information density
+   - Improved mobile layout
 
-3. Superuser:
-   - Added superuser creation to deploy.sh
-   - Set fixed credentials:
-     * Username: admin
-     * Email: admin@example.com
-     * Password: FuseFuse123!
-   - Added idempotent creation
+3. Deployment:
+   - Preserved database volume
+   - Maintained data across updates
+   - Fixed environment handling
+   - Added deployment notes
+
+4. Features Removed:
+   - Dashboard
+   - Network monitoring
+   - Status monitoring
+   - Active/inactive filters
 
 ## Next Steps
-1. Test deployment process end-to-end
-2. Verify superuser login works
-3. Verify static files are served correctly
-4. Document deployment process
+1. Test switch import with CSV
+2. Verify data persistence
+3. Test switch deletion
+4. Document simplified workflow
 
 ## Notes
-- Superuser is created after migrations
-- Static files use /netctrl prefix
-- Environment variables are properly exported
-- Local changes are preserved during deployment
+- Database persists across deployments
+- Focus on switch management only
+- Simplified user interface
+- Improved data density
