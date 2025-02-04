@@ -183,12 +183,18 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 
+# URL Configuration
+FORCE_SCRIPT_NAME = "/netctrl"
+
 # Static files (CSS, JavaScript, Images)
-STATIC_URL = os.environ.get("STATIC_URL", "static/")
+STATIC_URL = "/netctrl/static/"
 STATIC_ROOT = os.environ.get("STATIC_ROOT", BASE_DIR / "staticfiles")
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
+
+# Media files
+MEDIA_URL = "/netctrl/media/"
 
 # Whitenoise configuration
 STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
