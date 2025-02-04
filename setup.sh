@@ -68,10 +68,11 @@ if [ ! -d "/opt/netctrl/app/.git" ]; then
     secret_key=$(openssl rand -base64 64)
 
     # Update .env file with secure defaults
-    sed -i "s/DB_NAME=.*/DB_NAME=netctrl/" .env
-    sed -i "s/DB_USER=.*/DB_USER=netctrl/" .env
-    sed -i "s/DB_PASSWORD=.*/DB_PASSWORD=$db_password/" .env
-    sed -i "s/DB_HOST=.*/DB_HOST=db/" .env
+    sed -i "s/POSTGRES_DB=.*/POSTGRES_DB=netctrl/" .env
+    sed -i "s/POSTGRES_USER=.*/POSTGRES_USER=netctrl/" .env
+    sed -i "s/POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=$db_password/" .env
+    sed -i "s/POSTGRES_HOST=.*/POSTGRES_HOST=db/" .env
+    sed -i "s/POSTGRES_PORT=.*/POSTGRES_PORT=5432/" .env
     sed -i "s/DJANGO_SECRET_KEY=.*/DJANGO_SECRET_KEY=$secret_key/" .env
     sed -i "s/DJANGO_DEBUG=.*/DJANGO_DEBUG=False/" .env
     sed -i "s/DJANGO_ALLOWED_HOSTS=.*/DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1/" .env
