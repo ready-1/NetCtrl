@@ -21,9 +21,9 @@ services:
     expose:
       - "8000"
     volumes:
-      - /opt/netctrl/static:/app/staticfiles:rw
-      - /opt/netctrl/media:/app/media:rw
       - /opt/netctrl/app:/app:ro
+      - /opt/netctrl/static:/opt/static
+      - /opt/netctrl/media:/opt/media
     environment:
       - DJANGO_SETTINGS_MODULE=config.settings
       - POSTGRES_DB=${DB_NAME}
@@ -31,6 +31,8 @@ services:
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_HOST=db
       - REDIS_HOST=redis
+      - STATIC_ROOT=/opt/static
+      - MEDIA_ROOT=/opt/media
     depends_on:
       db:
         condition: service_healthy
