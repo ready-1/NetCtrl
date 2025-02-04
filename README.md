@@ -189,5 +189,18 @@ docker compose -f docker-compose.prod.yml logs web
 ├── app/              # Application code (Git repository)
 ├── static/           # Static files served by Nginx
 ├── media/           # Media files served by Nginx
+├── logs/            # Application and server logs
 └── certs/           # SSL certificates
+```
+
+### Log Files
+
+The application logs are stored in `/opt/netctrl/logs/netctrl.log`. You can view them using:
+```bash
+tail -f /opt/netctrl/logs/netctrl.log
+```
+
+For container logs, use:
+```bash
+docker compose -f docker-compose.prod.yml logs -f
 ```
