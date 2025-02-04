@@ -32,7 +32,17 @@ class Command(BaseCommand):
         """Handle the command execution."""
         try:
             with open(options["csv_file"]) as f:
-                reader = csv.DictReader(f)
+                # Use skipinitialspace to handle spaces after commas
+                reader = csv.DictReader(
+                    f,
+                    skipinitialspace=True,
+                    # Clean up fieldnames to remove spaces
+                    fieldnames=[name.strip() for name in next(csv.reader(f))],
+                )
+                # Reset file pointer after reading header
+                f.seek(0)
+                # Skip header row since we manually read it
+                next(f)
 
                 # Verify required columns
                 required_fields = ["name", "in_band_ip", "out_band_ip"]
@@ -50,6 +60,8 @@ class Command(BaseCommand):
                 error_count = 0
 
                 for row in reader:
+                    # Clean up values
+                    row = {k: v.strip() for k, v in row.items()}
                     try:
                         # Check if switch exists
                         switch, created = Switch.objects.get_or_create(
