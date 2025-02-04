@@ -6,14 +6,15 @@ set -e
 echo "Starting deployment..."
 
 # Check if setup.sh has been run
-if [ ! -d "/opt/netctrl" ]; then
-    echo "Error: /opt/netctrl directory not found."
+if [ ! -d "/opt/netctrl/app" ]; then
+    echo "Error: /opt/netctrl/app directory not found."
     echo "Please run setup.sh first to prepare the system."
     exit 1
 fi
 
-# Pull latest changes
-echo "Pulling latest changes..."
+# Change to app directory and update
+echo "Updating application..."
+cd /opt/netctrl/app
 git pull origin main
 
 # Create .env file if not exists
@@ -45,9 +46,9 @@ if [ ! -f .env ]; then
     sed -i "s/DJANGO_ALLOWED_HOSTS=.*/DJANGO_ALLOWED_HOSTS=$domain_name,localhost/" .env
 fi
 
-# Copy Nginx configuration
+# Copy and configure Nginx
 echo "Setting up Nginx configuration..."
-cp nginx.conf.example nginx.conf
+cp nginx.conf.example /opt/netctrl/app/nginx.conf
 
 # Stop any running containers
 echo "Stopping existing containers..."

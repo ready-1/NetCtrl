@@ -34,7 +34,7 @@ sudo usermod -aG docker $USER
 
 # Create required directories
 echo "Creating project directories..."
-sudo mkdir -p /opt/netctrl/{static,media,certs}
+sudo mkdir -p /opt/netctrl/{app,static,media,certs}
 sudo chown -R $USER:$USER /opt/netctrl
 
 # Generate self-signed SSL certificate (for development)
@@ -43,6 +43,13 @@ sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
     -keyout /opt/netctrl/certs/privkey.pem \
     -out /opt/netctrl/certs/fullchain.pem \
     -subj "/C=US/ST=State/L=City/O=Organization/CN=localhost"
+
+# Clone repository if not exists
+if [ ! -d "/opt/netctrl/app/.git" ]; then
+    echo "Cloning repository..."
+    git clone "$PWD" /opt/netctrl/app
+    cd /opt/netctrl/app
+fi
 
 echo "Setup completed successfully!"
 echo "Please log out and log back in for docker group membership to take effect."

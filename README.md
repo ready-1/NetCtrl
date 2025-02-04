@@ -78,11 +78,9 @@ poetry run flake8
 
 ### Initial Server Setup
 
-1. Install Git and clone the repository:
+1. Clone the repository:
 ```bash
-sudo apt-get update
-sudo apt-get install -y git
-git clone <repository-url>
+git clone <repository-url> netctrl
 cd netctrl
 ```
 
@@ -93,8 +91,9 @@ chmod +x setup.sh deploy.sh
 ```
 The setup script will:
 - Update system packages
-- Install Docker and Docker Compose
-- Create required directories
+- Install Docker Engine with Compose
+- Create required directories in /opt/netctrl
+- Clone repository to /opt/netctrl/app
 - Generate SSL certificate
 - Configure system permissions
 
@@ -108,7 +107,7 @@ exit
 
 1. Run the deployment script:
 ```bash
-cd netctrl
+cd /opt/netctrl/app
 ./deploy.sh
 ```
 The script will:
@@ -168,3 +167,13 @@ docker compose -f docker-compose.prod.yml logs web
 - 20GB disk space recommended
 - Git (installed automatically)
 - Docker Engine 24.0+ (installed automatically)
+
+### Directory Structure
+
+```
+/opt/netctrl/
+├── app/              # Application code (Git repository)
+├── static/           # Static files served by Nginx
+├── media/           # Media files served by Nginx
+└── certs/           # SSL certificates
+```
