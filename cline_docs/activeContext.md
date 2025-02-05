@@ -1,27 +1,23 @@
-# Active Context
+# Active Development Context
 
 ## Current Task
-Implementing and improving switch authentication system with token management.
+Standardizing error messages in the switch status monitoring system to be more concise and consistent.
 
 ## Recent Changes
-1. Fixed SSL/TLS issues in switch authentication:
-   - Using SSLv23 protocol for flexible negotiation
-   - Proper error handling for both JSON and non-JSON responses
-   - Detailed logging for troubleshooting
-
-2. Implemented comprehensive token management:
-   - Token validation with 15-minute expiration buffer
-   - Automatic token refresh mechanism
-   - Background thread for token maintenance
-   - Error handling and logging
-
-3. Added TokenRefreshThread in switches/apps.py:
-   - Runs every 5 minutes in production
-   - Automatically refreshes tokens nearing expiration
-   - Daemon thread for clean application shutdown
+- Modified monitor_switch_status.py to use standardized error messages:
+  - TCP Connection failures: "No response"
+  - SSL certificate issues: "SSL"
+  - Failed authentication: "Auth failed"
+  - Connection errors: "No response"
+  - Timeouts: "Timeout"
+  - Unexpected errors: "Error"
 
 ## Next Steps
-1. Test token refresh mechanism in production environment
-2. Monitor token refresh logs for any issues
-3. Consider adding metrics/alerts for failed token refreshes
-4. Document API endpoints that require authentication
+- Commit the changes to the monitoring system
+- Verify the error messages are displaying correctly in the UI
+- Consider any other areas where error messages could be standardized
+
+## Technical Notes
+- Error messages are kept concise for better UI readability
+- Consistent messaging helps users quickly understand the status
+- The monitoring system checks both TCP connectivity and authentication
