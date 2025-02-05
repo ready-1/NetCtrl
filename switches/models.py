@@ -50,10 +50,42 @@ class Switch(models.Model):
     username = models.CharField(max_length=255)
     password = models.CharField(max_length=255)
     description = models.TextField(blank=True)
-    status = models.CharField(
-        max_length=20, choices=STATUS_CHOICES, default=STATUS_UNKNOWN
+    # Individual interface status fields
+    in_band_status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default=STATUS_UNKNOWN,
+        verbose_name="In-Band Status",
+        help_text="Status of the in-band management interface",
     )
-    last_seen = models.DateTimeField(null=True, blank=True)
+    out_band_status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default=STATUS_UNKNOWN,
+        verbose_name="Out-Band Status",
+        help_text="Status of the out-of-band management interface",
+    )
+    in_band_last_seen = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name="In-Band Last Seen",
+        help_text="Last successful connection to in-band interface",
+    )
+    out_band_last_seen = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name="Out-Band Last Seen",
+        help_text="Last successful connection to out-band interface",
+    )
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default=STATUS_UNKNOWN,
+        help_text="Aggregate status based on both interfaces",
+    )
+    status_details = models.JSONField(
+        default=dict, blank=True, help_text="Detailed status information and history"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -77,22 +109,78 @@ class Switch(models.Model):
         """Return a string representation of the switch."""
         return f"{self.name} ({self.in_band_ip})"
 
-    def update_status(self, new_status):
-        """Update switch status and last seen time."""
-        old_status = self.status
-        self.status = new_status
-        self.last_seen = timezone.now()
-        self.save(update_fields=["status", "last_seen"])
+    def update_interface_status(self, interface, new_status):
+        """Update status for a specific interface (in_band or out_band)."""
+        if interface not in ["in_band", "out_band"]:
+            raise ValueError("Interface must be 'in_band' or 'out_band'")
+
+        old_status = getattr(self, f"{interface}_status")
+        setattr(self, f"{interface}_status", new_status)
+        setattr(
+            self,
+            f"{interface}_last_seen",
+            timezone.now() if new_status == self.STATUS_UP else None,
+        )
+
+        # Update aggregate status
+        if (
+            self.in_band_status == self.STATUS_UP
+            and self.out_band_status == self.STATUS_UP
+        ):
+            self.status = self.STATUS_UP
+        elif (
+            self.in_band_status == self.STATUS_DOWN
+            and self.out_band_status == self.STATUS_DOWN
+        ):
+            self.status = self.STATUS_DOWN
+        else:
+            self.status = self.STATUS_DEGRADED
+
+        # Update status details
+        current_time = timezone.now().isoformat()
+        if "history" not in self.status_details:
+            self.status_details["history"] = []
+
+        self.status_details["history"].append(
+            {
+                "timestamp": current_time,
+                "interface": interface,
+                "old_status": old_status,
+                "new_status": new_status,
+                "aggregate_status": self.status,
+            }
+        )
+
+        # Keep only last 5 status changes
+        if len(self.status_details["history"]) > 5:
+            self.status_details["history"] = self.status_details["history"][-5:]
+
+        update_fields = [
+            f"{interface}_status",
+            f"{interface}_last_seen",
+            "status",
+            "status_details",
+        ]
+        self.save(update_fields=update_fields)
         return old_status
+
+    def is_interface_online(self, interface):
+        """Check if a specific interface is online."""
+        if interface not in ["in_band", "out_band"]:
+            raise ValueError("Interface must be 'in_band' or 'out_band'")
+
+        last_seen = getattr(self, f"{interface}_last_seen")
+        if not last_seen:
+            return False
+
+        return (timezone.now() - last_seen).total_seconds() < 30
 
     @property
     def is_online(self):
-        """Check if switch is considered online based on last_seen time."""
-        if not self.last_seen:
-            return False
-        return (
-            timezone.now() - self.last_seen
-        ).total_seconds() < 30  # 30 seconds threshold
+        """Check if either interface is online."""
+        return self.is_interface_online("in_band") or self.is_interface_online(
+            "out_band"
+        )
 
 
 class Port(models.Model):

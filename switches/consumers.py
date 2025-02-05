@@ -1,114 +1,66 @@
-"""WebSocket consumers for switch status updates."""
+"""WebSocket consumers for the switches app."""
 
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
-from django.utils import timezone
 from .models import Switch
-from core.models import Notification
-from core.utils.notifications import notify_switch_status_change
 
 
 class SwitchStatusConsumer(AsyncWebsocketConsumer):
-    """Consumer for handling switch status updates."""
+    """Consumer for switch status updates."""
 
     async def connect(self):
         """Handle WebSocket connection."""
-        # Add to switch status group
+        # Add to the switch_status group
         await self.channel_layer.group_add("switch_status", self.channel_name)
         await self.accept()
 
     async def disconnect(self, close_code):
         """Handle WebSocket disconnection."""
-        # Remove from switch status group
+        # Remove from the switch_status group
         await self.channel_layer.group_discard("switch_status", self.channel_name)
 
     async def receive(self, text_data):
-        """Handle incoming WebSocket messages."""
-        try:
-            data = json.loads(text_data)
-            message_type = data.get("type")
-            payload = data.get("payload", {})
+        """Handle incoming WebSocket data."""
+        # Currently we don't expect to receive any data
+        pass
 
-            if message_type == "switch_status":
-                await self.handle_switch_status(payload)
-            elif message_type == "port_status":
-                await self.handle_port_status(payload)
-
-        except json.JSONDecodeError:
-            await self.send(
-                text_data=json.dumps(
-                    {"type": "error", "message": "Invalid JSON format"}
-                )
-            )
-        except Exception as e:
-            await self.send(text_data=json.dumps({"type": "error", "message": str(e)}))
-
-    async def handle_switch_status(self, payload):
+    async def switch_status_update(self, event):
         """Handle switch status updates."""
-        switch_id = payload.get("id")
-        new_status = payload.get("status")
-
-        if not all([switch_id, new_status]):
-            return
-
-        # Update switch status in database
-        switch, old_status = await self.update_switch_status(switch_id, new_status)
-
-        if switch and old_status != new_status:
-            # Create notification for status change
-            await database_sync_to_async(notify_switch_status_change)(
-                switch=switch, old_status=old_status, new_status=new_status
-            )
-
-            # Broadcast status change to all connected clients
-            await self.channel_layer.group_send(
-                "switch_status",
+        # Send status update to WebSocket
+        await self.send(
+            text_data=json.dumps(
                 {
-                    "type": "switch_update",
-                    "payload": {
-                        "id": switch_id,
-                        "status": new_status,
-                        "lastSeen": timezone.now().isoformat(),
-                    },
-                },
+                    "type": "switch.status_update",
+                    "switch_id": event["switch_id"],
+                    "data": event["data"],
+                }
             )
-
-    async def handle_port_status(self, payload):
-        """Handle port status updates."""
-        switch_id = payload.get("switch_id")
-        port_id = payload.get("port_id")
-        status = payload.get("status")
-
-        if not all([switch_id, port_id, status]):
-            return
-
-        # Broadcast port status to all connected clients
-        await self.channel_layer.group_send(
-            "switch_status", {"type": "port_update", "payload": payload}
         )
 
     @database_sync_to_async
-    def update_switch_status(self, switch_id, new_status):
-        """Update switch status in database."""
+    def get_switch_status(self, switch_id):
+        """Get current status for a switch."""
         try:
-            switch = Switch.objects.get(id=switch_id)
-            old_status = switch.status
-            switch.status = new_status
-            switch.last_seen = timezone.now()
-            switch.save(update_fields=["status", "last_seen"])
-            return switch, old_status
+            switch = Switch.objects.get(pk=switch_id)
+            return {
+                "overall_status": switch.status,
+                "in_band": {
+                    "status": switch.in_band_status,
+                    "last_seen": (
+                        switch.in_band_last_seen.isoformat()
+                        if switch.in_band_last_seen
+                        else None
+                    ),
+                },
+                "out_band": {
+                    "status": switch.out_band_status,
+                    "last_seen": (
+                        switch.out_band_last_seen.isoformat()
+                        if switch.out_band_last_seen
+                        else None
+                    ),
+                },
+            }
         except Switch.DoesNotExist:
-            return None, None
-
-    async def switch_update(self, event):
-        """Handle switch update messages."""
-        await self.send(
-            text_data=json.dumps({"type": "switch_update", "payload": event["payload"]})
-        )
-
-    async def port_update(self, event):
-        """Handle port update messages."""
-        await self.send(
-            text_data=json.dumps({"type": "port_update", "payload": event["payload"]})
-        )
+            return None
