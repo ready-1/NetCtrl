@@ -10,12 +10,21 @@ import requests
 from requests.exceptions import RequestException, SSLError
 import logging
 from urllib3.exceptions import InsecureRequestWarning
-import time
 
 # Suppress only the single InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
+# Set up logging
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)  # Set to DEBUG for more verbose output
+
+# Add console handler if not already present
+if not logger.handlers:
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.DEBUG)
+    formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+    console_handler.setFormatter(formatter)
+    logger.addHandler(console_handler)
 
 
 class StatusMonitorThread(threading.Thread):
@@ -32,6 +41,7 @@ class StatusMonitorThread(threading.Thread):
         """Attempt to authenticate with the switch."""
         try:
             start_time = time.time()
+            logger.debug(f"Attempting authentication for switch {switch.name} at {ip}")
             response = requests.post(
                 f"https://{ip}:49151/api/v1/auth",
                 json={"username": switch.username, "password": switch.password},
@@ -43,17 +53,26 @@ class StatusMonitorThread(threading.Thread):
                 },
             )
             response_time = (time.time() - start_time) * 1000  # Convert to milliseconds
+            logger.debug(
+                f"Authentication response for {switch.name}: {response.status_code}"
+            )
 
             if response.status_code == 200:
                 return True, response_time, None
             else:
-                return (
-                    False,
-                    response_time,
-                    f"Authentication failed: {response.status_code}",
-                )
+                return False, response_time, "Auth failed"
+        except requests.exceptions.SSLError as e:
+            logger.debug(f"Authentication error for {switch.name}: {str(e)}")
+            return False, None, "SSL"
+        except requests.exceptions.ConnectionError as e:
+            logger.debug(f"Authentication error for {switch.name}: {str(e)}")
+            return False, None, "No response"
+        except requests.exceptions.Timeout as e:
+            logger.debug(f"Authentication error for {switch.name}: {str(e)}")
+            return False, None, "Timeout"
         except Exception as e:
-            return False, None, str(e)
+            logger.debug(f"Authentication error for {switch.name}: {str(e)}")
+            return False, None, "Error"
 
     def check_interface(self, switch, interface):
         """Check status of a specific interface."""
@@ -62,6 +81,8 @@ class StatusMonitorThread(threading.Thread):
         error_detail = ""
         response_time = None
 
+        logger.debug(f"Checking {interface} interface for switch {switch.name} ({ip})")
+
         try:
             # First try a simple TCP connection to port 49151
             start_time = time.time()
@@ -69,11 +90,15 @@ class StatusMonitorThread(threading.Thread):
             sock.settimeout(3)  # 3 second timeout for initial connection
 
             try:
+                logger.debug(f"Attempting TCP connection to {ip}:49151")
                 sock.connect((ip, 49151))
                 sock.close()
                 tcp_response_time = (
                     time.time() - start_time
                 ) * 1000  # Convert to milliseconds
+                logger.debug(
+                    f"TCP connection successful, response time: {tcp_response_time:.2f}ms"
+                )
 
                 # If TCP succeeds, try authentication
                 auth_success, auth_response_time, auth_error = self.authenticate_switch(
@@ -107,33 +132,38 @@ class StatusMonitorThread(threading.Thread):
             except (socket.timeout, socket.error) as e:
                 # If TCP fails, mark as DOWN
                 error_type = Switch.ERROR_NO_RESPONSE
-                error_detail = str(e)
+                error_detail = "No response"
                 old_status = switch.update_interface_status(
                     interface,
                     Switch.STATUS_DOWN,
                     error_type=error_type,
                     error_detail=error_detail,
                 )
-                logger.error(
-                    f"Switch {switch.name} {interface} is unreachable: {error_detail}"
-                )
+                logger.error(f"Switch {switch.name} {interface} is down")
         except Exception as e:
             error_type = Switch.ERROR_API
-            error_detail = str(e)
+            error_detail = "Error"
             old_status = switch.update_interface_status(
                 interface,
                 Switch.STATUS_DOWN,
                 error_type=error_type,
                 error_detail=error_detail,
             )
-            logger.error(
-                f"Unexpected error checking {switch.name} {interface}: {error_detail}"
-            )
+            logger.error(f"Error checking {switch.name} {interface}")
+
+        logger.debug(f"Status check complete for {switch.name} {interface}")
+        logger.debug(f"Status: {getattr(switch, f'{interface}_status')}")
+        logger.debug(f"Error: {getattr(switch, f'{interface}_error')}")
+        logger.debug(f"Error Detail: {getattr(switch, f'{interface}_error_detail')}")
+        logger.debug(f"Response Time: {getattr(switch, f'{interface}_response_time')}")
+        logger.debug(f"Last Seen: {getattr(switch, f'{interface}_last_seen')}")
 
     def check_all_switches(self):
         """Check status of all switches."""
         switches = Switch.objects.all()
+        logger.debug(f"Found {len(switches)} switches to check")
         for switch in switches:
+            logger.debug(f"Starting check for switch {switch.name}")
             # Check both interfaces in parallel using threads
             in_band_thread = threading.Thread(
                 target=self.check_interface, args=(switch, "in_band")
@@ -147,6 +177,7 @@ class StatusMonitorThread(threading.Thread):
 
             in_band_thread.join()
             out_band_thread.join()
+            logger.debug(f"Completed check for switch {switch.name}")
 
     def run(self):
         """Run the monitoring thread."""
@@ -158,6 +189,7 @@ class StatusMonitorThread(threading.Thread):
                 logger.error(f"Error in status monitoring: {str(e)}")
             finally:
                 # Wait for the specified interval or until stopped
+                logger.debug(f"Waiting {self.interval} seconds before next check")
                 self.stop_event.wait(self.interval)
 
         logger.info("Switch status monitoring stopped")
