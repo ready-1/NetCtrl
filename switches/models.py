@@ -24,6 +24,16 @@ class Switch(models.Model):
         (STATUS_UNKNOWN, "Unknown"),
     ]
 
+    AUTH_STATUS_AUTHENTICATED = "authenticated"
+    AUTH_STATUS_UNAUTHENTICATED = "unauthenticated"
+    AUTH_STATUS_ERROR = "error"
+
+    AUTH_STATUS_CHOICES = [
+        (AUTH_STATUS_AUTHENTICATED, "Authenticated"),
+        (AUTH_STATUS_UNAUTHENTICATED, "Unauthenticated"),
+        (AUTH_STATUS_ERROR, "Error"),
+    ]
+
     name = models.CharField(max_length=255)
     in_band_ip = models.GenericIPAddressField(
         protocol="IPv4",
@@ -46,6 +56,16 @@ class Switch(models.Model):
     last_seen = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    # Authentication fields
+    auth_token = models.CharField(max_length=255, blank=True)
+    token_expires = models.DateTimeField(null=True, blank=True)
+    auth_status = models.CharField(
+        max_length=20,
+        choices=AUTH_STATUS_CHOICES,
+        default=AUTH_STATUS_UNAUTHENTICATED,
+        help_text="Current authentication status with the switch",
+    )
 
     class Meta:
         """Meta class for Switch model."""

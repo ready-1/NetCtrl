@@ -17,7 +17,18 @@
         <div class="col">
           <div class="nc-card h-100">
             <div class="nc-card-body">
-              <h5 class="nc-card-title">{{ switch.name }}</h5>
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="nc-card-title mb-0">{{ switch.name }}</h5>
+                <div class="auth-status">
+                  {% if switch.auth_status == 'authenticated' %}
+                    <i class="bi bi-lock-fill text-success" title="Authenticated until {{ switch.token_expires|date:'Y-m-d H:i' }}"></i>
+                  {% elif switch.auth_status == 'error' %}
+                    <i class="bi bi-exclamation-triangle-fill text-warning" title="Authentication error"></i>
+                  {% else %}
+                    <i class="bi bi-unlock-fill text-danger" title="Not authenticated"></i>
+                  {% endif %}
+                </div>
+              </div>
               <div class="status-badge mb-3">
                 <span class="badge {% if switch.status == 'active' %}bg-success{% else %}bg-danger{% endif %}">
                   {{ switch.status|title }}
