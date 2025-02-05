@@ -47,19 +47,26 @@ console.log('Loading switch list page...');
                 </div>
               </div>
               <div class="status-badge mb-3">
-                <span class="badge {% if switch.status == 'up' %}bg-success{% elif switch.status == 'down' %}bg-danger{% else %}bg-warning{% endif %}">
+                <span class="badge {% if switch.status == 'up' %}bg-success{% elif switch.status == 'down' %}bg-danger{% else %}bg-warning{% endif %}"
+                      title="{% if switch.in_band_error != 'none' %}In-Band: {{ switch.in_band_error_detail }}{% endif %}{% if switch.out_band_error != 'none' %}{% if switch.in_band_error != 'none' %}&#13;{% endif %}Out-Band: {{ switch.out_band_error_detail }}{% endif %}">
                   {{ switch.status|title }}
                 </span>
                 <small class="text-muted d-block mt-1">
-                  In-Band: {% if switch.in_band_last_seen %}{{ switch.in_band_last_seen|timesince }} ago{% else %}Never{% endif %}<br>
+                  In-Band: {% if switch.in_band_last_seen %}{{ switch.in_band_last_seen|timesince }} ago{% else %}Never{% endif %}
+                  {% if switch.in_band_error != 'none' %}({{ switch.in_band_error_detail }}){% elif switch.in_band_response_time %}({{ switch.in_band_response_time|floatformat:1 }}ms){% endif %}<br>
                   Out-Band: {% if switch.out_band_last_seen %}{{ switch.out_band_last_seen|timesince }} ago{% else %}Never{% endif %}
+                  {% if switch.out_band_error != 'none' %}({{ switch.out_band_error_detail }}){% elif switch.out_band_response_time %}({{ switch.out_band_response_time|floatformat:1 }}ms){% endif %}
                 </small>
               </div>
               <div class="d-flex gap-2 mb-3">
-                <a href="http://{{ switch.in_band_ip }}:49151" target="_blank" class="nc-btn nc-btn-primary flex-grow-1 {% if switch.in_band_status != 'up' %}disabled{% endif %}">
+                <a href="http://{{ switch.in_band_ip }}:49151" target="_blank"
+                   class="nc-btn {% if switch.in_band_status == 'up' %}nc-btn-primary{% elif switch.in_band_status == 'degraded' %}nc-btn-warning{% else %}nc-btn-secondary disabled{% endif %} flex-grow-1"
+                   title="In-Band Interface{% if switch.in_band_error != 'none' %} - {{ switch.in_band_error_detail }}{% elif switch.in_band_response_time %} - Response time: {{ switch.in_band_response_time|floatformat:1 }}ms{% endif %}">
                   <i class="bi bi-box-arrow-up-right"></i> in band
                 </a>
-                <a href="http://{{ switch.out_band_ip }}:49151" target="_blank" class="nc-btn nc-btn-secondary flex-grow-1 {% if switch.out_band_status != 'up' %}disabled{% endif %}">
+                <a href="http://{{ switch.out_band_ip }}:49151" target="_blank"
+                   class="nc-btn {% if switch.out_band_status == 'up' %}nc-btn-primary{% elif switch.out_band_status == 'degraded' %}nc-btn-warning{% else %}nc-btn-secondary disabled{% endif %} flex-grow-1"
+                   title="Out-Band Interface{% if switch.out_band_error != 'none' %} - {{ switch.out_band_error_detail }}{% elif switch.out_band_response_time %} - Response time: {{ switch.out_band_response_time|floatformat:1 }}ms{% endif %}">
                   <i class="bi bi-box-arrow-up-right"></i> out band
                 </a>
                 <button type="button" class="nc-btn nc-btn-info btn-icon" data-bs-toggle="modal" data-bs-target="#statusModal{{ switch.pk }}" title="Status Details">
@@ -79,16 +86,28 @@ console.log('Loading switch list page...');
                       <div class="mb-3">
                         <h6>Current Status:</h6>
                         <p>
-                          In-Band: <span class="badge in-band-status {% if switch.in_band_status == 'up' %}bg-success{% elif switch.in_band_status == 'down' %}bg-danger{% else %}bg-warning{% endif %}">{{ switch.in_band_status|title }}</span><br>
-                          Out-Band: <span class="badge out-band-status {% if switch.out_band_status == 'up' %}bg-success{% elif switch.out_band_status == 'down' %}bg-danger{% else %}bg-warning{% endif %}">{{ switch.out_band_status|title }}</span>
+                          In-Band: <span class="badge in-band-status {% if switch.in_band_status == 'up' %}bg-success{% elif switch.in_band_status == 'down' %}bg-danger{% else %}bg-warning{% endif %}"
+                                       title="{% if switch.in_band_error != 'none' %}{{ switch.in_band_error_detail }}{% elif switch.in_band_response_time %}Response time: {{ switch.in_band_response_time|floatformat:1 }}ms{% endif %}">
+                            {{ switch.in_band_status|title }}
+                          </span><br>
+                          Out-Band: <span class="badge out-band-status {% if switch.out_band_status == 'up' %}bg-success{% elif switch.out_band_status == 'down' %}bg-danger{% else %}bg-warning{% endif %}"
+                                        title="{% if switch.out_band_error != 'none' %}{{ switch.out_band_error_detail }}{% elif switch.out_band_response_time %}Response time: {{ switch.out_band_response_time|floatformat:1 }}ms{% endif %}">
+                            {{ switch.out_band_status|title }}
+                          </span>
                         </p>
                       </div>
 
                       <div class="mb-3">
                         <h6>Last Seen:</h6>
                         <p>
-                          In-Band: <span class="in-band-last-seen">{% if switch.in_band_last_seen %}{{ switch.in_band_last_seen|timesince }} ago{% else %}Never{% endif %}</span><br>
-                          Out-Band: <span class="out-band-last-seen">{% if switch.out_band_last_seen %}{{ switch.out_band_last_seen|timesince }} ago{% else %}Never{% endif %}</span>
+                          In-Band: <span class="in-band-last-seen">
+                            {% if switch.in_band_last_seen %}{{ switch.in_band_last_seen|timesince }} ago{% else %}Never{% endif %}
+                            {% if switch.in_band_error != 'none' %}({{ switch.in_band_error_detail }}){% elif switch.in_band_response_time %}({{ switch.in_band_response_time|floatformat:1 }}ms){% endif %}
+                          </span><br>
+                          Out-Band: <span class="out-band-last-seen">
+                            {% if switch.out_band_last_seen %}{{ switch.out_band_last_seen|timesince }} ago{% else %}Never{% endif %}
+                            {% if switch.out_band_error != 'none' %}({{ switch.out_band_error_detail }}){% elif switch.out_band_response_time %}({{ switch.out_band_response_time|floatformat:1 }}ms){% endif %}
+                          </span>
                         </p>
                       </div>
 
@@ -101,6 +120,7 @@ console.log('Loading switch list page...');
                             <small>
                               {{ event.timestamp|slice:":19"|date:"Y-m-d H:i:s" }} -
                               {{ event.interface|title }}: {{ event.old_status|title }} → {{ event.new_status|title }}
+                              {% if event.error_type != 'none' %}({{ event.error_detail }}){% elif event.response_time %}({{ event.response_time|floatformat:1 }}ms){% endif %}
                             </small>
                           </li>
                         {% endfor %}

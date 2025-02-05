@@ -20,10 +20,10 @@ from django.views.generic import (
 )
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import JsonResponse
 
 
 @login_required
+@api_view(["GET"])
 def switch_status(request):
     """API endpoint for getting switch status."""
     switches = Switch.objects.all()
@@ -46,10 +46,16 @@ def switch_status(request):
                     if switch.out_band_last_seen
                     else None
                 ),
+                "in_band_error": switch.in_band_error,
+                "out_band_error": switch.out_band_error,
+                "in_band_error_detail": switch.in_band_error_detail,
+                "out_band_error_detail": switch.out_band_error_detail,
+                "in_band_response_time": switch.in_band_response_time,
+                "out_band_response_time": switch.out_band_response_time,
                 "status_details": switch.status_details,
             }
         )
-    return JsonResponse(data, safe=False)
+    return Response(data)
 
 
 class SwitchListView(LoginRequiredMixin, ListView):

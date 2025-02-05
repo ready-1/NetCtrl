@@ -24,6 +24,20 @@ class Switch(models.Model):
         (STATUS_UNKNOWN, "Unknown"),
     ]
 
+    ERROR_AUTH_FAILED = "auth_failed"
+    ERROR_SSL = "ssl_error"
+    ERROR_NO_RESPONSE = "no_response"
+    ERROR_API = "api_error"
+    ERROR_NONE = "none"
+
+    ERROR_CHOICES = [
+        (ERROR_AUTH_FAILED, "Authentication failed"),
+        (ERROR_SSL, "SSL certificate error"),
+        (ERROR_NO_RESPONSE, "No response from switch"),
+        (ERROR_API, "API error"),
+        (ERROR_NONE, "No error"),
+    ]
+
     AUTH_STATUS_AUTHENTICATED = "authenticated"
     AUTH_STATUS_UNAUTHENTICATED = "unauthenticated"
     AUTH_STATUS_ERROR = "error"
@@ -50,6 +64,7 @@ class Switch(models.Model):
     username = models.CharField(max_length=255)
     password = models.CharField(max_length=255)
     description = models.TextField(blank=True)
+
     # Individual interface status fields
     in_band_status = models.CharField(
         max_length=20,
@@ -77,6 +92,44 @@ class Switch(models.Model):
         verbose_name="Out-Band Last Seen",
         help_text="Last successful connection to out-band interface",
     )
+    in_band_error = models.CharField(
+        max_length=20,
+        choices=ERROR_CHOICES,
+        default=ERROR_NONE,
+        verbose_name="In-Band Error",
+        help_text="Last error encountered on in-band interface",
+    )
+    out_band_error = models.CharField(
+        max_length=20,
+        choices=ERROR_CHOICES,
+        default=ERROR_NONE,
+        verbose_name="Out-Band Error",
+        help_text="Last error encountered on out-band interface",
+    )
+    in_band_error_detail = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name="In-Band Error Detail",
+        help_text="Detailed error message for in-band interface",
+    )
+    out_band_error_detail = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name="Out-Band Error Detail",
+        help_text="Detailed error message for out-band interface",
+    )
+    in_band_response_time = models.FloatField(
+        null=True,
+        blank=True,
+        verbose_name="In-Band Response Time",
+        help_text="Last response time in milliseconds",
+    )
+    out_band_response_time = models.FloatField(
+        null=True,
+        blank=True,
+        verbose_name="Out-Band Response Time",
+        help_text="Last response time in milliseconds",
+    )
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
@@ -84,7 +137,9 @@ class Switch(models.Model):
         help_text="Aggregate status based on both interfaces",
     )
     status_details = models.JSONField(
-        default=dict, blank=True, help_text="Detailed status information and history"
+        default=dict,
+        blank=True,
+        help_text="Detailed status information and history",
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -109,18 +164,31 @@ class Switch(models.Model):
         """Return a string representation of the switch."""
         return f"{self.name} ({self.in_band_ip})"
 
-    def update_interface_status(self, interface, new_status):
+    def update_interface_status(
+        self,
+        interface,
+        new_status,
+        error_type=ERROR_NONE,
+        error_detail="",
+        response_time=None,
+    ):
         """Update status for a specific interface (in_band or out_band)."""
         if interface not in ["in_band", "out_band"]:
             raise ValueError("Interface must be 'in_band' or 'out_band'")
 
+        # Store old status for history
         old_status = getattr(self, f"{interface}_status")
+
+        # Update status fields
         setattr(self, f"{interface}_status", new_status)
-        setattr(
-            self,
-            f"{interface}_last_seen",
-            timezone.now() if new_status == self.STATUS_UP else None,
-        )
+        setattr(self, f"{interface}_error", error_type)
+        setattr(self, f"{interface}_error_detail", error_detail)
+        if response_time is not None:
+            setattr(self, f"{interface}_response_time", response_time)
+
+        # Update last seen timestamp for successful connections
+        if new_status == self.STATUS_UP:
+            setattr(self, f"{interface}_last_seen", timezone.now())
 
         # Update aggregate status
         if (
@@ -136,31 +204,43 @@ class Switch(models.Model):
         else:
             self.status = self.STATUS_DEGRADED
 
-        # Update status details
+        # Update status history
         current_time = timezone.now().isoformat()
         if "history" not in self.status_details:
             self.status_details["history"] = []
 
-        self.status_details["history"].append(
-            {
-                "timestamp": current_time,
-                "interface": interface,
-                "old_status": old_status,
-                "new_status": new_status,
-                "aggregate_status": self.status,
-            }
-        )
+        history_entry = {
+            "timestamp": current_time,
+            "interface": interface,
+            "old_status": old_status,
+            "new_status": new_status,
+            "aggregate_status": self.status,
+            "error_type": error_type,
+            "error_detail": error_detail,
+        }
+        if response_time is not None:
+            history_entry["response_time"] = response_time
+
+        self.status_details["history"].append(history_entry)
 
         # Keep only last 5 status changes
         if len(self.status_details["history"]) > 5:
             self.status_details["history"] = self.status_details["history"][-5:]
 
+        # Prepare fields to update
         update_fields = [
             f"{interface}_status",
-            f"{interface}_last_seen",
+            f"{interface}_error",
+            f"{interface}_error_detail",
             "status",
             "status_details",
         ]
+
+        if new_status == self.STATUS_UP:
+            update_fields.append(f"{interface}_last_seen")
+        if response_time is not None:
+            update_fields.append(f"{interface}_response_time")
+
         self.save(update_fields=update_fields)
         return old_status
 

@@ -1,6 +1,4 @@
 // Switch status polling
-alert('Switch status script loaded!'); // Test alert
-
 console.log('=== Switch Status Script Loaded ===');
 console.log('Script version: 1.0.0');
 console.log('Initializing status polling...');
@@ -56,11 +54,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     status: data.status,
                     in_band: {
                         status: data.in_band_status,
-                        last_seen: data.in_band_last_seen
+                        last_seen: data.in_band_last_seen,
+                        error: data.in_band_error,
+                        error_detail: data.in_band_error_detail,
+                        response_time: data.in_band_response_time
                     },
                     out_band: {
                         status: data.out_band_status,
-                        last_seen: data.out_band_last_seen
+                        last_seen: data.out_band_last_seen,
+                        error: data.out_band_error,
+                        error_detail: data.out_band_error_detail,
+                        response_time: data.out_band_response_time
                     }
                 });
             });
@@ -91,12 +95,22 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log(`Updated status badge: ${oldClass} -> ${statusBadge.className}`);
         }
 
-        // Update last seen timestamps
+        // Update last seen timestamps and error details
         const lastSeenText = card.querySelector('.status-badge small');
         if (lastSeenText) {
+            const inBandError = data.in_band.error !== 'none' ?
+                `(${data.in_band.error_detail})` :
+                data.in_band.response_time ?
+                    `(${data.in_band.response_time.toFixed(1)}ms)` : '';
+
+            const outBandError = data.out_band.error !== 'none' ?
+                `(${data.out_band.error_detail})` :
+                data.out_band.response_time ?
+                    `(${data.out_band.response_time.toFixed(1)}ms)` : '';
+
             const newText = `
-                In-Band: ${formatLastSeen(data.in_band.last_seen)}<br>
-                Out-Band: ${formatLastSeen(data.out_band.last_seen)}
+                In-Band: ${formatLastSeen(data.in_band.last_seen)} ${inBandError}<br>
+                Out-Band: ${formatLastSeen(data.out_band.last_seen)} ${outBandError}
             `;
             lastSeenText.innerHTML = newText;
             console.log('Updated last seen text:', newText);
@@ -106,22 +120,38 @@ document.addEventListener('DOMContentLoaded', function() {
         const inBandBtn = card.querySelector('a[href*="in_band"]');
         if (inBandBtn) {
             const wasEnabled = !inBandBtn.classList.contains('disabled');
-            const shouldBeEnabled = data.in_band.status === 'up';
+            const shouldBeEnabled = data.in_band.status !== 'down';
             if (wasEnabled !== shouldBeEnabled) {
                 console.log(`Updating in-band button state: ${wasEnabled} -> ${shouldBeEnabled}`);
-                updateButtonState(inBandBtn, shouldBeEnabled);
+                updateButtonState(inBandBtn, shouldBeEnabled, data.in_band.status);
             }
+            // Update tooltip
+            let tooltip = `In-Band Interface`;
+            if (data.in_band.error !== 'none') {
+                tooltip += ` - ${data.in_band.error_detail}`;
+            } else if (data.in_band.response_time) {
+                tooltip += ` - Response time: ${data.in_band.response_time.toFixed(1)}ms`;
+            }
+            inBandBtn.title = tooltip;
         }
 
         // Update out-band button
         const outBandBtn = card.querySelector('a[href*="out_band"]');
         if (outBandBtn) {
             const wasEnabled = !outBandBtn.classList.contains('disabled');
-            const shouldBeEnabled = data.out_band.status === 'up';
+            const shouldBeEnabled = data.out_band.status !== 'down';
             if (wasEnabled !== shouldBeEnabled) {
                 console.log(`Updating out-band button state: ${wasEnabled} -> ${shouldBeEnabled}`);
-                updateButtonState(outBandBtn, shouldBeEnabled);
+                updateButtonState(outBandBtn, shouldBeEnabled, data.out_band.status);
             }
+            // Update tooltip
+            let tooltip = `Out-Band Interface`;
+            if (data.out_band.error !== 'none') {
+                tooltip += ` - ${data.out_band.error_detail}`;
+            } else if (data.out_band.response_time) {
+                tooltip += ` - Response time: ${data.out_band.response_time.toFixed(1)}ms`;
+            }
+            outBandBtn.title = tooltip;
         }
 
         // Update modal if open
@@ -133,15 +163,21 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Update button state
-    function updateButtonState(button, isEnabled) {
-        if (isEnabled) {
-            button.classList.remove('disabled');
-            button.classList.remove('nc-btn-secondary');
-            button.classList.add('nc-btn-primary');
-        } else {
+    function updateButtonState(button, isEnabled, status) {
+        if (!isEnabled) {
             button.classList.add('disabled');
-            button.classList.remove('nc-btn-primary');
+            button.classList.remove('nc-btn-primary', 'nc-btn-warning');
             button.classList.add('nc-btn-secondary');
+        } else {
+            button.classList.remove('disabled');
+            if (status === 'up') {
+                button.classList.remove('nc-btn-secondary', 'nc-btn-warning');
+                button.classList.add('nc-btn-primary');
+            } else {
+                // Degraded status
+                button.classList.remove('nc-btn-secondary', 'nc-btn-primary');
+                button.classList.add('nc-btn-warning');
+            }
         }
     }
 
@@ -152,6 +188,11 @@ document.addEventListener('DOMContentLoaded', function() {
         if (inBandStatus) {
             inBandStatus.className = 'badge in-band-status ' + getStatusClass(data.in_band.status);
             inBandStatus.textContent = data.in_band.status.charAt(0).toUpperCase() + data.in_band.status.slice(1);
+            if (data.in_band.error !== 'none') {
+                inBandStatus.title = data.in_band.error_detail;
+            } else if (data.in_band.response_time) {
+                inBandStatus.title = `Response time: ${data.in_band.response_time.toFixed(1)}ms`;
+            }
         }
 
         // Update out-band status
@@ -159,17 +200,34 @@ document.addEventListener('DOMContentLoaded', function() {
         if (outBandStatus) {
             outBandStatus.className = 'badge out-band-status ' + getStatusClass(data.out_band.status);
             outBandStatus.textContent = data.out_band.status.charAt(0).toUpperCase() + data.out_band.status.slice(1);
+            if (data.out_band.error !== 'none') {
+                outBandStatus.title = data.out_band.error_detail;
+            } else if (data.out_band.response_time) {
+                outBandStatus.title = `Response time: ${data.out_band.response_time.toFixed(1)}ms`;
+            }
         }
 
         // Update timestamps
         const inBandLastSeen = modal.querySelector('.in-band-last-seen');
         if (inBandLastSeen) {
-            inBandLastSeen.textContent = formatLastSeen(data.in_band.last_seen);
+            let text = formatLastSeen(data.in_band.last_seen);
+            if (data.in_band.error !== 'none') {
+                text += ` (${data.in_band.error_detail})`;
+            } else if (data.in_band.response_time) {
+                text += ` (${data.in_band.response_time.toFixed(1)}ms)`;
+            }
+            inBandLastSeen.textContent = text;
         }
 
         const outBandLastSeen = modal.querySelector('.out-band-last-seen');
         if (outBandLastSeen) {
-            outBandLastSeen.textContent = formatLastSeen(data.out_band.last_seen);
+            let text = formatLastSeen(data.out_band.last_seen);
+            if (data.out_band.error !== 'none') {
+                text += ` (${data.out_band.error_detail})`;
+            } else if (data.out_band.response_time) {
+                text += ` (${data.out_band.response_time.toFixed(1)}ms)`;
+            }
+            outBandLastSeen.textContent = text;
         }
     }
 

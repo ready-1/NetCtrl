@@ -10,6 +10,7 @@ import requests
 from requests.exceptions import RequestException, SSLError
 import logging
 from urllib3.exceptions import InsecureRequestWarning
+import time
 
 # Suppress only the single InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
@@ -27,68 +28,106 @@ class StatusMonitorThread(threading.Thread):
         super().__init__(*args, **kwargs)
         self.daemon = True
 
+    def authenticate_switch(self, switch, ip):
+        """Attempt to authenticate with the switch."""
+        try:
+            start_time = time.time()
+            response = requests.post(
+                f"https://{ip}:49151/api/v1/auth",
+                json={"username": switch.username, "password": switch.password},
+                timeout=(3, 7),  # (connect timeout, read timeout)
+                verify=False,  # Required for self-signed certs
+                headers={
+                    "Connection": "close",  # Prevent connection pooling issues
+                    "User-Agent": "NetCtrl-StatusMonitor/1.0",
+                },
+            )
+            response_time = (time.time() - start_time) * 1000  # Convert to milliseconds
+
+            if response.status_code == 200:
+                return True, response_time, None
+            else:
+                return (
+                    False,
+                    response_time,
+                    f"Authentication failed: {response.status_code}",
+                )
+        except Exception as e:
+            return False, None, str(e)
+
     def check_interface(self, switch, interface):
         """Check status of a specific interface."""
         ip = getattr(switch, f"{interface}_ip")
+        error_type = Switch.ERROR_NONE
+        error_detail = ""
+        response_time = None
+
         try:
             # First try a simple TCP connection to port 49151
+            start_time = time.time()
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.settimeout(3)  # 3 second timeout for initial connection
+
             try:
                 sock.connect((ip, 49151))
                 sock.close()
+                tcp_response_time = (
+                    time.time() - start_time
+                ) * 1000  # Convert to milliseconds
 
-                # If TCP succeeds, try the API call
-                try:
-                    response = requests.get(
-                        f"https://{ip}:49151/api/v1/system",
-                        timeout=(3, 7),  # (connect timeout, read timeout)
-                        verify=False,  # Required for self-signed certs
-                        headers={
-                            "Connection": "close",  # Prevent connection pooling issues
-                            "User-Agent": "NetCtrl-StatusMonitor/1.0",
-                        },
-                    )
-                    if response.status_code == 200:
-                        old_status = switch.update_interface_status(
-                            interface, Switch.STATUS_UP
-                        )
-                        logger.info(f"Switch {switch.name} {interface} is UP")
-                    else:
-                        old_status = switch.update_interface_status(
-                            interface, Switch.STATUS_DEGRADED
-                        )
-                        logger.warning(
-                            f"Switch {switch.name} {interface} API returned status code {response.status_code}"
-                        )
-                except requests.exceptions.SSLError:
-                    # If SSL fails but TCP works, mark as DEGRADED
+                # If TCP succeeds, try authentication
+                auth_success, auth_response_time, auth_error = self.authenticate_switch(
+                    switch, ip
+                )
+                if auth_success:
+                    response_time = auth_response_time
                     old_status = switch.update_interface_status(
-                        interface, Switch.STATUS_DEGRADED
+                        interface,
+                        Switch.STATUS_UP,
+                        error_type=Switch.ERROR_NONE,
+                        response_time=response_time,
+                    )
+                    logger.info(
+                        f"Switch {switch.name} {interface} is UP (response time: {response_time:.2f}ms)"
+                    )
+                else:
+                    response_time = tcp_response_time
+                    error_type = Switch.ERROR_AUTH_FAILED
+                    error_detail = auth_error
+                    old_status = switch.update_interface_status(
+                        interface,
+                        Switch.STATUS_DEGRADED,
+                        error_type=error_type,
+                        error_detail=error_detail,
+                        response_time=response_time,
                     )
                     logger.warning(
-                        f"Switch {switch.name} {interface} is reachable but has SSL issues"
+                        f"Switch {switch.name} {interface} authentication failed: {error_detail}"
                     )
-                except RequestException as e:
-                    # If API fails but TCP works, mark as DEGRADED
-                    old_status = switch.update_interface_status(
-                        interface, Switch.STATUS_DEGRADED
-                    )
-                    logger.warning(
-                        f"Switch {switch.name} {interface} is reachable but API failed: {str(e)}"
-                    )
-            except (socket.timeout, socket.error):
+            except (socket.timeout, socket.error) as e:
                 # If TCP fails, mark as DOWN
+                error_type = Switch.ERROR_NO_RESPONSE
+                error_detail = str(e)
                 old_status = switch.update_interface_status(
-                    interface, Switch.STATUS_DOWN
+                    interface,
+                    Switch.STATUS_DOWN,
+                    error_type=error_type,
+                    error_detail=error_detail,
                 )
                 logger.error(
-                    f"Switch {switch.name} {interface} is unreachable (TCP connection failed)"
+                    f"Switch {switch.name} {interface} is unreachable: {error_detail}"
                 )
         except Exception as e:
-            old_status = switch.update_interface_status(interface, Switch.STATUS_DOWN)
+            error_type = Switch.ERROR_API
+            error_detail = str(e)
+            old_status = switch.update_interface_status(
+                interface,
+                Switch.STATUS_DOWN,
+                error_type=error_type,
+                error_detail=error_detail,
+            )
             logger.error(
-                f"Unexpected error checking {switch.name} {interface}: {str(e)}"
+                f"Unexpected error checking {switch.name} {interface}: {error_detail}"
             )
 
     def check_all_switches(self):

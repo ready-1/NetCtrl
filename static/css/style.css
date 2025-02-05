@@ -76,6 +76,11 @@
   color: #fff;
 }
 
+.nc-btn-warning {
+  background-color: var(--nc-warning);
+  color: var(--nc-dark);
+}
+
 .nc-btn-info {
   background-color: var(--nc-info);
   color: #fff;
@@ -112,6 +117,7 @@
 .status-badge .badge {
   font-size: 0.75rem;
   padding: 0.25rem 0.5rem;
+  cursor: help;
 }
 
 /* Auth status */
@@ -144,4 +150,28 @@
   margin-bottom: 0.5rem;
   padding-left: 1rem;
   border-left: 2px solid var(--nc-info);
+}
+
+/* Tooltip styles */
+[title] {
+  cursor: help;
+}
+
+.badge[title],
+.nc-btn[title] {
+  position: relative;
+}
+
+/* Response time display */
+.response-time {
+  font-size: 0.75rem;
+  color: var(--nc-secondary);
+  margin-left: 0.5rem;
+}
+
+/* Error message display */
+.error-detail {
+  font-size: 0.75rem;
+  color: var(--nc-danger);
+  margin-left: 0.5rem;
 }
