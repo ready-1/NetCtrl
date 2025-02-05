@@ -2,6 +2,8 @@
 
 from rest_framework import generics, permissions
 from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from .models import Switch, Port
 from .serializers import (
@@ -18,59 +20,36 @@ from django.views.generic import (
 )
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse
 
 
-class UserDetailView(generics.RetrieveAPIView):
-    """API view for retrieving user details."""
-
-    permission_classes = [permissions.IsAuthenticated]
-    serializer_class = UserSerializer
-
-    def get_object(self):
-        """Return the authenticated user."""
-        return self.request.user
-
-
-class SwitchListCreateView(generics.ListCreateAPIView):
-    """API view for listing and creating switches."""
-
-    permission_classes = [permissions.IsAuthenticated]
-    queryset = Switch.objects.all()
-    serializer_class = SwitchSerializer
-
-
-class SwitchDetailView(generics.RetrieveUpdateDestroyAPIView):
-    """API view for retrieving, updating and deleting switches."""
-
-    permission_classes = [permissions.IsAuthenticated]
-    queryset = Switch.objects.all()
-    serializer_class = SwitchSerializer
-
-
-class PortListView(generics.ListAPIView):
-    """API view for listing ports."""
-
-    permission_classes = [permissions.IsAuthenticated]
-    serializer_class = PortSerializer
-
-    def get_queryset(self):
-        """Return ports for a specific switch."""
-        switch_id = self.kwargs["switch_id"]
-        return Port.objects.filter(switch_id=switch_id)
-
-
-class PortDetailView(generics.RetrieveUpdateAPIView):
-    """API view for retrieving and updating ports."""
-
-    permission_classes = [permissions.IsAuthenticated]
-    serializer_class = PortSerializer
-    lookup_field = "name"  # Field in the model
-    lookup_url_kwarg = "n"  # Parameter in the URL
-
-    def get_queryset(self):
-        """Return ports for a specific switch."""
-        switch_id = self.kwargs["switch_id"]
-        return Port.objects.filter(switch_id=switch_id)
+@login_required
+def switch_status(request):
+    """API endpoint for getting switch status."""
+    switches = Switch.objects.all()
+    data = []
+    for switch in switches:
+        data.append(
+            {
+                "id": switch.pk,
+                "name": switch.name,
+                "status": switch.status,
+                "in_band_status": switch.in_band_status,
+                "out_band_status": switch.out_band_status,
+                "in_band_last_seen": (
+                    switch.in_band_last_seen.isoformat()
+                    if switch.in_band_last_seen
+                    else None
+                ),
+                "out_band_last_seen": (
+                    switch.out_band_last_seen.isoformat()
+                    if switch.out_band_last_seen
+                    else None
+                ),
+                "status_details": switch.status_details,
+            }
+        )
+    return JsonResponse(data, safe=False)
 
 
 class SwitchListView(LoginRequiredMixin, ListView):
@@ -80,15 +59,22 @@ class SwitchListView(LoginRequiredMixin, ListView):
     template_name = "switches/list.html"
     context_object_name = "switches"
 
+    def get_context_data(self, **kwargs):
+        """Add extra context data."""
+        context = super().get_context_data(**kwargs)
+        for switch in context["switches"]:
+            if not hasattr(switch, "status_details"):
+                switch.status_details = {"history": []}
+        return context
+
 
 class SwitchCreateView(LoginRequiredMixin, CreateView):
     """View for creating a new switch."""
 
     model = Switch
     template_name = "switches/switch_form.html"
-    fields = ["name", "in_band_ip", "out_band_ip"]
+    fields = ["name", "in_band_ip", "out_band_ip", "username", "password"]
     success_url = reverse_lazy("switches:switch-list")
-    template_name = "switches/switch_form.html"
 
 
 class SwitchUpdateView(LoginRequiredMixin, UpdateView):
@@ -96,9 +82,8 @@ class SwitchUpdateView(LoginRequiredMixin, UpdateView):
 
     model = Switch
     template_name = "switches/switch_form.html"
-    fields = ["name", "in_band_ip", "out_band_ip"]
+    fields = ["name", "in_band_ip", "out_band_ip", "username", "password"]
     success_url = reverse_lazy("switches:switch-list")
-    template_name = "switches/switch_form.html"
 
 
 class SwitchDetailView(LoginRequiredMixin, DetailView):

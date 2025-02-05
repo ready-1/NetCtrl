@@ -1,4 +1,21 @@
 {% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+.modal-content {
+    background-color: #fff;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+console.log('Loading switch list page...');
+</script>
+<script src="{% static 'js/switch-status.js' %}" type="text/javascript"></script>
+{% endblock %}
+
 {% block content %}
 <div class="container">
   <div class="nc-card">
@@ -15,7 +32,7 @@
       <div class="row row-cols-1 row-cols-md-3 g-4">
         {% for switch in switches %}
         <div class="col">
-          <div class="nc-card h-100">
+          <div class="nc-card h-100" data-switch-id="{{ switch.pk }}">
             <div class="nc-card-body">
               <div class="d-flex justify-content-between align-items-center mb-2">
                 <h5 class="nc-card-title mb-0">{{ switch.name }}</h5>
@@ -30,19 +47,71 @@
                 </div>
               </div>
               <div class="status-badge mb-3">
-                <span class="badge {% if switch.status == 'active' %}bg-success{% else %}bg-danger{% endif %}">
+                <span class="badge {% if switch.status == 'up' %}bg-success{% elif switch.status == 'down' %}bg-danger{% else %}bg-warning{% endif %}">
                   {{ switch.status|title }}
                 </span>
-                <small class="text-muted d-block mt-1">Last seen: {{ switch.last_seen|default:"Never"|date:"Y-m-d H:i" }}</small>
+                <small class="text-muted d-block mt-1">
+                  In-Band: {% if switch.in_band_last_seen %}{{ switch.in_band_last_seen|timesince }} ago{% else %}Never{% endif %}<br>
+                  Out-Band: {% if switch.out_band_last_seen %}{{ switch.out_band_last_seen|timesince }} ago{% else %}Never{% endif %}
+                </small>
               </div>
               <div class="d-flex gap-2 mb-3">
-                <a href="http://{{ switch.in_band_ip }}:49151" target="_blank" class="nc-btn nc-btn-primary flex-grow-1">
+                <a href="http://{{ switch.in_band_ip }}:49151" target="_blank" class="nc-btn nc-btn-primary flex-grow-1 {% if switch.in_band_status != 'up' %}disabled{% endif %}">
                   <i class="bi bi-box-arrow-up-right"></i> in band
                 </a>
-                <a href="http://{{ switch.out_band_ip }}:49151" target="_blank" class="nc-btn nc-btn-secondary flex-grow-1">
+                <a href="http://{{ switch.out_band_ip }}:49151" target="_blank" class="nc-btn nc-btn-secondary flex-grow-1 {% if switch.out_band_status != 'up' %}disabled{% endif %}">
                   <i class="bi bi-box-arrow-up-right"></i> out band
                 </a>
+                <button type="button" class="nc-btn nc-btn-info btn-icon" data-bs-toggle="modal" data-bs-target="#statusModal{{ switch.pk }}" title="Status Details">
+                  <i class="bi bi-sticky-fill"></i>
+                </button>
               </div>
+
+              <!-- Status Modal -->
+              <div class="modal fade" id="statusModal{{ switch.pk }}" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content" style="transform: rotate(-1deg);">
+                    <div class="modal-header border-bottom-0">
+                      <h5 class="modal-title">{{ switch.name }} Status</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <div class="mb-3">
+                        <h6>Current Status:</h6>
+                        <p>
+                          In-Band: <span class="badge in-band-status {% if switch.in_band_status == 'up' %}bg-success{% elif switch.in_band_status == 'down' %}bg-danger{% else %}bg-warning{% endif %}">{{ switch.in_band_status|title }}</span><br>
+                          Out-Band: <span class="badge out-band-status {% if switch.out_band_status == 'up' %}bg-success{% elif switch.out_band_status == 'down' %}bg-danger{% else %}bg-warning{% endif %}">{{ switch.out_band_status|title }}</span>
+                        </p>
+                      </div>
+
+                      <div class="mb-3">
+                        <h6>Last Seen:</h6>
+                        <p>
+                          In-Band: <span class="in-band-last-seen">{% if switch.in_band_last_seen %}{{ switch.in_band_last_seen|timesince }} ago{% else %}Never{% endif %}</span><br>
+                          Out-Band: <span class="out-band-last-seen">{% if switch.out_band_last_seen %}{{ switch.out_band_last_seen|timesince }} ago{% else %}Never{% endif %}</span>
+                        </p>
+                      </div>
+
+                      {% if switch.status_details.history %}
+                      <div>
+                        <h6>Recent Status Changes:</h6>
+                        <ul class="list-unstyled status-history">
+                        {% for event in switch.status_details.history %}
+                          <li class="mb-1">
+                            <small>
+                              {{ event.timestamp|slice:":19"|date:"Y-m-d H:i:s" }} -
+                              {{ event.interface|title }}: {{ event.old_status|title }} → {{ event.new_status|title }}
+                            </small>
+                          </li>
+                        {% endfor %}
+                        </ul>
+                      </div>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <div class="mt-3 d-flex justify-content-between">
                 <a href="{% url 'switches:switch-edit' pk=switch.pk %}" class="nc-btn nc-btn-sm nc-btn-light">
                   <i class="bi bi-info-circle"></i>

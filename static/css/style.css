@@ -1,447 +1,147 @@
-/* NetCtrl Base Styles */
-
+/* Base styles */
 :root {
-    /* Bootstrap default colors */
-    --bs-body-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    --bs-body-line-height: 1.5;
-    --bs-body-color: #212529;
-    --bs-body-bg: #ffffff;
-    --bs-secondary-color: #6c757d;
-    --bs-form-control-bg: #ffffff;
-    --bs-border-color: #ced4da;
-    --bs-table-color: #212529;
-    --bs-card-bg: #ffffff;
-    --bs-card-border-width: 1px;
-    --bs-card-border-color: rgba(0, 0, 0, 0.125);
-    --bs-card-cap-bg: rgba(0, 0, 0, 0.03);
-    --bs-secondary: #6c757d;
-    --bs-success: #198754;
-    --bs-danger: #dc3545;
-    --bs-warning: #ffc107;
-    --bs-dark: #1a1a1a;
-    --bs-white: #ffffff;
-    --bs-heading-color: #212529;
-    --bs-form-invalid-color: #dc3545;
-    --bs-box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-    --bs-border-radius-lg: 0.5rem;
+  --nc-primary: #007bff;
+  --nc-secondary: #6c757d;
+  --nc-success: #28a745;
+  --nc-danger: #dc3545;
+  --nc-warning: #ffc107;
+  --nc-info: #17a2b8;
+  --nc-light: #f8f9fa;
+  --nc-dark: #343a40;
 }
 
-/* Global styles */
-
-/* Theme */
-.nc-dark-theme {
-    background-color: var(--bs-body-bg);
-    color: var(--bs-body-color);
+/* Card styles */
+.nc-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
 }
 
-.nc-dark-theme .text-muted {
-    color: var(--bs-secondary-color) !important;
+.nc-card-header {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.nc-dark-theme .table {
-    color: var(--bs-table-color);
+.nc-card-header-title {
+  font-size: 1.25rem;
+  margin: 0;
 }
 
-.nc-dark-theme .card {
-    background-color: var(--bs-card-bg);
-    border-color: var(--bs-card-border-color);
+.nc-card-body {
+  padding: 1.5rem;
 }
 
-.nc-dark-theme .form-control {
-    background-color: var(--bs-form-control-bg);
-    border-color: var(--bs-border-color);
-    color: var(--bs-body-color);
+/* Button styles */
+.nc-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.5;
+  text-align: center;
+  text-decoration: none;
+  vertical-align: middle;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  transition: all 0.15s ease-in-out;
+  cursor: pointer;
 }
 
-.nc-dark-theme .form-control:focus {
-    background-color: var(--bs-form-control-bg);
-    color: var(--bs-body-color);
+.nc-btn:disabled,
+.nc-btn.disabled {
+  opacity: 0.65;
+  pointer-events: none;
 }
 
-.nc-dark-theme .btn-outline-secondary {
-    color: var(--bs-secondary);
-    border-color: var(--bs-secondary);
+.nc-btn i {
+  font-size: 1rem;
+  margin-right: 0.5rem;
 }
 
-.nc-dark-theme .btn-outline-secondary:hover {
-    color: #fff;
-    background-color: var(--bs-secondary);
-    border-color: var(--bs-secondary);
+.nc-btn-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
 }
 
-/* Typography */
-body {
-    font-family: var(--bs-body-font-family);
-    line-height: var(--bs-body-line-height);
-    color: var(--bs-body-color);
-    background-color: var(--bs-body-bg);
+.nc-btn-primary {
+  background-color: var(--nc-primary);
+  color: #fff;
 }
 
-/* Links */
-a {
-    color: #0d6efd;  /* Bootstrap default link color */
-    text-decoration: none;
-    transition: color var(--nc-transition-speed) var(--nc-transition-timing);
+.nc-btn-secondary {
+  background-color: var(--nc-secondary);
+  color: #fff;
 }
 
-a:hover {
-    color: #0a58ca;  /* Bootstrap default link hover color */
-    text-decoration: underline;
+.nc-btn-info {
+  background-color: var(--nc-info);
+  color: #fff;
 }
 
-/* Headings */
-h1, h2, h3, h4, h5, h6 {
-    margin-bottom: var(--nc-spacing-md);
-    font-weight: 500;
-    line-height: 1.2;
-    color: var(--bs-heading-color);
+.nc-btn-light {
+  background-color: var(--nc-light);
+  color: var(--nc-dark);
+  border-color: #dee2e6;
 }
 
-/* Containers */
-.nc-container {
-    width: 100%;
-    padding-right: var(--nc-spacing-md);
-    padding-left: var(--nc-spacing-md);
-    margin-right: auto;
-    margin-left: auto;
+/* Icon button */
+.btn-icon {
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Borders */
-.nc-border {
-    border: 1px solid var(--bs-border-color);
+.btn-icon i {
+  margin: 0;
+  font-size: 1.25rem;
 }
 
-/* Text colors */
-.nc-text-primary { color: var(--bs-body-color) !important; }
-.nc-text-secondary { color: var(--bs-secondary-color) !important; }
-.nc-text-muted { color: var(--bs-secondary-color) !important; }
-
-/* Background colors */
-.nc-bg-primary { background-color: var(--bs-body-bg) !important; }
-.nc-bg-secondary { background-color: var(--bs-card-bg) !important; }
-.nc-bg-tertiary { background-color: var(--bs-card-bg) !important; }
-
-/* Responsive breakpoints */
-@media (min-width: 576px) {
-    .nc-container {
-        max-width: 540px;
-    }
+/* Status badge */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-@media (min-width: 768px) {
-    .nc-container {
-        max-width: 720px;
-    }
+.status-badge .badge {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
 }
 
-@media (min-width: 992px) {
-    .nc-container {
-        max-width: 960px;
-    }
-}
-
-@media (min-width: 1200px) {
-    .nc-container {
-        max-width: 1140px;
-    }
-}
-
-/* Base Layout */
-body {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
-
-.content {
-    flex: 1;
-    background-color: var(--bs-body-bg);
-    border-radius: 0.5rem;
-    padding: 1.5rem;
-    margin-top: 1rem;
-}
-
-body.login-page .content {
-    background-color: transparent;
-    padding: 0;
-}
-
-/* Navigation */
-.navbar {
-    background-color: var(--bs-card-bg);
-    border-bottom: 1px solid var(--bs-border-color);
-}
-
-.navbar-dark .navbar-nav .nav-link {
-    color: var(--bs-secondary-color);
-}
-
-.navbar-dark .navbar-nav .nav-link:hover {
-    color: var(--bs-body-color);
-}
-
-/* Cards and containers */
-.card {
-    background-color: var(--bs-card-bg);
-    border: 1px solid var(--bs-card-border-color);
-}
-
-.card-header {
-    background-color: var(--bs-card-cap-bg);
-    border-bottom: 1px solid var(--bs-card-border-color);
-}
-
-/* Forms */
-.form-label {
-    color: var(--bs-body-color);
-    font-weight: 500;
-    margin-bottom: 0.5rem;
-}
-
-.card .form-label {
-    color: var(--bs-body-color) !important;
-}
-
-.modal .form-label {
-    color: var(--bs-body-color) !important;
-}
-
-.login-form .form-label {
-    color: var(--bs-body-color);
-    font-weight: 500;
-    margin-bottom: 0.5rem;
-}
-
-input[type="text"],
-input[type="password"],
-input[type="email"],
-input[type="number"],
-textarea,
-select {
-    color: var(--bs-body-color) !important;
-    background-color: var(--bs-form-control-bg) !important;
-}
-
-.form-control {
-    color: var(--bs-body-color);
-    background-color: var(--bs-form-control-bg);
-    border-color: var(--bs-border-color);
-}
-
-.login-form .form-control {
-    background-color: var(--bs-form-control-bg) !important;
-    color: var(--bs-body-color) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 0.75rem 1rem;
-    font-size: 1rem;
-    border-radius: 0.375rem;
-}
-
-.form-control:focus {
-    color: var(--bs-body-color);
-    background-color: var(--bs-form-control-bg);
-    border-color: #86b7fe;
-    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-}
-
-.login-form .form-control:focus {
-    border-color: #0d6efd;
-    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-}
-
-.form-text {
-    color: var(--bs-secondary-color);
-}
-
-/* Login page styles */
-.login-form {
-    background-color: var(--bs-white);
-    padding: 2rem;
-    border-radius: var(--bs-border-radius-lg);
-    box-shadow: var(--bs-box-shadow);
-}
-
-.login-form h2 {
-    color: var(--bs-heading-color);
-    margin-bottom: 1.5rem;
-}
-
-.login-form .btn-primary {
-    padding: 0.75rem 1rem;
-    font-size: 1rem;
-    font-weight: 500;
-}
-
-.login-form .invalid-feedback {
-    color: var(--bs-form-invalid-color);
-}
-
-.login-form .alert {
-    margin-bottom: 1.5rem;
-}
-
-/* Tables */
-.table {
-    color: var(--bs-table-color);
-}
-
-.table thead th {
-    border-bottom: 2px solid var(--bs-border-color);
-}
-
-/* Breadcrumbs */
-.breadcrumb {
-    background-color: var(--bs-card-bg);
-    border: 1px solid var(--bs-border-color);
-    border-radius: 0.25rem;
-    padding: 0.75rem 1rem;
-    margin-bottom: 1rem;
-}
-
-.breadcrumb-item + .breadcrumb-item::before {
-    color: var(--bs-secondary);
-}
-
-.breadcrumb-item.active {
-    color: var(--bs-secondary);
-}
-
-/* Loading Spinner */
-.loading-spinner {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1000;
-}
-
-.loading-spinner.show {
-    display: flex;
-}
-
-/* Alerts */
-.alert {
-    border: 1px solid var(--bs-border-color);
-}
-
-.alert-info {
-    background-color: rgba(0, 123, 255, 0.1);
-    border-color: rgba(0, 123, 255, 0.2);
-    color: var(--bs-body-color);
-}
-
-.alert-success {
-    background-color: rgba(40, 167, 69, 0.1);
-    border-color: rgba(40, 167, 69, 0.2);
-    color: var(--bs-body-color);
-}
-
-.alert-warning {
-    background-color: rgba(255, 193, 7, 0.1);
-    border-color: rgba(255, 193, 7, 0.2);
-    color: var(--bs-body-color);
-}
-
-.alert-danger {
-    background-color: rgba(220, 53, 69, 0.1);
-    border-color: rgba(220, 53, 69, 0.2);
-    color: var(--bs-body-color);
-}
-
-/* Cards */
-.card-text {
-    color: var(--bs-body-color);  /* Dark gray, almost black */
-}
-
-/* Mobile responsiveness */
-@media (max-width: 768px) {
-    .container {
-        padding: 0.5rem;
-    }
-
-    .card {
-        margin-bottom: 1rem;
-    }
-
-    .breadcrumb {
-        padding: 0.5rem;
-        font-size: 0.875rem;
-    }
-
-    .navbar-brand {
-        font-size: 1.1rem;
-    }
-}
-
-/* Buttons */
-.btn-outline-secondary {
-    color: var(--bs-secondary);
-    border-color: var(--bs-secondary);
-}
-
-.btn-outline-secondary:hover {
-    color: #fff;
-    background-color: var(--bs-secondary);
-    border-color: var(--bs-secondary);
-}
-
-/* Status badges */
-.badge.bg-success {
-    background-color: var(--bs-success) !important;  /* Bootstrap 5 success color */
-}
-
-.badge.bg-danger {
-    background-color: var(--bs-danger) !important;  /* Bootstrap 5 danger color */
-}
-
-.badge.bg-warning {
-    background-color: var(--bs-warning) !important;  /* Bootstrap 5 warning color */
-    color: var(--bs-dark);
+/* Auth status */
+.auth-status i {
+  font-size: 1rem;
 }
 
 /* Modal styles */
 .modal-content {
-    background-color: var(--bs-white);
-    color: var(--bs-body-color);
+  border: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
 }
 
 .modal-header {
-    background-color: var(--bs-card-cap-bg);
-    border-bottom: 1px solid var(--bs-border-color);
-}
-
-.modal-title {
-    color: var(--bs-body-color);
+  background-color: #fff;
 }
 
 .modal-body {
-    color: var(--bs-body-color);
+  background-color: #fff;
 }
 
-.modal-body label {
-    color: var(--bs-body-color);
-    font-weight: 500;
+/* Status history */
+.status-history {
+  font-size: 0.875rem;
+  color: var(--nc-secondary);
 }
 
-.modal-body .form-control {
-    color: var(--bs-body-color);
-    background-color: var(--bs-form-control-bg);
-    border-color: var(--bs-border-color);
-}
-
-.modal-body .form-control:focus {
-    color: var(--bs-body-color);
-    background-color: var(--bs-form-control-bg);
-    border-color: #86b7fe;
-    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-}
-
-.modal-body .form-text {
-    color: var(--bs-secondary-color);
-}
-
-.modal-footer {
-    background-color: var(--bs-card-cap-bg);
-    border-top: 1px solid var(--bs-border-color);
+.status-history li {
+  margin-bottom: 0.5rem;
+  padding-left: 1rem;
+  border-left: 2px solid var(--nc-info);
 }

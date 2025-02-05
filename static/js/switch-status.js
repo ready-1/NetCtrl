@@ -1,129 +1,213 @@
-// WebSocket connection for switch status updates
+// Switch status polling
+alert('Switch status script loaded!'); // Test alert
+
+console.log('=== Switch Status Script Loaded ===');
+console.log('Script version: 1.0.0');
+console.log('Initializing status polling...');
+
 document.addEventListener('DOMContentLoaded', function() {
-    // Create WebSocket connection
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const socket = new WebSocket(
-        `${protocol}//${window.location.host}/ws/switch-status/`
-    );
+    console.log('DOM Content Loaded - Starting switch status monitoring');
 
-    socket.onmessage = function(event) {
-        const data = JSON.parse(event.data);
-        if (data.type === 'switch.status_update') {
-            updateSwitchStatus(data.switch_id, data.data);
+    // Get CSRF token from global variable
+    const csrfToken = window.CSRF_TOKEN;
+    console.log('CSRF token found:', csrfToken ? 'Yes' : 'No');
+
+    // Function to fetch switch status
+    async function fetchSwitchStatus() {
+        try {
+            console.log('Fetching switch status...');
+            const response = await fetch('/switches/api/status/', {
+                method: 'GET',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'include'
+            });
+            console.log('Status response:', response.status, response.statusText);
+
+            if (response.status === 401) {
+                console.error('Authentication required - redirecting to login');
+                window.location.href = '/auth/login/?next=' + encodeURIComponent(window.location.pathname);
+                return;
+            }
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                throw new Error(`Expected JSON response but got ${contentType}`);
+            }
+
+            const switches = await response.json();
+            console.log('Received switch data:', switches);
+
+            if (!Array.isArray(switches)) {
+                throw new Error('Expected array of switches but got: ' + typeof switches);
+            }
+
+            switches.forEach(data => {
+                console.log(`Updating switch ${data.id}:`, data);
+                updateSwitchStatus(data.id, {
+                    status: data.status,
+                    in_band: {
+                        status: data.in_band_status,
+                        last_seen: data.in_band_last_seen
+                    },
+                    out_band: {
+                        status: data.out_band_status,
+                        last_seen: data.out_band_last_seen
+                    }
+                });
+            });
+        } catch (error) {
+            console.error('Error fetching switch status:', error);
+            if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+                console.error('Network error - server might be down');
+            }
         }
-    };
-
-    socket.onclose = function(event) {
-        console.log('WebSocket connection closed');
-        // Attempt to reconnect after 5 seconds
-        setTimeout(function() {
-            window.location.reload();
-        }, 5000);
-    };
+    }
 
     // Update switch status in the UI
     function updateSwitchStatus(switchId, data) {
-        // Find the switch card
         const card = document.querySelector(`[data-switch-id="${switchId}"]`);
-        if (!card) return;
+        if (!card) {
+            console.warn(`Switch card not found for ID: ${switchId}`);
+            return;
+        }
 
-        // Update overall status badge
-        const statusBadge = card.querySelector('.status-badge');
+        console.log(`Updating UI for switch ${switchId}:`, data);
+
+        // Update status badge
+        const statusBadge = card.querySelector('.status-badge .badge');
         if (statusBadge) {
-            statusBadge.className = 'badge ' + getStatusClass(data.overall_status);
-            statusBadge.textContent = data.overall_status.charAt(0).toUpperCase() + data.overall_status.slice(1);
+            const oldClass = statusBadge.className;
+            statusBadge.className = 'badge ' + getStatusClass(data.status);
+            statusBadge.textContent = data.status.charAt(0).toUpperCase() + data.status.slice(1);
+            console.log(`Updated status badge: ${oldClass} -> ${statusBadge.className}`);
+        }
+
+        // Update last seen timestamps
+        const lastSeenText = card.querySelector('.status-badge small');
+        if (lastSeenText) {
+            const newText = `
+                In-Band: ${formatLastSeen(data.in_band.last_seen)}<br>
+                Out-Band: ${formatLastSeen(data.out_band.last_seen)}
+            `;
+            lastSeenText.innerHTML = newText;
+            console.log('Updated last seen text:', newText);
         }
 
         // Update in-band button
-        const inBandBtn = card.querySelector('.in-band-btn');
+        const inBandBtn = card.querySelector('a[href*="in_band"]');
         if (inBandBtn) {
-            updateInterfaceButton(inBandBtn, data.in_band);
+            const wasEnabled = !inBandBtn.classList.contains('disabled');
+            const shouldBeEnabled = data.in_band.status === 'up';
+            if (wasEnabled !== shouldBeEnabled) {
+                console.log(`Updating in-band button state: ${wasEnabled} -> ${shouldBeEnabled}`);
+                updateButtonState(inBandBtn, shouldBeEnabled);
+            }
         }
 
         // Update out-band button
-        const outBandBtn = card.querySelector('.out-band-btn');
+        const outBandBtn = card.querySelector('a[href*="out_band"]');
         if (outBandBtn) {
-            updateInterfaceButton(outBandBtn, data.out_band);
+            const wasEnabled = !outBandBtn.classList.contains('disabled');
+            const shouldBeEnabled = data.out_band.status === 'up';
+            if (wasEnabled !== shouldBeEnabled) {
+                console.log(`Updating out-band button state: ${wasEnabled} -> ${shouldBeEnabled}`);
+                updateButtonState(outBandBtn, shouldBeEnabled);
+            }
         }
 
-        // Update status modal if open
+        // Update modal if open
         const modal = document.getElementById(`statusModal${switchId}`);
         if (modal && modal.classList.contains('show')) {
+            console.log('Updating modal for switch:', switchId);
             updateStatusModal(modal, data);
         }
     }
 
-    // Update interface button status and timestamp
-    function updateInterfaceButton(button, data) {
-        // Update button state
-        if (data.status === 'up') {
-            button.classList.remove('btn-secondary', 'disabled');
-            button.classList.add('btn-primary');
+    // Update button state
+    function updateButtonState(button, isEnabled) {
+        if (isEnabled) {
+            button.classList.remove('disabled');
+            button.classList.remove('nc-btn-secondary');
+            button.classList.add('nc-btn-primary');
         } else {
-            button.classList.remove('btn-primary');
-            button.classList.add('btn-secondary', 'disabled');
-        }
-
-        // Update timestamp
-        const timestamp = button.querySelector('small');
-        if (timestamp && data.last_seen) {
-            const lastSeen = new Date(data.last_seen);
-            const now = new Date();
-            const diff = Math.floor((now - lastSeen) / 1000); // difference in seconds
-
-            let timeAgo;
-            if (diff < 60) {
-                timeAgo = `${diff} seconds ago`;
-            } else if (diff < 3600) {
-                timeAgo = `${Math.floor(diff / 60)} minutes ago`;
-            } else {
-                timeAgo = `${Math.floor(diff / 3600)} hours ago`;
-            }
-
-            timestamp.textContent = timeAgo;
+            button.classList.add('disabled');
+            button.classList.remove('nc-btn-primary');
+            button.classList.add('nc-btn-secondary');
         }
     }
 
     // Update status modal content
     function updateStatusModal(modal, data) {
-        // Update status badges
-        const inBandBadge = modal.querySelector('.in-band-status');
-        if (inBandBadge) {
-            inBandBadge.className = 'badge ' + getStatusClass(data.in_band.status);
-            inBandBadge.textContent = data.in_band.status.charAt(0).toUpperCase() + data.in_band.status.slice(1);
+        // Update in-band status
+        const inBandStatus = modal.querySelector('.in-band-status');
+        if (inBandStatus) {
+            inBandStatus.className = 'badge in-band-status ' + getStatusClass(data.in_band.status);
+            inBandStatus.textContent = data.in_band.status.charAt(0).toUpperCase() + data.in_band.status.slice(1);
         }
 
-        const outBandBadge = modal.querySelector('.out-band-status');
-        if (outBandBadge) {
-            outBandBadge.className = 'badge ' + getStatusClass(data.out_band.status);
-            outBandBadge.textContent = data.out_band.status.charAt(0).toUpperCase() + data.out_band.status.slice(1);
+        // Update out-band status
+        const outBandStatus = modal.querySelector('.out-band-status');
+        if (outBandStatus) {
+            outBandStatus.className = 'badge out-band-status ' + getStatusClass(data.out_band.status);
+            outBandStatus.textContent = data.out_band.status.charAt(0).toUpperCase() + data.out_band.status.slice(1);
         }
 
         // Update timestamps
-        updateModalTimestamp(modal, '.in-band-last-seen', data.in_band.last_seen);
-        updateModalTimestamp(modal, '.out-band-last-seen', data.out_band.last_seen);
-    }
+        const inBandLastSeen = modal.querySelector('.in-band-last-seen');
+        if (inBandLastSeen) {
+            inBandLastSeen.textContent = formatLastSeen(data.in_band.last_seen);
+        }
 
-    // Update timestamp in modal
-    function updateModalTimestamp(modal, selector, timestamp) {
-        const element = modal.querySelector(selector);
-        if (element && timestamp) {
-            const date = new Date(timestamp);
-            element.textContent = date.toLocaleString();
+        const outBandLastSeen = modal.querySelector('.out-band-last-seen');
+        if (outBandLastSeen) {
+            outBandLastSeen.textContent = formatLastSeen(data.out_band.last_seen);
         }
     }
 
-    // Get appropriate Bootstrap status class
+    // Format last seen timestamp
+    function formatLastSeen(timestamp) {
+        if (!timestamp) return 'Never';
+        const date = new Date(timestamp);
+        const now = new Date();
+        const diff = Math.floor((now - date) / 1000); // difference in seconds
+
+        if (diff < 60) {
+            return `${diff} seconds ago`;
+        } else if (diff < 3600) {
+            const minutes = Math.floor(diff / 60);
+            return `${minutes} minute${minutes === 1 ? '' : 's'} ago`;
+        } else if (diff < 86400) {
+            const hours = Math.floor(diff / 3600);
+            return `${hours} hour${hours === 1 ? '' : 's'} ago`;
+        } else {
+            const days = Math.floor(diff / 86400);
+            return `${days} day${days === 1 ? '' : 's'} ago`;
+        }
+    }
+
+    // Get appropriate status class
     function getStatusClass(status) {
         switch (status) {
             case 'up':
                 return 'bg-success';
             case 'down':
                 return 'bg-danger';
-            case 'degraded':
-                return 'bg-warning';
             default:
-                return 'bg-secondary';
+                return 'bg-warning';
         }
     }
+
+    // Start polling
+    console.log('Starting switch status polling...');
+    fetchSwitchStatus(); // Initial fetch
+    setInterval(fetchSwitchStatus, 5000); // Poll every 5 seconds
 });

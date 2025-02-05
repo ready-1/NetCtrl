@@ -7,8 +7,8 @@
     <title>{% block title %}NetCtrl{% endblock %}</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     {% load static %}
     <!-- Custom CSS -->
     <link href="{% static 'css/base/variables.css' %}" rel="stylesheet">
@@ -65,6 +65,10 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <!-- Custom JS -->
+    <script>
+        // Make CSRF token available globally
+        window.CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    </script>
     <script src="{% static 'js/utils/htmx-config.js' %}"></script>
     <script src="{% static 'js/utils/charts.js' %}"></script>
     <script src="{% static 'js/utils/websocket.js' %}"></script>

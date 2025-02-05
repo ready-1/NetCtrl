@@ -75,6 +75,7 @@ INSTALLED_APPS = [
     "channels",
     "django_htmx",
     "whitenoise",  # Add whitenoise to installed apps
+    "corsheaders",  # Add CORS headers
     "netctrl",
     "styleguide",
     # Local apps
@@ -86,6 +87,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",  # Add whitenoise after security and before all other middleware
+    "corsheaders.middleware.CorsMiddleware",  # Add CORS middleware
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -95,6 +97,12 @@ MIDDLEWARE = [
     "django_htmx.middleware.HtmxMiddleware",
     "core.middleware.AuditLogMiddleware",  # Add audit log middleware
 ]
+
+# CORS settings
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_EXPOSE_HEADERS = ["Content-Type", "X-CSRFToken"]
+CSRF_TRUSTED_ORIGINS = ["http://localhost:8000"]
 
 ROOT_URLCONF = "config.urls"
 
@@ -174,7 +182,9 @@ FORCE_SCRIPT_NAME = None
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = "/static/"
-STATIC_ROOT = os.environ.get("STATIC_ROOT", BASE_DIR / "staticfiles")
+STATIC_ROOT = (
+    BASE_DIR / "staticfiles"
+)  # Changed from /opt/static to project's staticfiles directory
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
