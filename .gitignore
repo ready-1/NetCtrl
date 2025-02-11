@@ -241,3 +241,9 @@ __pycache__/
 # Docker
 docker-compose.override.yml
 .docker/
+
+# Certificates and keys
+certificates/
+*.crt
+*.key
+*.pem
