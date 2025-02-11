@@ -25,6 +25,8 @@ whitenoise = "^6.8.2"
 openapi-client = {path = "openapi_client/dist/openapi_client-1.0.0-py3-none-any.whl"}
 requests = "^2.32.3"
 django-cors-headers = "^4.6.0"
+cryptography = "^44.0.0"
+pdfplumber = "^0.10.3"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.4"
