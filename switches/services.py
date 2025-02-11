@@ -11,6 +11,8 @@ import openapi_client
 from openapi_client.rest import ApiException
 from requests.adapters import HTTPAdapter
 from urllib3.util.ssl_ import create_urllib3_context
+from pathlib import Path
+from django.conf import settings
 
 # Disable SSL verification warnings in development
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -54,18 +56,28 @@ class SwitchAuthService:
         """Initialize the service."""
         # Configure API client for development
         configuration = openapi_client.Configuration()
-        configuration.verify_ssl = (
-            False  # Disable SSL verification for self-signed certs
-        )
 
-        # Create a custom SSL context that doesn't verify certificates
-        import ssl
+        # Get certificate paths
+        certs_dir = Path(settings.BASE_DIR) / "certificates"
+        ca_cert_path = certs_dir / "ca.crt"
 
+        # Use our CA certificate if it exists, otherwise disable SSL verification
+        if ca_cert_path.exists():
+            configuration.ssl_ca_cert = str(ca_cert_path)
+            configuration.verify_ssl = True
+        else:
+            configuration.verify_ssl = False
+            logger.warning("CA certificate not found. SSL verification disabled.")
+
+        # Create SSL context
         ssl_context = ssl.create_default_context()
-        ssl_context.check_hostname = False
-        ssl_context.verify_mode = ssl.CERT_NONE
+        if ca_cert_path.exists():
+            ssl_context.load_verify_locations(cafile=str(ca_cert_path))
+        else:
+            ssl_context.check_hostname = False
+            ssl_context.verify_mode = ssl.CERT_NONE
 
-        # Create a custom pool manager with our SSL context
+        # Create pool manager with our SSL context
         pool_manager = urllib3.PoolManager(
             ssl_version=ssl.PROTOCOL_TLS,
             ssl_context=ssl_context,
@@ -88,70 +100,37 @@ class SwitchAuthService:
             bool: True if authentication was successful, False otherwise.
         """
         try:
-            # Configure API client with minimal SSL verification
-            configuration = openapi_client.Configuration(
-                host=f"https://{switch.in_band_ip}:8443/api/v1"
-            )
-            configuration.verify_ssl = False
-            configuration.assert_hostname = False
-            configuration.tls_server_name = None
+            # Get certificate paths for this switch
+            certs_dir = Path(settings.BASE_DIR) / "certificates"
+            cert_path = certs_dir / f"{switch.name}.crt"
+            key_path = certs_dir / f"{switch.name}.key"
 
-            # Create API client
-            with openapi_client.ApiClient(configuration) as api_client:
-                # Create auth API instance
-                auth_api = openapi_client.AuthenticationApi(api_client)
+            # Create session with certificate if available
+            session = requests.Session()
+            if cert_path.exists() and key_path.exists():
+                session.cert = (str(cert_path), str(key_path))
 
-                # Create login request with exact payload format
-                payload = {
+            # Make authentication request
+            response = session.post(
+                f"https://{switch.in_band_ip}:8443/api/v1/login",
+                json={
                     "login": {"username": switch.username, "password": switch.password}
-                }
+                },
+                verify=(
+                    False
+                    if not (certs_dir / "ca.crt").exists()
+                    else str(certs_dir / "ca.crt")
+                ),
+                timeout=10,
+            )
 
-                # Create SSL context with minimal restrictions
-                ssl_context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
-                ssl_context.verify_mode = ssl.CERT_NONE
-                ssl_context.check_hostname = False
-                ssl_context.set_ciphers("ALL:@SECLEVEL=0")
-                ssl_context.options &= ~ssl.OP_NO_SSLv2
-                ssl_context.options &= ~ssl.OP_NO_SSLv3
-                ssl_context.options &= ~ssl.OP_NO_TLSv1
-                ssl_context.options &= ~ssl.OP_NO_TLSv1_1
-                ssl_context.options &= ~ssl.OP_NO_RENEGOTIATION
-
-                # Create pool manager with our context
-                pool_manager = urllib3.PoolManager(
-                    ssl_version=ssl.PROTOCOL_SSLv23,
-                    ssl_context=ssl_context,
-                    retries=urllib3.Retry(3),
-                    timeout=urllib3.Timeout(connect=5.0, read=10.0),
-                )
-
-                # Make login request
-                logger.info(f"Attempting to authenticate with switch {switch.name}")
-                response = pool_manager.request(
-                    "POST",
-                    f"https://{switch.in_band_ip}:8443/api/v1/login",
-                    headers={
-                        "Content-Type": "application/json",
-                        "Accept": "application/json",
-                    },
-                    body=json.dumps(payload).encode("utf-8"),
-                )
-
-                # Check response
-                response_text = response.data.decode("utf-8")
-                logger.info(f"Response status: {response.status}")
-                logger.info(f"Response data: {response_text}")
-
-                # Handle non-JSON error responses
-                if response_text.strip() == "Failed to login":
-                    raise Exception("Login failed: Invalid credentials")
-
+            if response.status_code == 200:
                 # Parse JSON response
                 try:
-                    data = json.loads(response_text)
+                    data = json.loads(response.text)
                 except json.JSONDecodeError as e:
                     logger.error(f"Failed to parse response: {str(e)}")
-                    raise Exception(f"Invalid response format: {response_text}")
+                    raise Exception(f"Invalid response format: {response.text}")
 
                 # Check response status
                 if data.get("resp", {}).get("status") != "success":
@@ -169,27 +148,28 @@ class SwitchAuthService:
                         f"Invalid response format - missing required fields: {data}"
                     )
 
-            # Store token and expiry from response
-            switch.auth_token = data["login"]["token"]
-            expires = int(data["login"]["expire"])
-            switch.token_expires = timezone.now() + timedelta(seconds=expires)
-            switch.auth_status = switch.AUTH_STATUS_AUTHENTICATED
-            switch.save(update_fields=["auth_token", "token_expires", "auth_status"])
+                # Store token and expiry from response
+                switch.auth_token = data["login"]["token"]
+                expires = int(data["login"]["expire"])
+                switch.token_expires = timezone.now() + timedelta(seconds=expires)
+                switch.auth_status = switch.AUTH_STATUS_AUTHENTICATED
+                switch.save(
+                    update_fields=["auth_token", "token_expires", "auth_status"]
+                )
 
-            # Configure API client with the new token
-            self.api_client.configuration.host = (
-                f"https://{switch.in_band_ip}:8443/api/v1"
-            )
-            self.api_client.configuration.access_token = switch.auth_token
+                logger.info(f"Successfully authenticated with switch {switch.name}")
+                return True
+            else:
+                switch.auth_status = "failed"
+                switch.auth_token = None
+                switch.save()
+                return False
 
-            logger.info(f"Successfully authenticated with switch {switch.name}")
-            return True
-
-        except openapi_client.ApiException as e:
-            logger.error(f"Error authenticating switch {switch.name}: {str(e)}")
-            logger.error(f"Response body: {e.body}")
-            switch.auth_status = switch.AUTH_STATUS_ERROR
-            switch.save(update_fields=["auth_status"])
+        except Exception as e:
+            logger.error(f"Authentication failed for switch {switch.name}: {str(e)}")
+            switch.auth_status = "failed"
+            switch.auth_token = None
+            switch.save()
             return False
 
     def logout_switch(self, switch):
