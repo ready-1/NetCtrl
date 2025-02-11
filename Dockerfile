@@ -24,6 +24,7 @@ ENV PATH="${POETRY_HOME}/bin:$PATH"
 
 # Copy poetry files
 COPY pyproject.toml poetry.lock ./
+COPY openapi_client/dist ./openapi_client/dist/
 
 # Install dependencies
 RUN poetry install --no-interaction --no-ansi --no-root

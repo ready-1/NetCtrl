@@ -63,6 +63,28 @@ services:
       db:
         condition: service_healthy
 
+  monitor:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: bash -c "poetry install && poetry run python manage.py monitor_switch_status --interval 30"
+    volumes:
+      - .:/app
+      - ./logs:/opt/logs
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings
+      POSTGRES_DB: netctrl
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_HOST: db
+      REDIS_HOST: redis
+      LOG_DIR: /opt/logs
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
 volumes:
   postgres_data: {}
   redis_data: {}
