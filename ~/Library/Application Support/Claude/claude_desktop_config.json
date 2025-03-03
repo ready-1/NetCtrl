@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "github.com/modelcontextprotocol/servers/tree/main/src/git": {
+      "command": "python",
+      "args": ["-m", "mcp_server_git", "--repository", "/Users/bob/Documents/Cline/MCP/git-test"],
+      "disabled": false,
+      "autoApprove": []
+    }
+  }
+}
