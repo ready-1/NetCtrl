@@ -15,6 +15,9 @@
 - Implemented AuthContext provider for state management and JWT authentication
 - Set up database initialization scripts
 - Configured Nginx for serving the frontend and proxying API requests
+- Fixed Flask application dependencies:
+  - Added pinned version of Werkzeug (2.2.3) to fix compatibility with Flask 2.2.3
+  - Resolved import error for werkzeug.urls.url_quote
 
 ## Next Steps
 1. ✅ Create basic database initialization scripts

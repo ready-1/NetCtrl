@@ -79,6 +79,8 @@
   - [x] Celery workers and beat
   - [x] Nginx container configuration
   - [x] Docker Compose configuration
+- [x] Dependency fixes
+  - [x] Fixed Flask/Werkzeug compatibility issue by pinning Werkzeug==2.2.3
 
 ### Testing
 - [ ] Backend unit tests
