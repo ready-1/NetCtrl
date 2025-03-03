@@ -68,7 +68,20 @@ const Switches = () => {
     }
     try {
       const response = await apiService.switches.getStatus();
-      setStatusData(response.data);
+      
+      // Convert the dashboard data to the status format we need
+      const statusMap = {};
+      if (response.data && response.data.switches) {
+        response.data.switches.forEach(switchItem => {
+          statusMap[switchItem.id] = {
+            status: switchItem.status || 'unknown',
+            last_updated: switchItem.last_updated || new Date().toISOString(),
+            ...switchItem.metrics
+          };
+        });
+      }
+      
+      setStatusData(statusMap);
     } catch (err) {
       console.error('Error fetching status data:', err);
       // Don't show error for status updates to avoid UI clutter

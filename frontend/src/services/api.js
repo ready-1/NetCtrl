@@ -62,46 +62,56 @@ const apiService = {
   auth: {
     login: (credentials) => api.post('/auth/login', credentials),
     logout: () => api.post('/auth/logout'),
-    currentUser: () => api.get('/auth/me'),
+    currentUser: () => api.get('/auth/profile'),
+    register: (userData) => api.post('/auth/register', userData),
   },
   
   // Switch management
   switches: {
-    getAll: () => api.get('/switches'),
-    getById: (id) => api.get(`/switches/${id}`),
-    create: (data) => api.post('/switches', data),
-    update: (id, data) => api.put(`/switches/${id}`, data),
-    delete: (id) => api.delete(`/switches/${id}`),
-    getMetrics: (id) => api.get(`/switches/${id}/metrics`),
-    getStatus: () => api.get('/switches/status'),
+    getAll: () => api.get('/switch'),
+    getById: (id) => api.get(`/switch/${id}`),
+    create: (data) => api.post('/switch', data),
+    update: (id, data) => api.put(`/switch/${id}`, data),
+    delete: (id) => api.delete(`/switch/${id}`),
+    getMetrics: (id) => api.get(`/switch/${id}/metrics`),
+    getStatus: () => api.get('/switch/dashboard'),
+    poll: (id) => api.post(`/switch/${id}/poll`),
   },
   
   // Content management
   content: {
-    getAll: () => api.get('/cms/content'),
-    getById: (id) => api.get(`/cms/content/${id}`),
-    getBySlug: (slug) => api.get(`/cms/content/slug/${slug}`),
-    create: (data) => api.post('/cms/content', data),
-    update: (id, data) => api.put(`/cms/content/${id}`, data),
-    delete: (id) => api.delete(`/cms/content/${id}`),
+    getAll: () => api.get('/cms'),
+    getUnpublished: () => api.get('/cms/unpublished'),
+    getBySlug: (slug) => api.get(`/cms/${slug}`),
+    create: (data) => api.post('/cms', data),
+    update: (slug, data) => api.put(`/cms/${slug}`, data),
+    delete: (slug) => api.delete(`/cms/${slug}`),
     getCategories: () => api.get('/cms/categories'),
     getTags: () => api.get('/cms/tags'),
+    getRevisions: (slug) => api.get(`/cms/${slug}/revisions`),
+    getRevision: (slug, revisionId) => api.get(`/cms/${slug}/revisions/${revisionId}`),
+    uploadAttachment: (slug, formData) => api.post(`/cms/${slug}/attachments`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    }),
+    deleteAttachment: (attachmentId) => api.delete(`/cms/attachments/${attachmentId}`),
   },
   
   // User management
   users: {
-    getAll: () => api.get('/admin/users'),
-    getById: (id) => api.get(`/admin/users/${id}`),
-    create: (data) => api.post('/admin/users', data),
-    update: (id, data) => api.put(`/admin/users/${id}`, data),
-    delete: (id) => api.delete(`/admin/users/${id}`),
-    updateRole: (id, roles) => api.put(`/admin/users/${id}/roles`, { roles }),
-    getRoles: () => api.get('/admin/roles'),
+    getAll: () => api.get('/auth/users'),
+    getById: (id) => api.get(`/auth/users/${id}`),
+    create: (data) => api.post('/auth/register', data),
+    update: (id, data) => api.put(`/auth/users/${id}`, data),
+    delete: (id) => api.delete(`/auth/users/${id}`),
+    updateRole: (id, roles) => api.put(`/auth/users/${id}`, { roles }),
+    getRoles: () => api.get('/auth/roles'),
   },
   
   // Dashboard
   dashboard: {
-    getStats: () => api.get('/dashboard/stats'),
+    getStats: () => api.get('/switch/dashboard'),
   },
 };
 

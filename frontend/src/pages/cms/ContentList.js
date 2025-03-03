@@ -51,8 +51,30 @@ const ContentList = () => {
   const fetchContent = async () => {
     setLoading(true);
     try {
-      const response = await apiService.content.getAll();
-      setContent(response.data);
+      // Determine if we need unpublished content based on the active tab
+      let response;
+      if (activeTab === 'draft' || activeTab === 'archived') {
+        response = await apiService.content.getUnpublished();
+      } else {
+        response = await apiService.content.getAll();
+      }
+      
+      // Map the response data to the required format
+      const formattedContent = response.data.map(item => ({
+        id: item.id,
+        title: item.title,
+        slug: item.slug,
+        description: item.summary,
+        content: item.content,
+        status: item.published ? 'published' : 'draft', // Map published status to our UI states
+        author: item.author_name || 'Unknown',
+        category: item.category?.name || 'Uncategorized',
+        tags: item.tags?.map(tag => typeof tag === 'object' ? tag.name : tag) || [],
+        created_at: item.created_at,
+        updated_at: item.updated_at
+      }));
+      
+      setContent(formattedContent);
       setError(null);
     } catch (err) {
       console.error('Error fetching content:', err);

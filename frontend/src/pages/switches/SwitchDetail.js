@@ -68,10 +68,34 @@ const SwitchDetail = () => {
     }
     try {
       const response = await apiService.switches.getMetrics(id);
-      setMetrics(response.data);
+      
+      // Extract metrics from response
+      if (response.data && response.data.metrics) {
+        setMetrics(response.data.metrics);
+      } else {
+        console.warn('Metrics data not found in response');
+      }
     } catch (err) {
       console.error('Error fetching metrics:', err);
       // Don't show error for metrics updates to avoid UI clutter
+    } finally {
+      setRefreshing(false);
+    }
+  };
+  
+  // Function to trigger a switch poll
+  const pollSwitch = async () => {
+    setRefreshing(true);
+    try {
+      await apiService.switches.poll(id);
+      // Wait a moment for the poll to complete before fetching metrics
+      setTimeout(() => {
+        fetchSwitchData();
+        fetchMetrics(false);
+      }, 2000);
+    } catch (err) {
+      console.error('Error polling switch:', err);
+      setError('Failed to poll switch. Please try again later.');
     } finally {
       setRefreshing(false);
     }

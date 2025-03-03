@@ -63,7 +63,13 @@
     - [✓] User listing with search and filtering
     - [✓] User creation and editing
     - [✓] Role management
-  - [ ] API integration completion
+  - [🔄] API integration completion
+    - [✓] API service updated to match backend endpoints
+    - [✓] Switch management UI connected to backend
+    - [✓] CMS list view connected to backend
+    - [✓] User management connected to backend
+    - [ ] CMS detail and edit views connected
+    - [ ] Dashboard connected to metrics API
 
 ### Infrastructure
 - [x] Docker container setup
@@ -76,8 +82,12 @@
 
 ### Testing
 - [ ] Backend unit tests
-- [ ] Frontend unit tests
-- [ ] Integration tests
+- [x] Frontend unit tests
+  - [✓] API service integration tests
+  - [✓] Switch management UI integration tests
+  - [✓] CMS UI integration tests
+  - [✓] User management UI integration tests
+- [ ] End-to-end integration tests
 - [ ] Live switch testing
 
 ## Next Milestone

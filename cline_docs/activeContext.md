@@ -24,7 +24,7 @@
    - ✅ Layout components (Header, Sidebar)
    - ✅ Dashboard UI
    - ✅ Dark mode theme support
-4. 🔄 Implement remaining frontend components
+4. ✅ Implement remaining frontend components
    - ✅ Switch management UI
      - ✅ Implemented Switches.js component with data fetching and table display
      - ✅ Implemented SwitchDetail.js with configuration management and metrics display
@@ -37,13 +37,27 @@
      - ✅ Implemented user listing with search and filtering
      - ✅ Added user creation and editing functionality
      - ✅ Implemented role management with permissions display
-5. Integrate frontend with backend APIs
-   - Connect Switch Management UI to OpenAPI client endpoints
-   - Connect CMS UI to content management endpoints
-   - Connect User Management UI to user administration endpoints
-6. Document the API endpoints for frontend integration
-7. Build out automated tests for both frontend and backend
-8. Implement production-ready configuration
+5. 🔄 Integrate frontend with backend APIs
+   - ✅ Updated API service to match backend endpoints 
+   - ✅ Connected Switch Management UI to backend APIs
+     - ✅ Implemented status data mapping from dashboard endpoint
+     - ✅ Updated metrics format to match backend response
+   - ✅ Connected ContentList to CMS endpoints
+     - ✅ Implemented data format mapping between frontend and backend
+   - ✅ Connected UserManagement to user/role endpoints
+     - ✅ Implemented proper data formatting for user information
+   - 🔄 Remaining integration tasks:
+     - [ ] Connect ContentDetail and ContentEdit views to CMS endpoints
+     - [ ] Connect Dashboard to metrics endpoints
+     - [ ] Test all CRUD operations with backend
+6. ✅ Implement frontend unit tests for API integration
+   - ✅ Created API service tests to verify endpoint communication
+   - ✅ Implemented tests for Switch Management UI with mocked API responses
+   - ✅ Created tests for CMS content list with mocked backend data
+   - ✅ Implemented User Management UI tests with mocked auth context
+7. Document the API endpoints for frontend integration
+8. Build out backend automated tests
+9. Implement production-ready configuration
 
 ## Current Status
 Development phase - Core infrastructure and backend components are largely complete. Frontend architecture and basic components are implemented. Currently focused on completing the remaining frontend components (Switch Management UI, CMS UI, User Management UI) and integrating them with the backend APIs.
