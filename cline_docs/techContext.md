@@ -76,3 +76,48 @@ The application integrates with the Netgear M4300 REST API (v2.0.0.59) using the
 - Backend: pytest for unit and integration tests
 - Frontend: Jest for React component testing
 - Live test switch for OpenAPI/SNMP validation
+
+## Documentation Resources
+
+### Container Infrastructure
+- [Docker Documentation](https://docs.docker.com/reference/)
+
+### Frontend Technologies
+- [React Documentation](https://react.dev/reference/react)
+- [Bootstrap Documentation](https://getbootstrap.com/docs/5.3/getting-started/introduction/)
+
+### Operating Systems
+- [Debian Documentation](https://www.debian.org/doc/)
+
+### Flask Ecosystem
+- [Flask Documentation](https://flask.palletsprojects.com/en/2.2.x/)
+- [Flask-SQLAlchemy](https://flask-sqlalchemy.palletsprojects.com/en/3.0.x/)
+- [Flask-Migrate](https://flask-migrate.readthedocs.io/en/latest/)
+- [Flask-JWT-Extended](https://flask-jwt-extended.readthedocs.io/en/stable/)
+- [Flask-CORS](https://flask-cors.readthedocs.io/en/latest/)
+
+### Database and Storage
+- [PostgreSQL Documentation](https://www.postgresql.org/docs/current/index.html)
+- [SQLAlchemy](https://docs.sqlalchemy.org/en/2.0/)
+- [Psycopg (PostgreSQL driver)](https://www.psycopg.org/docs/)
+- [Redis-py](https://redis-py.readthedocs.io/en/stable/)
+
+### Task Processing
+- [Celery](https://docs.celeryproject.org/en/stable/)
+- [Flower (Celery monitoring)](https://flower.readthedocs.io/en/latest/)
+
+### Networking and Security
+- [PySNMP](https://pysnmp.readthedocs.io/en/latest/)
+- [PyCryptodome](https://pycryptodome.readthedocs.io/en/latest/)
+- [Requests](https://requests.readthedocs.io/en/latest/)
+- [Urllib3](https://urllib3.readthedocs.io/en/latest/)
+
+### Testing
+- [Pytest](https://docs.pytest.org/en/7.3.x/)
+- [Pytest-Flask](https://pytest-flask.readthedocs.io/en/latest/)
+- [Pytest-Cov](https://pytest-cov.readthedocs.io/en/latest/)
+
+### Utilities and Configuration
+- [Python-dotenv](https://github.com/theskumar/python-dotenv)
+- [Marshmallow](https://marshmallow.readthedocs.io/en/stable/)
+- [Gunicorn](https://docs.gunicorn.org/en/stable/)
