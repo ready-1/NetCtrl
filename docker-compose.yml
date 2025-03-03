@@ -1,14 +1,20 @@
-version: '3.8'
+version: '3.9'
+
+name: netctrl
 
 services:
   flask:
     build:
       context: ./flask_app
+      dockerfile: Dockerfile
+      args:
+        - ENVIRONMENT=development
+    container_name: netctrl-flask
     ports:
       - "5000:5000"
     volumes:
-      - ./flask_app:/app
-      - ./openapi_client:/app/openapi_client
+      - ./flask_app:/app:ro
+      - ./openapi_client:/app/openapi_client:ro
       - shared_files:/app/shared_files
     environment:
       - FLASK_APP=app
@@ -19,19 +25,35 @@ services:
       - SWITCH_DEFAULT_USERNAME=${SWITCH_DEFAULT_USERNAME}
       - SWITCH_DEFAULT_PASSWORD=${SWITCH_DEFAULT_PASSWORD}
     depends_on:
-      - postgres
-      - redis
-    restart: unless-stopped
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+      restart_policy:
+        condition: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     networks:
       - netctrl-network
 
   celery_worker:
     build:
       context: ./flask_app
+      dockerfile: Dockerfile
+    container_name: netctrl-celery-worker
     command: celery -A app.worker.celery worker --loglevel=info
     volumes:
-      - ./flask_app:/app
-      - ./openapi_client:/app/openapi_client
+      - ./flask_app:/app:ro
+      - ./openapi_client:/app/openapi_client:ro
       - shared_files:/app/shared_files
     environment:
       - DATABASE_URL=${DATABASE_URL}
@@ -39,77 +61,147 @@ services:
       - SWITCH_DEFAULT_USERNAME=${SWITCH_DEFAULT_USERNAME}
       - SWITCH_DEFAULT_PASSWORD=${SWITCH_DEFAULT_PASSWORD}
     depends_on:
-      - postgres
-      - redis
-      - flask
-    restart: unless-stopped
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      flask:
+        condition: service_started
+    deploy:
+      resources:
+        limits:
+          cpus: '0.7'
+          memory: 512M
+      restart_policy:
+        condition: unless-stopped
     networks:
       - netctrl-network
 
   celery_beat:
     build:
       context: ./flask_app
+      dockerfile: Dockerfile
+    container_name: netctrl-celery-beat
     command: celery -A app.worker.celery beat --loglevel=info
     volumes:
-      - ./flask_app:/app
-      - ./openapi_client:/app/openapi_client
+      - ./flask_app:/app:ro
+      - ./openapi_client:/app/openapi_client:ro
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - REDIS_URL=redis://redis:6379/0
     depends_on:
-      - postgres
-      - redis
-      - flask
-    restart: unless-stopped
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      flask:
+        condition: service_started
+    deploy:
+      resources:
+        limits:
+          cpus: '0.3'
+          memory: 256M
+      restart_policy:
+        condition: unless-stopped
     networks:
       - netctrl-network
 
   postgres:
-    image: postgres:14
+    image: postgres:15-alpine
+    container_name: netctrl-postgres
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./postgres/init:/docker-entrypoint-initdb.d
+      - ./postgres/init:/docker-entrypoint-initdb.d:ro
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+      restart_policy:
+        condition: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     networks:
       - netctrl-network
 
   redis:
-    image: redis:7
+    image: redis:7-alpine
+    container_name: netctrl-redis
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
-    restart: unless-stopped
+    command: >
+      --requirepass ${REDIS_PASSWORD:-redis}
+      --appendonly yes
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+    deploy:
+      resources:
+        limits:
+          cpus: '0.3'
+          memory: 256M
+      restart_policy:
+        condition: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     networks:
       - netctrl-network
 
   nginx:
     build:
       context: ./nginx
+      dockerfile: Dockerfile
+    container_name: netctrl-nginx
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx/conf:/etc/nginx/conf.d
-      - ./frontend/build:/usr/share/nginx/html
-      - shared_files:/usr/share/nginx/shared_files
+      - ./nginx/conf:/etc/nginx/conf.d:ro
+      - ./frontend/build:/usr/share/nginx/html:ro
+      - shared_files:/usr/share/nginx/shared_files:ro
     depends_on:
-      - flask
-    restart: unless-stopped
+      flask:
+        condition: service_started
+    deploy:
+      resources:
+        limits:
+          cpus: '0.2'
+          memory: 128M
+      restart_policy:
+        condition: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
     networks:
       - netctrl-network
 
 volumes:
   postgres_data:
+    name: netctrl-postgres-data
   redis_data:
+    name: netctrl-redis-data
   shared_files:
+    name: netctrl-shared-files
 
 networks:
   netctrl-network:
+    name: netctrl-network
     driver: bridge
