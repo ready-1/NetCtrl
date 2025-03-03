@@ -56,8 +56,7 @@ function App() {
           <Route path="settings" element={<Settings />} />
         </Route>
         
-        {/* Redirect root to dashboard */}
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        {/* Note: Root redirect not needed as we already have a route for "/" above */}
         
         {/* 404 route */}
         <Route path="*" element={<NotFound />} />
