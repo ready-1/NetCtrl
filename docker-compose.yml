@@ -11,7 +11,7 @@ services:
         - ENVIRONMENT=development
     container_name: netctrl-flask
     ports:
-      - "5000:5000"
+      - "5001:5000"
     volumes:
       - ./flask_app:/app:ro
       - ./openapi_client:/app/openapi_client:ro
