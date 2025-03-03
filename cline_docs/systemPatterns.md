@@ -5,27 +5,42 @@ The application follows a containerized microservices architecture with four pri
 
 1. **Flask App Container**
    - Core backend services
-   - API endpoints
-   - Business logic
+   - API endpoints and REST controllers
+   - Business logic implementation
    - Worker processes for switch polling
+   - OpenAPI client integration for M4300 switches
+   - SNMP integration for metrics collection
+   - Authentication and authorization handling
+   - CMS content management
 
 2. **PostgreSQL Container**
    - Persistent data storage
-   - Stores user information
-   - CMS content
-   - Switch configuration data
+   - Stores user information and authentication data
+   - CMS content and revision history
+   - Switch configuration data in JSON format
+   - File metadata tracking
+   - Maintains relationships between entities
 
 3. **Redis Container**
    - Near-realtime SNMP metrics storage
-   - Caching layer
-   - Worker task queue
+   - Caching layer for frequently accessed data
+   - Worker task queue for Celery
+   - Session management (optional)
+   - Pub/Sub for real-time updates (optional)
+   - Optional persistence for airgapped recovery
 
 4. **Nginx Container**
-   - Reverse proxy
-   - Static file serving
-   - API request forwarding
+   - Reverse proxy for the Flask application
+   - Static file serving for frontend assets
+   - API request forwarding to backend
+   - SSL termination
+   - Request rate limiting
+   - HTTP caching
+   - Load balancing (future scalability)
 
 ## Data Flow
+
+### Primary User Flow
 ```
 User → Nginx → Flask → PostgreSQL/Redis
                 ↓
@@ -34,34 +49,214 @@ User → Nginx → Flask → PostgreSQL/Redis
             Switches
 ```
 
+### Detailed Component Interaction
+```mermaid
+flowchart TD
+    User[User Browser] --> Nginx[Nginx Container]
+    Nginx --> Static[Static Files]
+    Nginx --> Flask[Flask Container]
+    Flask --> Auth[Authentication]
+    Flask --> APIC[API Controllers]
+    Flask --> Business[Business Logic]
+    Flask --> ORM[SQLAlchemy ORM]
+    Flask --> WorkerMgmt[Worker Management]
+    Flask --> OAPIC[OpenAPI Client]
+    Flask --> SNMPM[SNMP Manager]
+    ORM --> Postgres[(PostgreSQL)]
+    WorkerMgmt --> Celery[Celery Workers]
+    Celery --> Redis[(Redis)]
+    Celery --> OAPIC
+    Celery --> SNMPM
+    OAPIC --> Switches[Network Switches]
+    SNMPM --> Switches
+```
+
+### Authentication Flow
+```mermaid
+sequenceDiagram
+    actor User
+    participant Frontend
+    participant Backend
+    participant DB
+    
+    User->>Frontend: Enter Credentials
+    Frontend->>Backend: POST /api/auth/login
+    Backend->>DB: Validate Credentials
+    DB-->>Backend: User Data/Roles
+    Backend->>Backend: Generate JWT
+    Backend-->>Frontend: Return JWT
+    Frontend->>Frontend: Store JWT
+    Frontend-->>User: Redirect to Dashboard
+```
+
+### Switch Management Flow
+```mermaid
+sequenceDiagram
+    participant Frontend
+    participant API
+    participant Worker
+    participant OpenAPI
+    participant SNMP
+    participant DB
+    participant Redis
+    
+    Frontend->>API: Request Switch Data
+    API->>DB: Get Cached Configuration
+    DB-->>API: Return Configuration
+    API-->>Frontend: Initial Data
+    
+    Worker->>OpenAPI: Poll Configuration (every 5min)
+    OpenAPI-->>Worker: Switch Configuration
+    Worker->>DB: Update Configuration
+    
+    Worker->>SNMP: Poll Metrics (every 30s)
+    SNMP-->>Worker: Real-time Metrics
+    Worker->>Redis: Store Metrics
+    
+    Frontend->>API: Request Real-time Metrics
+    API->>Redis: Get Latest Metrics
+    Redis-->>API: Return Metrics
+    API-->>Frontend: Real-time Data
+```
+
 ## Key Technical Decisions
+
 1. **Worker Processes**
-   - Celery workers for switch polling
+   - Celery workers for asynchronous switch polling
+   - Redis as message broker for task queue
    - Managed task queue for distributed processing
-   - Configured to balance load across switches
+   - Configured to balance load across switches (10 switches per worker)
+   - Scheduled tasks for periodic data collection
+   - Error handling and retry mechanisms
+   - Task prioritization for critical operations
 
 2. **API Design**
-   - RESTful API endpoints
-   - OpenAPI integration for M4300 switches
+   - RESTful API endpoints with consistent naming conventions
+   - OpenAPI integration for M4300 switches using generated client
    - SNMP integration for near-realtime metrics
+   - API versioning for future compatibility
+   - Response caching for improved performance
+   - Standardized error responses
+   - Pagination for large data sets
+   - Filtering and sorting capabilities
 
 3. **Authentication**
-   - JWT-based authentication
-   - Role-based access control
-   - Air-gapped registration workflow
+   - JWT-based authentication with token expiration and refresh
+   - Role-based access control (Admin, Manager, User, Read-only)
+   - Permission-based authorization for fine-grained control
+   - Air-gapped registration workflow with admin approval
+   - Password policies and secure credential storage
+   - Session management
+   - Audit logging for security events
 
 4. **Database Schema**
-   - Users and roles tables
-   - CMS content storage
-   - Switch configuration JSON storage
-   - File metadata tracking
+   - Users and roles tables with many-to-many relationships
+   - CMS content storage with revision history
+   - Switch configuration JSON storage with historical tracking
+   - File metadata tracking for uploaded content
+   - Optimized indexes for common queries
+   - Foreign key constraints for data integrity
+   - Soft delete for important records
 
 5. **SSL Handling**
    - Temporary workaround for self-signed certificates
    - Suppression of insecure connection warnings
+   - Documentation of security implications
+   - Future roadmap for proper certificate management
 
 ## Deployment Strategy
+
 - Docker Compose for container orchestration
 - Environment variables for configuration
-- Shared volumes for file storage
+- Shared volumes for file storage and persistence
 - Self-contained dependencies for air-gapped operation
+- Container health checks for reliability
+- Startup order management with dependency waiting
+- Volume backups for data protection
+- Resource constraints to prevent container resource starvation
+- Logging configuration for troubleshooting
+- Restart policies for service resilience
+
+## Repository Structure
+
+```
+netctrl/
+├── docker-compose.yml       # Main container orchestration
+├── .env                     # Environment variables
+├── .gitignore               # Git ignore patterns
+├── README.md                # Project documentation
+├── cline_docs/              # Memory bank documentation
+├── docs/                    # Project specifications
+├── flask_app/               # Backend application
+│   ├── app/                 # Application code
+│   │   ├── __init__.py      # App initialization
+│   │   ├── models/          # Database models
+│   │   ├── api/             # API endpoints
+│   │   ├── auth/            # Authentication
+│   │   ├── cms/             # CMS functionality
+│   │   ├── switch/          # Switch management
+│   │   ├── worker/          # Worker processes
+│   │   └── utils/           # Utility functions
+│   ├── tests/               # Backend tests
+│   ├── Dockerfile           # Flask container build
+│   └── requirements.txt     # Python dependencies
+├── frontend/                # React application
+│   ├── public/              # Static assets
+│   ├── src/                 # React source code
+│   │   ├── components/      # UI components
+│   │   ├── pages/           # Page layouts
+│   │   ├── services/        # API services
+│   │   ├── store/           # State management
+│   │   └── utils/           # Frontend utilities
+│   ├── Dockerfile           # Frontend container build
+│   ├── package.json         # Node.js dependencies
+│   └── tests/               # Frontend tests
+├── nginx/                   # Nginx configuration
+│   ├── Dockerfile           # Nginx container build
+│   └── conf/                # Nginx config files
+├── postgres/                # PostgreSQL configuration
+│   ├── init/                # DB initialization scripts
+│   └── Dockerfile           # PostgreSQL customization
+└── openapi_client/          # OpenAPI generated client
+```
+
+## Error Handling Strategy
+
+1. **API Error Responses**
+   - Standardized error format across all endpoints
+   - HTTP status codes with meaningful error messages
+   - Detailed error information for debugging (dev environment only)
+   - Error categorization for frontend handling
+
+2. **Worker Error Management**
+   - Task retry mechanism with exponential backoff
+   - Dead letter queue for failed tasks
+   - Alerting for critical failures
+   - Graceful degradation when switches are unreachable
+
+3. **Frontend Error Handling**
+   - Global error boundary components
+   - Offline operation capabilities
+   - User-friendly error messages
+   - Automatic retry for transient network issues
+
+## Testing Architecture
+
+1. **Backend Testing**
+   - Unit tests for business logic
+   - API integration tests
+   - Database model tests
+   - Worker process tests
+   - Mock objects for external dependencies
+
+2. **Frontend Testing**
+   - Component unit tests
+   - Integration tests for complex interactions
+   - End-to-end testing for critical flows
+   - Accessibility testing
+
+3. **CI/CD Considerations**
+   - Automated test suite execution
+   - Docker build verification
+   - Static code analysis
+   - Security scanning

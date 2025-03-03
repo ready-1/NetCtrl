@@ -1,0 +1,33 @@
+# Flask and extensions
+Flask==2.2.3
+Flask-SQLAlchemy==3.0.3
+Flask-Migrate==4.0.4
+Flask-JWT-Extended==4.5.2
+Flask-CORS==3.0.10
+
+# Database
+SQLAlchemy==2.0.9
+psycopg2-binary==2.9.6
+redis==4.5.4
+
+# Worker processes
+celery==5.2.7
+flower==1.2.0
+
+# SNMP
+pysnmp==4.4.12
+pycryptodomex==3.17
+
+# API
+requests==2.28.2
+urllib3==1.26.15
+
+# Testing
+pytest==7.3.1
+pytest-flask==1.2.0
+pytest-cov==4.1.0
+
+# Utilities
+python-dotenv==1.0.0
+marshmallow==3.19.0
+gunicorn==20.1.0
