@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import jwtDecode from 'jwt-decode';
@@ -62,7 +62,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (credentials) => {
     try {
       const response = await axios.post('/api/auth/login', credentials);
-      const { token } = response.data;
+      const token = response.data.access_token;
       
       // Store token in local storage
       localStorage.setItem('token', token);
@@ -124,6 +124,17 @@ export const AuthProvider = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
+};
+
+// Custom hook to use the auth context
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  
+  return context;
 };
 
 export default AuthContext;

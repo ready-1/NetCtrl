@@ -16,9 +16,14 @@ def create_app(test_config=None):
     
     # Load configuration
     if test_config is None:
+        # Fix for PostgreSQL dialect name (postgres:// -> postgresql://)
+        database_url = os.environ.get('DATABASE_URL', 'sqlite:///netctrl.db')
+        if database_url.startswith('postgres://'):
+            database_url = database_url.replace('postgres://', 'postgresql://', 1)
+            
         app.config.from_mapping(
             SECRET_KEY=os.environ.get('SECRET_KEY', 'dev'),
-            SQLALCHEMY_DATABASE_URI=os.environ.get('DATABASE_URL', 'sqlite:///netctrl.db'),
+            SQLALCHEMY_DATABASE_URI=database_url,
             SQLALCHEMY_TRACK_MODIFICATIONS=False,
             JWT_SECRET_KEY=os.environ.get('JWT_SECRET_KEY', 'dev-jwt-secret'),
             REDIS_URL=os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),

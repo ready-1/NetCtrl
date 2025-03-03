@@ -11,15 +11,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
-COPY requirements.txt .
+COPY flask_app/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt && \
-    pip install --no-cache-dir flask celery
+    pip install --no-cache-dir flask flask-sqlalchemy flask-migrate flask-jwt-extended flask-cors celery psycopg2
 
 # Copy application code
 COPY . .
 
-# Copy openapi_client directory (will be accessed from docker-compose build context)
-COPY ../openapi_client /app/openapi_client
+# Copy openapi_client directory
+COPY openapi_client/ /app/openapi_client/
 
 # Create shared files directory with appropriate permissions
 RUN mkdir -p /app/shared_files && chmod 777 /app/shared_files

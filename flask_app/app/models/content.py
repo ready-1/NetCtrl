@@ -29,7 +29,7 @@ class Content(db.Model):
                                 cascade="all, delete-orphan")
     
     # Revisions (one-to-many)
-    revisions = db.relationship('ContentRevision', backref='content', lazy='dynamic',
+    revisions = db.relationship('ContentRevision', backref='parent_content', lazy='dynamic',
                               cascade="all, delete-orphan")
     
     # Timestamps
