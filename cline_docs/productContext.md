@@ -1,16 +1,22 @@
-# Product Context
+# Project Context
+
+## Overview
+The Netgear Switch Management Application is designed to manage up to 50 network switches. It leverages Flask for the backend, React for the frontend, and PostgreSQL with Redis for data handling. The application is deployed via Docker containers, ensuring modularity and portability.
 
 ## Problem Statement
-Broadcast engineers managing Fuse Corporate Rigs need centralized control over Netgear M4300 switches to:
-- Simplify firmware updates across distributed locations
-- Maintain consistent network configurations
-- Document network topology changes in real-time
-- Reduce manual CLI configuration errors
+The application addresses the need for centralized switch management, offering features like role-based authentication, a CMS, and SNMP integration. It operates effectively in airgapped environments, requiring self-contained dependencies.
 
-## Value Proposition
-NetCtrl provides:
-1. Unified web interface for switch management
-2. Version-controlled configuration storage
-3. Automated firmware deployment
-4. Integrated network documentation CMS
-5. Real-time monitoring through Grafana dashboards
+## Key Features
+- Role-based access control
+- Wiki-style CMS
+- Switch management via OpenAPI and SNMP
+- Responsive UI with Bootstrap and dark mode
+- Worker processes for polling switches
+- SSL handling with temporary workarounds
+
+## Technologies
+- Backend: Flask
+- Frontend: React
+- Database: PostgreSQL
+- Caching: Redis
+- Deployment: Docker

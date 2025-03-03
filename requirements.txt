@@ -1,10 +1,4 @@
-Django==4.2.10
-djangorestframework==3.14.0
-gunicorn==21.2.0
-psycopg2-binary==2.9.9
-python-dotenv==1.0.0
-celery==5.3.6
-redis==4.6.0
-cryptography==41.0.7
-django-environ==0.11.2
-whitenoise==6.6.0
+urllib3 >= 1.25.3, < 3.0.0
+python_dateutil >= 2.8.2
+pydantic >= 2
+typing-extensions >= 4.7.1
