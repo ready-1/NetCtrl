@@ -119,6 +119,77 @@ sequenceDiagram
     API-->>Frontend: Real-time Data
 ```
 
+## API Integration
+
+### Frontend-Backend Integration
+
+- **Centralized API Service**: Frontend uses a centralized API service (`frontend/src/services/api.js`) that encapsulates all backend communication, providing a clean interface for components to interact with backend data.
+
+- **Authentication Flow**: 
+  - JWT tokens are automatically injected into requests via an Axios interceptor
+  - Unauthorized responses (401) trigger automatic redirection to login
+  - Token management handled transparently from components
+
+- **API Modularity**:
+  - Service organized into logical domains (auth, switches, content, users, dashboard)
+  - Each domain contains related API methods with consistent patterns
+  - Methods return promises for async handling
+
+- **Data Transformation**:
+  - Incoming API data is transformed to frontend-friendly formats
+  - Component-specific data structures are created from API responses
+  - Backend date formats are converted to user-friendly displays
+
+- **Error Handling Strategy**:
+  - Centralized error interception and processing
+  - Consistent error presentation across components
+  - Fallback data patterns for graceful degradation
+
+### CMS Integration
+
+- **Content Retrieval and Display**:
+  - Content listing with pagination, filtering, and search
+  - Detailed content view with revision history
+  - File attachment handling with appropriate MIME types
+  - Content status management (draft, published, archived)
+
+- **Content Editing**:
+  - Form validation before submission
+  - File upload progress tracking
+  - Draft auto-saving capabilities
+  - Unsaved changes protection
+  - Tab-based content organization
+
+### Dashboard Integration
+
+- **Concurrent API Requests**:
+  - Parallel fetching of switch and content statistics
+  - Promise.all pattern for efficient data loading
+  - Separate error handling for each data source
+
+- **Metrics Visualization**:
+  - Real-time data display with auto-refresh
+  - Status-based visual indicators
+  - Error states with graceful fallbacks
+
+### Switch Management Integration
+
+- **OpenAPI Client Abstraction**:
+  - Backend abstracts OpenAPI client complexity
+  - Frontend works with simplified data models
+  - Backend handles data normalization and transformation
+
+- **Real-time Updates**:
+  - Periodic polling for fresh switch data
+  - Smart caching to reduce network overhead
+  - Optimistic UI updates for responsive experience
+
+### OpenAPI Client Integration
+
+- **Client Generation**: The OpenAPI client for the M4300 switch API is pre-generated (`openapi_client` directory).
+- **API Abstraction**: Backend facades over the OpenAPI client to provide simplified interfaces.
+- **Response Normalization**: Switch data is normalized to consistent formats by the backend before storing or sending to frontend.
+
 ## Key Technical Decisions
 
 1. **Worker Processes**
