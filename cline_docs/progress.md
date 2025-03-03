@@ -86,6 +86,9 @@
   - [✓] API service integration tests
   - [✓] Switch management UI integration tests
   - [✓] CMS UI integration tests
+    - [✓] Content listing tests
+    - [✓] Content detail view tests
+    - [✓] Content editing tests
   - [✓] User management UI integration tests
 - [ ] End-to-end integration tests
 - [ ] Live switch testing
