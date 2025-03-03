@@ -237,16 +237,20 @@ sequenceDiagram
 
 ## Deployment Strategy
 
-- Docker Compose for container orchestration
-- Environment variables for configuration
-- Shared volumes for file storage and persistence
+- Docker Compose 3.9 for modern container orchestration
+- Named services, volumes, and networks for clarity
+- Explicit container resource limits (CPU and memory)
+- Comprehensive health checks for all services
+- Condition-based service dependencies (service_healthy)
+- Read-only volume mounts where possible for security
+- Alpine-based images where appropriate for smaller footprint
+- Redis configured with password authentication and memory limits
+- Environment variables for flexible configuration
 - Self-contained dependencies for air-gapped operation
-- Container health checks for reliability
-- Startup order management with dependency waiting
-- Volume backups for data protection
-- Resource constraints to prevent container resource starvation
-- Logging configuration for troubleshooting
-- Restart policies for service resilience
+- Explicit container naming for easier management
+- Enhanced restart policies for improved uptime
+- Volume backup capabilities for data protection
+- Proper service shutdown order for data integrity
 
 ## Repository Structure
 

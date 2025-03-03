@@ -27,9 +27,15 @@
   - Optional persistence for airgapped recovery
 
 ### Infrastructure
-- **Containerization**: Docker and Docker Compose
+- **Containerization**: Docker and Docker Compose 3.9
 - **Deployment Platform**: Debian Bookworm
 - **Web Server**: Nginx (reverse proxy)
+- **Container Management**:
+  - Resource limits for CPU and memory
+  - Service healthchecks for reliability
+  - Named volumes and networks
+  - Condition-based service dependencies
+  - Alpine-based images where appropriate
 - **SSL**: Workaround for self-signed certificates
 
 ## Development Environment Setup
