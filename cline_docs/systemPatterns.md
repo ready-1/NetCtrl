@@ -260,3 +260,11 @@ netctrl/
    - Docker build verification
    - Static code analysis
    - Security scanning
+
+## Version Control Patterns
+
+1. **File Tracking**
+   - All new files should be explicitly added to git when they are created so they are tracked
+   - Use `git add [filename]` when creating new files
+   - Ensure configuration files, documentation, and code are properly tracked
+   - Add files before committing changes to maintain complete project history
