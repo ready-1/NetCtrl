@@ -3,8 +3,8 @@ name: netctrl
 services:
   flask:
     build:
-      context: ./flask_app
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: flask_app/Dockerfile
       args:
         - ENVIRONMENT=development
     container_name: netctrl-flask
@@ -12,8 +12,6 @@ services:
       - "5001:5000"
     volumes:
       - ./flask_app:/app:ro
-      - ./openapi_client:/app/openapi_client:ro
-      - shared_files:/app/shared_files:rw
     environment:
       - FLASK_APP=app
       - FLASK_ENV=development
@@ -45,14 +43,12 @@ services:
 
   celery_worker:
     build:
-      context: ./flask_app
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: flask_app/Dockerfile
     container_name: netctrl-celery-worker
-    command: celery -A app.worker.celery worker --loglevel=info
+    command: python -m celery -A app.worker.celery worker --loglevel=info
     volumes:
       - ./flask_app:/app:ro
-      - ./openapi_client:/app/openapi_client:ro
-      - shared_files:/app/shared_files:rw
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - REDIS_URL=redis://redis:6379/0
@@ -77,13 +73,12 @@ services:
 
   celery_beat:
     build:
-      context: ./flask_app
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: flask_app/Dockerfile
     container_name: netctrl-celery-beat
-    command: celery -A app.worker.celery beat --loglevel=info
+    command: python -m celery -A app.worker.celery beat --loglevel=info
     volumes:
       - ./flask_app:/app:ro
-      - ./openapi_client:/app/openapi_client:ro
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - REDIS_URL=redis://redis:6379/0
@@ -171,7 +166,6 @@ services:
     volumes:
       - ./nginx/conf:/etc/nginx/conf.d:ro
       - ./frontend/build:/usr/share/nginx/html:ro
-      - shared_files:/usr/share/nginx/shared_files:ro
     depends_on:
       flask:
         condition: service_started
