@@ -15,6 +15,7 @@
 - CMS implementation with content revisions and file attachments
 - Worker processes for switch polling with Celery
 - Database models for users, switches, and CMS content
+- Version control workflow established with requirement to explicitly add new files to git
 
 ## What's Left to Build
 
@@ -28,21 +29,21 @@
   - [x] OpenAPI integration
   - [x] SNMP integration
   - [x] Worker process implementation
-- [ ] Database initialization scripts
+- [x] Database initialization scripts
 - [ ] End-to-end testing
 - [ ] API documentation
 - [ ] Production-ready configuration
 
 ### Frontend
-- [ ] React application setup
-  - [ ] Project structure
-  - [ ] Component library
-  - [ ] State management
-  - [ ] Authentication UI
+- [x] React application setup
+  - [x] Project structure
+  - [x] Component library
+  - [x] State management
+  - [x] Authentication UI
   - [ ] CMS UI
   - [ ] Switch management UI
-  - [ ] Dashboard UI
-  - [ ] Dark mode implementation
+  - [x] Dashboard UI
+  - [x] Dark mode implementation
 
 ### Infrastructure
 - [x] Docker container setup
@@ -50,7 +51,7 @@
   - [x] PostgreSQL container
   - [x] Redis container
   - [x] Celery workers and beat
-  - [ ] Nginx container configuration
+  - [x] Nginx container configuration
   - [x] Docker Compose configuration
 
 ### Testing
@@ -60,7 +61,7 @@
 - [ ] Live switch testing
 
 ## Next Milestone
-Implement the Nginx configuration and begin developing the React frontend components, starting with the authentication system and dashboard.
+Complete the remaining React frontend components, including the switch management UI and CMS UI, and implement API documentation for easier frontend integration.
 
 ## Development Roadmap
 1. **Phase 1**: ✅ Infrastructure Setup (Docker, Database, Basic API)
@@ -68,6 +69,10 @@ Implement the Nginx configuration and begin developing the React frontend compon
 3. **Phase 3**: ✅ OpenAPI Integration and Switch Management
 4. **Phase 4**: ✅ SNMP Integration and Worker Processes
 5. **Phase 5**: ✅ CMS Implementation
-6. **Phase 6**: 🔄 Frontend Development and UI (Next focus)
+6. **Phase 6**: 🔄 Frontend Development and UI (In progress)
+   - ✅ Core UI components (Auth, Layout, Dashboard)
+   - 🔄 Switch Management UI (Next focus)
+   - 🔄 CMS UI
+   - 🔄 User Management UI
 7. **Phase 7**: 🔄 Testing and Documentation (Parallel with frontend)
 8. **Phase 8**: Deployment and Handover

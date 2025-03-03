@@ -16,15 +16,23 @@
   - Worker processes for polling switches using Celery
   - Database models for users, switches, and CMS content
 - Added comprehensive documentation resources to techContext.md including links to all key libraries and frameworks being used in the project (Flask, SQLAlchemy, Celery, Redis, Pytest, etc.)
+- Added requirement for explicitly tracking new files in git when they are created
 
 ## Next Steps
-1. Create basic database initialization scripts
-2. Set up the Nginx configuration
-3. Implement the React frontend components
-4. Build the UI for authentication, switch management, and CMS
-5. Create a dashboard for monitoring switch status
-6. Build out automated tests for the application
-7. Document the API endpoints for frontend integration
+1. ✅ Create basic database initialization scripts
+2. ✅ Set up the Nginx configuration
+3. ✅ Implement the core React frontend components
+   - ✅ Authentication UI
+   - ✅ Layout components (Header, Sidebar)
+   - ✅ Dashboard UI
+   - ✅ Dark mode theme support
+4. 🔄 Implement remaining frontend components
+   - Switch management UI
+   - CMS UI
+   - User management UI
+5. Document the API endpoints for frontend integration
+6. Build out automated tests for both frontend and backend
+7. Implement production-ready configuration
 
 ## Current Status
-Development phase - Core infrastructure and backend components have been implemented. Ready to start working on the frontend components and integration.
+Development phase - Core infrastructure, backend components, and basic frontend architecture have been implemented. The next focus is completing the remaining frontend components and integrating with the backend APIs.
