@@ -80,22 +80,27 @@ const apiService = {
   
   // Content management
   content: {
-    getAll: () => api.get('/cms'),
+    getAll: (params) => api.get('/cms', { params }),
     getUnpublished: () => api.get('/cms/unpublished'),
+    getById: (id) => api.get(`/cms/id/${id}`),
     getBySlug: (slug) => api.get(`/cms/${slug}`),
     create: (data) => api.post('/cms', data),
-    update: (slug, data) => api.put(`/cms/${slug}`, data),
-    delete: (slug) => api.delete(`/cms/${slug}`),
+    update: (id, data) => api.put(`/cms/${id}`, data),
+    delete: (id) => api.delete(`/cms/${id}`),
     getCategories: () => api.get('/cms/categories'),
     getTags: () => api.get('/cms/tags'),
-    getRevisions: (slug) => api.get(`/cms/${slug}/revisions`),
-    getRevision: (slug, revisionId) => api.get(`/cms/${slug}/revisions/${revisionId}`),
-    uploadAttachment: (slug, formData) => api.post(`/cms/${slug}/attachments`, formData, {
+    getRevisions: (id) => api.get(`/cms/${id}/revisions`),
+    getRevision: (id, revisionId) => api.get(`/cms/${id}/revisions/${revisionId}`),
+    restoreRevision: (id, revisionId) => api.post(`/cms/${id}/revisions/${revisionId}/restore`),
+    uploadAttachment: (id, formData) => api.post(`/cms/${id}/attachments`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
     }),
-    deleteAttachment: (attachmentId) => api.delete(`/cms/attachments/${attachmentId}`),
+    deleteAttachment: (id, attachmentId) => api.delete(`/cms/${id}/attachments/${attachmentId}`),
+    getAttachments: (id) => api.get(`/cms/${id}/attachments`),
+    getStats: () => api.get('/cms/stats'),
+    search: (query) => api.get('/cms/search', { params: { q: query } }),
   },
   
   // User management

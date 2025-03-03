@@ -186,35 +186,40 @@ const ContentEdit = () => {
     const file = e.target.files[0];
     if (!file) return;
     
+    // Create form data for file upload
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('contentId', id || 'new');
     
     setFileUploading(true);
     setUploadProgress(0);
     
     try {
-      // Simulate upload progress
-      const interval = setInterval(() => {
+      // Setup progress tracking
+      const uploadProgressInterval = setInterval(() => {
         setUploadProgress(prev => {
-          const newProgress = prev + Math.random() * 10;
+          const newProgress = prev + Math.random() * 8;
           return newProgress > 90 ? 90 : newProgress;
         });
       }, 300);
       
-      // Simulate API call with timeout
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Upload file through API service
+      const response = await apiService.content.uploadAttachment(
+        id || 'temp', // For new content, use temp ID until content is created
+        formData
+      );
       
-      clearInterval(interval);
+      clearInterval(uploadProgressInterval);
       setUploadProgress(100);
       
-      // Add file to files list
+      // Process the response and add file to list
+      const fileData = response.data;
       const newFile = {
-        id: Date.now().toString(),
-        name: file.name,
-        size: `${(file.size / 1024).toFixed(2)} KB`,
-        type: file.type,
-        uploaded_at: new Date().toISOString()
+        id: fileData.id || Date.now().toString(),
+        name: fileData.name || file.name,
+        size: fileData.size || `${(file.size / 1024).toFixed(2)} KB`,
+        type: fileData.mime_type || file.type,
+        uploaded_at: fileData.uploaded_at || new Date().toISOString(),
+        url: fileData.url || ''
       };
       
       setFiles(prev => [...prev, newFile]);

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Card, Row, Col, Alert, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import AuthContext from '../../store/AuthContext';
+import apiService from '../../services/api';
 
 /**
  * Dashboard Component
@@ -23,19 +24,44 @@ const Dashboard = () => {
     const fetchDashboardData = async () => {
       try {
         setLoading(true);
-        // TODO: Replace with actual API call
-        // Simulated data for initial implementation
-        setTimeout(() => {
-          setStats({
-            switches: { total: 12, online: 10, offline: 2 },
-            content: { total: 15, recent: 3 },
-          });
-          setLoading(false);
-        }, 500);
+        
+        // Get switch statistics from the dashboard endpoint
+        const switchStatsPromise = apiService.dashboard.getStats();
+        
+        // Get content statistics from the CMS endpoint
+        const contentStatsPromise = apiService.content.getStats();
+        
+        // Wait for both requests to complete
+        const [switchResponse, contentResponse] = await Promise.all([
+          switchStatsPromise,
+          contentStatsPromise
+        ]);
+        
+        // Update stats state with real data
+        setStats({
+          switches: {
+            total: switchResponse.data.total || 0,
+            online: switchResponse.data.online || 0,
+            offline: switchResponse.data.offline || 0
+          },
+          content: {
+            total: contentResponse.data.total || 0,
+            recent: contentResponse.data.recent || 0
+          }
+        });
+        
+        setError(null);
+        setLoading(false);
       } catch (err) {
         console.error('Error fetching dashboard data:', err);
         setError('Failed to load dashboard data. Please try again later.');
         setLoading(false);
+        
+        // Set fallback data if API calls fail
+        setStats({
+          switches: { total: 0, online: 0, offline: 0 },
+          content: { total: 0, recent: 0 }
+        });
       }
     };
 

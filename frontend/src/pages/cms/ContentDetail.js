@@ -43,14 +43,62 @@ const ContentDetail = () => {
   const fetchContent = async () => {
     setLoading(true);
     try {
-      const response = await apiService.content.getById(id);
-      setContent(response.data);
+      // Use getBySlug for string IDs (slugs) and getById for numeric IDs
+      const response = isNaN(id) 
+        ? await apiService.content.getBySlug(id)
+        : await apiService.content.getById(id);
+      
+      // Process the data from backend format to component format
+      const contentData = response.data;
+      
+      // Format the content data for the component
+      setContent({
+        ...contentData,
+        // Ensure tags is an array
+        tags: Array.isArray(contentData.tags) 
+          ? contentData.tags.map(tag => typeof tag === 'object' ? tag.name : tag)
+          : [],
+        // Get category name if it's an object
+        category: contentData.category?.name || contentData.category || 'Uncategorized',
+        // Ensure author is a string
+        author: contentData.author_name || contentData.author || 'Unknown',
+        // Default status if not provided
+        status: contentData.status || (contentData.published ? 'published' : 'draft')
+      });
+      
       setError(null);
+      
+      // If revisions are not included in the initial response, fetch them
+      if (!contentData.revisions || contentData.revisions.length === 0) {
+        fetchRevisions(id);
+      }
     } catch (err) {
       console.error('Error fetching content:', err);
       setError('Failed to load content. Please try again later.');
     } finally {
       setLoading(false);
+    }
+  };
+  
+  // Function to fetch revision history
+  const fetchRevisions = async (contentId) => {
+    try {
+      const response = await apiService.content.getRevisions(contentId);
+      
+      if (response.data && response.data.length > 0) {
+        setContent(prevContent => ({
+          ...prevContent,
+          revisions: response.data.map(rev => ({
+            version: rev.version || '1.0',
+            date: rev.created_at,
+            author: rev.author_name || rev.author || 'Unknown',
+            comments: rev.comments || ''
+          }))
+        }));
+      }
+    } catch (err) {
+      console.error('Error fetching revisions:', err);
+      // Don't show error for revisions to avoid UI clutter
     }
   };
 
