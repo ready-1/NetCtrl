@@ -67,7 +67,21 @@ const UserManagement = () => {
     setLoading(true);
     try {
       const response = await apiService.users.getAll();
-      setUsers(response.data);
+      
+      // Format the data to match our component's expectations
+      const formattedUsers = response.data.map(user => ({
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        firstName: user.first_name,
+        lastName: user.last_name,
+        roles: user.roles || [],
+        active: user.is_active,
+        created_at: user.created_at,
+        updated_at: user.updated_at
+      }));
+      
+      setUsers(formattedUsers);
       setError(null);
     } catch (err) {
       console.error('Error fetching users:', err);
