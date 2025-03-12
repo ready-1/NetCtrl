@@ -49,7 +49,7 @@ env-config/
 
 4. Start the containers:
    ```bash
-   docker-compose up -d
+   docker compose up -d
    ```
 
 5. Access the application at http://localhost
@@ -69,17 +69,17 @@ For development, you can use the following commands:
 
 - Start individual services:
   ```bash
-  docker-compose up backend database -d
+  docker compose up backend database -d
   ```
 
 - View logs:
   ```bash
-  docker-compose logs -f
+  docker compose logs -f
   ```
 
 - Access specific container:
   ```bash
-  docker-compose exec backend bash
+  docker compose exec backend bash
   ```
 
 ## Configuration

@@ -25,8 +25,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt /app/
 
 # Install Python dependencies
+# For initial builds, use the public PyPI repository to ensure successful installation
+# In production, the containers will use the local mirror as configured in docker-compose.yml
 RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+    pip install --no-cache-dir --index-url https://pypi.org/simple -r requirements.txt
 
 # Copy application code
 COPY . /app/

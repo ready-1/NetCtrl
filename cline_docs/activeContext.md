@@ -11,23 +11,27 @@
 
 ## Current Work Focus:
 
+- Standardized Docker command syntax and configuration format
+- Fixed Docker container DNS resolution and logging issues
 - Implementing Docker environment setup for MVP1
-- Creating comprehensive environment variable management system
-- Configuring Docker containers for air-gapped operation
 
 ## Next Steps:
 
-1. Create Docker Compose file and basic project structure
-2. Set up environment variable management system (templates and structure)
-3. Configure container images with Dockerfiles for each service
-4. Set up volume mounts and network configuration
-5. Implement environment validation scripts
+1. Implement the FastAPI backend with authentication
+2. Resolve backend and frontend container startup issues 
+3. Test the system's resilience during temporary internet outages
+4. Leverage the Docker helper script for container management
 
 ## Active Decisions and Considerations:
 
-- Designing the optimal Docker container structure for the CMS system in air-gapped environments
+- Standardized on "docker compose" command syntax (without hyphen) for all operations
+- Created Docker helper script to ensure consistent use of modern Docker syntax
+- Using direct connections to public package repositories (PyPI, NPM) as system will be online for installations
+- Designing Docker container structure that handles periodic internet outages gracefully
 - Creating a comprehensive environment variable management strategy for all containers
-- Planning approach for bundling all dependencies locally (no CDNs or external package repositories)
+- Using simplified network architecture (single shared network) for reliable DNS resolution
+- Using file-based logging instead of syslog logging to avoid dependency on DNS resolution
+- Caching required dependencies when online to maintain functionality during outages
 - Structuring volume mounts for persistent data in the containerized environment
 - Determining the best approach for container health checks and startup order
-- Configuring NGINX for handling large file uploads (up to 2GB) in an air-gapped environment
+- Configuring NGINX for handling large file uploads (up to 2GB)

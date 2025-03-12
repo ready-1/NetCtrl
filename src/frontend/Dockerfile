@@ -18,9 +18,22 @@ RUN apk add --no-cache curl
 # Copy package files
 COPY package.json package-lock.json* ./
 
-# Configure npm to use local registry and install dependencies
+# Configure npm to use specified registry and install dependencies with improved settings
+# to prevent hanging during builds
 RUN echo "registry=${NPM_REGISTRY}" > .npmrc && \
-    npm ci
+    echo "network-timeout=300000" >> .npmrc && \
+    echo "fetch-retries=10" >> .npmrc && \
+    echo "fetch-retry-mintimeout=15000" >> .npmrc && \
+    echo "fetch-retry-maxtimeout=60000" >> .npmrc && \
+    echo "cache-min=3600" >> .npmrc && \
+    # Set npm to continue on error for certain non-critical errors
+    npm config set --global legacy-peer-deps true && \
+    # Force progress=false to avoid console spam
+    npm config set progress=false && \
+    # Attempt to install dependencies with fallback and multiple retry options
+    (npm ci --prefer-offline --no-audit --no-fund || \
+     npm install --prefer-offline --no-audit --no-fund || \
+     npm install --prefer-offline --no-audit --no-fund --registry=https://registry.npmjs.org)
 
 # Copy application code
 COPY . .

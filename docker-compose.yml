@@ -1,18 +1,38 @@
-version: '3.8'
-
-# CMS with RBAC Docker Compose Configuration
-# This file defines all services required for the CMS application
-# Configured for air-gapped operation with local dependency repositories
+name: netctrl
 
 services:
+  # Syslog Service for Centralized Logging
+  syslog:
+    build:
+      context: ./src/syslog
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file:
+      - ./env-config/.env
+      - ./env-config/services/syslog/.env
+    volumes:
+      - syslog_data:/var/log/cms
+    networks:
+      - app_network
+    hostname: syslog
+    container_name: syslog
+    ports:
+      - "514:514"
+      - "514:514/udp"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
   # FastAPI Backend Service
   backend:
     build:
       context: ./src/backend
       dockerfile: Dockerfile
       args:
-        - PIP_INDEX_URL=${PIP_INDEX_URL:-http://localhost:3141/simple}
-        - PIP_TRUSTED_HOST=${PIP_TRUSTED_HOST:-localhost}
+        - PIP_INDEX_URL=${PIP_INDEX_URL:-https://pypi.org/simple}
+        - PIP_TRUSTED_HOST=${PIP_TRUSTED_HOST:-pypi.org}
     restart: unless-stopped
     env_file:
       - ./env-config/.env
@@ -27,8 +47,7 @@ services:
       syslog:
         condition: service_started
     networks:
-      - backend_network
-      - database_network
+      - app_network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:${API_PORT:-8000}/health"]
       interval: 30s
@@ -36,10 +55,10 @@ services:
       retries: 3
       start_period: 40s
     logging:
-      driver: "syslog"
+      driver: "json-file"
       options:
-        syslog-address: "udp://syslog:${SYSLOG_PORT:-514}"
-        tag: "backend"
+        max-size: "10m"
+        max-file: "3"
 
   # PostgreSQL Database Service
   database:
@@ -53,7 +72,7 @@ services:
       - ./src/database/init:/docker-entrypoint-initdb.d
       - ./src/database/backups:/var/lib/postgresql/backups
     networks:
-      - database_network
+      - app_network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-cms_db}"]
       interval: 10s
@@ -61,10 +80,10 @@ services:
       retries: 5
       start_period: 30s
     logging:
-      driver: "syslog"
+      driver: "json-file"
       options:
-        syslog-address: "udp://syslog:${SYSLOG_PORT:-514}"
-        tag: "database"
+        max-size: "10m"
+        max-file: "3"
 
   # React Frontend Service
   frontend:
@@ -72,7 +91,7 @@ services:
       context: ./src/frontend
       dockerfile: Dockerfile
       args:
-        - NPM_REGISTRY=${NPM_REGISTRY:-http://localhost:4873}
+        - NPM_REGISTRY=${NPM_REGISTRY:-https://registry.npmjs.org}
         - NODE_ENV=${NODE_ENV:-development}
     restart: unless-stopped
     env_file:
@@ -82,14 +101,14 @@ services:
       - ./src/frontend:/app
       - frontend_node_modules:/app/node_modules
     networks:
-      - frontend_network
+      - app_network
     depends_on:
-      - nginx
+      - syslog
     logging:
-      driver: "syslog"
+      driver: "json-file"
       options:
-        syslog-address: "udp://syslog:${SYSLOG_PORT:-514}"
-        tag: "frontend"
+        max-size: "10m"
+        max-file: "3"
 
   # NGINX Reverse Proxy Service
   nginx:
@@ -112,8 +131,7 @@ services:
       - backend
       - syslog
     networks:
-      - frontend_network
-      - backend_network
+      - app_network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:${NGINX_PORT:-80}/health"]
       interval: 30s
@@ -121,73 +139,10 @@ services:
       retries: 3
       start_period: 10s
     logging:
-      driver: "syslog"
+      driver: "json-file"
       options:
-        syslog-address: "udp://syslog:${SYSLOG_PORT:-514}"
-        tag: "nginx"
-
-  # Syslog Service for Centralized Logging
-  syslog:
-    build:
-      context: ./src/syslog
-      dockerfile: Dockerfile
-    restart: unless-stopped
-    env_file:
-      - ./env-config/.env
-      - ./env-config/services/syslog/.env
-    volumes:
-      - syslog_data:/var/log/cms
-    networks:
-      - backend_network
-      - frontend_network
-      - database_network
-
-# Local dependency repositories for air-gapped operation
-  # PyPI mirror (using pypiserver)
-  pypi_mirror:
-    image: pypiserver/pypiserver:latest
-    restart: unless-stopped
-    volumes:
-      - pypi_mirror_data:/data/packages
-    networks:
-      - backend_network
-    ports:
-      - "${PIP_REPO_PORT:-3141}:8080"
-    command: -p 8080 -a . /data/packages
-    healthcheck:
-      test: ["CMD", "wget", "--spider", "http://localhost:8080"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
-    logging:
-      driver: "syslog"
-      options:
-        syslog-address: "udp://syslog:${SYSLOG_PORT:-514}"
-        tag: "pypi_mirror"
-
-  # NPM mirror (using verdaccio)
-  npm_mirror:
-    image: verdaccio/verdaccio
-    restart: unless-stopped
-    volumes:
-      - npm_mirror_data:/verdaccio/storage
-      - ./src/npm_mirror/conf:/verdaccio/conf
-    networks:
-      - frontend_network
-    ports:
-      - "${NPM_REPO_PORT:-4873}:4873"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:4873"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
-    logging:
-      driver: "syslog"
-      options:
-        syslog-address: "udp://syslog:${SYSLOG_PORT:-514}"
-        tag: "npm_mirror"
+        max-size: "10m"
+        max-file: "3"
 
 # Persistent volumes
 volumes:
@@ -203,16 +158,8 @@ volumes:
     driver: local
   syslog_data:
     driver: local
-  pypi_mirror_data:
-    driver: local
-  npm_mirror_data:
-    driver: local
 
-# Network configuration
+# Network configuration - simplified to a single network
 networks:
-  frontend_network:
-    driver: bridge
-  backend_network:
-    driver: bridge
-  database_network:
+  app_network:
     driver: bridge

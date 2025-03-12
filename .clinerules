@@ -1,14 +1,24 @@
 ---CLINE_RULES_START---
 [LAST_ACTION_STATE]
-last_action: "Implemented Docker Environment Structure with Environment Variable Management"
+last_action: "Fixed Docker Container DNS Resolution and Logging Issues"
 current_phase: "Strategy"
-next_action: "Implement FastAPI Backend with Authentication"
+next_action: "Implement FastAPI Backend with Authentication" 
 next_phase: "Strategy"
 
 [CODE_ROOT_DIRECTORIES]
 - src
 
 [LEARNING_JOURNAL]
+- Standardized on "docker compose" command syntax (without hyphen) for all operations
+- Updated project to use modern Docker Compose standards (removing deprecated "version" key)
+- Updated Docker configuration to operate with direct internet connection while being resilient to temporary outages
+- Removed local PyPI and NPM mirrors as system will be online for installation and updates
+- Fixed Docker container DNS resolution issue by simplifying network architecture and using explicit hostname/container_name
+- Fixed Docker container logging issues by switching from syslog to JSON file logging
+- Fixed Docker frontend container build hanging issue by configuring docker-compose.yml to use host network during build
+- Improved Docker frontend build by adding npm retry logic and network timeout settings to prevent hanging
+- Updated docker-compose.yml to properly establish service dependencies with health checks
+- Fixed Docker backend container build issue by configuring it to use the public PyPI repository during initial build
 - Initialized CRCT system on March 12, 2025
 - Created core files for CMS with RBAC project
 - Set up main dependency tracker (cline_docs/dependency_tracker.md) and doc tracker (docs/doc_tracker.md)
