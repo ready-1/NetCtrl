@@ -2,7 +2,7 @@
 
 ## Why This Project Exists:
 
-This Content Management System (CMS) with Role-Based Access Control (RBAC) is being developed to provide organizations with a secure, flexible solution for managing content while maintaining strict access controls. The system fills the need for a modern CMS that properly segregates user permissions based on organizational roles and responsibilities.
+This Content Management System (CMS) with Role-Based Access Control (RBAC) is being developed to provide organizations with a secure, flexible solution for managing content while maintaining strict access controls. The system fills the need for a modern CMS that properly segregates user permissions based on organizational roles and responsibilities, even in air-gapped environments without internet access.
 
 ## Problems It Solves:
 
@@ -15,6 +15,10 @@ This Content Management System (CMS) with Role-Based Access Control (RBAC) is be
 4. **Modern Deployment**: The Docker-based implementation ensures consistent deployment across environments and proper isolation of components.
 
 5. **Issue Tracking Integration**: The GitHub issue submission feature enables authenticated users to report problems or request features directly from within the CMS.
+
+6. **Air-Gapped Operation**: The system can function in environments without internet access, with all dependencies, frameworks, and libraries served locally.
+
+7. **Consistent UI**: By using Material UI components, the system provides a cohesive, responsive user interface that works across devices while being completely served from local resources.
 
 ## How It Should Work:
 
@@ -39,18 +43,26 @@ This Content Management System (CMS) with Role-Based Access Control (RBAC) is be
 
 5. **GitHub Issue Submission**:
    - Authenticated users can submit issues directly to GitHub through a dedicated interface.
+   - In air-gapped environments, issues are queued locally for later synchronization.
+
+6. **Offline Operation**:
+   - All dependencies, frameworks, and libraries are served locally.
+   - No external API calls or CDN dependencies.
+   - System functions completely within the internal network.
 
 ## User Experience Goals:
 
-1. **Simplicity**: Intuitive interfaces for all user roles, with clear navigation and contextual actions.
+1. **Simplicity**: Intuitive interfaces for all user roles, with clear navigation and contextual actions using Material UI components.
 
-2. **Responsiveness**: Mobile-first design ensures usability across devices of various sizes.
+2. **Responsiveness**: Mobile-first design with Material UI ensures usability across devices of various sizes.
 
 3. **Feedback**: Clear error messages and status updates (e.g., "Account not approved," "Account is inactive").
 
 4. **Efficiency**: Streamlined workflows for common tasks to minimize clicks and user friction.
 
 5. **Security**: Robust authentication while maintaining a smooth user experience.
+
+6. **Offline Functionality**: Complete functionality in air-gapped environments with no dependency on external resources.
 
 ## Value Proposition / Key Benefits:
 
@@ -63,3 +75,7 @@ This Content Management System (CMS) with Role-Based Access Control (RBAC) is be
 4. **Deployment Simplicity**: Docker containerization simplifies deployment and environment consistency.
 
 5. **Adaptable Framework**: The system can be extended to accommodate additional features and workflows as organizational needs evolve.
+
+6. **Air-Gapped Operation**: The ability to function in environments without internet access expands usability to high-security, isolated networks.
+
+7. **Consistent Design Language**: Material UI provides a professional, cohesive interface that is both intuitive and visually appealing while being served entirely from local resources.

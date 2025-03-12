@@ -13,17 +13,19 @@
 
 - Initializing the CRCT system for the CMS with RBAC project
 - Setting up core files and dependency trackers
-- Preparing for MVP1 development
+- Preparing for MVP1 development with air-gapped environment requirements
 
 ## Next Steps:
 
 1. Complete CRCT system initialization
-2. Validate code root directories
-3. Create dependency trackers
-4. Plan for Docker environment setup (MVP1)
+2. Plan Docker environment setup for air-gapped operation (MVP1)
+3. Design frontend architecture with Material UI components
+4. Develop approach for bundling dependencies for offline use
 
 ## Active Decisions and Considerations:
 
-- Determining the optimal Docker container structure for the CMS system
-- Considering specific RBAC implementation details with FastAPI Users
-- Planning strategy for handling large file uploads (up to 2GB)
+- Determining the optimal Docker container structure for the CMS system in air-gapped environments
+- Planning strategy for bundling all dependencies locally (no CDNs or external package repositories)
+- Considering specific RBAC implementation details with FastAPI Users in offline environments
+- Evaluating Material UI component structure for responsive design
+- Planning approach for large file uploads (up to 2GB) in an air-gapped environment
