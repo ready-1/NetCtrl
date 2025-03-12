@@ -1,3 +1,7 @@
+# Environment variables
+env-config/.env
+env-config/services/*/.env
+
 # Python
 __pycache__/
 *.py[cod]
@@ -19,9 +23,7 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-
-# Virtual Environment - Exclude entire python directory with 30k+ files
-/python/
+MANIFEST
 .env
 .venv
 env/
@@ -29,67 +31,54 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-
-# CRCT System
-*embeddings*
-.hypothesis/
 .pytest_cache/
-.coverage
-htmlcov/
 
-# Node/React (Frontend)
+# Node.js
 node_modules/
 npm-debug.log
 yarn-debug.log
 yarn-error.log
-/frontend/build/
-/frontend/dist/
-.pnp
-.pnp.js
-coverage/
-.next/
-out/
-.nuxt/
-.cache/
-.parcel-cache/
-
-# Docker
-.env
+.npm
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
-docker-compose.override.yml
 
-# Database
-*.sqlite3
-*.db
-postgres-data/
-*.sql.gz
-*.sql.bz2
-*.backup
-
-# IDE
+# IDEs and editors
 .idea/
 .vscode/
-*.sublime-project
-*.sublime-workspace
-.vs/
 *.swp
 *.swo
-
-# OS specific
 .DS_Store
-Thumbs.db
-desktop.ini
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# Docker volumes
+postgres_data/
+backend_data/
+file_uploads/
+static_files/
+frontend_node_modules/
+syslog_data/
+pypi_mirror_data/
+npm_mirror_data/
 
 # Logs
 logs/
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
-# Project specific
-# We're keeping most project directories tracked for now
-# since they contain minimal files for project structure
+# Build files
+/build
+/dist
+/.next
+/out
+
+# Local files
+python/
+.coverage
+coverage/
+htmlcov/

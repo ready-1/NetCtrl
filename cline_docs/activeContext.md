@@ -11,21 +11,23 @@
 
 ## Current Work Focus:
 
-- Initializing the CRCT system for the CMS with RBAC project
-- Setting up core files and dependency trackers
-- Preparing for MVP1 development with air-gapped environment requirements
+- Implementing Docker environment setup for MVP1
+- Creating comprehensive environment variable management system
+- Configuring Docker containers for air-gapped operation
 
 ## Next Steps:
 
-1. Complete CRCT system initialization
-2. Plan Docker environment setup for air-gapped operation (MVP1)
-3. Design frontend architecture with Material UI components
-4. Develop approach for bundling dependencies for offline use
+1. Create Docker Compose file and basic project structure
+2. Set up environment variable management system (templates and structure)
+3. Configure container images with Dockerfiles for each service
+4. Set up volume mounts and network configuration
+5. Implement environment validation scripts
 
 ## Active Decisions and Considerations:
 
-- Determining the optimal Docker container structure for the CMS system in air-gapped environments
-- Planning strategy for bundling all dependencies locally (no CDNs or external package repositories)
-- Considering specific RBAC implementation details with FastAPI Users in offline environments
-- Evaluating Material UI component structure for responsive design
-- Planning approach for large file uploads (up to 2GB) in an air-gapped environment
+- Designing the optimal Docker container structure for the CMS system in air-gapped environments
+- Creating a comprehensive environment variable management strategy for all containers
+- Planning approach for bundling all dependencies locally (no CDNs or external package repositories)
+- Structuring volume mounts for persistent data in the containerized environment
+- Determining the best approach for container health checks and startup order
+- Configuring NGINX for handling large file uploads (up to 2GB) in an air-gapped environment
