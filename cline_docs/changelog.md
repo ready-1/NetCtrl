@@ -1,6 +1,10 @@
 # Changelog
 
 ## 2025-03-12
+- **Implemented**: FastAPI backend with role-based authentication and comprehensive test suite
+- **Added**: Authentication system with JWT tokens and role-based access control (admin, manager, user)
+- **Added**: API routes for user management and role management with proper authorization
+- **Added**: Dual testing setup supporting both SQLite (quick tests) and PostgreSQL (production-like tests)
 - **Added**: FastAPI backend authentication implementation plan with role-based access control (RBAC)
 - **Added**: Standalone NGINX container for serving static content independently
 - **Added**: Static landing page and comprehensive error pages using Material UI-styled components
