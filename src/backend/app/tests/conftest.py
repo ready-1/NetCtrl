@@ -6,6 +6,7 @@ import pytest
 from typing import AsyncGenerator, Dict, Any
 from fastapi import FastAPI
 from httpx import AsyncClient
+from httpx._transports.asgi import ASGITransport
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 
@@ -90,18 +91,18 @@ async def client(test_db_session) -> AsyncClient:
     
     app.dependency_overrides[get_async_session] = override_get_db
     
-    # Create a test client
-    client = AsyncClient(app=app, base_url="http://test")
+    # Create the client using async with to properly manage its lifecycle
+    async with AsyncClient(
+        transport=ASGITransport(app=app), 
+        base_url="http://test"
+    ) as test_client:
+        yield test_client
     
-    try:
-        yield client
-    finally:
-        await client.aclose()
-        # Clear overrides
-        app.dependency_overrides.clear()
+    # Clear dependency overrides after test
+    app.dependency_overrides.clear()
 
 @pytest.fixture
-async def user_manager(test_db_session) -> UserManager:
+def user_manager(test_db_session) -> UserManager:
     """
     Create a user manager for tests
     """
@@ -112,6 +113,7 @@ async def test_user(user_manager) -> User:
     """
     Create a test user
     """
+    # Create user data
     user_data = {
         "username": "testuser",
         "email": None,
@@ -121,7 +123,9 @@ async def test_user(user_manager) -> User:
         "role": UserRole.USER,
     }
     
-    return await user_manager.create(user_data)
+    # Create the user
+    user = await user_manager.create(user_data)
+    return user
 
 @pytest.fixture
 async def test_admin(user_manager) -> User:
