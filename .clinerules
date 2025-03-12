@@ -1,6 +1,6 @@
 ---CLINE_RULES_START---
 [LAST_ACTION_STATE]
-last_action: "Updated .gitignore for Project Architecture"
+last_action: "Added Air-Gapped Operation and Material UI Requirements"
 current_phase: "Set-up/Maintenance"
 next_action: "Phase Complete - User Action Required"
 next_phase: "Strategy"
@@ -15,4 +15,6 @@ next_phase: "Strategy"
 - Generated embeddings for dependency trackers (both are empty currently as expected - no source files yet)
 - Updated .gitignore to properly reflect the CMS with RBAC project architecture
 - Refined .gitignore to specifically exclude the python directory with 30k+ virtual environment files
+- Added requirements for air-gapped operation (all dependencies to be served locally)
+- Added Material UI as the CSS framework for the frontend
 ---CLINE_RULES_END---
