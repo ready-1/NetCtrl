@@ -29,6 +29,45 @@ Backend API for the NetCtrl CMS with Role-Based Access Control.
    - OpenAPI UI: http://localhost:8000/api/v1/docs
    - ReDoc: http://localhost:8000/api/v1/redoc
 
+### Database Migrations
+
+The application uses Alembic for database migrations. Here are the common commands:
+
+#### Generate a new migration
+
+```bash
+cd src/backend
+alembic revision -m "Description of the changes"
+```
+
+#### Generate automatic migrations (when connected to database)
+
+```bash
+cd src/backend
+alembic revision --autogenerate -m "Description of the changes"
+```
+
+#### Upgrade to the latest version
+
+```bash
+cd src/backend
+alembic upgrade head
+```
+
+#### Downgrade to a specific version
+
+```bash
+cd src/backend
+alembic downgrade <revision>
+```
+
+#### Show migration history
+
+```bash
+cd src/backend
+alembic history
+```
+
 ### Running Tests
 
 #### Option 1: Run with SQLite (Quick Tests)

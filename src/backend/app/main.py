@@ -7,8 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.api.routes import auth, roles
-from app.db.init_db import create_tables, create_first_superuser
-from app.db.session import engine
+from app.db.init_db import create_first_superuser
 
 # Configure logging
 logging.basicConfig(
@@ -66,8 +65,8 @@ async def startup_event():
     Startup event that initializes the database
     """
     logger.info("Starting up application")
-    await create_tables(engine)
-    await create_first_superuser()
+    # Database migrations are handled by Alembic via the start script
+    # First superuser creation is handled in the start script via app.initial_setup
     logger.info("Application startup completed")
 
 # Shutdown event
