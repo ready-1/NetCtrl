@@ -80,7 +80,7 @@ async def test_db_session(test_engine) -> AsyncGenerator[AsyncSession, None]:
         await connection.close()
 
 @pytest.fixture
-async def client(test_db_session) -> AsyncGenerator[AsyncClient, None]:
+async def client(test_db_session) -> AsyncClient:
     """
     Create a test client with overridden dependencies
     """
@@ -91,18 +91,21 @@ async def client(test_db_session) -> AsyncGenerator[AsyncClient, None]:
     app.dependency_overrides[get_async_session] = override_get_db
     
     # Create a test client
-    async with AsyncClient(app=app, base_url="http://test") as client:
-        yield client
+    client = AsyncClient(app=app, base_url="http://test")
     
-    # Clear overrides
-    app.dependency_overrides.clear()
+    try:
+        yield client
+    finally:
+        await client.aclose()
+        # Clear overrides
+        app.dependency_overrides.clear()
 
 @pytest.fixture
-async def user_manager(test_db_session) -> AsyncGenerator[UserManager, None]:
+async def user_manager(test_db_session) -> UserManager:
     """
     Create a user manager for tests
     """
-    yield UserManager(test_db_session)
+    return UserManager(test_db_session)
 
 @pytest.fixture
 async def test_user(user_manager) -> User:
@@ -138,7 +141,7 @@ async def test_admin(user_manager) -> User:
     return await user_manager.create(admin_data)
 
 @pytest.fixture
-async def test_user_token(client, test_user) -> str:
+async def test_user_token(client: AsyncClient, test_user) -> str:
     """
     Get an authentication token for the test user
     """
@@ -152,7 +155,7 @@ async def test_user_token(client, test_user) -> str:
     return response.json()["access_token"]
 
 @pytest.fixture
-async def test_admin_token(client, test_admin) -> str:
+async def test_admin_token(client: AsyncClient, test_admin) -> str:
     """
     Get an authentication token for the test admin
     """
