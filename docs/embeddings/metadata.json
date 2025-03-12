@@ -1,0 +1,7 @@
+{
+    "1A1": {
+        "path": "docs/doc_tracker.md",
+        "embedding_file": "1A1.embedding",
+        "text": "---KEY_DEFINITIONS_START---\nKey Definitions:\n1A: docs\n---KEY_DEFINITIONS_END---\nlast_KEY_edit: 1A\nlast_GRID_edit: \n---GRID_START---\nX 1A\n1A = o\n---GRID_END---\n"
+    }
+}
