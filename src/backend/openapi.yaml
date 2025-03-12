@@ -1,0 +1,919 @@
+openapi: 3.1.0
+info:
+  title: NetCtrl CMS
+  description: API for the NetCtrl CMS with role-based access control
+  version: 1.0.0
+paths:
+  /:
+    get:
+      summary: Root
+      description: Root endpoint that returns API information
+      operationId: root__get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /health:
+    get:
+      summary: Health Check
+      description: Health check endpoint
+      operationId: health_check_health_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /api/v1/jwt/login:
+    post:
+      tags:
+      - auth
+      summary: Auth:Jwt.Login
+      operationId: auth_jwt_login_api_v1_jwt_login_post
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Body_auth_jwt_login_api_v1_jwt_login_post'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BearerResponse'
+              example:
+                access_token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiOTIyMWZmYzktNjQwZi00MzcyLTg2ZDMtY2U2NDJjYmE1NjAzIiwiYXVkIjoiZmFzdGFwaS11c2VyczphdXRoIiwiZXhwIjoxNTcxNTA0MTkzfQ.M10bjOe45I5Ncu_uXvOmVV8QxnL-nZfcH96U90JaocI
+                token_type: bearer
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+              examples:
+                LOGIN_BAD_CREDENTIALS:
+                  summary: Bad credentials or the user is inactive.
+                  value:
+                    detail: LOGIN_BAD_CREDENTIALS
+                LOGIN_USER_NOT_VERIFIED:
+                  summary: The user is not verified.
+                  value:
+                    detail: LOGIN_USER_NOT_VERIFIED
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/jwt/logout:
+    post:
+      tags:
+      - auth
+      summary: Auth:Jwt.Logout
+      operationId: auth_jwt_logout_api_v1_jwt_logout_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '401':
+          description: Missing token or inactive user.
+      security:
+      - OAuth2PasswordBearer: []
+  /api/v1/register/register:
+    post:
+      tags:
+      - auth
+      summary: Register:Register
+      operationId: register_register_api_v1_register_register_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+        required: true
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRead'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+              examples:
+                REGISTER_USER_ALREADY_EXISTS:
+                  summary: A user with this email already exists.
+                  value:
+                    detail: REGISTER_USER_ALREADY_EXISTS
+                REGISTER_INVALID_PASSWORD:
+                  summary: Password validation failed.
+                  value:
+                    detail:
+                      code: REGISTER_INVALID_PASSWORD
+                      reason: Password should beat least 3 characters
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/users/me:
+    get:
+      tags:
+      - users
+      summary: Get Current User
+      description: 'Get the current authenticated user''s details
+
+
+        This endpoint returns details about the currently authenticated user,
+
+        including their role information. Requires authentication.'
+      operationId: get_current_user_api_v1_users_me_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserWithRoles'
+      security:
+      - OAuth2PasswordBearer: []
+    patch:
+      tags:
+      - auth
+      summary: Users:Patch Current User
+      operationId: users_patch_current_user_api_v1_users_me_patch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRead'
+        '401':
+          description: Missing token or inactive user.
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+              examples:
+                UPDATE_USER_EMAIL_ALREADY_EXISTS:
+                  summary: A user with this email already exists.
+                  value:
+                    detail: UPDATE_USER_EMAIL_ALREADY_EXISTS
+                UPDATE_USER_INVALID_PASSWORD:
+                  summary: Password validation failed.
+                  value:
+                    detail:
+                      code: UPDATE_USER_INVALID_PASSWORD
+                      reason: Password should beat least 3 characters
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - OAuth2PasswordBearer: []
+  /api/v1/users/{id}:
+    get:
+      tags:
+      - auth
+      summary: Users:User
+      operationId: users_user_api_v1_users__id__get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRead'
+        '401':
+          description: Missing token or inactive user.
+        '403':
+          description: Not a superuser.
+        '404':
+          description: The user does not exist.
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - auth
+      summary: Users:Patch User
+      operationId: users_patch_user_api_v1_users__id__patch
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRead'
+        '401':
+          description: Missing token or inactive user.
+        '403':
+          description: Not a superuser.
+        '404':
+          description: The user does not exist.
+        '400':
+          content:
+            application/json:
+              examples:
+                UPDATE_USER_EMAIL_ALREADY_EXISTS:
+                  summary: A user with this email already exists.
+                  value:
+                    detail: UPDATE_USER_EMAIL_ALREADY_EXISTS
+                UPDATE_USER_INVALID_PASSWORD:
+                  summary: Password validation failed.
+                  value:
+                    detail:
+                      code: UPDATE_USER_INVALID_PASSWORD
+                      reason: Password should beat least 3 characters
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: Bad Request
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - auth
+      summary: Users:Delete User
+      operationId: users_delete_user_api_v1_users__id__delete
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Id
+      responses:
+        '204':
+          description: Successful Response
+        '401':
+          description: Missing token or inactive user.
+        '403':
+          description: Not a superuser.
+        '404':
+          description: The user does not exist.
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/roles/:
+    get:
+      tags:
+      - roles
+      summary: List Roles
+      description: 'List all available roles
+
+
+        Returns a list of all role names in the system.
+
+        This endpoint is accessible to everyone.'
+      operationId: list_roles_api_v1_roles__get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  type: string
+                type: array
+                title: Response List Roles Api V1 Roles  Get
+  /api/v1/roles/{role}/users:
+    get:
+      tags:
+      - roles
+      summary: List Users By Role
+      description: 'List all users with a specific role
+
+
+        This endpoint allows administrators to list all users with a specific role.
+
+        Requires admin privileges.'
+      operationId: list_users_by_role_api_v1_roles__role__users_get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: role
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/UserRole'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserRead'
+                title: Response List Users By Role Api V1 Roles  Role  Users Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/roles/my-permissions:
+    get:
+      tags:
+      - roles
+      summary: Get Current User Permissions
+      description: 'Get the current user''s role-based permissions
+
+
+        This endpoint returns a dictionary of permission flags for the current user
+
+        based on their role. This can be used by the frontend to show/hide UI elements.'
+      operationId: get_current_user_permissions_api_v1_roles_my_permissions_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                additionalProperties:
+                  type: boolean
+                type: object
+                title: Response Get Current User Permissions Api V1 Roles My Permissions
+                  Get
+      security:
+      - OAuth2PasswordBearer: []
+  /api/v1/roles/assign/{user_id}:
+    put:
+      tags:
+      - roles
+      summary: Assign Role To User
+      description: 'Assign a role to a user
+
+
+        This endpoint allows administrators to assign a new role to a user.
+
+        Requires admin privileges.'
+      operationId: assign_role_to_user_api_v1_roles_assign__user_id__put
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: User Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRole'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserWithRoles'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/users/:
+    get:
+      tags:
+      - users
+      summary: List Users
+      description: 'List all users with optional filtering by role
+
+
+        This endpoint allows administrators to list all users in the system,
+
+        optionally filtered by role. Supports pagination.
+
+        Requires admin privileges.'
+      operationId: list_users_api_v1_users__get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: skip
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          default: 0
+          title: Skip
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          default: 100
+          title: Limit
+      - name: role
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/UserRole'
+          - type: 'null'
+          title: Role
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserRead'
+                title: Response List Users Api V1 Users  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/users/{user_id}:
+    get:
+      tags:
+      - users
+      summary: Get User By Id
+      description: 'Get a specific user by ID
+
+
+        This endpoint returns details about a specific user. Regular users can only
+
+        access their own information. Managers and admins can access any user.'
+      operationId: get_user_by_id_api_v1_users__user_id__get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: User Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserWithRoles'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - users
+      summary: Delete User
+      description: 'Delete a user
+
+
+        This endpoint allows administrators to delete users, or users to delete
+
+        their own accounts. Requires appropriate permissions.'
+      operationId: delete_user_api_v1_users__user_id__delete
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: User Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/users/{user_id}/role:
+    put:
+      tags:
+      - users
+      summary: Update User Role
+      description: 'Update a user''s role
+
+
+        This endpoint allows administrators to update a user''s role.
+
+        Requires admin privileges.'
+      operationId: update_user_role_api_v1_users__user_id__role_put
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: User Id
+      - name: role
+        in: query
+        required: true
+        schema:
+          $ref: '#/components/schemas/UserRole'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserWithRoles'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    BearerResponse:
+      properties:
+        access_token:
+          type: string
+          title: Access Token
+        token_type:
+          type: string
+          title: Token Type
+      type: object
+      required:
+      - access_token
+      - token_type
+      title: BearerResponse
+    Body_auth_jwt_login_api_v1_jwt_login_post:
+      properties:
+        grant_type:
+          anyOf:
+          - type: string
+            pattern: password
+          - type: 'null'
+          title: Grant Type
+        username:
+          type: string
+          title: Username
+        password:
+          type: string
+          title: Password
+        scope:
+          type: string
+          title: Scope
+          default: ''
+        client_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Client Id
+        client_secret:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Client Secret
+      type: object
+      required:
+      - username
+      - password
+      title: Body_auth_jwt_login_api_v1_jwt_login_post
+    ErrorModel:
+      properties:
+        detail:
+          anyOf:
+          - type: string
+          - additionalProperties:
+              type: string
+            type: object
+          title: Detail
+      type: object
+      required:
+      - detail
+      title: ErrorModel
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    UserCreate:
+      properties:
+        email:
+          anyOf:
+          - type: string
+            format: email
+          - type: 'null'
+          title: Email
+        password:
+          type: string
+          title: Password
+        is_active:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Active
+          default: true
+        is_superuser:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Superuser
+          default: false
+        is_verified:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Verified
+          default: false
+        username:
+          type: string
+          maxLength: 50
+          minLength: 3
+          title: Username
+        first_name:
+          anyOf:
+          - type: string
+            maxLength: 50
+          - type: 'null'
+          title: First Name
+        last_name:
+          anyOf:
+          - type: string
+            maxLength: 50
+          - type: 'null'
+          title: Last Name
+        role:
+          allOf:
+          - $ref: '#/components/schemas/UserRole'
+          default: user
+      type: object
+      required:
+      - password
+      - username
+      title: UserCreate
+      description: Schema for creating a new user
+    UserRead:
+      properties:
+        id:
+          type: integer
+          title: Id
+        email:
+          type: string
+          format: email
+          title: Email
+        is_active:
+          type: boolean
+          title: Is Active
+          default: true
+        is_superuser:
+          type: boolean
+          title: Is Superuser
+          default: false
+        is_verified:
+          type: boolean
+          title: Is Verified
+          default: false
+        username:
+          type: string
+          title: Username
+        first_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: First Name
+        last_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Name
+        role:
+          $ref: '#/components/schemas/UserRole'
+      type: object
+      required:
+      - id
+      - email
+      - username
+      - role
+      title: UserRead
+      description: Schema for reading user data
+    UserRole:
+      type: string
+      enum:
+      - admin
+      - manager
+      - user
+      title: UserRole
+      description: Enumeration of user roles in the system
+    UserUpdate:
+      properties:
+        password:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Password
+        email:
+          anyOf:
+          - type: string
+            format: email
+          - type: 'null'
+          title: Email
+        is_active:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Active
+        is_superuser:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Superuser
+        is_verified:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Verified
+        username:
+          anyOf:
+          - type: string
+            maxLength: 50
+            minLength: 3
+          - type: 'null'
+          title: Username
+        first_name:
+          anyOf:
+          - type: string
+            maxLength: 50
+          - type: 'null'
+          title: First Name
+        last_name:
+          anyOf:
+          - type: string
+            maxLength: 50
+          - type: 'null'
+          title: Last Name
+        role:
+          anyOf:
+          - $ref: '#/components/schemas/UserRole'
+          - type: 'null'
+      type: object
+      title: UserUpdate
+      description: Schema for updating user data
+    UserWithRoles:
+      properties:
+        id:
+          type: integer
+          title: Id
+        email:
+          type: string
+          format: email
+          title: Email
+        is_active:
+          type: boolean
+          title: Is Active
+          default: true
+        is_superuser:
+          type: boolean
+          title: Is Superuser
+          default: false
+        is_verified:
+          type: boolean
+          title: Is Verified
+          default: false
+        username:
+          type: string
+          title: Username
+        first_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: First Name
+        last_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Name
+        role:
+          $ref: '#/components/schemas/UserRole'
+        created_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Created At
+        updated_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Updated At
+        last_login:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Login
+      type: object
+      required:
+      - id
+      - email
+      - username
+      - role
+      title: UserWithRoles
+      description: Extended user schema that includes detailed role information
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+  securitySchemes:
+    OAuth2PasswordBearer:
+      type: oauth2
+      flows:
+        password:
+          scopes: {}
+          tokenUrl: /api/v1/auth/jwt/login
