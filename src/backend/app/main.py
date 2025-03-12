@@ -2,8 +2,11 @@
 Main application entry point for FastAPI
 """
 import logging
+import yaml
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.openapi.utils import get_openapi
 
 from app.core.config import settings
 from app.api.routes import auth, roles, users
@@ -19,6 +22,8 @@ logger = logging.getLogger(__name__)
 # Create FastAPI app
 app = FastAPI(
     title=settings.PROJECT_NAME,
+    version="1.0.0",
+    description="API for the NetCtrl CMS with role-based access control",
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
     docs_url=f"{settings.API_V1_STR}/docs",
     redoc_url=f"{settings.API_V1_STR}/redoc",
@@ -63,9 +68,22 @@ app.include_router(users.router, prefix=f"{settings.API_V1_STR}")
 @app.on_event("startup")
 async def startup_event():
     """
-    Startup event that initializes the database
+    Startup event that initializes the database and generates OpenAPI schema
     """
     logger.info("Starting up application")
+    
+    # Generate OpenAPI schema on startup
+    try:
+        openapi_schema = app.openapi()
+        openapi_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 
+                                  "openapi.yaml")
+        
+        with open(openapi_path, 'w') as f:
+            yaml.dump(openapi_schema, f, default_flow_style=False, sort_keys=False)
+        logger.info(f"OpenAPI schema exported to {openapi_path}")
+    except Exception as e:
+        logger.error(f"Failed to generate OpenAPI schema: {e}")
+    
     # Database migrations are handled by Alembic via the start script
     # First superuser creation is handled in the start script via app.initial_setup
     logger.info("Application startup completed")
