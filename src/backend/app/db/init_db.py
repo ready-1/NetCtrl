@@ -47,21 +47,23 @@ async def create_first_superuser():
             
             logger.info("Creating initial superuser")
             
-            # Create a valid UserCreate model instance
-            user_create = UserCreate(
-                username=settings.FIRST_SUPERUSER_USERNAME,
-                email=None,  # Email is optional in our setup
-                password=settings.FIRST_SUPERUSER_PASSWORD,
-                is_active=True,
-                is_verified=True,
-                is_superuser=True,
-                role=UserRole.ADMIN
-            )
-            
             # Create user manager
             async for user_manager in get_user_manager(session):
-                # Use the proper create method with the UserCreate model
-                await user_manager.create(user_create.dict(), safe=False)
+                # Create a dictionary directly with the required fields
+                # This approach bypasses model validation which might be causing issues
+                user_data = {
+                    "username": settings.FIRST_SUPERUSER_USERNAME,
+                    "email": None,  # Email is optional in our setup
+                    "password": settings.FIRST_SUPERUSER_PASSWORD,  # This is the key that must be present
+                    "is_active": True,
+                    "is_verified": True,
+                    "is_superuser": True,
+                    "role": UserRole.ADMIN
+                }
+                
+                # Use the appropriate method directly
+                # Note: Looking at the error, it seems the manager expects a direct dict with password key
+                await user_manager.create(user_data, safe=False)
                 
             logger.info("Superuser created successfully")
             
