@@ -28,6 +28,7 @@ class Settings(BaseSettings):
     # Superuser settings
     FIRST_SUPERUSER_USERNAME: str = "admin"
     FIRST_SUPERUSER_PASSWORD: Optional[str] = "admin"  # Override in production
+    FIRST_SUPERUSER_EMAIL: Optional[str] = None  # Email is optional in our setup
     
     @validator("SQLALCHEMY_DATABASE_URI", pre=True)
     def assemble_db_connection(cls, v: Optional[str], values: dict) -> str:

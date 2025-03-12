@@ -49,23 +49,26 @@ async def create_first_superuser():
             
             # Create user manager
             async for user_manager in get_user_manager(session):
-                # Create a proper Pydantic model instance
-                user_create = UserCreate(
-                    username=settings.FIRST_SUPERUSER_USERNAME,
-                    email=None,  # Email is optional in our setup
-                    password=settings.FIRST_SUPERUSER_PASSWORD,
-                    is_active=True,
-                    is_verified=True,
-                    is_superuser=True,
-                    role=UserRole.ADMIN
-                )
-                
-                # Convert to dict before passing to create
-                user_data = user_create.model_dump()
-                
-                # Use the appropriate method
-                logger.info(f"Creating superuser with data: {user_data}")
-                await user_manager.create(user_data, safe=False)
+                # Let's try a direct approach - create the user with individual parameters
+                try:
+                    # Direct approach with keyword arguments
+                    user = await user_manager.create(
+                        {
+                            "email": settings.FIRST_SUPERUSER_EMAIL or None,
+                            "password": settings.FIRST_SUPERUSER_PASSWORD,
+                            "username": settings.FIRST_SUPERUSER_USERNAME,
+                            "is_active": True,
+                            "is_verified": True,
+                            "is_superuser": True,
+                            "role": UserRole.ADMIN
+                        },
+                        safe=False,
+                        request=None
+                    )
+                    logger.info(f"Superuser created with ID: {user.id}")
+                except Exception as e:
+                    logger.error(f"Error in user creation: {e}", exc_info=True)
+                    raise
                 
             logger.info("Superuser created successfully")
             
