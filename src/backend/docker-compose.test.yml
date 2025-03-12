@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  test_db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=test_netctrl
+    ports:
+      - "5433:5432"  # Map to a different port to avoid conflicts with main DB
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  test_backend:
+    build: .
+    command: >
+      bash -c "
+        echo 'Waiting for database to be ready...' &&
+        python -m pytest app/tests/ -v
+      "
+    environment:
+      - TEST_WITH_POSTGRES=1
+      - POSTGRES_SERVER=test_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=test_netctrl
+      - SECRET_KEY=testsecretkey
+    volumes:
+      - .:/app
+    depends_on:
+      test_db:
+        condition: service_healthy
