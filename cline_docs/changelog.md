@@ -1,6 +1,14 @@
 # Changelog
 
 ## 2025-03-12
+- **Fixed**: Database migration error by properly configuring Alembic with asyncpg driver
+- **Updated**: Backend Dockerfile to explicitly install asyncpg package to ensure availability during migrations
+- **Fixed**: Alembic configuration to handle literal_binds correctly by adding as_sql=True parameter
+- **Fixed**: Duplicate enum type creation in migrations by removing redundant creation and setting create_type=False
+- **Updated**: FastAPI-Users import to use correct package path from fastapi_users_db_sqlalchemy
+- **Fixed**: Table name mismatch by changing User model's __tablename__ from "users" to "user" to match migration
+- **Added**: Missing last_login column to initial migration file to match User model definition
+- **Fixed**: Superuser creation issue by updating SQL query to use "user" table name and proper Pydantic model
 - **Implemented**: FastAPI backend with role-based authentication and comprehensive test suite
 - **Added**: Authentication system with JWT tokens and role-based access control (admin, manager, user)
 - **Added**: API routes for user management and role management with proper authorization

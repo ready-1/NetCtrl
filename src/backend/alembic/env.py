@@ -59,6 +59,7 @@ def run_migrations_offline() -> None:
         url=url,
         target_metadata=target_metadata,
         literal_binds=True,
+        as_sql=True,  # Required when using literal_binds
         dialect_opts={"paramstyle": "named"},
     )
 
@@ -94,6 +95,7 @@ async def run_migrations_online() -> None:
             url=sqlalchemy_url,
             target_metadata=target_metadata,
             literal_binds=True,
+            as_sql=True,  # Required when using literal_binds
             dialect_opts={"paramstyle": "named"},
             compare_type=True,
         )
@@ -129,7 +131,19 @@ async def run_migrations_online() -> None:
     except Exception as e:
         print(f"Error during migration: {e}")
         # If running migrations fails (e.g., during revision), fallback to offline mode
-        run_migrations_offline()
+        # Configure offline mode properly here as well
+        url = config.get_main_option("sqlalchemy.url")
+        from app.core.config import settings
+        url = settings.SQLALCHEMY_DATABASE_URI
+        context.configure(
+            url=url,
+            target_metadata=target_metadata,
+            literal_binds=True,
+            as_sql=True,  # Required when using literal_binds
+            dialect_opts={"paramstyle": "named"},
+        )
+        with context.begin_transaction():
+            context.run_migrations()
 
 
 # Choose the appropriate migration function

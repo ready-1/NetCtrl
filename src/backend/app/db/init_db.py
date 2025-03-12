@@ -2,6 +2,7 @@
 Database initialization and first superuser creation
 """
 import logging
+from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
@@ -47,18 +48,21 @@ async def create_first_superuser():
             
             # Create user manager
             async for user_manager in get_user_manager(session):
-                # Create admin user
-                await user_manager.create(
-                    {
-                        "username": settings.FIRST_SUPERUSER_USERNAME,
-                        "email": None,  # Email is optional in our setup
-                        "password": settings.FIRST_SUPERUSER_PASSWORD,
-                        "is_active": True,
-                        "is_verified": True,
-                        "is_superuser": True,
-                        "role": UserRole.ADMIN,
-                    }
-                )
+                # Directly create a user with raw dict instead of using models
+                # The base manager expects different attribute names
+                user_data = {
+                    "username": settings.FIRST_SUPERUSER_USERNAME,
+                    "email": None,  # Email is optional in our setup
+                    "hashed_password": None,  # Will be hashed by the manager
+                    "password": settings.FIRST_SUPERUSER_PASSWORD,  # This is what's required
+                    "is_active": True,
+                    "is_verified": True,
+                    "is_superuser": True,
+                    "role": UserRole.ADMIN,
+                }
+                
+                # Use create with safe=False to allow creating admin user
+                await user_manager.create(user_data, safe=False)
                 
             logger.info("Superuser created successfully")
             

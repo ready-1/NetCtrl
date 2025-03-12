@@ -19,10 +19,8 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    # Create enum type for user roles
-    op.execute(
-        "CREATE TYPE user_role AS ENUM ('admin', 'manager', 'user')"
-    )
+    # Create enum type for user roles - SQLAlchemy will create it automatically
+    # Remove explicit enum creation to avoid "type already exists" error
     
     # Create user table
     op.create_table(
@@ -36,9 +34,10 @@ def upgrade() -> None:
         sa.Column('is_active', sa.Boolean(), nullable=False, default=True),
         sa.Column('is_verified', sa.Boolean(), nullable=False, default=False),
         sa.Column('is_superuser', sa.Boolean(), nullable=False, default=False),
-        sa.Column('role', sa.Enum('admin', 'manager', 'user', name='user_role'), nullable=False),
+        sa.Column('role', sa.Enum('admin', 'manager', 'user', name='user_role', create_type=False), nullable=False),
         sa.Column('created_at', sa.DateTime(), nullable=False, server_default=sa.text('now()')),
         sa.Column('updated_at', sa.DateTime(), nullable=False, server_default=sa.text('now()')),
+        sa.Column('last_login', sa.DateTime(), nullable=True),
         sa.PrimaryKeyConstraint('id'),
         sa.UniqueConstraint('username')
     )

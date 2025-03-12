@@ -38,3 +38,10 @@
 - Structuring volume mounts for persistent data in the containerized environment
 - Determining the best approach for container health checks and startup order
 - Configuring NGINX for handling large file uploads (up to 2GB)
+- Fixed Alembic DB migration issues by properly configuring literal_binds with as_sql flag
+- Added explicit asyncpg installation in Dockerfile to ensure availability during migrations
+- Fixed duplicate enum type creation in migration files by removing explicit creation and configuring SQLAlchemy properly
+- Updated fastapi-users import to use fastapi_users_db_sqlalchemy package instead of the deprecated import path
+- Fixed table name mismatch between User model and database migration ("users" vs "user")
+- Added missing last_login column to migration to match User model definition and fix superuser creation
+- Fixed superuser creation by using proper table name in SQL queries and implementing correct Pydantic model for user creation

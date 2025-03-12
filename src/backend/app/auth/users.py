@@ -5,7 +5,7 @@ from typing import Optional, Dict, Any
 from fastapi import Depends, Request, HTTPException, status
 from fastapi_users import BaseUserManager, FastAPIUsers, IntegerIDMixin
 from fastapi_users.authentication import JWTStrategy, AuthenticationBackend, BearerTransport
-from fastapi_users.db import SQLAlchemyUserDatabase
+from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
@@ -61,7 +61,7 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
         user_db = self.user_db
         if isinstance(user_db, SQLAlchemyUserDatabase):
             session = user_db.session
-            first_user = await session.execute("SELECT COUNT(*) FROM users")
+            first_user = await session.execute("SELECT COUNT(*) FROM \"user\"")
             is_first_user = (await first_user.scalar()) == 0
             
             if is_first_user:

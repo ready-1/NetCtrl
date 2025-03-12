@@ -13,7 +13,7 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     """
     Core user model that extends the FastAPI Users base model
     """
-    __tablename__ = "users"
+    __tablename__ = "user"
     
     # Override id from SQLAlchemyBaseUserTable to explicitly set primary key
     id = Column(Integer, primary_key=True)

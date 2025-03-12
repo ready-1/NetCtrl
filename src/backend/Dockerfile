@@ -28,7 +28,9 @@ COPY requirements.txt /app/
 # For initial builds, use the public PyPI repository to ensure successful installation
 # In production, the containers will use the local mirror as configured in docker-compose.yml
 RUN pip install --upgrade pip && \
-    pip install --no-cache-dir --index-url https://pypi.org/simple -r requirements.txt
+    pip install --no-cache-dir --index-url https://pypi.org/simple -r requirements.txt && \
+    # Explicitly install asyncpg to ensure it's available
+    pip install --no-cache-dir asyncpg==0.28.0
 
 # Copy application code
 COPY . /app/
