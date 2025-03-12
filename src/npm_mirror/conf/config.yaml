@@ -1,0 +1,54 @@
+# Verdaccio configuration for air-gapped environment
+
+# Storage location for packages
+storage: /verdaccio/storage
+
+# Default plugins
+plugins: /verdaccio/plugins
+
+# Web interface settings
+web:
+  title: Local NPM Registry
+  logo: https://verdaccio.org/img/logo/svg/verdaccio-tiny.svg
+  scope: '@netctrl'
+
+# Authentication settings (basic for local development)
+auth:
+  htpasswd:
+    file: /verdaccio/storage/htpasswd
+    # Maximum amount of users allowed to register
+    max_users: 1000
+
+# Uplinks to npm registry - commented out for air-gapped environment
+# If internet access is available, uncomment to enable caching from official registry
+# uplinks:
+#   npmjs:
+#     url: https://registry.npmjs.org/
+#     agent_options:
+#       keepAlive: true
+#       maxSockets: 40
+#       maxFreeSockets: 10
+
+# Package access control
+packages:
+  '@*/*':
+    access: $all
+    publish: $authenticated
+    # proxy: npmjs # commented out for air-gapped operation
+
+  '**':
+    access: $all
+    publish: $authenticated
+    # proxy: npmjs # commented out for air-gapped operation
+
+# Server settings
+server:
+  keepAliveTimeout: 60
+
+# Log settings
+logs:
+  - {type: stdout, format: pretty, level: http}
+
+# Offline mode for air-gapped environment
+# When true, verdaccio does not attempt to fetch packages from uplinks if they are not available locally
+offline: true
