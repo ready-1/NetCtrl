@@ -11,19 +11,22 @@
 
 ## Current Work Focus:
 
-- Created standalone NGINX container for static content serving
+- Created comprehensive FastAPI backend authentication implementation plan with RBAC
 - Implemented static landing page and error pages with Material UI styling
-- Fixed Docker container DNS resolution and logging issues
+- Created standalone NGINX container for static content serving
 
 ## Next Steps:
 
-1. Implement the FastAPI backend with authentication
-2. Resolve backend and frontend container startup issues 
-3. Test the system's resilience during temporary internet outages
+1. Implement the FastAPI backend with authentication following the implementation plan
+2. Set up comprehensive testing for authentication and RBAC
+3. Resolve backend and frontend container startup issues
 4. Integrate standalone static site with the main Docker Compose setup
 
 ## Active Decisions and Considerations:
 
+- Simplified the user authentication model to use role-based access control with three roles (admin, manager, user)
+- Selected FastAPI-Users library for authentication with customizations for username-based auth without email requirement
+- Designed JWT-based authentication strategy with appropriate token lifetimes
 - Standardized on "docker compose" command syntax (without hyphen) for all operations
 - Created Docker helper script to ensure consistent use of modern Docker syntax
 - Using direct connections to public package repositories (PyPI, NPM) as system will be online for installations

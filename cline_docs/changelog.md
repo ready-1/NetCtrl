@@ -1,6 +1,7 @@
 # Changelog
 
 ## 2025-03-12
+- **Added**: FastAPI backend authentication implementation plan with role-based access control (RBAC)
 - **Added**: Standalone NGINX container for serving static content independently
 - **Added**: Static landing page and comprehensive error pages using Material UI-styled components
 - **Updated**: NGINX configuration to serve static content and properly route error pages
