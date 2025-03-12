@@ -1,0 +1,18 @@
+---CLINE_RULES_START---
+[LAST_ACTION_STATE]
+last_action: "Updated .gitignore for Project Architecture"
+current_phase: "Set-up/Maintenance"
+next_action: "Phase Complete - User Action Required"
+next_phase: "Strategy"
+
+[CODE_ROOT_DIRECTORIES]
+- src
+
+[LEARNING_JOURNAL]
+- Initialized CRCT system on March 12, 2025
+- Created core files for CMS with RBAC project
+- Set up main dependency tracker (cline_docs/dependency_tracker.md) and doc tracker (docs/doc_tracker.md)
+- Generated embeddings for dependency trackers (both are empty currently as expected - no source files yet)
+- Updated .gitignore to properly reflect the CMS with RBAC project architecture
+- Refined .gitignore to specifically exclude the python directory with 30k+ virtual environment files
+---CLINE_RULES_END---
