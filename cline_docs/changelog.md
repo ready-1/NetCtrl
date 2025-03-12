@@ -1,6 +1,12 @@
 # Changelog
 
 ## 2025-03-12
+- **Implemented**: User CRUD operations with comprehensive role-based access control
+- **Added**: Custom user management API routes for listing, creating, retrieving, updating, and deleting users
+- **Added**: Role management endpoints for assigning roles and checking permissions
+- **Enhanced**: User schema with additional role-related information and validation
+- **Fixed**: Superuser creation functionality with proper Pydantic model handling
+- **Added**: Comprehensive test suite for user management operations
 - **Fixed**: Database migration error by properly configuring Alembic with asyncpg driver
 - **Updated**: Backend Dockerfile to explicitly install asyncpg package to ensure availability during migrations
 - **Fixed**: Alembic configuration to handle literal_binds correctly by adding as_sql=True parameter

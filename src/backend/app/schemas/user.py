@@ -2,6 +2,7 @@
 Pydantic schemas for user data validation and serialization
 """
 from typing import Optional
+from datetime import datetime
 from pydantic import Field, validator, EmailStr
 from fastapi_users.schemas import BaseUser, BaseUserCreate, BaseUserUpdate
 
@@ -59,3 +60,17 @@ class UserUpdate(BaseUserUpdate):
         if v is not None and not v.isalnum():
             raise ValueError('Username must be alphanumeric')
         return v
+
+class UserWithRoles(UserRead):
+    """
+    Extended user schema that includes detailed role information
+    """
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+    last_login: Optional[datetime] = None
+    
+    class Config:
+        """
+        Pydantic configuration for ORM mode
+        """
+        orm_mode = True

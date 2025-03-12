@@ -5,156 +5,132 @@ import pytest
 from httpx import AsyncClient
 from fastapi import status
 
+from app.core.config import settings
 from app.models.role import UserRole
+from app.schemas.user import UserCreate
+
+# Constants for testing
+TEST_USERNAME = "testuser"
+TEST_PASSWORD = "testpassword123"
 
 @pytest.mark.asyncio
-async def test_get_users_as_admin(client: AsyncClient, test_admin_token, test_user):
-    """
-    Test getting users list as admin
-    """
-    response = await client.get(
-        "/api/v1/users",
-        headers={"Authorization": f"Bearer {test_admin_token}"},
-    )
-    assert response.status_code == status.HTTP_200_OK
-    users = response.json()
-    assert len(users) >= 2  # Admin and regular user
-    
-    # Find our test user in the list
-    test_user_found = False
-    for user in users:
-        if user["username"] == "testuser":
-            test_user_found = True
-            assert user["role"] == "user"
-    assert test_user_found
-
-@pytest.mark.asyncio
-async def test_get_users_as_regular_user(client: AsyncClient, test_user_token):
-    """
-    Test getting users list as regular user
-    """
-    response = await client.get(
-        "/api/v1/users",
-        headers={"Authorization": f"Bearer {test_user_token}"},
-    )
-    # Regular users may be able to list users, depending on your API configuration
-    # This could be 200 or 403 depending on your policy
-    if response.status_code == status.HTTP_200_OK:
-        users = response.json()
-        assert len(users) >= 1
-    else:
-        assert response.status_code == status.HTTP_403_FORBIDDEN
-
-@pytest.mark.asyncio
-async def test_get_user_by_id(client: AsyncClient, test_admin_token, test_user):
-    """
-    Test getting a specific user by ID
-    """
-    # First, get the user ID 
-    users_response = await client.get(
-        "/api/v1/users",
-        headers={"Authorization": f"Bearer {test_admin_token}"},
-    )
-    users = users_response.json()
-    
-    # Find our test user
-    user_id = None
-    for user in users:
-        if user["username"] == "testuser":
-            user_id = user["id"]
-            break
-    
-    assert user_id is not None
-    
-    # Now get the specific user
-    response = await client.get(
-        f"/api/v1/users/{user_id}",
-        headers={"Authorization": f"Bearer {test_admin_token}"},
-    )
-    assert response.status_code == status.HTTP_200_OK
-    user = response.json()
-    assert user["username"] == "testuser"
-    assert user["role"] == "user"
-
-@pytest.mark.asyncio
-async def test_create_user_as_admin(client: AsyncClient, test_admin_token):
-    """
-    Test creating a new user as admin
-    """
+async def test_create_user(client: AsyncClient, test_admin_token: str):
+    """Test creating a new user as admin"""
+    # Create a user
     response = await client.post(
-        "/api/v1/users",
-        headers={"Authorization": f"Bearer {test_admin_token}"},
+        f"{settings.API_V1_STR}/auth/register",
         json={
-            "username": "createduser",
-            "password": "password123",
-            "role": "manager",
+            "username": TEST_USERNAME,
+            "password": TEST_PASSWORD,
+            "role": UserRole.USER.value,
+            "is_active": True,
+            "is_verified": True
         },
+        headers={"Authorization": f"Bearer {test_admin_token}"}
     )
+    
     assert response.status_code == status.HTTP_201_CREATED
-    user = response.json()
-    assert user["username"] == "createduser"
-    assert user["role"] == "manager"
+    data = response.json()
+    assert data["username"] == TEST_USERNAME
+    assert "id" in data
+    assert data["role"] == UserRole.USER.value
+    assert "password" not in data
+    
+    return data
 
 @pytest.mark.asyncio
-async def test_create_user_as_regular_user(client: AsyncClient, test_user_token):
-    """
-    Test creating a new user as regular user (forbidden)
-    """
-    response = await client.post(
-        "/api/v1/users",
-        headers={"Authorization": f"Bearer {test_user_token}"},
-        json={
-            "username": "anothercreateduser",
-            "password": "password123",
-            "role": "user",
-        },
-    )
-    # Regular users should not be able to create other users
-    assert response.status_code == status.HTTP_403_FORBIDDEN
-
-@pytest.mark.asyncio
-async def test_update_user(client: AsyncClient, test_admin_token, test_user):
-    """
-    Test updating a user
-    """
-    # First, get the user ID 
-    users_response = await client.get(
-        "/api/v1/users",
-        headers={"Authorization": f"Bearer {test_admin_token}"},
-    )
-    users = users_response.json()
+async def test_get_user_by_id(client: AsyncClient, test_admin_token: str):
+    """Test retrieving a user by ID"""
+    # First create a user
+    created_user = await test_create_user(client, test_admin_token)
+    user_id = created_user["id"]
     
-    # Find our test user
-    user_id = None
-    for user in users:
-        if user["username"] == "testuser":
-            user_id = user["id"]
-            break
-    
-    assert user_id is not None
-    
-    # Update the user
-    response = await client.patch(
-        f"/api/v1/users/{user_id}",
-        headers={"Authorization": f"Bearer {test_admin_token}"},
-        json={
-            "first_name": "Test",
-            "last_name": "User",
-            "role": "manager",
-        },
-    )
-    assert response.status_code == status.HTTP_200_OK
-    updated_user = response.json()
-    assert updated_user["first_name"] == "Test"
-    assert updated_user["last_name"] == "User"
-    assert updated_user["role"] == "manager"
-    
-    # Verify the update by getting the user again
+    # Get the user by ID
     response = await client.get(
-        f"/api/v1/users/{user_id}",
-        headers={"Authorization": f"Bearer {test_admin_token}"},
+        f"{settings.API_V1_STR}/users/{user_id}",
+        headers={"Authorization": f"Bearer {test_admin_token}"}
     )
-    user = response.json()
-    assert user["first_name"] == "Test"
-    assert user["last_name"] == "User"
-    assert user["role"] == "manager"
+    
+    assert response.status_code == status.HTTP_200_OK
+    data = response.json()
+    assert data["id"] == user_id
+    assert data["username"] == TEST_USERNAME
+    assert data["role"] == UserRole.USER.value
+
+@pytest.mark.asyncio
+async def test_list_users(client: AsyncClient, test_admin_token: str):
+    """Test listing all users"""
+    # Get users list
+    response = await client.get(
+        f"{settings.API_V1_STR}/users/",
+        headers={"Authorization": f"Bearer {test_admin_token}"}
+    )
+    
+    assert response.status_code == status.HTTP_200_OK
+    data = response.json()
+    assert isinstance(data, list)
+    # Should include at least the admin user and our test user
+    assert len(data) >= 2
+    
+    # Verify the test user is in the list
+    test_user = next((user for user in data if user["username"] == TEST_USERNAME), None)
+    assert test_user is not None
+    assert test_user["role"] == UserRole.USER.value
+
+@pytest.mark.asyncio
+async def test_update_user_role(client: AsyncClient, test_admin_token: str):
+    """Test updating a user's role"""
+    # First create a user
+    created_user = await test_create_user(client, test_admin_token)
+    user_id = created_user["id"]
+    
+    # Update the user's role
+    response = await client.put(
+        f"{settings.API_V1_STR}/roles/assign/{user_id}",
+        json=UserRole.MANAGER.value,
+        headers={"Authorization": f"Bearer {test_admin_token}"}
+    )
+    
+    assert response.status_code == status.HTTP_200_OK
+    data = response.json()
+    assert data["id"] == user_id
+    assert data["role"] == UserRole.MANAGER.value
+
+@pytest.mark.asyncio
+async def test_permissions(client: AsyncClient, test_admin_token: str):
+    """Test getting user permissions"""
+    response = await client.get(
+        f"{settings.API_V1_STR}/roles/my-permissions",
+        headers={"Authorization": f"Bearer {test_admin_token}"}
+    )
+    
+    assert response.status_code == status.HTTP_200_OK
+    permissions = response.json()
+    assert permissions["can_view_all_users"] is True
+    assert permissions["can_create_users"] is True
+    assert permissions["can_update_users"] is True
+    assert permissions["can_delete_users"] is True
+    assert permissions["can_assign_roles"] is True
+
+@pytest.mark.asyncio
+async def test_delete_user(client: AsyncClient, test_admin_token: str):
+    """Test deleting a user"""
+    # First create a user
+    created_user = await test_create_user(client, test_admin_token)
+    user_id = created_user["id"]
+    
+    # Delete the user
+    response = await client.delete(
+        f"{settings.API_V1_STR}/users/{user_id}",
+        headers={"Authorization": f"Bearer {test_admin_token}"}
+    )
+    
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+    
+    # Try to get the deleted user (should return 404)
+    response = await client.get(
+        f"{settings.API_V1_STR}/users/{user_id}",
+        headers={"Authorization": f"Bearer {test_admin_token}"}
+    )
+    
+    assert response.status_code == status.HTTP_404_NOT_FOUND

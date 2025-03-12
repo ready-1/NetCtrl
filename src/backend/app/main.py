@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
-from app.api.routes import auth, roles
+from app.api.routes import auth, roles, users
 from app.db.init_db import create_first_superuser
 
 # Configure logging
@@ -57,6 +57,7 @@ async def health_check():
 # Include API routers
 app.include_router(auth.router, prefix=f"{settings.API_V1_STR}")
 app.include_router(roles.router, prefix=f"{settings.API_V1_STR}")
+app.include_router(users.router, prefix=f"{settings.API_V1_STR}")
 
 # Startup event
 @app.on_event("startup")
