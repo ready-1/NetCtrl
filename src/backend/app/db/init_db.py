@@ -49,20 +49,22 @@ async def create_first_superuser():
             
             # Create user manager
             async for user_manager in get_user_manager(session):
-                # Create a dictionary directly with the required fields
-                # This approach bypasses model validation which might be causing issues
-                user_data = {
-                    "username": settings.FIRST_SUPERUSER_USERNAME,
-                    "email": None,  # Email is optional in our setup
-                    "password": settings.FIRST_SUPERUSER_PASSWORD,  # This is the key that must be present
-                    "is_active": True,
-                    "is_verified": True,
-                    "is_superuser": True,
-                    "role": UserRole.ADMIN
-                }
+                # Create a proper Pydantic model instance
+                user_create = UserCreate(
+                    username=settings.FIRST_SUPERUSER_USERNAME,
+                    email=None,  # Email is optional in our setup
+                    password=settings.FIRST_SUPERUSER_PASSWORD,
+                    is_active=True,
+                    is_verified=True,
+                    is_superuser=True,
+                    role=UserRole.ADMIN
+                )
                 
-                # Use the appropriate method directly
-                # Note: Looking at the error, it seems the manager expects a direct dict with password key
+                # Convert to dict before passing to create
+                user_data = user_create.model_dump()
+                
+                # Use the appropriate method
+                logger.info(f"Creating superuser with data: {user_data}")
                 await user_manager.create(user_data, safe=False)
                 
             logger.info("Superuser created successfully")

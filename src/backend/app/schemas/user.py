@@ -21,7 +21,7 @@ class UserRead(BaseUser[int]):
         """
         Pydantic configuration for ORM mode
         """
-        orm_mode = True
+        from_attributes = True
 
 class UserCreate(BaseUserCreate):
     """
@@ -73,4 +73,4 @@ class UserWithRoles(UserRead):
         """
         Pydantic configuration for ORM mode
         """
-        orm_mode = True
+        from_attributes = True
