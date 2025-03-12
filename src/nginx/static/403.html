@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>403 - Access Forbidden | NetCtrl CMS</title>
+    <link rel="stylesheet" href="/static/assets/css/custom.css">
+    <meta name="description" content="Access Forbidden - NetCtrl CMS">
+</head>
+<body>
+    <!-- App Bar / Header -->
+    <header class="app-bar">
+        <h1>NetCtrl CMS</h1>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <div class="error-container">
+            <h1 class="error-code">403</h1>
+            <h2 class="error-title">Access Forbidden</h2>
+            <p class="error-message">
+                You don't have permission to access this resource.
+                This might be because you lack the necessary privileges or your account 
+                needs additional access rights.
+            </p>
+            
+            <div class="card" style="max-width: 500px; margin: 0 auto;">
+                <div class="card-header">
+                    <h3>Access Control Information</h3>
+                </div>
+                <div class="card-content">
+                    <p>NetCtrl CMS uses Role-Based Access Control (RBAC) to manage permissions:</p>
+                    <ul>
+                        <li>Each user is assigned specific roles</li>
+                        <li>Roles determine which resources you can access</li>
+                        <li>Some areas require elevated permissions</li>
+                        <li>Contact your administrator if you need additional access</li>
+                    </ul>
+                </div>
+                <div class="card-actions">
+                    <button class="button button-contained" data-action="home">Go to Homepage</button>
+                    <button class="button button-outlined" data-action="back">Go Back</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="grid">
+                <div class="grid-item grid-item-6">
+                    <h3>NetCtrl CMS with RBAC</h3>
+                    <p>A Content Management System with Role-Based Access Control</p>
+                </div>
+                <div class="grid-item grid-item-6">
+                    <h3>Support Links</h3>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/docs">API Documentation</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="text-center" style="margin-top: 20px;">
+                <p>&copy; 2025 NetCtrl CMS</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="/static/assets/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>401 - Authentication Required | NetCtrl CMS</title>
+    <link rel="stylesheet" href="/static/assets/css/custom.css">
+    <meta name="description" content="Authentication Required - NetCtrl CMS">
+</head>
+<body>
+    <!-- App Bar / Header -->
+    <header class="app-bar">
+        <h1>NetCtrl CMS</h1>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <div class="error-container">
+            <h1 class="error-code">401</h1>
+            <h2 class="error-title">Authentication Required</h2>
+            <p class="error-message">
+                You need to be logged in to access this resource.
+                Please sign in with your credentials to continue.
+            </p>
+            
+            <div class="card" style="max-width: 500px; margin: 0 auto;">
+                <div class="card-header">
+                    <h3>Login Information</h3>
+                </div>
+                <div class="card-content">
+                    <p>Authentication is required for the following reasons:</p>
+                    <ul>
+                        <li>Secure access to protected resources</li>
+                        <li>User-specific content and settings</li>
+                        <li>Audit trail of actions</li>
+                        <li>Role-based permissions management</li>
+                    </ul>
+                    
+                    <div class="text-center" style="margin-top: 20px;">
+                        <p>Don't have an account? Contact your system administrator.</p>
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <button class="button button-contained" data-action="login">Sign In</button>
+                    <button class="button button-outlined" data-action="home">Go to Homepage</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="grid">
+                <div class="grid-item grid-item-6">
+                    <h3>NetCtrl CMS with RBAC</h3>
+                    <p>A Content Management System with Role-Based Access Control</p>
+                </div>
+                <div class="grid-item grid-item-6">
+                    <h3>Support Links</h3>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/docs">API Documentation</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="text-center" style="margin-top: 20px;">
+                <p>&copy; 2025 NetCtrl CMS</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="/static/assets/js/app.js"></script>
+    <script>
+        // Redirect to login page when Sign In button is clicked
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginButton = document.querySelector('[data-action="login"]');
+            if (loginButton) {
+                loginButton.addEventListener('click', function() {
+                    // This would redirect to your actual login page
+                    window.location.href = '/login';
+                });
+            }
+        });
+    </script>
+</body>
+</html>

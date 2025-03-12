@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scheduled Maintenance | NetCtrl CMS</title>
+    <link rel="stylesheet" href="/static/assets/css/custom.css">
+    <meta name="description" content="Scheduled Maintenance - NetCtrl CMS">
+    <meta http-equiv="refresh" content="60">
+</head>
+<body>
+    <!-- App Bar / Header -->
+    <header class="app-bar">
+        <h1>NetCtrl CMS</h1>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <div class="error-container">
+            <h1 class="error-code" style="color: var(--warning-color);">Maintenance</h1>
+            <h2 class="error-title">Scheduled System Maintenance</h2>
+            <p class="error-message">
+                The system is currently undergoing scheduled maintenance to improve performance and reliability.
+                We apologize for any inconvenience and appreciate your patience.
+            </p>
+            
+            <div class="card" style="max-width: 500px; margin: 0 auto;">
+                <div class="card-header">
+                    <h3>Maintenance Information</h3>
+                </div>
+                <div class="card-content">
+                    <p>Important details about this maintenance:</p>
+                    <ul>
+                        <li><strong>Start Time:</strong> <span id="maintenance-start">March 12, 2025 - 12:00 AM UTC</span></li>
+                        <li><strong>Estimated Duration:</strong> <span id="maintenance-duration">4 hours</span></li>
+                        <li><strong>Expected Completion:</strong> <span id="maintenance-end">March 12, 2025 - 4:00 AM UTC</span></li>
+                        <li><strong>Services Affected:</strong> All system services</li>
+                    </ul>
+                    
+                    <div class="text-center" style="margin-top: 20px;">
+                        <div class="spinner"></div>
+                        <p>This page will automatically refresh every 60 seconds</p>
+                        <p>Current time: <span id="current-time">Loading...</span></p>
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <button class="button button-contained" data-action="refresh">Refresh Page</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="grid">
+                <div class="grid-item grid-item-6">
+                    <h3>NetCtrl CMS with RBAC</h3>
+                    <p>A Content Management System with Role-Based Access Control</p>
+                </div>
+                <div class="grid-item grid-item-6">
+                    <h3>Contact Information</h3>
+                    <p>For urgent matters during maintenance, please contact:</p>
+                    <p>Email: support@netctrl-cms.example.com</p>
+                </div>
+            </div>
+            <div class="text-center" style="margin-top: 20px;">
+                <p>&copy; 2025 NetCtrl CMS</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="/static/assets/js/app.js"></script>
+    <script>
+        // Set maintenance times - this would be dynamically populated in a real system
+        document.addEventListener('DOMContentLoaded', function() {
+            // These would be set by the maintenance script in a real environment
+            const maintenanceStart = new Date();
+            const maintenanceDuration = 4; // hours
+            const maintenanceEnd = new Date(maintenanceStart.getTime() + maintenanceDuration * 60 * 60 * 1000);
+            
+            // Format the dates for display
+            document.getElementById('maintenance-start').textContent = maintenanceStart.toLocaleString();
+            document.getElementById('maintenance-duration').textContent = `${maintenanceDuration} hours`;
+            document.getElementById('maintenance-end').textContent = maintenanceEnd.toLocaleString();
+        });
+    </script>
+</body>
+</html>

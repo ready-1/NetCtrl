@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetCtrl CMS with RBAC</title>
+    <link rel="stylesheet" href="/static/assets/css/custom.css">
+    <meta name="description" content="Content Management System with Role-Based Access Control">
+</head>
+<body>
+    <!-- App Bar / Header -->
+    <header class="app-bar">
+        <h1>NetCtrl CMS</h1>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2>System Status</h2>
+            </div>
+            <div class="card-content">
+                <div class="text-center">
+                    <div class="chip chip-success">System Online</div>
+                    <p>Current Time: <span id="current-time">Loading...</span></p>
+                </div>
+                
+                <div id="service-status-container">
+                    <h3>Service Status</h3>
+                    <div class="grid">
+                        <div class="grid-item grid-item-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4>Backend API</h4>
+                                </div>
+                                <div class="card-content">
+                                    <p>Status: <span class="chip" id="backend-status">Checking...</span></p>
+                                    <p>Endpoint: <code>/api/</code></p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid-item grid-item-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4>Database</h4>
+                                </div>
+                                <div class="card-content">
+                                    <p>Status: <span class="chip" id="database-status">Checking...</span></p>
+                                    <p>PostgreSQL 15</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid-item grid-item-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4>Frontend</h4>
+                                </div>
+                                <div class="card-content">
+                                    <p>Status: <span class="chip" id="frontend-status">Checking...</span></p>
+                                    <p>React with Material UI</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid-item grid-item-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4>NGINX</h4>
+                                </div>
+                                <div class="card-content">
+                                    <p>Status: <span class="chip" id="nginx-status">Checking...</span></p>
+                                    <p>Reverse Proxy & Static Files</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-actions">
+                <button class="button button-contained" data-action="refresh">Refresh Status</button>
+                <a href="/docs" class="button button-outlined" data-action="docs">API Documentation</a>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h2>System Information</h2>
+            </div>
+            <div class="card-content">
+                <p>NetCtrl CMS with RBAC is a comprehensive content management system featuring role-based access control. The system is designed to operate in environments with periodic internet outages.</p>
+                
+                <h3>Key Features</h3>
+                <ul>
+                    <li>Role-Based Access Control (RBAC)</li>
+                    <li>Content Management</li>
+                    <li>API-First Architecture</li>
+                    <li>Resilient to Network Outages</li>
+                    <li>Centralized Logging</li>
+                    <li>Scalable Containerized Deployment</li>
+                </ul>
+                
+                <h3>System Architecture</h3>
+                <p>This system is built using a microservices architecture with the following components:</p>
+                <ul>
+                    <li><strong>FastAPI Backend</strong>: Handling business logic and API endpoints</li>
+                    <li><strong>PostgreSQL Database</strong>: Storing application data</li>
+                    <li><strong>React Frontend</strong>: Providing the user interface</li>
+                    <li><strong>NGINX</strong>: Serving as reverse proxy and static file server</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="grid">
+                <div class="grid-item grid-item-6">
+                    <h3>NetCtrl CMS with RBAC</h3>
+                    <p>A Content Management System with Role-Based Access Control</p>
+                </div>
+                <div class="grid-item grid-item-6">
+                    <h3>Links</h3>
+                    <ul>
+                        <li><a href="/docs">API Documentation</a></li>
+                        <li><a href="/static/error/404.html">Sample 404 Page</a></li>
+                        <li><a href="/static/error/50x.html">Sample Error Page</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="text-center" style="margin-top: 20px;">
+                <p>&copy; 2025 NetCtrl CMS</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="/static/assets/js/app.js"></script>
+</body>
+</html>

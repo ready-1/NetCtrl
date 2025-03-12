@@ -11,16 +11,16 @@
 
 ## Current Work Focus:
 
-- Standardized Docker command syntax and configuration format
+- Created standalone NGINX container for static content serving
+- Implemented static landing page and error pages with Material UI styling
 - Fixed Docker container DNS resolution and logging issues
-- Implementing Docker environment setup for MVP1
 
 ## Next Steps:
 
 1. Implement the FastAPI backend with authentication
 2. Resolve backend and frontend container startup issues 
 3. Test the system's resilience during temporary internet outages
-4. Leverage the Docker helper script for container management
+4. Integrate standalone static site with the main Docker Compose setup
 
 ## Active Decisions and Considerations:
 

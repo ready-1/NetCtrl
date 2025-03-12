@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>500 - Server Error | NetCtrl CMS</title>
+    <link rel="stylesheet" href="/static/assets/css/custom.css">
+    <meta name="description" content="Server Error - NetCtrl CMS">
+</head>
+<body>
+    <!-- App Bar / Header -->
+    <header class="app-bar">
+        <h1>NetCtrl CMS</h1>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <div class="error-container">
+            <h1 class="error-code">500</h1>
+            <h2 class="error-title">Server Error</h2>
+            <p class="error-message">
+                We apologize, but something went wrong on our servers while processing your request.
+                Our technical team has been notified and is working to resolve the issue.
+            </p>
+            
+            <div class="card" style="max-width: 500px; margin: 0 auto;">
+                <div class="card-header">
+                    <h3>What you can do</h3>
+                </div>
+                <div class="card-content">
+                    <p>Here are some options:</p>
+                    <ul>
+                        <li>Refresh the page to try again</li>
+                        <li>Try again in a few minutes</li>
+                        <li>Clear your browser cache and cookies</li>
+                        <li>Return to the homepage</li>
+                    </ul>
+                    
+                    <div class="text-center" style="margin-top: 20px;">
+                        <div class="spinner"></div>
+                        <p>Automatic retry in <span id="countdown">30</span> seconds...</p>
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <button class="button button-contained" data-action="refresh">Refresh Page</button>
+                    <button class="button button-outlined" data-action="home">Go to Homepage</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="grid">
+                <div class="grid-item grid-item-6">
+                    <h3>NetCtrl CMS with RBAC</h3>
+                    <p>A Content Management System with Role-Based Access Control</p>
+                </div>
+                <div class="grid-item grid-item-6">
+                    <h3>Support Links</h3>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/docs">API Documentation</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="text-center" style="margin-top: 20px;">
+                <p>&copy; 2025 NetCtrl CMS</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="/static/assets/js/app.js"></script>
+    <script>
+        // Countdown timer for automatic refresh
+        document.addEventListener('DOMContentLoaded', function() {
+            const countdownElement = document.getElementById('countdown');
+            let seconds = 30;
+            
+            const interval = setInterval(function() {
+                seconds--;
+                if (countdownElement) {
+                    countdownElement.textContent = seconds;
+                }
+                
+                if (seconds <= 0) {
+                    clearInterval(interval);
+                    window.location.reload();
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

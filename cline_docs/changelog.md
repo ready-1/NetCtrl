@@ -1,6 +1,9 @@
 # Changelog
 
 ## 2025-03-12
+- **Added**: Standalone NGINX container for serving static content independently
+- **Added**: Static landing page and comprehensive error pages using Material UI-styled components
+- **Updated**: NGINX configuration to serve static content and properly route error pages
 - **Added**: Docker helper script with standardized functions for modern Docker command syntax
 - **Updated**: Project documentation and scripts to use "docker compose" instead of "docker-compose"
 - **Standardized**: Docker Compose format to follow modern specification (without version key)

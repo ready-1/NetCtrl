@@ -124,7 +124,7 @@ services:
     volumes:
       - ./src/nginx/conf:/etc/nginx/conf.d
       - ./src/nginx/ssl:/etc/nginx/ssl
-      - static_files:/var/www/html/static
+      - ./src/nginx/static:/var/www/html/static
       - file_uploads:/var/www/html/uploads
       - ./src/nginx/templates:/etc/nginx/templates
     depends_on:
