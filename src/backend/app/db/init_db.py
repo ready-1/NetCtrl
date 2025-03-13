@@ -48,34 +48,37 @@ async def create_first_superuser():
             logger.info("Creating initial superuser")
             
             # Get a user manager to use its password helper
-            async for user_manager in get_user_manager(session):
-                try:
-                    # Hash the password using the user manager's password helper
-                    hashed_password = await user_manager.password_helper.hash(settings.FIRST_SUPERUSER_PASSWORD)
-                    
-                    # Create user dict with all required fields
-                    user_dict = {
-                        "username": settings.FIRST_SUPERUSER_USERNAME,
-                        "email": settings.FIRST_SUPERUSER_EMAIL,
-                        "hashed_password": hashed_password,
-                        "is_active": True,
-                        "is_verified": True,
-                        "is_superuser": True,
-                        "role": UserRole.ADMIN,
-                    }
-                    
-                    # Create user directly using SQLAlchemy
-                    user = User(**user_dict)
-                    session.add(user)
-                    await session.commit()
-                    await session.refresh(user)
-                    
-                    logger.info(f"Superuser created with ID: {user.id}")
-                    break  # Exit after successful creation
-                except Exception as e:
-                    await session.rollback()
-                    logger.error(f"Error in user creation: {e}")
-                    raise
+            from fastapi_users.password import PasswordHelper
+            
+            # Create password helper directly
+            password_helper = PasswordHelper()
+            
+            try:
+                # Hash the password - using await correctly for async method
+                hashed_password = await password_helper.hash(settings.FIRST_SUPERUSER_PASSWORD)
+                
+                # Create user dict with all required fields
+                user_dict = {
+                    "username": settings.FIRST_SUPERUSER_USERNAME,
+                    "email": settings.FIRST_SUPERUSER_EMAIL,
+                    "hashed_password": hashed_password,
+                    "is_active": True,
+                    "is_verified": True,
+                    "is_superuser": True,
+                    "role": UserRole.ADMIN,
+                }
+                
+                # Create user directly using SQLAlchemy
+                user = User(**user_dict)
+                session.add(user)
+                await session.commit()
+                await session.refresh(user)
+                
+                logger.info(f"Superuser created with ID: {user.id}")
+            except Exception as e:
+                await session.rollback()
+                logger.error(f"Error in user creation: {e}")
+                raise
                 
             logger.info("Superuser created successfully")
             
