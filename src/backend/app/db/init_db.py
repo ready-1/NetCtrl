@@ -47,26 +47,13 @@ async def create_first_superuser():
             
             logger.info("Creating initial superuser")
             
-            # Create user manager
+            # Get a user manager to use its password helper
             async for user_manager in get_user_manager(session):
-                # Use a proper UserCreate instance
-                from fastapi_users.schemas import CreateUserProtocol
-                from app.schemas.user import UserCreate
-                
-                # Create a user with our custom UserCreate model
-                user_create = UserCreate(
-                    username=settings.FIRST_SUPERUSER_USERNAME,
-                    email=settings.FIRST_SUPERUSER_EMAIL,
-                    password=settings.FIRST_SUPERUSER_PASSWORD,
-                    is_active=True,
-                    is_verified=True,
-                    is_superuser=True,
-                    role=UserRole.ADMIN
-                )
-                
                 try:
-                    # Manually create the user to bypass the model validation issues
+                    # Hash the password using the user manager's password helper
                     hashed_password = await user_manager.password_helper.hash(settings.FIRST_SUPERUSER_PASSWORD)
+                    
+                    # Create user dict with all required fields
                     user_dict = {
                         "username": settings.FIRST_SUPERUSER_USERNAME,
                         "email": settings.FIRST_SUPERUSER_EMAIL,
@@ -77,15 +64,17 @@ async def create_first_superuser():
                         "role": UserRole.ADMIN,
                     }
                     
-                    # Create the user directly in the database
+                    # Create user directly using SQLAlchemy
                     user = User(**user_dict)
                     session.add(user)
                     await session.commit()
                     await session.refresh(user)
                     
                     logger.info(f"Superuser created with ID: {user.id}")
+                    break  # Exit after successful creation
                 except Exception as e:
-                    logger.error(f"Error in user creation: {e}", exc_info=True)
+                    await session.rollback()
+                    logger.error(f"Error in user creation: {e}")
                     raise
                 
             logger.info("Superuser created successfully")
