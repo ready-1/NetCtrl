@@ -52,7 +52,7 @@ async def root():
     }
 
 # Health check endpoint
-@app.get("/health")
+@app.get(f"{settings.API_V1_STR}/health")
 async def health_check():
     """
     Health check endpoint
