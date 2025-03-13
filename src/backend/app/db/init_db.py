@@ -49,22 +49,40 @@ async def create_first_superuser():
             
             # Create user manager
             async for user_manager in get_user_manager(session):
-                # Let's try a direct approach - create the user with individual parameters
+                # Use a proper UserCreate instance
+                from fastapi_users.schemas import CreateUserProtocol
+                from app.schemas.user import UserCreate
+                
+                # Create a user with our custom UserCreate model
+                user_create = UserCreate(
+                    username=settings.FIRST_SUPERUSER_USERNAME,
+                    email=settings.FIRST_SUPERUSER_EMAIL,
+                    password=settings.FIRST_SUPERUSER_PASSWORD,
+                    is_active=True,
+                    is_verified=True,
+                    is_superuser=True,
+                    role=UserRole.ADMIN
+                )
+                
                 try:
-                    # Direct approach with keyword arguments
-                    user = await user_manager.create(
-                        {
-                            "email": settings.FIRST_SUPERUSER_EMAIL or None,
-                            "password": settings.FIRST_SUPERUSER_PASSWORD,
-                            "username": settings.FIRST_SUPERUSER_USERNAME,
-                            "is_active": True,
-                            "is_verified": True,
-                            "is_superuser": True,
-                            "role": UserRole.ADMIN
-                        },
-                        safe=False,
-                        request=None
-                    )
+                    # Manually create the user to bypass the model validation issues
+                    hashed_password = await user_manager.password_helper.hash(settings.FIRST_SUPERUSER_PASSWORD)
+                    user_dict = {
+                        "username": settings.FIRST_SUPERUSER_USERNAME,
+                        "email": settings.FIRST_SUPERUSER_EMAIL,
+                        "hashed_password": hashed_password,
+                        "is_active": True,
+                        "is_verified": True,
+                        "is_superuser": True,
+                        "role": UserRole.ADMIN,
+                    }
+                    
+                    # Create the user directly in the database
+                    user = User(**user_dict)
+                    session.add(user)
+                    await session.commit()
+                    await session.refresh(user)
+                    
                     logger.info(f"Superuser created with ID: {user.id}")
                 except Exception as e:
                     logger.error(f"Error in user creation: {e}", exc_info=True)
