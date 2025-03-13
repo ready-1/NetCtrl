@@ -7,17 +7,19 @@ server {
     proxy_connect_timeout 300s;
     
     # API endpoints
-    location /api/ {
-        proxy_pass http://${API_HOST}:${API_PORT}/;
+    location /api/v1/ {
+        proxy_pass http://${API_HOST}:${API_PORT}/api/v1/;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Accept "application/json";
+        proxy_set_header Content-Type "application/json";
     }
     
     # OpenAPI documentation
-    location /docs {
-        proxy_pass http://${API_HOST}:${API_PORT}/docs;
+    location /api/v1/docs {
+        proxy_pass http://${API_HOST}:${API_PORT}/api/v1/docs;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -40,11 +42,17 @@ server {
     
     # Frontend application
     location / {
-        proxy_pass http://${FRONTEND_HOST}:${FRONTEND_PORT};
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
+        # Serve static files if frontend is not available
+        root /var/www/html/static;
+        index index.html;
+        try_files $uri $uri/ /index.html;
+        
+        # Enable when frontend service is fully operational
+        # proxy_pass http://${FRONTEND_HOST}:${FRONTEND_PORT};
+        # proxy_set_header Host $host;
+        # proxy_set_header X-Real-IP $remote_addr;
+        # proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        # proxy_set_header X-Forwarded-Proto $scheme;
     }
     
     # Error pages
