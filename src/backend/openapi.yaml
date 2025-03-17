@@ -30,61 +30,27 @@ paths:
     post:
       tags:
       - auth
-      summary: Auth:Jwt.Login
-      operationId: auth_jwt_login_api_v1_jwt_login_post
+      summary: Login
+      description: Custom login route that authenticates with username
+      operationId: login_api_v1_jwt_login_post
       requestBody:
         content:
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Body_auth_jwt_login_api_v1_jwt_login_post'
+              $ref: '#/components/schemas/Body_login_api_v1_jwt_login_post'
         required: true
       responses:
         '200':
           description: Successful Response
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/BearerResponse'
-              example:
-                access_token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiOTIyMWZmYzktNjQwZi00MzcyLTg2ZDMtY2U2NDJjYmE1NjAzIiwiYXVkIjoiZmFzdGFwaS11c2VyczphdXRoIiwiZXhwIjoxNTcxNTA0MTkzfQ.M10bjOe45I5Ncu_uXvOmVV8QxnL-nZfcH96U90JaocI
-                token_type: bearer
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorModel'
-              examples:
-                LOGIN_BAD_CREDENTIALS:
-                  summary: Bad credentials or the user is inactive.
-                  value:
-                    detail: LOGIN_BAD_CREDENTIALS
-                LOGIN_USER_NOT_VERIFIED:
-                  summary: The user is not verified.
-                  value:
-                    detail: LOGIN_USER_NOT_VERIFIED
+              schema: {}
         '422':
           description: Validation Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-  /api/v1/jwt/logout:
-    post:
-      tags:
-      - auth
-      summary: Auth:Jwt.Logout
-      operationId: auth_jwt_logout_api_v1_jwt_logout_post
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema: {}
-        '401':
-          description: Missing token or inactive user.
-      security:
-      - OAuth2PasswordBearer: []
   /api/v1/register/register:
     post:
       tags:
@@ -312,6 +278,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/logout:
+    post:
+      summary: Auth:Jwt.Logout
+      operationId: auth_jwt_logout_api_v1_logout_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '401':
+          description: Missing token or inactive user.
+      security:
+      - OAuth2PasswordBearer: []
   /api/v1/roles/:
     get:
       tags:
@@ -597,20 +577,7 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    BearerResponse:
-      properties:
-        access_token:
-          type: string
-          title: Access Token
-        token_type:
-          type: string
-          title: Token Type
-      type: object
-      required:
-      - access_token
-      - token_type
-      title: BearerResponse
-    Body_auth_jwt_login_api_v1_jwt_login_post:
+    Body_login_api_v1_jwt_login_post:
       properties:
         grant_type:
           anyOf:
@@ -642,7 +609,7 @@ components:
       required:
       - username
       - password
-      title: Body_auth_jwt_login_api_v1_jwt_login_post
+      title: Body_login_api_v1_jwt_login_post
     ErrorModel:
       properties:
         detail:
@@ -727,8 +694,10 @@ components:
           type: integer
           title: Id
         email:
-          type: string
-          format: email
+          anyOf:
+          - type: string
+            format: email
+          - type: 'null'
           title: Email
         is_active:
           type: boolean
@@ -760,7 +729,6 @@ components:
       type: object
       required:
       - id
-      - email
       - username
       - role
       title: UserRead
@@ -833,8 +801,10 @@ components:
           type: integer
           title: Id
         email:
-          type: string
-          format: email
+          anyOf:
+          - type: string
+            format: email
+          - type: 'null'
           title: Email
         is_active:
           type: boolean
@@ -884,7 +854,6 @@ components:
       type: object
       required:
       - id
-      - email
       - username
       - role
       title: UserWithRoles
@@ -916,4 +885,4 @@ components:
       flows:
         password:
           scopes: {}
-          tokenUrl: /api/v1/auth/jwt/login
+          tokenUrl: /api/v1/jwt/login

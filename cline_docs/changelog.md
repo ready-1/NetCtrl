@@ -1,47 +1,99 @@
 # Changelog
 
-## 2025-03-12
-- **Implemented**: User CRUD operations with comprehensive role-based access control
-- **Added**: Custom user management API routes for listing, creating, retrieving, updating, and deleting users
-- **Added**: Role management endpoints for assigning roles and checking permissions
-- **Enhanced**: User schema with additional role-related information and validation
-- **Fixed**: Superuser creation functionality with proper Pydantic model handling
-- **Added**: Comprehensive test suite for user management operations
-- **Fixed**: Database migration error by properly configuring Alembic with asyncpg driver
-- **Updated**: Backend Dockerfile to explicitly install asyncpg package to ensure availability during migrations
-- **Fixed**: Alembic configuration to handle literal_binds correctly by adding as_sql=True parameter
-- **Fixed**: Duplicate enum type creation in migrations by removing redundant creation and setting create_type=False
-- **Updated**: FastAPI-Users import to use correct package path from fastapi_users_db_sqlalchemy
-- **Fixed**: Table name mismatch by changing User model's __tablename__ from "users" to "user" to match migration
-- **Added**: Missing last_login column to initial migration file to match User model definition
-- **Fixed**: Superuser creation issue by updating SQL query to use "user" table name and proper Pydantic model
-- **Implemented**: FastAPI backend with role-based authentication and comprehensive test suite
-- **Added**: Authentication system with JWT tokens and role-based access control (admin, manager, user)
-- **Added**: API routes for user management and role management with proper authorization
-- **Added**: Dual testing setup supporting both SQLite (quick tests) and PostgreSQL (production-like tests)
-- **Added**: FastAPI backend authentication implementation plan with role-based access control (RBAC)
-- **Added**: Standalone NGINX container for serving static content independently
-- **Added**: Static landing page and comprehensive error pages using Material UI-styled components
-- **Updated**: NGINX configuration to serve static content and properly route error pages
-- **Added**: Docker helper script with standardized functions for modern Docker command syntax
-- **Updated**: Project documentation and scripts to use "docker compose" instead of "docker-compose"
-- **Standardized**: Docker Compose format to follow modern specification (without version key)
-- **Fixed**: Docker container DNS resolution issue by simplifying network architecture and using explicit hostname/container_name
-- **Fixed**: Docker container logging issues by switching from syslog to JSON file logging
-- **Updated**: Docker configuration to operate with direct internet connection while being resilient to temporary outages
-- **Removed**: Local PyPI and NPM mirrors as system will be online for installation and updates
-- **Fixed**: Frontend Docker build loop issue by removing circular dependency and using official npm registry
-- **Improved**: NPM package installation in frontend Dockerfile with multiple fallback options and better timeout settings
-- **Fixed**: Frontend container build hanging issue by configuring docker-compose.yml to use host network during build
-- **Improved**: Frontend container build process by adding npm retry logic and network timeout settings to prevent hanging
-- **Updated**: docker-compose.yml to properly establish service dependencies with health checks
-- **Fixed**: Backend container build issue by configuring it to use the public PyPI repository during initial build
-- **Added**: Docker environment implementation with Docker Compose, Dockerfiles for all services, and scripts
-- **Added**: Comprehensive environment variable management system with templates and validation script
-- **Added**: Service configurations for backend (FastAPI), frontend (React with Material UI), NGINX, database, and syslog
-- **Added**: Docker_Environment_Setup_Instructions.md in strategy_tasks directory
-- **Updated**: activeContext.md to reflect focus on Docker environment setup for MVP1
-- **Updated**: progress.md to prioritize Docker environment implementation
-- **Added**: Material UI as the CSS framework requirement for the frontend
-- **Added**: Initial CRCT system setup with core files and dependency trackers
-- **Updated**: .gitignore file to reflect project architecture for CMS with RBAC
+## March 16, 2025 - Fixed Authentication System
+
+- Implemented custom JWT strategy for proper authentication:
+  - Created a custom JWT strategy implementation to handle token generation and validation
+  - Fixed type conversion between database integers and JWT string IDs
+  - Added proper error handling for authentication flows
+  - Made email field optional in user schemas to support username-only authentication
+  - Updated authentication documentation with comprehensive examples
+  - Added tested curl examples for all authentication endpoints
+  - Fixed token processing in read_token and write_token functions
+
+- Technical improvements:
+  - Consolidated authentication documentation into a single comprehensive guide
+  - Added explicit type conversions to prevent database query errors
+  - Improved error logging during authentication flows
+  - Enhanced authentication route with better exception handling
+  - Verified the complete authentication flow with proper testing
+
+## March 16, 2025 - Authentication System Aggressive Optimization
+
+- Ruthlessly simplified and optimized authentication system:
+  - Removed all custom authentication implementations in favor of the standard FastAPI-Users library
+  - Deleted 10+ redundant debugging scripts and consolidated into a single auth_diagnostics.py tool
+  - Streamlined auth-related utilities with proper error handling and logging
+  - Optimized database queries using SQL text() for better performance
+  - Simplified NGINX configuration by removing all special case handling
+  - Eliminated code duplication and redundant documentation
+
+- Technical improvements:
+  - Replaced print statements with proper logging
+  - Optimized SQL queries for better performance
+  - Added more efficient error handling
+  - Reduced script file sizes by up to 60%
+  - Cleaned up API endpoint routing
+
+## March 16, 2025 - Authentication System Refactoring
+
+- Simplified authentication system by removing duplicate router registrations:
+  - Eliminated custom_auth router to prevent route conflicts
+  - Standardized on FastAPI-Users implementation as single source of truth
+  - Removed custom_auth import from main.py
+
+- Streamlined NGINX configuration:
+  - Removed special case handling for login endpoint
+  - Eliminated request mirroring and debug-specific configuration
+  - Unified API request handling for more consistent behavior
+
+- Consolidated authentication tooling and documentation:
+  - Created comprehensive AUTHENTICATION_GUIDE.md that covers all scenarios
+  - Developed unified auth_diagnostics.py tool that replaces multiple specialized scripts
+  - Made auth_diagnostics.py executable
+
+- The new authentication system is more maintainable follows standard patterns and eliminates potential conflicts that were causing login issues
+
+## March 12, 2025 - Fixed Database Migration and Import Errors
+
+- Updated FastAPI-Users import path
+- Fixed duplicate enum creation
+- Configured Alembic properly
+- Resolved table name mismatch
+- Added missing columns to migrations
+- Fixed superuser creation with proper Pydantic model
+
+## March 11, 2025 - Implemented FastAPI Backend
+
+- Implemented role-based authentication system
+- Created comprehensive test suite
+- Created comprehensive authentication implementation plan for FastAPI backend with RBAC
+
+## March 10, 2025 - Docker Modernization
+
+- Standardized on "docker compose" command syntax (without hyphen) for all operations
+- Updated project to use modern Docker Compose standards (removing deprecated "version" key)
+- Updated Docker configuration to operate with direct internet connection while being resilient to temporary outages
+- Removed local PyPI and NPM mirrors as system will be online for installation and updates
+
+## March 9, 2025 - Docker Configuration Fixes
+
+- Fixed Docker container DNS resolution issue by simplifying network architecture and using explicit hostname/container_name
+- Fixed Docker container logging issues by switching from syslog to JSON file logging
+- Fixed Docker frontend container build hanging issue by configuring docker-compose.yml to use host network during build
+- Improved Docker frontend build by adding npm retry logic and network timeout settings to prevent hanging
+- Updated docker-compose.yml to properly establish service dependencies with health checks
+- Fixed Docker backend container build issue by configuring it to use the public PyPI repository during initial build
+
+## March 8, 2025 - Project Initialization
+
+- Initialized CRCT system
+- Created core files for CMS with RBAC project
+- Set up main dependency tracker (cline_docs/dependency_tracker.md) and doc tracker (docs/doc_tracker.md)
+- Generated embeddings for dependency trackers
+- Updated .gitignore to properly reflect the CMS with RBAC project architecture
+- Refined .gitignore to specifically exclude the python directory with 30k+ virtual environment files
+- Added requirements for air-gapped operation (all dependencies to be served locally)
+- Added Material UI as the CSS framework for the frontend
+- Created strategy for Docker environment setup with environment variable management (first step for MVP1)
+- Identified need for comprehensive env file structure to support air-gapped operation

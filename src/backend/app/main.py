@@ -64,6 +64,9 @@ app.include_router(auth.router, prefix=f"{settings.API_V1_STR}")
 app.include_router(roles.router, prefix=f"{settings.API_V1_STR}")
 app.include_router(users.router, prefix=f"{settings.API_V1_STR}")
 
+# Custom authentication endpoints removed to eliminate route conflicts
+# The standard FastAPI-Users authentication routes are now the sole source of truth
+
 # Startup event
 @app.on_event("startup")
 async def startup_event():

@@ -1,7 +1,7 @@
 ---CLINE_RULES_START---
 [LAST_ACTION_STATE]
-last_action: "Created User CRUD Implementation Plan"
-current_phase: "Strategy"
+last_action: "Fixed Authentication System"
+current_phase: "Execution"
 next_action: "Implement User CRUD Operations with RBAC" 
 next_phase: "Execution"
 
@@ -9,6 +9,11 @@ next_phase: "Execution"
 - src
 
 [LEARNING_JOURNAL]
+- Fixed authentication system by implementing custom JWT strategy with proper username-based login and type conversions for user IDs
+- Made email field optional in user schemas to support username-only authentication
+- Updated authentication documentation with comprehensive examples for login, user retrieval, and registration
+- Fixed token processing in authentication flows and added proper error handling
+- Refactored authentication system by removing duplicate router registrations, streamlining NGINX configuration, and consolidating tooling and documentation
 - Fixed database migration and import errors by updating FastAPI-Users import path, fixing duplicate enum creation, configuring Alembic properly, resolving table name mismatch, adding missing columns to migrations, and fixing superuser creation with proper Pydantic model
 - Implemented FastAPI backend with role-based authentication system and comprehensive test suite
 - Created comprehensive authentication implementation plan for FastAPI backend with RBAC
