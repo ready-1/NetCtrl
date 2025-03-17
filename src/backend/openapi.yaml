@@ -31,7 +31,7 @@ paths:
       tags:
       - auth
       summary: Login
-      description: Custom login route that authenticates with username
+      description: Login endpoint for username-password authentication
       operationId: login_api_v1_jwt_login_post
       requestBody:
         content:
@@ -44,7 +44,15 @@ paths:
           description: Successful Response
           content:
             application/json:
-              schema: {}
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                    description: JWT token for authentication
+                  token_type:
+                    type: string
+                    description: Token type (bearer)
         '422':
           description: Validation Error
           content:
@@ -55,7 +63,8 @@ paths:
     post:
       tags:
       - auth
-      summary: Register:Register
+      summary: Register a new user
+      description: Register a new user with the system
       operationId: register_register_api_v1_register_register_post
       requestBody:
         content:
@@ -86,7 +95,7 @@ paths:
                   value:
                     detail:
                       code: REGISTER_INVALID_PASSWORD
-                      reason: Password should beat least 3 characters
+                      reason: Password must meet complexity requirements
         '422':
           description: Validation Error
           content:
@@ -117,7 +126,8 @@ paths:
     patch:
       tags:
       - auth
-      summary: Users:Patch Current User
+      summary: Update Current User
+      description: Update the current user's profile information
       operationId: users_patch_current_user_api_v1_users_me_patch
       requestBody:
         content:
@@ -150,7 +160,7 @@ paths:
                   value:
                     detail:
                       code: UPDATE_USER_INVALID_PASSWORD
-                      reason: Password should beat least 3 characters
+                      reason: Password must meet complexity requirements
         '422':
           description: Validation Error
           content:
@@ -163,7 +173,8 @@ paths:
     get:
       tags:
       - auth
-      summary: Users:User
+      summary: Get User by ID
+      description: Get a user by their ID (superuser only)
       operationId: users_user_api_v1_users__id__get
       security:
       - OAuth2PasswordBearer: []
@@ -196,7 +207,8 @@ paths:
     patch:
       tags:
       - auth
-      summary: Users:Patch User
+      summary: Update User
+      description: Update a user's information (superuser only)
       operationId: users_patch_user_api_v1_users__id__patch
       security:
       - OAuth2PasswordBearer: []
@@ -239,7 +251,7 @@ paths:
                   value:
                     detail:
                       code: UPDATE_USER_INVALID_PASSWORD
-                      reason: Password should beat least 3 characters
+                      reason: Password must meet complexity requirements
               schema:
                 $ref: '#/components/schemas/ErrorModel'
           description: Bad Request
@@ -252,7 +264,8 @@ paths:
     delete:
       tags:
       - auth
-      summary: Users:Delete User
+      summary: Delete User
+      description: Delete a user (superuser only)
       operationId: users_delete_user_api_v1_users__id__delete
       security:
       - OAuth2PasswordBearer: []
@@ -280,7 +293,10 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
   /api/v1/logout:
     post:
-      summary: Auth:Jwt.Logout
+      tags:
+      - auth
+      summary: Logout
+      description: Logout the current user
       operationId: auth_jwt_logout_api_v1_logout_post
       responses:
         '200':
@@ -473,6 +489,46 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - users
+      summary: Create User
+      description: 'Create a new user
+
+
+        This endpoint allows administrators and managers to create new users.
+
+        Managers cannot create admin users. Regular users cannot create users.'
+      operationId: create_user_api_v1_users__post
+      security:
+      - OAuth2PasswordBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRead'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+        '403':
+          description: Forbidden - Not enough permissions
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /api/v1/users/{user_id}:
     get:
       tags:
@@ -501,6 +557,51 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserWithRoles'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - users
+      summary: Update User
+      description: 'Update a user
+
+
+        This endpoint allows users to update their own information, and allows
+
+        administrators and managers to update other users. Managers cannot update
+
+        admin users or change user roles to admin.'
+      operationId: update_user_api_v1_users__user_id__put
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: User Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserWithRoles'
+        '403':
+          description: Forbidden - Not enough permissions
+        '404':
+          description: Not Found - User not found
         '422':
           description: Validation Error
           content:
@@ -643,6 +744,17 @@ components:
         password:
           type: string
           title: Password
+          description: 'Password must meet complexity requirements:
+            
+            - At least 8 characters
+            
+            - At least 1 uppercase letter
+            
+            - At least 1 lowercase letter
+            
+            - At least 1 digit
+            
+            - At least 1 special character'
         is_active:
           anyOf:
           - type: boolean
@@ -748,6 +860,17 @@ components:
           - type: string
           - type: 'null'
           title: Password
+          description: 'If provided, password must meet complexity requirements:
+            
+            - At least 8 characters
+            
+            - At least 1 uppercase letter
+            
+            - At least 1 lowercase letter
+            
+            - At least 1 digit
+            
+            - At least 1 special character'
         email:
           anyOf:
           - type: string
