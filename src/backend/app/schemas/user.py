@@ -16,7 +16,8 @@ class UserRead(BaseUser[int]):
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     role: UserRole
-    
+    email: Optional[EmailStr] = None  # Make email optional
+
     class Config:
         """
         Pydantic configuration for ORM mode
@@ -32,7 +33,7 @@ class UserCreate(BaseUserCreate):
     last_name: Optional[str] = Field(None, max_length=50)
     email: Optional[EmailStr] = None  # Make email optional
     role: UserRole = UserRole.USER
-    
+
     @validator('username')
     def username_alphanumeric(cls, v):
         """
@@ -51,7 +52,7 @@ class UserUpdate(BaseUserUpdate):
     last_name: Optional[str] = Field(None, max_length=50)
     email: Optional[EmailStr] = None
     role: Optional[UserRole] = None
-    
+
     @validator('username')
     def username_alphanumeric(cls, v):
         """
@@ -68,7 +69,7 @@ class UserWithRoles(UserRead):
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
     last_login: Optional[datetime] = None
-    
+
     class Config:
         """
         Pydantic configuration for ORM mode

@@ -1,128 +1,132 @@
 """
-FastAPI-Users configuration and user management
+FastAPI-Users configuration with role-based authentication
 """
-from typing import Optional, Dict, Any
-from fastapi import Depends, Request, HTTPException, status
-from fastapi_users import BaseUserManager, FastAPIUsers, IntegerIDMixin
-from fastapi_users.authentication import JWTStrategy, AuthenticationBackend, BearerTransport
+import logging
+from typing import Optional, Dict, Any, List, Tuple
+from fastapi import Depends, Request, HTTPException, status, Response
+from fastapi_users import BaseUserManager, FastAPIUsers, IntegerIDMixin, models, schemas
+from fastapi_users.authentication import AuthenticationBackend, BearerTransport, Strategy
+from fastapi_users.authentication.strategy.base import StrategyDestroyNotSupportedError
 from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+from sqlalchemy.sql import text
+import jwt
+from datetime import datetime, timedelta
 
 from app.core.config import settings
 from app.db.session import get_async_session
 from app.models.user import User
 from app.models.role import UserRole
+from app.auth.custom_jwt import CustomJWTStrategy
+
+# Configure logger
+logger = logging.getLogger(__name__)
 
 # User database adapter
 async def get_user_db(session: AsyncSession = Depends(get_async_session)):
-    """
-    FastAPI dependency that provides a SQLAlchemy user database
-    """
+    """Provides SQLAlchemy user database adapter"""
     yield SQLAlchemyUserDatabase(session, User)
 
-# User manager for handling user operations
+# User manager
 class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
-    """
-    Custom user manager for handling user operations
-    """
+    """Custom user manager with username-based login and role-based access control"""
     reset_password_token_secret = settings.SECRET_KEY
     verification_token_secret = settings.SECRET_KEY
     
-    # Override to handle user creation
+    async def get_by_username(self, username: str) -> Optional[User]:
+        """Get user by username"""
+        user_db = self.user_db
+        if isinstance(user_db, SQLAlchemyUserDatabase):
+            statement = select(User).where(User.username == username)
+            result = await user_db.session.execute(statement)
+            user = result.scalars().first()
+            
+            if user is None:
+                raise self.not_exists_exception
+                
+            return user
+        return None
+    
     async def on_after_register(self, user: User, request: Optional[Request] = None):
-        """
-        Hook that runs after successful user registration
-        """
-        # Auto-verify users since we don't have email
+        """Auto-verify users on registration"""
         user.is_verified = True
-        print(f"User {user.id} has registered with username {user.username}")
+        logger.info("User %s registered successfully", user.id)
     
-    # Override to handle password reset (minimal without email)
     async def on_after_forgot_password(self, user: User, token: str, request: Optional[Request] = None):
-        """
-        Hook that runs after user requests password reset
-        """
-        # In a real system, you would send an email here
-        print(f"User {user.id} has requested password reset. Token: {token}")
+        """Handle password reset requests"""
+        logger.info("User %s requested password reset", user.id)
     
-    # Custom method to check if user has specific role
     async def has_role(self, user: User, role: UserRole) -> bool:
-        """
-        Check if user has a specific role or is an admin
-        """
+        """Check if user has specific role or is admin"""
         return user.role == role or user.role == UserRole.ADMIN
     
-    # Override create to set admin role for first user
     async def create(self, user_create: Dict[str, Any], safe: bool = False, request: Optional[Request] = None) -> User:
-        """
-        Create a new user and make first user an admin
-        """
-        # Check if this is first user to be created
+        """Create user and make first user an admin"""
         user_db = self.user_db
         if isinstance(user_db, SQLAlchemyUserDatabase):
             session = user_db.session
-            first_user = await session.execute("SELECT COUNT(*) FROM \"user\"")
-            is_first_user = (await first_user.scalar()) == 0
+            # Fixed async query
+            result = await session.execute(select(User))
+            is_first_user = result.scalars().first() is None
             
             if is_first_user:
                 user_create["role"] = UserRole.ADMIN
                 user_create["is_superuser"] = True
+                logger.info("Creating first user as admin")
         
         return await super().create(user_create, safe, request)
 
+# User manager dependency
 async def get_user_manager(user_db=Depends(get_user_db)):
-    """
-    FastAPI dependency that provides a user manager
-    """
+    """Provides user manager dependency"""
     yield UserManager(user_db)
 
-# JWT authentication
-bearer_transport = BearerTransport(tokenUrl=f"{settings.API_V1_STR}/auth/jwt/login")
+# JWT authentication configuration
+bearer_transport = BearerTransport(tokenUrl=f"{settings.API_V1_STR}/jwt/login")
 
-def get_jwt_strategy() -> JWTStrategy:
-    """
-    Get JWT strategy for token generation
-    """
-    return JWTStrategy(
+# JWT strategy factory function
+def get_jwt_strategy() -> Strategy:
+    """Get JWT strategy for token generation"""
+    # Get token expire minutes as integer
+    expire_minutes = int(settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    lifetime_seconds = expire_minutes * 60
+    
+    return CustomJWTStrategy(
         secret=settings.SECRET_KEY,
-        lifetime_seconds=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+        lifetime_seconds=lifetime_seconds,
     )
 
-# Authentication backend
+# Auth backend
 auth_backend = AuthenticationBackend(
     name="jwt",
     transport=bearer_transport,
     get_strategy=get_jwt_strategy,
 )
 
-# FastAPIUsers instance
+# Create FastAPIUsers instance
 fastapi_users = FastAPIUsers[User, int](get_user_manager, [auth_backend])
 
-# Export current user dependencies
+# User dependencies
 current_active_user = fastapi_users.current_user(active=True)
 current_verified_user = fastapi_users.current_user(active=True, verified=True)
 current_superuser = fastapi_users.current_user(active=True, superuser=True)
 
-# Role-based dependencies
+# Role-based access control
 def current_user_with_role(role: UserRole):
-    """
-    Creates a dependency for role-based access control
-    """
-    async def current_user_with_role_dependency(
+    """Creates a dependency for role-based access control"""
+    async def dependency(
         user_manager=Depends(get_user_manager),
         user=Depends(current_active_user),
     ):
-        """
-        Check if current user has required role
-        """
         if await user_manager.has_role(user, role):
             return user
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail=f"Role {role} required",
         )
-    return current_user_with_role_dependency
+    return dependency
 
-# Export role-based dependencies
+# Role-based dependencies
 current_admin = current_user_with_role(UserRole.ADMIN)
 current_manager = current_user_with_role(UserRole.MANAGER)
