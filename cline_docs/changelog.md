@@ -1,5 +1,13 @@
 # Changelog
 
+## March 17, 2025 - Enhanced API Documentation and Testing
+
+- Added comprehensive API documentation and test coverage:
+  - Created CURL_API_EXAMPLES.md with detailed examples for all authentication and user management endpoints
+  - Added test_user_management.py with tests for login, user creation, retrieval, updates, and role-based permissions
+  - Updated OpenAPI specification with detailed descriptions, request/response formats, and password requirements
+  - Documented the curl command for login: `curl -X POST "http://localhost/api/v1/jwt/login" -d "username=admin&password=admin123&grant_type=password" -H "Content-Type: application/x-www-form-urlencoded"`
+
 ## March 17, 2025 - Implemented User CRUD Operations with RBAC
 
 - Implemented comprehensive user management with role-based access control:
