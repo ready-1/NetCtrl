@@ -31,3 +31,12 @@ async def get_async_session() -> AsyncSession:
             yield session
         finally:
             await session.close()
+
+async def get_engine():
+    """
+    Get the SQLAlchemy engine instance.
+    
+    This function is used for direct engine access when needed,
+    primarily for database initialization and testing.
+    """
+    return engine
