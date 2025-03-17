@@ -10,7 +10,7 @@ from fastapi.openapi.utils import get_openapi
 
 from app.core.config import settings
 from app.api.routes import auth, roles, users
-from app.db.init_db import create_first_superuser
+from app.db.init_db import init_db
 
 # Configure logging
 logging.basicConfig(
@@ -64,9 +64,6 @@ app.include_router(auth.router, prefix=f"{settings.API_V1_STR}")
 app.include_router(roles.router, prefix=f"{settings.API_V1_STR}")
 app.include_router(users.router, prefix=f"{settings.API_V1_STR}")
 
-# Custom authentication endpoints removed to eliminate route conflicts
-# The standard FastAPI-Users authentication routes are now the sole source of truth
-
 # Startup event
 @app.on_event("startup")
 async def startup_event():
@@ -74,6 +71,13 @@ async def startup_event():
     Startup event that initializes the database and generates OpenAPI schema
     """
     logger.info("Starting up application")
+    
+    # Initialize database and create superuser if needed
+    try:
+        await init_db()
+        logger.info("Database initialization completed successfully")
+    except Exception as e:
+        logger.error(f"Error initializing database: {e}")
     
     # Generate OpenAPI schema on startup
     try:
@@ -87,8 +91,6 @@ async def startup_event():
     except Exception as e:
         logger.error(f"Failed to generate OpenAPI schema: {e}")
     
-    # Database migrations are handled by Alembic via the start script
-    # First superuser creation is handled in the start script via app.initial_setup
     logger.info("Application startup completed")
 
 # Shutdown event

@@ -1,5 +1,27 @@
 # Changelog
 
+## March 17, 2025 - Implemented User CRUD Operations with RBAC
+
+- Implemented comprehensive user management with role-based access control:
+  - Added password complexity validation with requirements for length, uppercase, lowercase, digits, and special characters
+  - Implemented role-based permissions for user management operations
+  - Added comprehensive test suite for user operations and RBAC
+  - Created detailed documentation for all user management endpoints
+  - Improved error handling with specific permission denied messages
+
+- Enhanced superuser creation:
+  - Added retry logic for database connections
+  - Improved error handling during user creation
+  - Added environment variable support for superuser credentials
+  - Added better logging for initialization process
+  - Updated documentation about superuser configuration
+
+- Additional improvements:
+  - Made email field optional in user schemas for username-only authentication
+  - Added validation warning for default admin password use
+  - Added thorough API documentation with examples
+  - Implemented init_db function for reliable database initialization
+
 ## March 16, 2025 - Fixed Authentication System
 
 - Implemented custom JWT strategy for proper authentication:

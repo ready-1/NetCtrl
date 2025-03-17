@@ -2,7 +2,7 @@
 Extended user management routes beyond the basic FastAPI-Users functionality
 """
 from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi import APIRouter, Depends, HTTPException, status, Query, Body, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
@@ -15,7 +15,8 @@ from app.auth.users import (
     current_admin,
     current_manager,
     fastapi_users,
-    get_user_manager
+    get_user_manager,
+    UserManager
 )
 
 # Create the users router
@@ -89,19 +90,60 @@ async def get_user_by_id(
     
     return user
 
-@router.put("/{user_id}/role", response_model=UserWithRoles)
-async def update_user_role(
-    user_id: int,
-    role: UserRole,
-    db: AsyncSession = Depends(get_async_session),
-    _: User = Depends(current_admin)  # Admin only
+@router.post("/", response_model=UserRead, status_code=status.HTTP_201_CREATED)
+async def create_user(
+    user_data: UserCreate,
+    current_user: User = Depends(current_active_user),
+    user_manager: UserManager = Depends(get_user_manager)
 ):
     """
-    Update a user's role
+    Create a new user
     
-    This endpoint allows administrators to update a user's role.
-    Requires admin privileges.
+    This endpoint allows administrators and managers to create new users.
+    Managers cannot create admin users. Regular users cannot create users.
     """
+    # Check if current user has permission to create users
+    if current_user.role == UserRole.USER and not current_user.is_superuser:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not enough permissions to create users"
+        )
+    
+    # Check if current user has permission to create users with specified role
+    if user_data.role == UserRole.ADMIN and current_user.role != UserRole.ADMIN and not current_user.is_superuser:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not enough permissions to create admin users"
+        )
+    
+    # Convert to dict for user creation
+    user_dict = user_data.dict()
+    
+    try:
+        created_user = await user_manager.create(user_dict)
+        return created_user
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Error creating user: {str(e)}"
+        )
+
+@router.put("/{user_id}", response_model=UserWithRoles)
+async def update_user(
+    user_id: int,
+    user_data: UserUpdate,
+    db: AsyncSession = Depends(get_async_session),
+    current_user: User = Depends(current_active_user),
+    user_manager: UserManager = Depends(get_user_manager)
+):
+    """
+    Update a user
+    
+    This endpoint allows users to update their own information, and allows
+    administrators and managers to update other users. Managers cannot update
+    admin users or change user roles to admin.
+    """
+    # Get the user to update
     result = await db.execute(select(User).filter(User.id == user_id))
     user = result.scalars().first()
     
@@ -111,12 +153,49 @@ async def update_user_role(
             detail="User not found"
         )
     
-    # Update the user's role
-    user.role = role
-    await db.commit()
-    await db.refresh(user)
+    # Check permissions for updating user
+    is_self = current_user.id == user_id
+    is_admin = current_user.role == UserRole.ADMIN or current_user.is_superuser
+    is_manager = current_user.role == UserRole.MANAGER or is_admin
     
-    return user
+    if not (is_self or is_admin or is_manager):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not enough permissions to update this user"
+        )
+    
+    # Additional role-based restrictions
+    if user_data.role is not None:
+        # Only admins can change roles
+        if not is_admin:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Only administrators can change user roles"
+            )
+        
+        # Prevent downgrading own admin role
+        if is_self and current_user.role == UserRole.ADMIN and user_data.role != UserRole.ADMIN:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Administrators cannot downgrade their own role"
+            )
+    
+    # Get only the fields that were actually provided
+    update_data = user_data.dict(exclude_unset=True)
+    
+    # If no fields to update, return the current user
+    if not update_data:
+        return user
+    
+    # Update the user
+    try:
+        updated_user = await user_manager.update(update_data, user)
+        return updated_user
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Error updating user: {str(e)}"
+        )
 
 @router.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_user(
