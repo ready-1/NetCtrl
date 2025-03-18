@@ -5,7 +5,8 @@
 set -e
 
 echo "📦 Installing dependencies..."
-npm install
+# Use legacy-peer-deps to handle TypeScript version compatibility with react-scripts
+npm install --legacy-peer-deps
 
 echo "🚀 Starting development server..."
 npm start

@@ -8,18 +8,23 @@ There are multiple ways to run the frontend application:
 
 ### Local Development
 
-1. **Install dependencies**:
+1. **Using the convenience script (Recommended)**:
    ```bash
    cd src/frontend
-   npm install
+   ./start-dev.sh
    ```
+   This script handles dependency installation and starts the development server automatically.
 
-2. **Start the development server**:
+2. **Manual installation**:
    ```bash
+   cd src/frontend
+   npm install --legacy-peer-deps
    npm start
    ```
+   
+   > **Note:** The `--legacy-peer-deps` flag is required to handle TypeScript version compatibility with react-scripts.
 
-3. This will launch the application in development mode at [http://localhost:3000](http://localhost:3000)
+3. The application will be available at [http://localhost:3000](http://localhost:3000)
 
 ### Using Docker
 
