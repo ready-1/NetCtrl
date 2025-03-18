@@ -18,11 +18,11 @@ There are multiple ways to run the frontend application:
 2. **Manual installation**:
    ```bash
    cd src/frontend
-   npm install --legacy-peer-deps
+   npm install --force
    npm start
    ```
    
-   > **Note:** The `--legacy-peer-deps` flag is required to handle TypeScript version compatibility with react-scripts.
+   > **Note:** The `--force` flag is required to resolve dependency conflicts in the project. This is necessary because of compatibility issues between certain packages.
 
 3. The application will be available at [http://localhost:3000](http://localhost:3000)
 
