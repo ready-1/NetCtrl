@@ -1,6 +1,29 @@
-# CMS with RBAC
+# NetCtrl: CMS with RBAC
 
-A Content Management System with Role-Based Access Control (RBAC), deployed using Docker containers.
+A Content Management System with Role-Based Access Control (RBAC) deployed using Docker containers.
+
+## Features
+
+- **User Authentication**: Username-based JWT authentication system
+- **Role-Based Access Control**: Admin, Editor, and User roles with granular permissions
+- **Content Management**: Create, read, update, and delete content with versioning
+- **File Management**: Upload, download, and manage files with content associations
+- **Permission System**: Fine-grained permission controls for content and files
+
+## Backend Implementation
+
+The system uses a FastAPI backend with the following components:
+
+- **Authentication System**: Custom JWT implementation with username-based login
+- **User Management**: Complete CRUD operations with role-based permissions
+- **Content API**: RESTful API for content management with filtering and search
+- **File API**: File upload, download, and management API
+- **Testing Framework**: Comprehensive test suite for all functionality
+
+Documentation for the backend APIs can be found in the `src/backend/` directory:
+- [CMS API Guide](src/backend/CMS_API_GUIDE.md)
+- [Authentication Guide](src/backend/AUTHENTICATION_GUIDE.md)
+- [User Management Guide](src/backend/USER_MANAGEMENT_GUIDE.md)
 
 ## Docker Environment Setup
 
@@ -65,7 +88,7 @@ This project is designed to work in air-gapped environments with no internet acc
 
 ## Development
 
-For development, you can use the following commands:
+For development you can use the following commands:
 
 - Start individual services:
   ```bash
@@ -80,6 +103,11 @@ For development, you can use the following commands:
 - Access specific container:
   ```bash
   docker compose exec backend bash
+  ```
+
+- Run the test suite:
+  ```bash
+  docker compose -f docker-compose.test.yml run --rm test_backend pytest
   ```
 
 ## Configuration
