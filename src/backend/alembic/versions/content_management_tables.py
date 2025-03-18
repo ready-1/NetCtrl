@@ -1,7 +1,7 @@
 """Create content management tables
 
-Revision ID: content_management_tables
-Revises: 
+Revision ID: bce38eb0d123
+Revises: 79944eb5a713
 Create Date: 2025-03-17 15:30:00.000000
 
 """
@@ -12,8 +12,8 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = 'content_management_tables'
-down_revision = None
+revision = 'bce38eb0d123'
+down_revision = '79944eb5a713'  # Set to depend on the initial migration
 branch_labels = None
 depends_on = None
 
