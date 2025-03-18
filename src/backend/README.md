@@ -1,132 +1,60 @@
 # NetCtrl CMS Backend
 
-Backend API for the NetCtrl CMS with Role-Based Access Control.
+This is the backend for the NetCtrl Content Management System with Role-Based Access Control.
 
 ## Features
 
-- FastAPI-based RESTful API
-- JWT Authentication with username/password
-- Role-Based Access Control (Admin, Manager, User)
-- PostgreSQL database
-- Comprehensive testing suite
-- Docker support
+- **Authentication**: Username-based JWT authentication system
+- **Role-Based Access Control**: Admin, Editor, and User roles with appropriate permissions
+- **User Management**: CRUD operations for users with proper permission checks
+- **Content Management**: Complete CMS functionality for creating, managing, and publishing content
+- **File Management**: File upload, download, and management with content associations
+- **Permission System**: Granular permission controls for content and files
 
-## Development Setup
+## API Documentation
 
-### Local Development
+- [Authentication Guide](./AUTHENTICATION_GUIDE.md) - Details on the authentication system
+- [User Management Guide](./USER_MANAGEMENT_GUIDE.md) - User CRUD operations and RBAC
+- [CMS API Guide](./CMS_API_GUIDE.md) - Content Management API documentation
+- [Testing Guide](./CMS_TESTING_GUIDE.md) - Testing the CMS functionality
+- [curl Examples](./CURL_API_EXAMPLES.md) - Example API calls with curl
 
-1. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+## Getting Started
 
-2. Run the application:
-   ```bash
-   uvicorn app.main:app --reload
-   ```
+### Prerequisites
 
-3. Access the API documentation:
-   - OpenAPI UI: http://localhost:8000/api/v1/docs
-   - ReDoc: http://localhost:8000/api/v1/redoc
+- Docker and Docker Compose
+- Python 3.11+
 
-### Database Migrations
-
-The application uses Alembic for database migrations. Here are the common commands:
-
-#### Generate a new migration
+### Running the Backend
 
 ```bash
-cd src/backend
-alembic revision -m "Description of the changes"
-```
-
-#### Generate automatic migrations (when connected to database)
-
-```bash
-cd src/backend
-alembic revision --autogenerate -m "Description of the changes"
-```
-
-#### Upgrade to the latest version
-
-```bash
-cd src/backend
-alembic upgrade head
-```
-
-#### Downgrade to a specific version
-
-```bash
-cd src/backend
-alembic downgrade <revision>
-```
-
-#### Show migration history
-
-```bash
-cd src/backend
-alembic history
-```
-
-### Running Tests
-
-#### Option 1: Run with SQLite (Quick Tests)
-
-```bash
-cd src/backend
-python -m pytest app/tests/
-```
-
-#### Option 2: Run with PostgreSQL (Production-like Tests)
-
-```bash
-cd src/backend
-chmod +x run_tests_with_postgres.sh
-./run_tests_with_postgres.sh
-```
-
-#### Option 3: Run with Docker Compose
-
-```bash
-cd src/backend
-docker compose -f docker-compose.test.yml up --build
-```
-
-## API Endpoints
-
-### Authentication
-
-- `POST /api/v1/jwt/login` - Login and get JWT token
-- `POST /api/v1/register` - Register a new user
-- `GET /api/v1/users/me` - Get current user profile
-
-### User Management
-
-- `GET /api/v1/users` - List all users (admin/manager)
-- `GET /api/v1/users/{id}` - Get user by ID
-- `POST /api/v1/users` - Create a new user (admin only)
-- `PATCH /api/v1/users/{id}` - Update a user
-- `DELETE /api/v1/users/{id}` - Delete a user (admin only)
-
-### Roles
-
-- `GET /api/v1/roles` - List all available roles
-- `GET /api/v1/roles/{role}/users` - List users with a specific role (admin only)
-
-## Environment Variables
-
-- `SECRET_KEY` - Secret key for JWT token generation
-- `POSTGRES_SERVER` - PostgreSQL server hostname
-- `POSTGRES_USER` - PostgreSQL username
-- `POSTGRES_PASSWORD` - PostgreSQL password
-- `POSTGRES_DB` - PostgreSQL database name
-- `FIRST_SUPERUSER_USERNAME` - Initial admin username (default: admin)
-- `FIRST_SUPERUSER_PASSWORD` - Initial admin password
-
-## Docker Deployment
-
-The application is designed to run in a Docker container and is configured to work with the project's Docker Compose setup.
-
-```bash
-# Start the entire application stack
+# Start all services
 docker compose up -d
+
+# Run database migrations
+docker compose exec backend alembic upgrade head
+
+# Create initial superuser if needed
+docker compose exec backend python -m app.initial_setup
+```
+
+### Configuration
+
+Modify the .env files in the env-config/ directory to configure the system. See the env-config/.env.example files for available options.
+
+### Testing
+
+```bash
+# Run the test suite
+docker compose -f docker-compose.test.yml run --rm test_backend pytest
+```
+
+## Endpoints
+
+Main API endpoints:
+
+- **Authentication**: `/api/v1/jwt/login`, `/api/v1/users/me`
+- **User Management**: `/api/v1/users/`, `/api/v1/roles/`
+- **Content Management**: `/api/v1/content/`
+- **File Management**: `/api/v1/files/`
