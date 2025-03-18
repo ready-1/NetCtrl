@@ -111,21 +111,70 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
       },
       MuiInputBase: {
         styleOverrides: {
+          root: {
+            // Default background to ensure contrast
+            backgroundColor: mode === 'light' ? '#fcfcfc' : '#333',
+            // Add transition for smooth color changes
+            transition: 'all 0.2s ease-in-out',
+            // Force text color to ensure visibility
+            '& input': {
+              color: mode === 'light' ? 'rgba(0, 0, 0, 0.87)' : 'rgba(255, 255, 255, 0.87)',
+            },
+            // Focus state - maintain text visibility
+            '&.Mui-focused': {
+              backgroundColor: mode === 'light' ? '#fff' : '#424242',
+              '& input': {
+                color: mode === 'light' ? 'rgba(0, 0, 0, 0.87)' : 'rgba(255, 255, 255, 0.87)',
+              },
+            },
+            // On hover, ensure contrast
+            '&:hover': {
+              backgroundColor: mode === 'light' ? '#fff' : '#3a3a3a',
+            },
+          },
           input: {
-            // Ensure input text is always visible with proper contrast
             color: mode === 'light' ? 'rgba(0, 0, 0, 0.87)' : 'rgba(255, 255, 255, 0.87)',
+            '&::placeholder': {
+              color: mode === 'light' ? 'rgba(0, 0, 0, 0.42)' : 'rgba(255, 255, 255, 0.5)',
+              opacity: 1,
+            },
+          },
+        },
+      },
+      MuiFilledInput: {
+        styleOverrides: {
+          root: {
+            backgroundColor: mode === 'light' ? 'rgba(0, 0, 0, 0.06)' : 'rgba(255, 255, 255, 0.09)',
+            '&:hover': {
+              backgroundColor: mode === 'light' ? 'rgba(0, 0, 0, 0.09)' : 'rgba(255, 255, 255, 0.13)',
+            },
+            '&.Mui-focused': {
+              backgroundColor: mode === 'light' ? 'rgba(0, 0, 0, 0.09)' : 'rgba(255, 255, 255, 0.13)',
+            },
           },
         },
       },
       MuiOutlinedInput: {
         styleOverrides: {
           root: {
+            // Background color for better contrast
+            backgroundColor: mode === 'light' ? '#fff' : '#333',
+            // Normal state
+            '& fieldset': {
+              borderColor: mode === 'light' ? 'rgba(0, 0, 0, 0.23)' : 'rgba(255, 255, 255, 0.23)',
+            },
             // Improved focus state
-            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-              borderWidth: 2,
+            '&.Mui-focused': {
+              '& fieldset': {
+                borderColor: mode === 'light' ? '#1976d2' : '#64b5f6',
+                borderWidth: 2,
+              },
+              '& input': {
+                color: mode === 'light' ? 'rgba(0, 0, 0, 0.87)' : 'rgba(255, 255, 255, 0.87)',
+              },
             },
             // Better hover state
-            '&:hover .MuiOutlinedInput-notchedOutline': {
+            '&:hover fieldset': {
               borderColor: mode === 'light' ? 'rgba(0, 0, 0, 0.42)' : 'rgba(255, 255, 255, 0.42)',
             },
           },
