@@ -80,6 +80,10 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
         default: mode === 'light' ? '#f5f5f5' : '#121212',
         paper: mode === 'light' ? '#ffffff' : '#1e1e1e',
       },
+      text: {
+        primary: mode === 'light' ? 'rgba(0, 0, 0, 0.87)' : 'rgba(255, 255, 255, 0.87)',
+        secondary: mode === 'light' ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.6)',
+      },
     },
     typography: {
       fontFamily: [
@@ -102,6 +106,56 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
             boxShadow: mode === 'light' 
               ? '0px 2px 4px rgba(0, 0, 0, 0.1)' 
               : '0px 2px 4px rgba(0, 0, 0, 0.3)',
+          },
+        },
+      },
+      MuiInputBase: {
+        styleOverrides: {
+          input: {
+            // Ensure input text is always visible with proper contrast
+            color: mode === 'light' ? 'rgba(0, 0, 0, 0.87)' : 'rgba(255, 255, 255, 0.87)',
+          },
+        },
+      },
+      MuiOutlinedInput: {
+        styleOverrides: {
+          root: {
+            // Improved focus state
+            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+              borderWidth: 2,
+            },
+            // Better hover state
+            '&:hover .MuiOutlinedInput-notchedOutline': {
+              borderColor: mode === 'light' ? 'rgba(0, 0, 0, 0.42)' : 'rgba(255, 255, 255, 0.42)',
+            },
+          },
+          notchedOutline: {
+            // Better default border
+            borderColor: mode === 'light' ? 'rgba(0, 0, 0, 0.23)' : 'rgba(255, 255, 255, 0.23)',
+          },
+        },
+      },
+      MuiFormLabel: {
+        styleOverrides: {
+          root: {
+            // Better label visibility
+            color: mode === 'light' ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.6)',
+            '&.Mui-focused': {
+              color: mode === 'light' ? '#1976d2' : '#64b5f6',
+            },
+          },
+        },
+      },
+      MuiTextField: {
+        defaultProps: {
+          variant: 'outlined',
+        },
+      },
+      MuiLink: {
+        styleOverrides: {
+          root: {
+            // Better link visibility
+            color: mode === 'light' ? '#0059b3' : '#64b5f6',
           },
         },
       },
