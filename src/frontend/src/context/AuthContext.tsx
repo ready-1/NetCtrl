@@ -114,7 +114,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           
           // Get current user
           const response = await api.get('/api/v1/users/me');
-          const user = response.data;
+          const user = response.data as User;
           
           dispatch({
             type: 'INITIALIZE',
@@ -161,7 +161,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         password,
       });
       
-      const { access_token } = response.data;
+      const { access_token } = response.data as { access_token: string };
       
       // Store token in localStorage
       localStorage.setItem('auth-token', access_token);
@@ -171,7 +171,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       // Get user data
       const userResponse = await api.get('/api/v1/users/me');
-      const user = userResponse.data;
+      const user = userResponse.data as User;
       
       dispatch({
         type: 'LOGIN',
@@ -206,7 +206,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         password,
       });
       
-      const { access_token } = response.data;
+      const { access_token } = response.data as { access_token: string };
       
       // Store token in localStorage
       localStorage.setItem('auth-token', access_token);
@@ -216,7 +216,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       // Get user data
       const userResponse = await api.get('/api/v1/users/me');
-      const user = userResponse.data;
+      const user = userResponse.data as User;
       
       dispatch({
         type: 'REGISTER',
