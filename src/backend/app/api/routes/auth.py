@@ -17,7 +17,7 @@ router = APIRouter(tags=["auth"])
 async def login(
     request: Request,
     credentials: OAuth2PasswordRequestForm = Depends(),
-    user_manager: UserManager = Depends(get_user_manager),
+    user_manager: UserManager = Depends(get_user_manager)
 ):
     """Custom login route that authenticates with username"""
     try:

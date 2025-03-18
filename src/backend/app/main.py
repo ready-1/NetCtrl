@@ -9,7 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 
 from app.core.config import settings
-from app.api.routes import auth, roles, users
+from app.api.routes import auth, roles, users, content, files
 from app.db.init_db import init_db
 
 # Configure logging
@@ -63,6 +63,8 @@ async def health_check():
 app.include_router(auth.router, prefix=f"{settings.API_V1_STR}")
 app.include_router(roles.router, prefix=f"{settings.API_V1_STR}")
 app.include_router(users.router, prefix=f"{settings.API_V1_STR}")
+app.include_router(content.router, prefix=f"{settings.API_V1_STR}")
+app.include_router(files.router, prefix=f"{settings.API_V1_STR}")
 
 # Startup event
 @app.on_event("startup")

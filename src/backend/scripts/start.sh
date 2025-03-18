@@ -34,9 +34,20 @@ init_superuser() {
   echo "Superuser check completed."
 }
 
+# Function to ensure upload directory exists
+ensure_upload_dir() {
+  echo "Ensuring uploads directory exists..."
+  mkdir -p /app/uploads
+  chmod 775 /app/uploads
+  echo "Uploads directory ready at /app/uploads"
+}
+
 # Main execution
 echo "Starting backend service in $(hostname) container..."
 echo "Environment: $NODE_ENV"
+
+# Ensure upload directory exists
+ensure_upload_dir
 
 # Wait for database to be ready
 wait_for_db

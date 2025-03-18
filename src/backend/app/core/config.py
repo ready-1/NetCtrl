@@ -24,6 +24,10 @@ class Settings(BaseSettings):
     POSTGRES_PASSWORD: str = "postgres"
     POSTGRES_DB: str = "netctrl"
     SQLALCHEMY_DATABASE_URI: Optional[str] = None
+    
+    # File upload settings
+    UPLOAD_DIR: str = "/app/uploads"  # Directory for file uploads, mounted as volume in Docker
+    MAX_UPLOAD_SIZE: int = 2 * 1024 * 1024 * 1024  # 2GB in bytes
 
     # CORS settings
     BACKEND_CORS_ORIGINS: List[Union[str, AnyHttpUrl]] = ["http://localhost:3000"]
