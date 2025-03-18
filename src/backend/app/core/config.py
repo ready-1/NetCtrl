@@ -21,8 +21,8 @@ class Settings(BaseSettings):
     # Database settings
     POSTGRES_SERVER: str = "database"
     POSTGRES_USER: str = "postgres"
-    POSTGRES_PASSWORD: str = "postgres"
-    POSTGRES_DB: str = "netctrl"
+    POSTGRES_PASSWORD: str = "changeme"
+    POSTGRES_DB: str = "cms_db"
     SQLALCHEMY_DATABASE_URI: Optional[str] = None
     
     # File upload settings

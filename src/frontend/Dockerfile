@@ -30,10 +30,15 @@ RUN echo "registry=${NPM_REGISTRY}" > .npmrc && \
     npm config set --global legacy-peer-deps true && \
     # Force progress=false to avoid console spam
     npm config set progress=false && \
-    # Attempt to install dependencies with fallback and multiple retry options
-    (npm ci --prefer-offline --no-audit --no-fund || \
-     npm install --prefer-offline --no-audit --no-fund || \
-     npm install --prefer-offline --no-audit --no-fund --registry=https://registry.npmjs.org)
+    # Clean any existing node_modules to ensure fresh install
+    rm -rf node_modules && \
+    # Clean npm cache to ensure fresh dependencies
+    npm cache clean --force && \
+    # Install with fallback options
+    (npm install --prefer-offline --no-audit --no-fund || \
+     npm install --prefer-offline --no-audit --no-fund --registry=https://registry.npmjs.org) && \
+    # Explicitly install ajv to resolve ajv-keywords dependency issues
+    npm install ajv@8.12.0
 
 # Copy application code
 COPY . .

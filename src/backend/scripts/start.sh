@@ -38,7 +38,7 @@ init_superuser() {
 ensure_upload_dir() {
   echo "Ensuring uploads directory exists..."
   mkdir -p /app/uploads
-  chmod 775 /app/uploads
+  # Remove chmod as non-root user can't change permissions
   echo "Uploads directory ready at /app/uploads"
 }
 

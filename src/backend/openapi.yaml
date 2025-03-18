@@ -31,7 +31,7 @@ paths:
       tags:
       - auth
       summary: Login
-      description: Login endpoint for username-password authentication
+      description: Custom login route that authenticates with username
       operationId: login_api_v1_jwt_login_post
       requestBody:
         content:
@@ -44,15 +44,7 @@ paths:
           description: Successful Response
           content:
             application/json:
-              schema:
-                type: object
-                properties:
-                  access_token:
-                    type: string
-                    description: JWT token for authentication
-                  token_type:
-                    type: string
-                    description: Token type (bearer)
+              schema: {}
         '422':
           description: Validation Error
           content:
@@ -63,8 +55,7 @@ paths:
     post:
       tags:
       - auth
-      summary: Register a new user
-      description: Register a new user with the system
+      summary: Register:Register
       operationId: register_register_api_v1_register_register_post
       requestBody:
         content:
@@ -95,7 +86,7 @@ paths:
                   value:
                     detail:
                       code: REGISTER_INVALID_PASSWORD
-                      reason: Password must meet complexity requirements
+                      reason: Password should beat least 3 characters
         '422':
           description: Validation Error
           content:
@@ -126,8 +117,7 @@ paths:
     patch:
       tags:
       - auth
-      summary: Update Current User
-      description: Update the current user's profile information
+      summary: Users:Patch Current User
       operationId: users_patch_current_user_api_v1_users_me_patch
       requestBody:
         content:
@@ -160,7 +150,7 @@ paths:
                   value:
                     detail:
                       code: UPDATE_USER_INVALID_PASSWORD
-                      reason: Password must meet complexity requirements
+                      reason: Password should beat least 3 characters
         '422':
           description: Validation Error
           content:
@@ -173,8 +163,7 @@ paths:
     get:
       tags:
       - auth
-      summary: Get User by ID
-      description: Get a user by their ID (superuser only)
+      summary: Users:User
       operationId: users_user_api_v1_users__id__get
       security:
       - OAuth2PasswordBearer: []
@@ -207,8 +196,7 @@ paths:
     patch:
       tags:
       - auth
-      summary: Update User
-      description: Update a user's information (superuser only)
+      summary: Users:Patch User
       operationId: users_patch_user_api_v1_users__id__patch
       security:
       - OAuth2PasswordBearer: []
@@ -251,7 +239,7 @@ paths:
                   value:
                     detail:
                       code: UPDATE_USER_INVALID_PASSWORD
-                      reason: Password must meet complexity requirements
+                      reason: Password should beat least 3 characters
               schema:
                 $ref: '#/components/schemas/ErrorModel'
           description: Bad Request
@@ -264,8 +252,7 @@ paths:
     delete:
       tags:
       - auth
-      summary: Delete User
-      description: Delete a user (superuser only)
+      summary: Users:Delete User
       operationId: users_delete_user_api_v1_users__id__delete
       security:
       - OAuth2PasswordBearer: []
@@ -293,10 +280,7 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
   /api/v1/logout:
     post:
-      tags:
-      - auth
-      summary: Logout
-      description: Logout the current user
+      summary: Auth:Jwt.Logout
       operationId: auth_jwt_logout_api_v1_logout_post
       responses:
         '200':
@@ -515,14 +499,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserRead'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorModel'
-        '403':
-          description: Forbidden - Not enough permissions
         '422':
           description: Validation Error
           content:
@@ -598,10 +574,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserWithRoles'
-        '403':
-          description: Forbidden - Not enough permissions
-        '404':
-          description: Not Found - User not found
         '422':
           description: Validation Error
           content:
@@ -637,39 +609,494 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-  /api/v1/users/{user_id}/role:
-    put:
+  /api/v1/content/:
+    post:
       tags:
-      - users
-      summary: Update User Role
-      description: 'Update a user''s role
+      - content
+      summary: Create Content
+      description: 'Create a new content item.
 
 
-        This endpoint allows administrators to update a user''s role.
+        Requires an authenticated user.'
+      operationId: create_content_api_v1_content__post
+      security:
+      - OAuth2PasswordBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContentCreate'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContentRead'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - content
+      summary: List Content
+      description: 'List content items with filtering and pagination.
 
-        Requires admin privileges.'
-      operationId: update_user_role_api_v1_users__user_id__role_put
+
+        Requires an authenticated user. Results are filtered by user''s permissions.'
+      operationId: list_content_api_v1_content__get
       security:
       - OAuth2PasswordBearer: []
       parameters:
-      - name: user_id
-        in: path
-        required: true
+      - name: skip
+        in: query
+        required: false
         schema:
           type: integer
-          title: User Id
-      - name: role
+          minimum: 0
+          title: Skip items
+          default: 0
+      - name: limit
         in: query
-        required: true
+        required: false
         schema:
-          $ref: '#/components/schemas/UserRole'
+          type: integer
+          maximum: 100
+          minimum: 1
+          title: Limit items
+          default: 100
+      - name: status_filter
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/ContentStatus'
+          - type: 'null'
+          title: Filter by status
+      - name: content_type_filter
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/ContentType'
+          - type: 'null'
+          title: Filter by content type
+      - name: search
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Search in title, description, and body
       responses:
         '200':
           description: Successful Response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserWithRoles'
+                $ref: '#/components/schemas/ContentListResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/content/{content_id}:
+    get:
+      tags:
+      - content
+      summary: Get Content
+      description: 'Get a specific content item by ID.
+
+
+        Requires an authenticated user with appropriate view permissions.'
+      operationId: get_content_api_v1_content__content_id__get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: content_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: The ID of the content to get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContentDetailRead'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - content
+      summary: Update Content
+      description: 'Update a content item.
+
+
+        Requires an authenticated user with appropriate edit permissions.'
+      operationId: update_content_api_v1_content__content_id__put
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: content_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: The ID of the content to update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContentUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContentRead'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - content
+      summary: Delete Content
+      description: 'Delete a content item.
+
+
+        Requires an authenticated user with appropriate delete permissions.'
+      operationId: delete_content_api_v1_content__content_id__delete
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: content_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: The ID of the content to delete
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/content/{content_id}/permissions:
+    post:
+      tags:
+      - content
+      summary: Set Content Permissions
+      description: 'Set permissions for a content item.
+
+
+        Requires an authenticated user with admin role or content creator.'
+      operationId: set_content_permissions_api_v1_content__content_id__permissions_post
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: content_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: The ID of the content to set permissions for
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContentPermissionsUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: boolean
+                title: Response Set Content Permissions Api V1 Content  Content Id  Permissions
+                  Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - content
+      summary: Get Content Permissions
+      description: 'Get permissions for a content item.
+
+
+        Requires an authenticated user with view permissions for the content.'
+      operationId: get_content_permissions_api_v1_content__content_id__permissions_get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: content_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: The ID of the content to get permissions for
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/PermissionSettings'
+                title: Response Get Content Permissions Api V1 Content  Content Id  Permissions
+                  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/files/:
+    post:
+      tags:
+      - files
+      summary: Upload File
+      description: 'Upload a new file.
+
+
+        Requires an authenticated user. If content_id is provided, the user must have
+        permission to edit the content.'
+      operationId: upload_file_api_v1_files__post
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: content_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          description: Content ID to associate with the file
+          title: Content Id
+        description: Content ID to associate with the file
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Body_upload_file_api_v1_files__post'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContentFileRead'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - files
+      summary: List Files
+      description: 'List files with filtering and pagination.
+
+
+        Requires an authenticated user. Results are filtered by user''s permissions.'
+      operationId: list_files_api_v1_files__get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: content_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          description: Filter files by content ID
+          title: Content Id
+        description: Filter files by content ID
+      - name: skip
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          title: Skip items
+          default: 0
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          title: Limit items
+          default: 100
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContentFileListResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/files/{file_id}:
+    get:
+      tags:
+      - files
+      summary: Get File Metadata
+      description: 'Get metadata for a specific file.
+
+
+        Requires an authenticated user with appropriate permissions.'
+      operationId: get_file_metadata_api_v1_files__file_id__get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: file_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: The ID of the file to get metadata for
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContentFileRead'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - files
+      summary: Update File Metadata
+      description: 'Update metadata for a file.
+
+
+        Requires an authenticated user with appropriate permissions.'
+      operationId: update_file_metadata_api_v1_files__file_id__patch
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: file_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: The ID of the file to update metadata for
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: File metadata to update
+              title: Metadata
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContentFileRead'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - files
+      summary: Delete File
+      description: 'Delete a file.
+
+
+        Requires an authenticated user with appropriate permissions.'
+      operationId: delete_file_api_v1_files__file_id__delete
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: file_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: The ID of the file to delete
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/files/{file_id}/download:
+    get:
+      tags:
+      - files
+      summary: Download File
+      description: 'Download a file.
+
+
+        Requires an authenticated user with appropriate permissions.'
+      operationId: download_file_api_v1_files__file_id__download_get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: file_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: The ID of the file to download
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
         '422':
           description: Validation Error
           content:
@@ -711,6 +1138,335 @@ components:
       - username
       - password
       title: Body_login_api_v1_jwt_login_post
+    Body_upload_file_api_v1_files__post:
+      properties:
+        file:
+          type: string
+          format: binary
+          title: File
+      type: object
+      required:
+      - file
+      title: Body_upload_file_api_v1_files__post
+    ContentCreate:
+      properties:
+        title:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Title
+        description:
+          anyOf:
+          - type: string
+            maxLength: 1000
+          - type: 'null'
+          title: Description
+        body:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Body
+        content_type:
+          allOf:
+          - $ref: '#/components/schemas/ContentType'
+          default: text
+        status:
+          allOf:
+          - $ref: '#/components/schemas/ContentStatus'
+          default: draft
+      type: object
+      required:
+      - title
+      title: ContentCreate
+      description: Schema for creating a new content item
+    ContentDetailRead:
+      properties:
+        id:
+          type: integer
+          title: Id
+        title:
+          type: string
+          title: Title
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        body:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Body
+        content_type:
+          $ref: '#/components/schemas/ContentType'
+        status:
+          $ref: '#/components/schemas/ContentStatus'
+        created_by:
+          type: integer
+          title: Created By
+        updated_by:
+          type: integer
+          title: Updated By
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+        files:
+          items:
+            $ref: '#/components/schemas/ContentFileRead'
+          type: array
+          title: Files
+          default: []
+        permissions:
+          items:
+            $ref: '#/components/schemas/ContentPermissionRead'
+          type: array
+          title: Permissions
+          default: []
+      type: object
+      required:
+      - id
+      - title
+      - content_type
+      - status
+      - created_by
+      - updated_by
+      - created_at
+      - updated_at
+      title: ContentDetailRead
+      description: Schema for reading detailed content data with permissions and files
+    ContentFileListResponse:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/ContentFileRead'
+          type: array
+          title: Items
+        total:
+          type: integer
+          title: Total
+        page:
+          type: integer
+          title: Page
+        size:
+          type: integer
+          title: Size
+        pages:
+          type: integer
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: ContentFileListResponse
+      description: Schema for content file list response
+    ContentFileRead:
+      properties:
+        filename:
+          type: string
+          title: Filename
+        file_size:
+          type: integer
+          title: File Size
+        mime_type:
+          type: string
+          title: Mime Type
+        id:
+          type: integer
+          title: Id
+        content_id:
+          type: integer
+          title: Content Id
+        file_path:
+          type: string
+          title: File Path
+        uploaded_at:
+          type: string
+          format: date-time
+          title: Uploaded At
+        uploaded_by:
+          type: integer
+          title: Uploaded By
+      type: object
+      required:
+      - filename
+      - file_size
+      - mime_type
+      - id
+      - content_id
+      - file_path
+      - uploaded_at
+      - uploaded_by
+      title: ContentFileRead
+      description: Schema for reading content file data
+    ContentListResponse:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/ContentRead'
+          type: array
+          title: Items
+        total:
+          type: integer
+          title: Total
+        page:
+          type: integer
+          title: Page
+        size:
+          type: integer
+          title: Size
+        pages:
+          type: integer
+          title: Pages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - size
+      - pages
+      title: ContentListResponse
+      description: Schema for content list response
+    ContentPermissionRead:
+      properties:
+        role:
+          $ref: '#/components/schemas/UserRole'
+        can_view:
+          type: boolean
+          title: Can View
+          default: false
+        can_edit:
+          type: boolean
+          title: Can Edit
+          default: false
+        can_delete:
+          type: boolean
+          title: Can Delete
+          default: false
+        id:
+          type: integer
+          title: Id
+        content_id:
+          type: integer
+          title: Content Id
+      type: object
+      required:
+      - role
+      - id
+      - content_id
+      title: ContentPermissionRead
+      description: Schema for reading content permission data
+    ContentPermissionsUpdate:
+      properties:
+        permissions:
+          additionalProperties:
+            $ref: '#/components/schemas/PermissionSettings'
+          type: object
+          title: Permissions
+      type: object
+      required:
+      - permissions
+      title: ContentPermissionsUpdate
+      description: Schema for updating content permissions
+    ContentRead:
+      properties:
+        id:
+          type: integer
+          title: Id
+        title:
+          type: string
+          title: Title
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        body:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Body
+        content_type:
+          $ref: '#/components/schemas/ContentType'
+        status:
+          $ref: '#/components/schemas/ContentStatus'
+        created_by:
+          type: integer
+          title: Created By
+        updated_by:
+          type: integer
+          title: Updated By
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+      type: object
+      required:
+      - id
+      - title
+      - content_type
+      - status
+      - created_by
+      - updated_by
+      - created_at
+      - updated_at
+      title: ContentRead
+      description: Schema for reading content data
+    ContentStatus:
+      type: string
+      enum:
+      - draft
+      - published
+      - archived
+      title: ContentStatus
+      description: Enumeration of content status values in the system
+    ContentType:
+      type: string
+      enum:
+      - text
+      - html
+      - markdown
+      - file
+      title: ContentType
+      description: Enumeration of content types in the system
+    ContentUpdate:
+      properties:
+        title:
+          anyOf:
+          - type: string
+            maxLength: 255
+            minLength: 1
+          - type: 'null'
+          title: Title
+        description:
+          anyOf:
+          - type: string
+            maxLength: 1000
+          - type: 'null'
+          title: Description
+        body:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Body
+        status:
+          anyOf:
+          - $ref: '#/components/schemas/ContentStatus'
+          - type: 'null'
+      type: object
+      title: ContentUpdate
+      description: Schema for updating content data
     ErrorModel:
       properties:
         detail:
@@ -733,6 +1489,23 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
+    PermissionSettings:
+      properties:
+        can_view:
+          type: boolean
+          title: Can View
+          default: false
+        can_edit:
+          type: boolean
+          title: Can Edit
+          default: false
+        can_delete:
+          type: boolean
+          title: Can Delete
+          default: false
+      type: object
+      title: PermissionSettings
+      description: Schema for permission settings
     UserCreate:
       properties:
         email:
@@ -744,17 +1517,6 @@ components:
         password:
           type: string
           title: Password
-          description: 'Password must meet complexity requirements:
-            
-            - At least 8 characters
-            
-            - At least 1 uppercase letter
-            
-            - At least 1 lowercase letter
-            
-            - At least 1 digit
-            
-            - At least 1 special character'
         is_active:
           anyOf:
           - type: boolean
@@ -860,17 +1622,6 @@ components:
           - type: string
           - type: 'null'
           title: Password
-          description: 'If provided, password must meet complexity requirements:
-            
-            - At least 8 characters
-            
-            - At least 1 uppercase letter
-            
-            - At least 1 lowercase letter
-            
-            - At least 1 digit
-            
-            - At least 1 special character'
         email:
           anyOf:
           - type: string
