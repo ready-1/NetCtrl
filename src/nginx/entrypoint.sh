@@ -18,23 +18,17 @@ for template in /etc/nginx/templates/*.template; do
   if [ -f "$template" ]; then
     output_path="/etc/nginx/conf.d/$(basename ${template%.template}.conf)"
     echo "Generating $output_path from template $template..."
-    envsubst '${NGINX_HOST},${NGINX_PORT},${API_HOST},${API_PORT},${FRONTEND_HOST},${FRONTEND_PORT},${NGINX_MAX_BODY_SIZE}' < "$template" > "$output_path"
+    envsubst '${NGINX_HOST}${NGINX_PORT}${API_HOST}${API_PORT}${FRONTEND_HOST}${FRONTEND_PORT}${NGINX_MAX_BODY_SIZE}' < "$template" > "$output_path"
   fi
 done
 
-# Create health check endpoint
-cat > /etc/nginx/conf.d/health.conf << EOF
-server {
-    listen 80;
-    server_name localhost;
-    
-    location /health {
-        access_log off;
-        add_header Content-Type text/plain;
-        return 200 'NGINX is healthy';
-    }
-}
-EOF
+# Apply any environment variable substitutions to the existing default.conf
+if [ -f "/etc/nginx/conf.d/default.conf" ]; then
+  echo "Processing environment variables in default.conf..."
+  cp /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.bak
+  envsubst '${NGINX_HOST}${NGINX_PORT}${API_HOST}${API_PORT}${FRONTEND_HOST}${FRONTEND_PORT}${NGINX_MAX_BODY_SIZE}' < "/etc/nginx/conf.d/default.conf.bak" > "/etc/nginx/conf.d/default.conf"
+  rm /etc/nginx/conf.d/default.conf.bak
+fi
 
 echo "NGINX configuration complete. Starting server..."
 

@@ -1,223 +1,209 @@
 import React, { useState } from 'react';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import {
-  Avatar,
   Box,
   Button,
   Container,
-  Grid,
-  Link,
+  Paper,
   TextField,
   Typography,
   Alert,
-  useTheme,
+  CircularProgress,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  SelectChangeEvent,
+  FormHelperText,
 } from '@mui/material';
-import { PersonAdd as PersonAddIcon } from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import routes from '../../config/routes';
 
-/**
- * RegisterPage component
- * 
- * Registration form with:
- * - Username input
- * - Email input (optional)
- * - Password input with confirmation
- * - Registration button
- * - Link to login page
- */
 const RegisterPage: React.FC = () => {
-  const theme = useTheme();
   const navigate = useNavigate();
   const { register } = useAuth();
+  useDocumentTitle('Register');
   
   // Form state
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [role, setRole] = useState('user');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
   
-  // Error handling
-  const [error, setError] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  
-  // Form validation
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  
-  const validateForm = () => {
-    const newErrors: Record<string, string> = {};
-    
-    // Username validation
-    if (!username.trim()) {
-      newErrors.username = 'Username is required';
-    } else if (username.length < 3) {
-      newErrors.username = 'Username must be at least 3 characters long';
-    }
-    
-    // Email validation (optional)
-    if (email && !/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = 'Email address is invalid';
-    }
-    
-    // Password validation
-    if (!password) {
-      newErrors.password = 'Password is required';
-    } else if (password.length < 8) {
-      newErrors.password = 'Password must be at least 8 characters long';
-    }
-    
-    // Confirm password validation
-    if (password !== confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
-    }
-    
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  // Handle role selection change
+  const handleRoleChange = (event: SelectChangeEvent) => {
+    setRole(event.target.value);
   };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  
+  // Handle form submission
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validate form
-    if (!validateForm()) {
+    // Validate form inputs
+    if (!username) {
+      setError('Username is required');
       return;
     }
     
-    setError(null);
-    setIsSubmitting(true);
+    if (!password) {
+      setError('Password is required');
+      return;
+    }
+    
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
     
     try {
-      // Attempt registration
+      setIsLoading(true);
+      setError('');
+      
+      // Use optional email in register function
       await register(username, email || undefined, password);
       
-      // Redirect to dashboard
-      navigate('/');
-    } catch (err: any) {
-      // Handle registration error
-      setError(err.message || 'Registration failed. Please try again.');
-      setIsSubmitting(false);
+      // Navigate to login page or content
+      navigate(routes.content.list, { replace: true });
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Failed to register. Please try again later.');
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
-
+  
   return (
     <Container component="main" maxWidth="xs">
       <Box
         sx={{
-          marginTop: 8,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: '100vh',
         }}
       >
-        {/* Logo/Avatar */}
-        <Avatar sx={{ m: 1, bgcolor: theme.palette.secondary.main }}>
-          <PersonAddIcon />
-        </Avatar>
-        
-        {/* Page title */}
-        <Typography component="h1" variant="h5">
-          Create an Account
-        </Typography>
-        
-        {/* Error alert */}
-        {error && (
-          <Alert severity="error" sx={{ mt: 2, width: '100%' }}>
-            {error}
-          </Alert>
-        )}
-        
-        {/* Registration form */}
-        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 3 }}>
-          <Grid container spacing={2}>
-            {/* Username field */}
-            <Grid item xs={12}>
-              <TextField
-                required
-                fullWidth
-                id="username"
-                label="Username"
-                name="username"
-                autoComplete="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                error={!!errors.username}
-                helperText={errors.username}
-                disabled={isSubmitting}
-              />
-            </Grid>
-            
-            {/* Email field (optional) */}
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                id="email"
-                label="Email Address (Optional)"
-                name="email"
-                autoComplete="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                error={!!errors.email}
-                helperText={errors.email}
-                disabled={isSubmitting}
-              />
-            </Grid>
-            
-            {/* Password field */}
-            <Grid item xs={12}>
-              <TextField
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="new-password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                error={!!errors.password}
-                helperText={errors.password}
-                disabled={isSubmitting}
-              />
-            </Grid>
-            
-            {/* Confirm password field */}
-            <Grid item xs={12}>
-              <TextField
-                required
-                fullWidth
-                name="confirmPassword"
-                label="Confirm Password"
-                type="password"
-                id="confirmPassword"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                error={!!errors.confirmPassword}
-                helperText={errors.confirmPassword}
-                disabled={isSubmitting}
-              />
-            </Grid>
-          </Grid>
+        <Paper 
+          elevation={3} 
+          sx={{ 
+            p: 4, 
+            width: '100%', 
+            display: 'flex', 
+            flexDirection: 'column', 
+            alignItems: 'center',
+          }}
+        >
+          <Typography component="h1" variant="h5" gutterBottom>
+            Create an Account
+          </Typography>
           
-          {/* Submit button */}
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
-            disabled={isSubmitting}
-          >
-            Register
-          </Button>
+          {error && (
+            <Alert severity="error" sx={{ mb: 2, width: '100%' }}>
+              {error}
+            </Alert>
+          )}
           
-          {/* Link to login page */}
-          <Grid container justifyContent="flex-end">
-            <Grid item>
-              <Link component={RouterLink} to={routes.auth.login} variant="body2">
-                Already have an account? Sign in
-              </Link>
-            </Grid>
-          </Grid>
-        </Box>
+          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1, width: '100%' }}>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="username"
+              label="Username"
+              name="username"
+              autoComplete="username"
+              autoFocus
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              disabled={isLoading}
+            />
+            
+            <TextField
+              margin="normal"
+              fullWidth
+              id="email"
+              label="Email (Optional)"
+              name="email"
+              autoComplete="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={isLoading}
+              helperText="Email is optional for this system"
+            />
+            
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              autoComplete="new-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={isLoading}
+            />
+            
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="confirmPassword"
+              label="Confirm Password"
+              type="password"
+              id="confirmPassword"
+              autoComplete="new-password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              disabled={isLoading}
+            />
+            
+            <FormControl fullWidth margin="normal">
+              <InputLabel id="role-select-label">Role</InputLabel>
+              <Select
+                labelId="role-select-label"
+                id="role"
+                value={role}
+                label="Role"
+                onChange={handleRoleChange}
+                disabled={isLoading}
+              >
+                <MenuItem value="user">User</MenuItem>
+                <MenuItem value="manager">Manager</MenuItem>
+                <MenuItem value="admin">Admin</MenuItem>
+              </Select>
+              <FormHelperText>
+                Note: Role assignment might require admin approval
+              </FormHelperText>
+            </FormControl>
+            
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+              disabled={isLoading}
+            >
+              {isLoading ? <CircularProgress size={24} /> : 'Register'}
+            </Button>
+            
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+              <Typography variant="body2">
+                Already have an account?{' '}
+                <Link to={routes.auth.login}>Sign in</Link>
+              </Typography>
+            </Box>
+          </Box>
+        </Paper>
       </Box>
     </Container>
   );

@@ -99,9 +99,9 @@ apiClient.interceptors.response.use(
         // Clear stored auth tokens
         localStorage.removeItem('auth-token');
         
-        // Only redirect if not already on auth page
-        if (!window.location.pathname.includes('/auth/')) {
-          window.location.href = '/auth/login';
+        // Only redirect if not already on login or register page
+        if (!window.location.pathname.includes('/login') && !window.location.pathname.includes('/register')) {
+          window.location.href = '/login';
         }
       }
       

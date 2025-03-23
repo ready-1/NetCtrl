@@ -1,27 +1,39 @@
 server {
-    listen ${NGINX_PORT} default_server;
-    server_name localhost;
+    listen 80 default_server;
+    server_name ${NGINX_HOST};
     
     client_max_body_size ${NGINX_MAX_BODY_SIZE};
     
-    # Health check endpoint - simplest possible configuration
-    location /api/v1/health {
+    # EXACT match test endpoint - highest priority with plaintext type
+    location = /frontendtest {
+        add_header Content-Type text/plain;
+        return 200 "NGINX is proxying correctly to frontend - direct text reply";
+    }
+
+    # Health check endpoint
+    location = /health {
         proxy_pass http://${API_HOST}:${API_PORT}/api/v1/health;
         proxy_set_header Host $host;
     }
     
-    # All other API requests
+    # API requests
     location /api/ {
-        proxy_pass http://${API_HOST}:${API_PORT};  # Remove trailing slash to preserve the original path
+        proxy_pass http://${API_HOST}:${API_PORT};
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
     }
+        
+    # EXACT match for root redirect
+    location = / {
+        return 302 /status;
+    }
     
     # Static files
     location /static/ {
         alias /var/www/html/static/;
+        add_header Cache-Control "public, max-age=3600";
     }
     
     # File uploads
@@ -29,7 +41,52 @@ server {
         alias /var/www/html/uploads/;
     }
     
-    # Root location block
+    # Status page route - EXACT match
+    location = /status {
+        root /var/www/html/static;
+        try_files /index.html =404;
+    }
+    
+    # Frontend test nested path - unique test of nested paths
+    location = /app/test {
+        add_header Content-Type text/plain;
+        return 200 "Frontend app test path accessible";
+    }
+
+    # Proxy frontend application requests - use ^~ to give higher priority
+    location ^~ /app/ {
+        # Debug headers
+        add_header X-Debug-Info "Proxying to frontend:3000" always;
+        
+        # Remove /app prefix when proxying to frontend
+        rewrite ^/app/(.*)$ /$1 break;
+        
+        # Proxy to frontend
+        proxy_pass http://${FRONTEND_HOST}:${FRONTEND_PORT};
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+        
+        # Increase timeouts for debugging
+        proxy_connect_timeout 120s; 
+        proxy_read_timeout 120s;
+        
+        # Custom error handling
+        error_page 502 = @app_fallback;
+    }
+    
+    # Fallback for frontend failures
+    location @app_fallback {
+        add_header Content-Type text/plain;
+        return 502 "Cannot connect to frontend service at http://${FRONTEND_HOST}:${FRONTEND_PORT}. Please check if the frontend container is running and accessible.";
+    }
+    
+    # Catch-all for non-matching requests
     location / {
         root /var/www/html/static;
         index index.html;

@@ -13,6 +13,7 @@ import AuthGuard from './components/auth/AuthGuard';
 import GuestGuard from './components/auth/GuestGuard';
 
 // Lazy-loaded components
+const WelcomePage = React.lazy(() => import('./pages/WelcomePage'));
 const LoginPage = React.lazy(() => import('./pages/auth/LoginPage'));
 const RegisterPage = React.lazy(() => import('./pages/auth/RegisterPage'));
 const ContentListPage = React.lazy(() => import('./pages/content/ContentListPage'));
@@ -34,6 +35,9 @@ const App: React.FC = () => {
   return (
     <Suspense fallback={<Loader />}>
       <Routes>
+        {/* Welcome page - public */}
+        <Route path="/" element={<WelcomePage />} />
+        
         {/* Auth routes */}
         <Route
           path={routes.auth.login}
@@ -54,15 +58,15 @@ const App: React.FC = () => {
 
         {/* Protected routes */}
         <Route
-          path="/"
+          path="/app"
           element={
             <AuthGuard>
               <AppShell />
             </AuthGuard>
           }
         >
-          {/* Redirect root to content list */}
-          <Route path="/" element={<Navigate to={routes.content.list} replace />} />
+          {/* Redirect /app root to content list */}
+          <Route path="/app" element={<Navigate to={routes.content.list} replace />} />
 
           {/* Content routes */}
           <Route path={routes.content.list} element={<ContentListPage />} />

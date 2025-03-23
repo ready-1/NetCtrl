@@ -6,28 +6,34 @@
  */
 
 const routes = {
+  // Public routes
+  home: '/',
+  
+  // Auth routes
   auth: {
     login: '/login',
     register: '/register',
     resetPassword: '/reset-password',
   },
+  
+  // Protected routes (all under /app)
   content: {
-    list: '/content',
-    create: '/content/new',
-    detail: (id: string) => `/content/${id}`,
-    edit: (id: string) => `/content/${id}/edit`,
+    list: '/app/content',
+    create: '/app/content/new',
+    detail: (id: string) => `/app/content/${id}`,
+    edit: (id: string) => `/app/content/${id}/edit`,
   },
   files: {
-    list: '/files',
-    detail: (id: string) => `/files/${id}`,
-    upload: '/files/upload',
+    list: '/app/files',
+    detail: (id: string) => `/app/files/${id}`,
+    upload: '/app/files/upload',
   },
   user: {
-    profile: '/user/profile',
-    settings: '/user/settings',
+    profile: '/app/user/profile',
+    settings: '/app/user/settings',
   },
   system: {
-    settings: '/settings',
+    settings: '/app/settings',
   },
 };
 

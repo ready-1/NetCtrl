@@ -1,61 +1,64 @@
 /**
- * User-related type definitions
+ * User-related type definitions for the CMS
  */
 
-// Role enum
+// User roles
 export enum UserRole {
   ADMIN = 'admin',
-  EDITOR = 'editor',
+  MANAGER = 'manager',
   USER = 'user',
 }
 
-// User interface
+// Base user model
 export interface User {
   id: number;
   username: string;
-  email?: string;
-  role: UserRole;
-  permissions: string[];
+  email: string | null;
   is_active: boolean;
   is_superuser: boolean;
+  is_verified: boolean;
+  role: string;
+  first_name: string | null;
+  last_name: string | null;
   created_at: string;
   updated_at: string;
-}
-
-// User creation/update payload
-export interface UserCreatePayload {
-  username: string;
-  email?: string;
-  password: string;
-  role?: UserRole;
-  is_active?: boolean;
+  last_login: string | null;
+  permissions?: string[];
 }
 
 // User update payload
-export interface UserUpdatePayload {
-  username?: string;
+export interface UserUpdate {
   email?: string;
+  first_name?: string;
+  last_name?: string;
   password?: string;
   role?: UserRole;
-  is_active?: boolean;
 }
 
-// Login credentials
-export interface LoginCredentials {
-  username: string;
-  password: string;
-}
-
-// Registration credentials
-export interface RegistrationCredentials {
+// User create payload
+export interface UserCreate {
   username: string;
   email?: string;
   password: string;
-  password_confirm: string;
+  role?: UserRole;
+  first_name?: string;
+  last_name?: string;
 }
 
-// Auth tokens
-export interface AuthTokens {
-  access_token: string;
-  token_type: string;
+// User query parameters
+export interface UserQueryParams {
+  role?: UserRole;
+  search?: string;
+  is_active?: boolean;
+  page?: number;
+  limit?: number;
+}
+
+// User list response
+export interface UserListResponse {
+  items: User[];
+  total: number;
+  page: number;
+  limit: number;
+  pages: number;
 }
