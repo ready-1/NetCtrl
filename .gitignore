@@ -84,3 +84,6 @@ coverage/
 htmlcov/
 token.json
 token_fixed.json
+
+# Project specific
+grok.txt
