@@ -6,6 +6,40 @@ OUTPUT_FILE="grok.txt"
 # Clear the output file first
 echo "# NetCtrl CMS Project Code - Begin" > "$OUTPUT_FILE"
 
+# Generate and add project tree structure
+echo "" >> "$OUTPUT_FILE"
+echo "# Project Tree Structure" >> "$OUTPUT_FILE"
+echo '```' >> "$OUTPUT_FILE"
+echo "/Users/bob/dev/NetCtrl" >> "$OUTPUT_FILE"
+
+# Find main project directories excluding cache and unwanted files
+find src -type d | grep -v "__pycache__" | grep -v "node_modules" | grep -v "\.git" | grep -v "\.pytest_cache" | head -n 20 | sort | sed 's/^/├── /' >> "$OUTPUT_FILE"
+
+# Add key top-level directories
+echo "├── ..." >> "$OUTPUT_FILE"
+echo "├── cline_docs" >> "$OUTPUT_FILE"
+echo "├── docs" >> "$OUTPUT_FILE"
+echo "├── strategy_tasks" >> "$OUTPUT_FILE"
+echo "└── docker-compose.yml" >> "$OUTPUT_FILE"
+
+echo '```' >> "$OUTPUT_FILE"
+echo "" >> "$OUTPUT_FILE"
+
+# Add project description
+echo "# Project Overview" >> "$OUTPUT_FILE"
+echo "" >> "$OUTPUT_FILE"
+echo "NetCtrl CMS is a Content Management System with Role-Based Access Control (RBAC) built using:" >> "$OUTPUT_FILE"
+echo "- Backend: FastAPI with SQLAlchemy ORM and PostgreSQL" >> "$OUTPUT_FILE"
+echo "- Frontend: React with TypeScript and Material UI" >> "$OUTPUT_FILE"
+echo "- Infrastructure: Docker, NGINX, and PostgreSQL" >> "$OUTPUT_FILE"
+echo "" >> "$OUTPUT_FILE"
+echo "Key components:" >> "$OUTPUT_FILE"
+echo "1. User authentication and authorization with RBAC" >> "$OUTPUT_FILE"
+echo "2. Content management with CRUD operations" >> "$OUTPUT_FILE"
+echo "3. File management capabilities" >> "$OUTPUT_FILE"
+echo "4. API-first design with comprehensive OpenAPI documentation" >> "$OUTPUT_FILE"
+echo "" >> "$OUTPUT_FILE"
+
 # Function to add a file to the output
 add_file() {
   local filepath="$1"
@@ -18,7 +52,7 @@ add_file() {
   
   # Add file header
   echo "" >> "$OUTPUT_FILE"
-  echo "Begin $filepath" >> "$OUTPUT_FILE"
+  echo "Begin /Users/bob/dev/NetCtrl/$filepath" >> "$OUTPUT_FILE"
   echo "" >> "$OUTPUT_FILE"
   
   # Add file contents
@@ -26,7 +60,7 @@ add_file() {
   
   # Add file footer
   echo "" >> "$OUTPUT_FILE"
-  echo "End $filepath" >> "$OUTPUT_FILE"
+  echo "End /Users/bob/dev/NetCtrl/$filepath" >> "$OUTPUT_FILE"
   echo "" >> "$OUTPUT_FILE"
 }
 

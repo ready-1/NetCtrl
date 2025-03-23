@@ -1,6 +1,50 @@
 # NetCtrl CMS Project Code - Begin
 
-Begin src/backend/app/main.py
+# Project Tree Structure
+```
+/Users/bob/dev/NetCtrl
+├── src
+├── src/database
+├── src/database/backups
+├── src/database/init
+├── src/frontend
+├── src/frontend/public
+├── src/frontend/src
+├── src/frontend/src/components
+├── src/frontend/src/components/auth
+├── src/frontend/src/components/file
+├── src/frontend/src/components/ui
+├── src/frontend/src/components/ui/atoms
+├── src/frontend/src/components/ui/molecules
+├── src/frontend/src/components/ui/organisms
+├── src/frontend/src/config
+├── src/frontend/src/context
+├── src/frontend/src/features
+├── src/frontend/src/types
+├── src/frontend/src/utils
+├── src/syslog
+├── ...
+├── cline_docs
+├── docs
+├── strategy_tasks
+└── docker-compose.yml
+```
+
+# Project Overview
+
+NetCtrl CMS is a Content Management System with Role-Based Access Control (RBAC) built using:
+- Backend: FastAPI with SQLAlchemy ORM and PostgreSQL
+- Frontend: React with TypeScript and Material UI
+- Infrastructure: Docker, NGINX, and PostgreSQL
+
+Key components:
+1. User authentication and authorization with RBAC
+2. Content management with CRUD operations
+3. File management capabilities
+4. API-first design with comprehensive OpenAPI documentation
+
+
+Begin /Users/bob/dev/NetCtrl/src/backend/app/main.py
 
 """
 Main application entry point for FastAPI
@@ -107,10 +151,10 @@ async def shutdown_event():
     """
     logger.info("Application shutting down")
 
-End src/backend/app/main.py
+End /Users/bob/dev/NetCtrl/src/backend/app/main.py
 
 
-Begin src/backend/scripts/start.sh
+Begin /Users/bob/dev/NetCtrl/src/backend/scripts/start.sh
 
 #!/bin/bash
 set -e
@@ -176,10 +220,10 @@ init_superuser
 echo "Starting FastAPI application on ${APP_HOST}:${APP_PORT}"
 exec uvicorn app.main:app --host ${APP_HOST} --port ${APP_PORT} --log-level ${LOG_LEVEL}
 
-End src/backend/scripts/start.sh
+End /Users/bob/dev/NetCtrl/src/backend/scripts/start.sh
 
 
-Begin src/backend/start.sh
+Begin /Users/bob/dev/NetCtrl/src/backend/start.sh
 
 #!/bin/bash
 set -e
@@ -197,10 +241,10 @@ alembic upgrade head
 echo "Starting FastAPI application..."
 exec uvicorn app.main:app --host 0.0.0.0 --port 8000
 
-End src/backend/start.sh
+End /Users/bob/dev/NetCtrl/src/backend/start.sh
 
 
-Begin src/backend/alembic.ini
+Begin /Users/bob/dev/NetCtrl/src/backend/alembic.ini
 
 # A generic, single database configuration.
 
@@ -320,10 +364,10 @@ formatter = generic
 format = %(levelname)-5.5s [%(name)s] %(message)s
 datefmt = %H:%M:%S
 
-End src/backend/alembic.ini
+End /Users/bob/dev/NetCtrl/src/backend/alembic.ini
 
 
-Begin src/backend/app/core/config.py
+Begin /Users/bob/dev/NetCtrl/src/backend/app/core/config.py
 
 """
 Application configuration using environment variables and type validation
@@ -442,10 +486,10 @@ if settings.SECRET_KEY == "development_secret_key":
         "in production."
     )
 
-End src/backend/app/core/config.py
+End /Users/bob/dev/NetCtrl/src/backend/app/core/config.py
 
 
-Begin src/backend/alembic/versions/content_management_tables.py
+Begin /Users/bob/dev/NetCtrl/src/backend/alembic/versions/content_management_tables.py
 
 """Create content management tables
 
@@ -534,10 +578,10 @@ def downgrade() -> None:
     op.execute("DROP TYPE contentstatus")
     op.execute("DROP TYPE contenttype")
 
-End src/backend/alembic/versions/content_management_tables.py
+End /Users/bob/dev/NetCtrl/src/backend/alembic/versions/content_management_tables.py
 
 
-Begin src/backend/DATABASE_TROUBLESHOOTING.md
+Begin /Users/bob/dev/NetCtrl/src/backend/DATABASE_TROUBLESHOOTING.md
 
 # Database Troubleshooting Guide
 
@@ -789,10 +833,10 @@ CREATE TABLE content_permission (
     can_delete BOOLEAN DEFAULT FALSE
 );
 
-End src/backend/DATABASE_TROUBLESHOOTING.md
+End /Users/bob/dev/NetCtrl/src/backend/DATABASE_TROUBLESHOOTING.md
 
 
-Begin src/frontend/package.json
+Begin /Users/bob/dev/NetCtrl/src/frontend/package.json
 
 {
   "name": "cms-rbac-frontend",
@@ -853,10 +897,10 @@ Begin src/frontend/package.json
   }
 }
 
-End src/frontend/package.json
+End /Users/bob/dev/NetCtrl/src/frontend/package.json
 
 
-Begin src/frontend/Dockerfile
+Begin /Users/bob/dev/NetCtrl/src/frontend/Dockerfile
 
 FROM node:18-alpine
 
@@ -921,10 +965,10 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
 # Start application
 CMD ["npm", "start"]
 
-End src/frontend/Dockerfile
+End /Users/bob/dev/NetCtrl/src/frontend/Dockerfile
 
 
-Begin src/frontend/src/components/ui/molecules/RichTextEditor.tsx
+Begin /Users/bob/dev/NetCtrl/src/frontend/src/components/ui/molecules/RichTextEditor.tsx
 
 import React, { useRef, useMemo } from 'react';
 import ReactQuill from 'react-quill';
@@ -1061,10 +1105,10 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
 export default RichTextEditor;
 
-End src/frontend/src/components/ui/molecules/RichTextEditor.tsx
+End /Users/bob/dev/NetCtrl/src/frontend/src/components/ui/molecules/RichTextEditor.tsx
 
 
-Begin src/frontend/src/types/content.ts
+Begin /Users/bob/dev/NetCtrl/src/frontend/src/types/content.ts
 
 /**
  * Content-related type definitions for the CMS
@@ -1173,10 +1217,10 @@ export interface ContentListResponse {
   pages: number;
 }
 
-End src/frontend/src/types/content.ts
+End /Users/bob/dev/NetCtrl/src/frontend/src/types/content.ts
 
 
-Begin src/frontend/src/services/api/contentService.ts
+Begin /Users/bob/dev/NetCtrl/src/frontend/src/services/api/contentService.ts
 
 import api from './apiClient';
 import {
@@ -1296,10 +1340,10 @@ const contentService = {
 
 export default contentService;
 
-End src/frontend/src/services/api/contentService.ts
+End /Users/bob/dev/NetCtrl/src/frontend/src/services/api/contentService.ts
 
 
-Begin src/frontend/src/components/content/ContentList.tsx
+Begin /Users/bob/dev/NetCtrl/src/frontend/src/components/content/ContentList.tsx
 
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -1785,10 +1829,10 @@ const ContentList: React.FC = () => {
 
 export default ContentList;
 
-End src/frontend/src/components/content/ContentList.tsx
+End /Users/bob/dev/NetCtrl/src/frontend/src/components/content/ContentList.tsx
 
 
-Begin src/frontend/src/components/content/ContentForm.tsx
+Begin /Users/bob/dev/NetCtrl/src/frontend/src/components/content/ContentForm.tsx
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -2118,10 +2162,10 @@ const ContentForm: React.FC<ContentFormProps> = ({ initialContent, isEditing = f
 
 export default ContentForm;
 
-End src/frontend/src/components/content/ContentForm.tsx
+End /Users/bob/dev/NetCtrl/src/frontend/src/components/content/ContentForm.tsx
 
 
-Begin src/frontend/src/components/content/ContentDetail.tsx
+Begin /Users/bob/dev/NetCtrl/src/frontend/src/components/content/ContentDetail.tsx
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -2427,10 +2471,10 @@ const ContentDetail: React.FC<ContentDetailProps> = ({ contentId }) => {
 
 export default ContentDetail;
 
-End src/frontend/src/components/content/ContentDetail.tsx
+End /Users/bob/dev/NetCtrl/src/frontend/src/components/content/ContentDetail.tsx
 
 
-Begin src/frontend/src/pages/content/ContentListPage.tsx
+Begin /Users/bob/dev/NetCtrl/src/frontend/src/pages/content/ContentListPage.tsx
 
 import React from 'react';
 import { Container } from '@mui/material';
@@ -2450,10 +2494,10 @@ const ContentListPage: React.FC = () => {
 
 export default ContentListPage;
 
-End src/frontend/src/pages/content/ContentListPage.tsx
+End /Users/bob/dev/NetCtrl/src/frontend/src/pages/content/ContentListPage.tsx
 
 
-Begin src/frontend/src/hooks/useDocumentTitle.ts
+Begin /Users/bob/dev/NetCtrl/src/frontend/src/hooks/useDocumentTitle.ts
 
 import { useEffect } from 'react';
 
@@ -2475,10 +2519,10 @@ export const useDocumentTitle = (title: string, appName = 'NetCtrl CMS') => {
   }, [title, appName]);
 };
 
-End src/frontend/src/hooks/useDocumentTitle.ts
+End /Users/bob/dev/NetCtrl/src/frontend/src/hooks/useDocumentTitle.ts
 
 
-Begin src/frontend/src/hooks/useContentQuery.ts
+Begin /Users/bob/dev/NetCtrl/src/frontend/src/hooks/useContentQuery.ts
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import contentService from '../services/api/contentService';
@@ -2664,10 +2708,10 @@ export const useContentFiles = (id: number) => {
   });
 };
 
-End src/frontend/src/hooks/useContentQuery.ts
+End /Users/bob/dev/NetCtrl/src/frontend/src/hooks/useContentQuery.ts
 
 
-Begin src/frontend/src/pages/content/ContentDetailPage.tsx
+Begin /Users/bob/dev/NetCtrl/src/frontend/src/pages/content/ContentDetailPage.tsx
 
 import React from 'react';
 import { useParams, Navigate } from 'react-router-dom';
@@ -2700,10 +2744,10 @@ const ContentDetailPage: React.FC = () => {
 
 export default ContentDetailPage;
 
-End src/frontend/src/pages/content/ContentDetailPage.tsx
+End /Users/bob/dev/NetCtrl/src/frontend/src/pages/content/ContentDetailPage.tsx
 
 
-Begin src/frontend/src/pages/content/ContentEditPage.tsx
+Begin /Users/bob/dev/NetCtrl/src/frontend/src/pages/content/ContentEditPage.tsx
 
 import React from 'react';
 import { useParams, Navigate } from 'react-router-dom';
@@ -2777,10 +2821,10 @@ const ContentEditPage: React.FC = () => {
 
 export default ContentEditPage;
 
-End src/frontend/src/pages/content/ContentEditPage.tsx
+End /Users/bob/dev/NetCtrl/src/frontend/src/pages/content/ContentEditPage.tsx
 
 
-Begin src/frontend/src/index.tsx
+Begin /Users/bob/dev/NetCtrl/src/frontend/src/index.tsx
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
@@ -2821,10 +2865,10 @@ root.render(
   </React.StrictMode>
 );
 
-End src/frontend/src/index.tsx
+End /Users/bob/dev/NetCtrl/src/frontend/src/index.tsx
 
 
-Begin src/frontend/src/components/layout/AppShell.tsx
+Begin /Users/bob/dev/NetCtrl/src/frontend/src/components/layout/AppShell.tsx
 
 import React from 'react';
 import { Outlet } from 'react-router-dom';
@@ -3046,10 +3090,10 @@ const AppShell: React.FC = () => {
 
 export default AppShell;
 
-End src/frontend/src/components/layout/AppShell.tsx
+End /Users/bob/dev/NetCtrl/src/frontend/src/components/layout/AppShell.tsx
 
 
-Begin src/frontend/src/pages/NotFoundPage.tsx
+Begin /Users/bob/dev/NetCtrl/src/frontend/src/pages/NotFoundPage.tsx
 
 import React from 'react';
 import { Box, Button, Container, Typography, Paper } from '@mui/material';
@@ -3092,10 +3136,10 @@ const NotFoundPage: React.FC = () => {
 
 export default NotFoundPage;
 
-End src/frontend/src/pages/NotFoundPage.tsx
+End /Users/bob/dev/NetCtrl/src/frontend/src/pages/NotFoundPage.tsx
 
 
-Begin src/frontend/src/pages/auth/LoginPage.tsx
+Begin /Users/bob/dev/NetCtrl/src/frontend/src/pages/auth/LoginPage.tsx
 
 import React, { useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
@@ -3241,10 +3285,10 @@ const LoginPage: React.FC = () => {
 
 export default LoginPage;
 
-End src/frontend/src/pages/auth/LoginPage.tsx
+End /Users/bob/dev/NetCtrl/src/frontend/src/pages/auth/LoginPage.tsx
 
 
-Begin src/frontend/src/pages/auth/RegisterPage.tsx
+Begin /Users/bob/dev/NetCtrl/src/frontend/src/pages/auth/RegisterPage.tsx
 
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
@@ -3459,10 +3503,10 @@ const RegisterPage: React.FC = () => {
 
 export default RegisterPage;
 
-End src/frontend/src/pages/auth/RegisterPage.tsx
+End /Users/bob/dev/NetCtrl/src/frontend/src/pages/auth/RegisterPage.tsx
 
 
-Begin src/frontend/src/types/user.ts
+Begin /Users/bob/dev/NetCtrl/src/frontend/src/types/user.ts
 
 /**
  * User-related type definitions for the CMS
@@ -3529,10 +3573,10 @@ export interface UserListResponse {
   pages: number;
 }
 
-End src/frontend/src/types/user.ts
+End /Users/bob/dev/NetCtrl/src/frontend/src/types/user.ts
 
 
-Begin src/frontend/src/pages/user/ProfilePage.tsx
+Begin /Users/bob/dev/NetCtrl/src/frontend/src/pages/user/ProfilePage.tsx
 
 import React from 'react';
 import {
@@ -3731,10 +3775,10 @@ const ProfilePage: React.FC = () => {
 
 export default ProfilePage;
 
-End src/frontend/src/pages/user/ProfilePage.tsx
+End /Users/bob/dev/NetCtrl/src/frontend/src/pages/user/ProfilePage.tsx
 
 
-Begin src/frontend/src/services/api/apiClient.ts
+Begin /Users/bob/dev/NetCtrl/src/frontend/src/services/api/apiClient.ts
 
 import axios from 'axios';
 
@@ -3864,10 +3908,10 @@ if (process.env.NODE_ENV === 'development' && process.env.REACT_APP_MOCK_API ===
 
 export default apiClient;
 
-End src/frontend/src/services/api/apiClient.ts
+End /Users/bob/dev/NetCtrl/src/frontend/src/services/api/apiClient.ts
 
 
-Begin src/frontend/src/pages/WelcomePage.tsx
+Begin /Users/bob/dev/NetCtrl/src/frontend/src/pages/WelcomePage.tsx
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -4044,10 +4088,10 @@ const WelcomePage: React.FC = () => {
 
 export default WelcomePage;
 
-End src/frontend/src/pages/WelcomePage.tsx
+End /Users/bob/dev/NetCtrl/src/frontend/src/pages/WelcomePage.tsx
 
 
-Begin src/frontend/src/App.tsx
+Begin /Users/bob/dev/NetCtrl/src/frontend/src/App.tsx
 
 import React, { Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
@@ -4142,10 +4186,10 @@ const App: React.FC = () => {
 
 export default App;
 
-End src/frontend/src/App.tsx
+End /Users/bob/dev/NetCtrl/src/frontend/src/App.tsx
 
 
-Begin src/frontend/src/config/routes.ts
+Begin /Users/bob/dev/NetCtrl/src/frontend/src/config/routes.ts
 
 /**
  * Application routes configuration
@@ -4188,17 +4232,17 @@ const routes = {
 
 export default routes;
 
-End src/frontend/src/config/routes.ts
+End /Users/bob/dev/NetCtrl/src/frontend/src/config/routes.ts
 
 
-Begin src/frontend/public/health
+Begin /Users/bob/dev/NetCtrl/src/frontend/public/health
 
 {"status": "ok", "service": "frontend"}
 
-End src/frontend/public/health
+End /Users/bob/dev/NetCtrl/src/frontend/public/health
 
 
-Begin src/nginx/conf/default.conf
+Begin /Users/bob/dev/NetCtrl/src/nginx/conf/default.conf
 
 server {
     listen 80 default_server;
@@ -4293,10 +4337,10 @@ server {
     }
 }
 
-End src/nginx/conf/default.conf
+End /Users/bob/dev/NetCtrl/src/nginx/conf/default.conf
 
 
-Begin src/nginx/entrypoint.sh
+Begin /Users/bob/dev/NetCtrl/src/nginx/entrypoint.sh
 
 #!/bin/bash
 set -e
@@ -4335,10 +4379,10 @@ echo "NGINX configuration complete. Starting server..."
 # Start NGINX
 exec "$@"
 
-End src/nginx/entrypoint.sh
+End /Users/bob/dev/NetCtrl/src/nginx/entrypoint.sh
 
 
-Begin src/nginx/templates/default.template
+Begin /Users/bob/dev/NetCtrl/src/nginx/templates/default.template
 
 server {
     listen 80 default_server;
@@ -4436,10 +4480,10 @@ server {
     }
 }
 
-End src/nginx/templates/default.template
+End /Users/bob/dev/NetCtrl/src/nginx/templates/default.template
 
 
-Begin src/nginx/minimal-nginx.conf
+Begin /Users/bob/dev/NetCtrl/src/nginx/minimal-nginx.conf
 
 server {
     listen 80 default_server;
@@ -4534,10 +4578,10 @@ server {
     }
 }
 
-End src/nginx/minimal-nginx.conf
+End /Users/bob/dev/NetCtrl/src/nginx/minimal-nginx.conf
 
 
-Begin cline_docs/changelog.md
+Begin /Users/bob/dev/NetCtrl/cline_docs/changelog.md
 
 # Changelog
 
@@ -4629,10 +4673,10 @@ This document tracks significant changes to the NetCtrl CMS with RBAC system.
 - Configured NGINX for reverse proxy and handling large file uploads
 - Established centralized logging with syslog container
 
-End cline_docs/changelog.md
+End /Users/bob/dev/NetCtrl/cline_docs/changelog.md
 
 
-Begin cline_docs/activeContext.md
+Begin /Users/bob/dev/NetCtrl/cline_docs/activeContext.md
 
 Active Context
 
@@ -4741,10 +4785,10 @@ This document tracks the current state of the NetCtrl CMS project recent decisio
 6. **NGINX Configuration**: Using location block prioritization with exact matches for static endpoints and prefix matching for API and app routes
 7. **Error Handling**: Implementing retry logic for critical operations like database initialization
 
-End cline_docs/activeContext.md
+End /Users/bob/dev/NetCtrl/cline_docs/activeContext.md
 
 
-Begin .clinerules
+Begin /Users/bob/dev/NetCtrl/.clinerules
 
 ---CLINE_RULES_START---
 [LAST_ACTION_STATE]
@@ -4814,6 +4858,6 @@ next_phase: "Execution"
 - Established centralized logging with syslog container
 ---CLINE_RULES_END---
 
-End .clinerules
+End /Users/bob/dev/NetCtrl/.clinerules
 
 # NetCtrl CMS Project Code - End
