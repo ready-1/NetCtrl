@@ -1,0 +1,85 @@
+# Django Project Structure Instructions
+
+## Objective
+Set up the Django project structure for the NetCtrl application, including proper configuration for PostgreSQL, Syslog, static/media files, and authentication.
+
+## Context
+This task establishes the Django foundation for the NetCtrl application. It includes creating the Django project, configuring it to work with the Docker infrastructure, and establishing settings for both development and production environments.
+
+## Dependencies
+- Docker Infrastructure Setup (partial - specifically knowing the PostgreSQL and Syslog service names and configuration)
+
+## Steps
+
+1. **Initialize Django Project**
+   ```bash
+   cd app
+   django-admin startproject netctrl .
+   ```
+
+2. **Create Core Applications**
+   ```bash
+   python manage.py startapp cms
+   python manage.py startapp network
+   ```
+
+3. **Configure Settings**
+   - Update `netctrl/settings.py` with:
+     - PostgreSQL database configuration
+     - Static and media file settings
+     - Installed apps (including django-chunked-upload)
+     - Syslog integration
+     - Authentication configuration
+     - Production-ready settings
+
+4. **Create Base Templates**
+   - Create `templates/base.html` with the base template structure
+   - Set up template directory in settings
+   - Implement mobile-first responsive layout
+   - Include Bootstrap 5.3 (local copy)
+   - Add dark mode toggle functionality
+
+5. **Configure URL Routing**
+   - Update `netctrl/urls.py` with basic routing
+   - Set up URL patterns for the cms and network apps
+   - Configure media and static file serving for development
+
+6. **Create Core Models**
+   - Define initial models in `cms/models.py` for Document and File
+   - Configure meta options and field validations
+   - Set up proper file storage backend for large files
+
+7. **Set Up Authentication**
+   - Configure the Django authentication system for local users only
+   - Create login/logout views and templates
+   - Set up user registration functionality
+
+8. **Run Migrations**
+   ```bash
+   python manage.py makemigrations
+   python manage.py migrate
+   ```
+
+9. **Create Superuser**
+   ```bash
+   python manage.py createsuperuser
+   ```
+
+## Expected Output
+- Fully configured Django project structure
+- Core apps (cms, network) created
+- Settings configured for PostgreSQL and Syslog
+- Working authentication system
+- Base templates with responsive layout and dark mode toggle
+- URL routing structure established
+- Core models defined and migrated
+
+## Notes
+- Configure settings to use environment variables from the Docker configuration
+- Ensure all media storage is properly set up for handling large files
+- Implement proper error logging through Syslog
+- Configure for both development and production environments
+- Remember to follow Django best practices for project structure
+
+## Mini Dependency Tracker
+Not applicable for this task at this stage.

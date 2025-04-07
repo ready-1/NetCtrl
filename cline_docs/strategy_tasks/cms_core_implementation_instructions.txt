@@ -1,0 +1,95 @@
+# CMS Core Implementation Instructions
+
+## Objective
+Implement the core Content Management System (CMS) functionality for the NetCtrl application, including document creation, editing, viewing, and user management.
+
+## Context
+This task builds upon the Django project structure to implement the content management capabilities required for Phase 1. It focuses on the Document model and associated CRUD operations, along with the user interface for content management.
+
+## Dependencies
+- Django Project Structure (complete)
+- User Interface Development (partial)
+
+## Steps
+
+1. **Enhance Document Model**
+   - Update the `cms/models.py` Document model with additional fields:
+     - Status (draft, published)
+     - Categories/Tags
+     - Featured image
+     - Excerpt/Summary
+   - Add appropriate methods for model functionality
+   - Create model managers as needed
+
+2. **Create Document Admin Interface**
+   - Register Document model in `cms/admin.py`
+   - Customize admin views for document management
+   - Add filters, search fields, and list display options
+
+3. **Implement Document Views**
+   - Create views in `cms/views.py` for:
+     - Document listing (with filtering and pagination)
+     - Document detail view
+     - Document creation form
+     - Document editing form
+     - Document deletion with confirmation
+   - Implement proper permission handling
+
+4. **Create Document Templates**
+   - Design and implement templates for:
+     - Document list page
+     - Document detail page
+     - Document form (creation/editing)
+     - Categories/tags navigation
+   - Ensure mobile-first responsive design
+   - Implement dark mode compatible styling
+
+5. **Add Rich Text Editor**
+   - Integrate a JavaScript-based rich text editor
+   - Configure editor for document body editing
+   - Implement image insertion functionality
+   - Ensure the editor is mobile-friendly
+
+6. **Implement Document Search**
+   - Create search functionality for documents
+   - Implement filters by category, date, author
+   - Add sorting options
+   - Create search results template
+
+7. **Add User Dashboard**
+   - Create user dashboard view
+   - Show user's documents
+   - Display document statistics
+   - Add quick create/edit buttons
+
+8. **Add User Management**
+   - Implement user profile views
+   - Create account settings page
+   - Add user listing for administrators
+   - Implement user creation for administrators
+
+9. **Implement Permissions**
+   - Set up permission system for document access
+   - Configure view permissions
+   - Set up edit permissions
+   - Implement permission checks in views
+
+## Expected Output
+- Fully functional Document model with CRUD operations
+- Complete set of templates for document management
+- Working rich text editor for content creation
+- User dashboard and management interfaces
+- Search and filtering functionality
+- Mobile-responsive and dark mode compatible interface
+
+## Notes
+- Ensure all code follows Django best practices
+- Implement proper form validation
+- Use Django's class-based views where appropriate
+- Add appropriate docstrings and comments
+- Consider implementing preview functionality for documents
+- Make sure all functionality works properly on mobile devices
+
+## Mini Dependency Tracker
+- Depends on: Django Project Structure
+- Required for: File Management Implementation, User Interface Development, Testing

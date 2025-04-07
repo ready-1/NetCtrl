@@ -1,0 +1,93 @@
+# Deployment Preparation Instructions
+
+## Objective
+Prepare the NetCtrl application for deployment in an air-gapped Debian environment, ensuring all components function correctly without internet access.
+
+## Context
+This task involves creating a deployment package that can be transferred to and installed on an air-gapped Debian server. All dependencies, configuration files, and documentation must be included in the package.
+
+## Dependencies
+- All implementation tasks complete
+- Testing complete
+
+## Steps
+
+1. **Create Production Configuration**
+   - Finalize `compose.yaml` for production
+   - Update Nginx configuration for production
+   - Finalize Django settings for production
+   - Create environment variable templates
+
+2. **Prepare Static Assets**
+   - Collect and package all static files
+   - Include Bootstrap 5.3 and other frontend libraries
+   - Optimize images and other assets
+   - Create `collectstatic` script
+
+3. **Package Database Initialization**
+   - Create database initialization scripts
+   - Include initial data fixtures
+   - Document database migration process
+   - Test database setup process
+
+4. **Prepare Docker Images**
+   - Build final Docker images for all services
+   - Save images using `docker save`
+   - Document image loading process
+   - Verify image integrity
+
+5. **Create Deployment Scripts**
+   - Write installation script for Debian
+   - Create database initialization script
+   - Write service startup script
+   - Add backup/restore utilities
+
+6. **Create Air-Gapped Documentation**
+   - Document offline installation process
+   - Create troubleshooting guide
+   - Add system requirements documentation
+   - Include architecture diagrams
+
+7. **Test Deployment Process**
+   - Set up isolated test environment
+   - Test deployment from package
+   - Verify all services start correctly
+   - Test without internet connectivity
+
+8. **Create Administrator Documentation**
+   - Write system administration guide
+   - Document common maintenance tasks
+   - Create backup and restore procedures
+   - Add security hardening recommendations
+
+9. **Package All Components**
+   - Combine all code, configuration, and Docker images
+   - Create directory structure matching target environment
+   - Generate manifest of all included files
+   - Create checksums for verification
+
+10. **Create User Documentation**
+    - Write user manual for CMS
+    - Document file management procedures
+    - Create quick start guide
+    - Add frequently asked questions
+
+## Expected Output
+- Complete deployment package for air-gapped environment
+- Installation and configuration documentation
+- Administrator and user guides
+- Deployment verification procedures
+- Backup and restore utilities
+
+## Notes
+- Remember that the target environment has no internet access
+- Include all dependencies in the package
+- Document all assumptions about the target environment
+- Test the deployment process thoroughly
+- Consider creating a VM-based test environment that mimics the target
+- Verify that all services can start without internet connectivity
+- Ensure security best practices are followed
+
+## Mini Dependency Tracker
+- Depends on: All implementation tasks, Testing
+- Final output for Phase 1

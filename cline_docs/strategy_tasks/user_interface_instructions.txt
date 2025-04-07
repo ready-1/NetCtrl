@@ -1,0 +1,106 @@
+# User Interface Development Instructions
+
+## Objective
+Develop a responsive, mobile-first user interface for the NetCtrl application with dark mode toggle functionality, based on Bootstrap 5.3.
+
+## Context
+This task involves implementing the user interface components for both the CMS and file management features. The UI must be responsive, follow mobile-first design principles, and include a dark mode toggle for improved visibility in different environments.
+
+## Dependencies
+- Django Project Structure (complete)
+- CMS Core Implementation (partial)
+- File Management Implementation (partial)
+
+## Steps
+
+1. **Set Up Bootstrap 5.3**
+   - Download Bootstrap 5.3 for local hosting (air-gapped deployment)
+   - Create `app/static/bootstrap` directory
+   - Add Bootstrap CSS and JS files
+   - Configure in the base template
+
+2. **Create Base Template Structure**
+   - Design and implement `templates/base.html` with:
+     - Responsive meta tags
+     - Bootstrap CSS/JS integration
+     - Navigation structure
+     - Footer
+     - Content blocks
+   - Implement responsive container layout
+
+3. **Implement Dark Mode Toggle**
+   - Add dark mode CSS variables and classes
+   - Create JavaScript toggle functionality
+   - Store user preference in localStorage
+   - Add toggle button in navigation
+   - Test across all components
+
+4. **Design Mobile-First Navigation**
+   - Create collapsible mobile navigation
+   - Implement hamburger menu for small screens
+   - Design navigation hierarchy
+   - Add active state indicators
+   - Ensure touch-friendly targets
+
+5. **Create Component Library**
+   - Design and implement common UI components:
+     - Cards for document and file display
+     - Forms with responsive layout
+     - Buttons and action elements
+     - Alert and notification components
+     - Modal dialogs
+     - Tables with responsive behavior
+   - Document component usage
+
+6. **Implement Dashboard UI**
+   - Design responsive dashboard layout
+   - Create activity/summary cards
+   - Implement recent documents/files sections
+   - Add quick action buttons
+   - Ensure mobile optimization
+
+7. **Design Document Management Interface**
+   - Create document listing views with filtering
+   - Design document detail page
+   - Implement document editing form
+   - Add mobile-optimized editing toolbar
+   - Ensure dark mode compatibility
+
+8. **Design File Management Interface**
+   - Create file browser with responsive grid/list toggle
+   - Design file upload interface with progress indication
+   - Implement file detail view
+   - Add drag-and-drop support where possible
+   - Optimize for mobile touch interactions
+
+9. **Add UI Animations and Transitions**
+   - Implement smooth page transitions
+   - Add loading indicators
+   - Create subtle UI feedback animations
+   - Ensure accessibility is maintained
+
+10. **Test and Optimize UI**
+    - Test on various screen sizes
+    - Verify dark mode functionality
+    - Test touch interactions
+    - Optimize performance
+    - Ensure accessibility compliance
+
+## Expected Output
+- Responsive, mobile-first interface for all application features
+- Working dark mode toggle with persistent user preference
+- Complete set of UI components for CMS and file management
+- Optimized interface for mobile and desktop usage
+- Documentation of component usage
+
+## Notes
+- Minimize external dependencies due to air-gapped deployment
+- Ensure all UI elements work in both light and dark modes
+- Maintain accessibility standards (WCAG)
+- Optimize assets for performance
+- Test on various devices and browsers
+- Consider implementing a design system for consistency
+
+## Mini Dependency Tracker
+- Depends on: Django Project Structure, CMS Core Implementation (partial), File Management Implementation (partial)
+- Required for: Testing, Deployment Preparation

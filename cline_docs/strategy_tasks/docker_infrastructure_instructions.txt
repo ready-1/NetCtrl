@@ -1,0 +1,62 @@
+# Docker Infrastructure Setup Instructions
+
+## Objective
+Set up the foundational Docker infrastructure for the NetCtrl project, including service definitions, networking, and volume configuration.
+
+## Context
+The NetCtrl project requires a containerized environment with four primary services: syslog, PostgreSQL, Nginx, and the Django app. This task focuses on creating the Docker Compose configuration and related files to establish this infrastructure.
+
+## Dependencies
+- None (this is a foundation task)
+
+## Steps
+
+1. **Create Project Directory Structure**
+   ```bash
+   mkdir -p app nginx
+   ```
+
+2. **Create Docker Compose File**
+   - Create `compose.yaml` in the project root
+   - Define four services: syslog, postgres, nginx, app
+   - Configure volumes for persistent storage
+   - Set up networking between containers
+   - Establish proper service dependencies
+
+3. **Configure Nginx**
+   - Create `nginx/nginx.conf` for the Nginx service
+   - Configure proxy settings for the Django application
+   - Set up static and media file serving
+   - Configure for large file uploads (up to 5GB)
+
+4. **Create Django Dockerfile**
+   - Create `app/Dockerfile` for building the Django application
+   - Use Python 3.9 as the base image
+   - Install required dependencies
+   - Configure for Gunicorn
+
+5. **Create Requirements File**
+   - Create `app/requirements.txt` listing all Python dependencies
+   - Include Django, PostgreSQL adapter, django-chunked-upload, and Gunicorn
+
+6. **Test Docker Compose Configuration**
+   - Validate the compose file syntax
+   - Test building the images
+   - Verify volume and network creation
+
+## Expected Output
+- Working `compose.yaml` configuring all required services
+- Nginx configuration file ready for production use
+- Django Dockerfile properly configured
+- Requirements file with all necessary dependencies
+- Docker volumes and networks correctly defined
+
+## Notes
+- Use Docker Compose version 3.8 syntax
+- Ensure proper container naming for easier management
+- Configure reasonable resource limits
+- Use environment variables for sensitive information
+- Remember the deployment will ultimately be in an air-gapped environment
+
+## Mini Dependency Tracker
+Not applicable for this foundation task.

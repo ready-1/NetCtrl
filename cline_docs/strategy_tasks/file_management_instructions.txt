@@ -1,0 +1,110 @@
+# File Management Implementation Instructions
+
+## Objective
+Implement robust file management capabilities for the NetCtrl application that support uploading, downloading, and managing files up to 5GB in size.
+
+## Context
+This task focuses on implementing large file upload and management functionality using the django-chunked-upload package. The implementation must be reliable, support very large files (up to 5GB), and provide a good user experience on both desktop and mobile devices.
+
+## Dependencies
+- Django Project Structure (complete)
+- CMS Core Implementation (partial)
+- Nginx properly configured for large uploads
+
+## Steps
+
+1. **Install and Configure django-chunked-upload**
+   - Add to requirements.txt if not already included
+   - Add to INSTALLED_APPS in settings.py
+   - Configure settings:
+     ```python
+     CHUNKED_UPLOAD_PATH = 'uploads/%Y/%m/%d'
+     CHUNKED_UPLOAD_MAX_BYTES = 5 * 1024 * 1024 * 1024  # 5GB
+     ```
+   - Configure any additional package settings
+
+2. **Create File Model**
+   - Enhance the File model in `cms/models.py`:
+     ```python
+     class File(models.Model):
+         name = models.CharField(max_length=255)
+         description = models.TextField(blank=True)
+         file = models.FileField(upload_to='uploads/')
+         file_size = models.BigIntegerField()
+         mime_type = models.CharField(max_length=100)
+         uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE)
+         uploaded_at = models.DateTimeField(auto_now_add=True)
+         
+         # Add additional fields as needed
+     ```
+   - Add file validation methods
+   - Create file categorization or tagging
+
+3. **Implement Chunked Upload Views**
+   - Create `ChunkedUploadView` and `ChunkedUploadCompleteView` subclasses
+   - Implement proper error handling and validation
+   - Set up authentication and permission checks
+   - Create success and failure responses
+
+4. **Create File Management Views**
+   - Implement views for:
+     - File listing (with sorting and filtering)
+     - File detail view
+     - File download
+     - File deletion
+     - File updating (metadata)
+   - Add proper permission checking
+
+5. **Create File Upload Templates**
+   - Design file upload form with progress bar
+   - Implement drag-and-drop upload area
+   - Create progress indicators
+   - Add error handling and retry functionality
+   - Ensure mobile compatibility
+
+6. **Create File Management Templates**
+   - Design file listing page with sorting and filtering
+   - Create file detail page
+   - Add download button and sharing options
+   - Implement file preview when possible
+   - Ensure mobile-first responsive design
+
+7. **Implement File Processing**
+   - Add virus scanning if required
+   - Create file preview generation for supported types
+   - Implement file metadata extraction
+   - Set up storage backend properly
+
+8. **Create JavaScript Upload Handlers**
+   - Implement chunked upload with progress tracking
+   - Add pause/resume functionality if possible
+   - Create error handling and retry logic
+   - Optimize for mobile usage
+
+9. **Configure Nginx for Large Uploads**
+   - Update `nginx/nginx.conf` to support large uploads:
+     ```
+     client_max_body_size 5G;
+     proxy_read_timeout 300s;
+     client_body_timeout 300s;
+     ```
+   - Test configuration thoroughly
+
+## Expected Output
+- Fully functional file upload system supporting files up to 5GB
+- Complete set of views and templates for file management
+- Working progress tracking for uploads
+- Mobile-compatible upload and management interface
+- Properly configured Nginx for large file handling
+
+## Notes
+- Test with various file sizes and types
+- Ensure proper error handling for failed uploads
+- Consider implementing file versioning if needed
+- Add appropriate access controls and permissions
+- Make sure to clean up incomplete uploads periodically
+- Consider implementing resumable uploads
+
+## Mini Dependency Tracker
+- Depends on: Django Project Structure, Nginx Configuration
+- Required for: User Interface Development, Testing
