@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block title %}User Profile{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="alert alert-info">
+            <h4 class="alert-heading">User Profile</h4>
+            <p>This is a placeholder for the user profile page. It will be fully implemented in the next phase of development.</p>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-person-circle"></i> Profile Details
+                </h5>
+            </div>
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <div class="avatar-placeholder rounded-circle mx-auto d-flex align-items-center justify-content-center bg-secondary" style="width: 128px; height: 128px;">
+                        <i class="bi bi-person" style="font-size: 64px;"></i>
+                    </div>
+                </div>
+                <h4>{{ user.username }}</h4>
+                <p class="text-muted">{{ user.email }}</p>
+                <p><small>Member since: {{ user.date_joined|date:"F j, Y" }}</small></p>
+                <div class="d-grid">
+                    <button class="btn btn-primary" type="button">
+                        <i class="bi bi-pencil"></i> Edit Profile
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8 mb-4">
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-gear"></i> Profile Settings
+                </h5>
+            </div>
+            <div class="card-body">
+                <form>
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" id="username" value="{{ user.username }}" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" id="email" value="{{ user.email }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="bio" class="form-label">Bio</label>
+                        <textarea class="form-control {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" id="bio" rows="3">{{ user.profile.bio }}</textarea>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="darkMode" {% if user.profile.dark_mode %}checked{% endif %}>
+                        <label class="form-check-label" for="darkMode">Dark Mode</label>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-file-earmark-text"></i> Your Documents
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="placeholder-glow mb-3">
+                    <p class="placeholder col-12"></p>
+                    <p class="placeholder col-12"></p>
+                    <p class="placeholder col-12"></p>
+                </div>
+                <div class="text-center text-muted">
+                    <em>You haven't created any documents yet.</em>
+                </div>
+            </div>
+            <div class="card-footer text-end">
+                <a href="{% url 'cms:document_list' %}" class="btn btn-outline-primary btn-sm">
+                    View All <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 mb-4">
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-files"></i> Your Files
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="placeholder-glow mb-3">
+                    <p class="placeholder col-12"></p>
+                    <p class="placeholder col-12"></p>
+                    <p class="placeholder col-12"></p>
+                </div>
+                <div class="text-center text-muted">
+                    <em>You haven't uploaded any files yet.</em>
+                </div>
+            </div>
+            <div class="card-footer text-end">
+                <a href="{% url 'cms:file_list' %}" class="btn btn-outline-primary btn-sm">
+                    View All <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-shield-lock"></i> Security
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Change Password</h6>
+                        <p>It's a good idea to use a strong password that you don't use elsewhere.</p>
+                        <a href="{% url 'password_change' %}" class="btn btn-outline-primary">
+                            <i class="bi bi-key"></i> Change Password
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Account Activity</h6>
+                        <p>Your last login was on: {{ user.last_login|date:"F j, Y" }} at {{ user.last_login|time:"H:i" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

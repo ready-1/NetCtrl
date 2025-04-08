@@ -1,140 +1,181 @@
-# NetCtrl Project
+# NetCtrl CMS
 
-## Centralized Logging System with Syslog and Graylog
+A Django-based Content Management System with file management capabilities and network control features.
 
-This repository contains the implementation for the NetCtrl project's centralized logging system with the following components:
+## Project Overview
 
-### Syslog Server
+NetCtrl CMS is a comprehensive Django web application that combines content management functionality with network management capabilities. The system allows users to manage documents and files (supporting uploads up to 5GB), along with monitoring and controlling network infrastructure.
 
-The Syslog server is implemented using syslog-ng and provides:
-- Centralized log collection over TCP (port 601) and UDP (port 514)
-- Log categorization by service (nginx, django, postgres)
-- Structured logging template
-- Integration with Graylog via GELF format
-- Log rotation with configurable retention periods (7-30 days)
-- Error log aggregation
+### Key Features
 
-### Log Viewer (Graylog)
+- **Content Management System**
+  - Document management with categories and tags
+  - File management supporting files up to 5GB
+  - Chunked file upload for large files
+  - Rich text editing
 
-A web-based log viewer is available at http://localhost:8080/logs/ providing:
-- Comprehensive log management and searching
-- Advanced filtering and analysis capabilities
-- Service-specific log views
-- Dashboard creation
-- Alert configuration
-- GELF input support (UDP port 12201)
-- Direct access to syslog log files
+- **Network Control**
+  - Network monitoring and visualization
+  - Device management
+  - Performance metrics
+  - Alert system
 
-### Python Logging Integration
+## Implementation Status
 
-A standardized Python logging facility with:
-- Centralized configuration in `src/netctrl/logging_config.py`
-- Custom TCP handler for reliable syslog communication
-- Automatic integration with the centralized logging system
-- Structured log formatting
-- Console and syslog outputs
-- Service tag support for proper log categorization
-- Example Django views demonstrating proper usage
+This implementation represents Phase 1 of the project, focusing on:
 
-### Docker Infrastructure
+- Core Django project setup
+- Database models for CMS functionality
+- User authentication system
+- Admin interface
+- Placeholder UI with Bootstrap 5
+- Responsive design with dark mode support
 
-The system uses Docker Compose with:
-- Modern compose.yaml syntax
-- Bridge networking
-- Volume management for persistent logs
-- Health checks
-- Proper service dependencies
-- JSON-file logging driver with rotation for container logs
+The following features are currently implemented as placeholders and will be fully implemented in subsequent phases:
+- Chunked file upload for large files
+- Document/file content views and management
+- Network monitoring and control
 
 ## Getting Started
 
 ### Prerequisites
 
-- Docker and Docker Compose
-- Python 3.12 for running the test script and using the logging facility
+- Python 3.8+
+- PostgreSQL (optional, SQLite is used for development)
 
-### Starting the Services
+### Installation
 
+1. Clone the repository
 ```bash
-# Start all services
-docker compose up -d
-
-# Start only the logging components
-docker compose up -d syslog elasticsearch mongodb logviewer
+git clone <repository-url>
+cd NetCtrl
 ```
 
-### Testing
-
-A Python test script is provided to verify the logging functionality:
-
+2. Create and activate a virtual environment
 ```bash
-python scripts/syslog_test.py
+python -m venv python
+source python/bin/activate  # On Windows: python\Scripts\activate
 ```
 
-This script sends test log entries to all configured log streams for validation using both TCP and UDP connections.
+3. Install dependencies
+```bash
+pip install -r app/requirements.txt
+```
 
-### Viewing Logs
+4. Apply database migrations
+```bash
+cd app
+python manage.py migrate
+```
 
-1. Open http://localhost:8080/logs/ in your browser
-2. Login with username: `admin` and password: `admin`
-3. Navigate to the "Search" tab to view incoming logs
-4. Create custom dashboards and views as needed
+5. Create a superuser (admin account)
+```bash
+python manage.py createsuperuser
+```
+
+6. Run the development server
+```bash
+python manage.py runserver
+```
+
+7. Access the application at `http://localhost:8000`
+
+### Environment Variables
+
+The application supports the following environment variables:
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `DJANGO_SECRET_KEY` | Django secret key | Auto-generated |
+| `DJANGO_DEBUG` | Debug mode | `True` |
+| `DJANGO_ALLOWED_HOSTS` | Allowed hosts | `localhost,127.0.0.1` |
+| `USE_POSTGRES` | Use PostgreSQL instead of SQLite | `False` |
+| `POSTGRES_DB` | PostgreSQL database name | `netctrl_db` |
+| `POSTGRES_USER` | PostgreSQL username | `netctrl_user` |
+| `POSTGRES_PASSWORD` | PostgreSQL password | `netctrl_password` |
+| `POSTGRES_HOST` | PostgreSQL host | `postgres` |
+| `POSTGRES_PORT` | PostgreSQL port | `5432` |
+| `SYSLOG_HOST` | Syslog server host | `syslog` |
+| `SYSLOG_PORT` | Syslog server port | `601` |
 
 ## Project Structure
 
 ```
-├── app/                      # Django application
-│   ├── Dockerfile            # Django app container configuration
-│   └── requirements.txt      # Python dependencies
-├── compose.yaml              # Docker Compose configuration
-├── nginx/                    # Nginx configuration
-│   └── nginx.conf            # Main Nginx configuration file
-├── scripts/
-│   └── syslog_test.py        # Python test script for syslog verification
-├── src/
-│   └── netctrl/
-│       ├── logging_config.py # Python logging facility configuration
-│       └── views_example.py  # Example Django views with logging
-└── syslog/
-    └── syslog-ng.conf        # Syslog-ng configuration
+NetCtrl/
+├── app/                  # Django application
+│   ├── cms/              # CMS application
+│   │   ├── models/       # CMS models
+│   │   └── templates/    # CMS templates
+│   ├── network/          # Network application
+│   ├── netctrl/          # Django project settings
+│   ├── static/           # Static files (CSS, JS)
+│   │   ├── css/          # CSS files
+│   │   └── js/           # JavaScript files
+│   ├── templates/        # Base templates
+│   ├── manage.py         # Django management script
+│   └── requirements.txt  # Python dependencies
+├── syslog/               # Syslog configuration
+├── scripts/              # Utility scripts
+└── docs/                 # Documentation
 ```
 
-## Logs Location
+## Authentication
 
-- Container logs: Managed by Docker using json-file driver with rotation
-- Syslog log files (inside the syslog container):
-  - `/var/log/all.log` - All logs
-  - `/var/log/nginx.log` - Nginx-specific logs
-  - `/var/log/django.log` - Django-specific logs
-  - `/var/log/postgres.log` - PostgreSQL-specific logs
-  - `/var/log/errors.log` - Error logs from all services
-- Graylog logs: Stored in Elasticsearch and accessible via the web interface
+The system uses Django's built-in authentication system with extended user profiles. Key URLs:
 
-## Using the Python Logging Facility
+- Login: `/accounts/login/`
+- Logout: `/accounts/logout/`
+- Admin: `/admin/`
 
-To use the logging facility in your application code:
+Default credentials for development:
+- Username: admin
+- Email: admin@example.com
+- Password: (set during `createsuperuser`)
 
-```python
-from netctrl.logging_config import get_logger
+## Development
 
-# Create a logger with an optional service tag
-logger = get_logger(__name__, 'django')
+### Running with SQLite (Development)
 
-# Use standard logging methods
-logger.debug("Debug message")
-logger.info("Information message")
-logger.warning("Warning message")
-logger.error("Error message", exc_info=True)  # Include exception info
+By default, the application uses SQLite for development:
+
+```bash
+cd app
+python manage.py runserver
 ```
 
-The logs will be sent to both the console and the syslog server, then aggregated and viewable in Graylog.
+### Running with PostgreSQL (Production-like)
 
-## Future Development
+To use PostgreSQL:
 
-The next steps for this project include:
-- Implementing the Django project structure
-- Developing CMS core functionality with file management up to 5GB
-- Creating a user interface with mobile-first design and dark mode support
-- Implementing comprehensive testing
-- Preparing for air-gapped deployment
-- Phase 2: Implementing network management for Netgear M4300 switches
+1. Ensure PostgreSQL is running
+2. Set environment variables:
+```bash
+export USE_POSTGRES=True
+export POSTGRES_DB=netctrl_db
+export POSTGRES_USER=netctrl_user
+export POSTGRES_PASSWORD=netctrl_password
+export POSTGRES_HOST=localhost
+export POSTGRES_PORT=5432
+```
+3. Run the server:
+```bash
+python manage.py runserver
+```
+
+## Logging
+
+The application uses a custom logging configuration that integrates with syslog:
+
+- Console logging for development
+- Syslog integration for production
+- Custom TCP syslog handler for reliable delivery
+
+## Contributing
+
+1. Create a feature branch
+2. Implement your changes
+3. Submit a pull request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.

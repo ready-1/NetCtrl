@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}Files{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <div class="alert alert-info">
+            <h4 class="alert-heading">File Management</h4>
+            <p>This is a placeholder for the file management page. It will be fully implemented in the next phase of development.</p>
+        </div>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="#" class="btn btn-success">
+            <i class="bi bi-upload"></i> Upload File
+        </a>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-filter"></i> Filters
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="categoryFilter" class="form-label">Category</label>
+                    <select class="form-select {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" id="categoryFilter">
+                        <option selected>All Categories</option>
+                        <option>Category placeholder</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="tagFilter" class="form-label">Tag</label>
+                    <select class="form-select {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" id="tagFilter">
+                        <option selected>All Tags</option>
+                        <option>Tag placeholder</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="typeFilter" class="form-label">File Type</label>
+                    <select class="form-select {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" id="typeFilter">
+                        <option selected>All Types</option>
+                        <option>Images</option>
+                        <option>Documents</option>
+                        <option>Videos</option>
+                        <option>Audio</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary" type="button">Apply Filters</button>
+                    <button class="btn btn-secondary" type="button">Reset</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-files"></i> Files
+                        </h5>
+                    </div>
+                    <div class="col-auto">
+                        <div class="input-group">
+                            <input type="text" class="form-control {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" placeholder="Search files...">
+                            <button class="btn btn-outline-secondary" type="button">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="placeholder-glow mb-4">
+                    <p class="placeholder col-12"></p>
+                    <p class="placeholder col-12"></p>
+                    <p class="placeholder col-12"></p>
+                    <p class="placeholder col-12"></p>
+                    <p class="placeholder col-12"></p>
+                </div>
+                <div class="text-center text-muted">
+                    <em>No files found. Upload a file to get started.</em>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-info-circle"></i> About File Management
+                </h5>
+            </div>
+            <div class="card-body">
+                <p>The file management system in NetCtrl CMS supports the following features:</p>
+                <ul>
+                    <li>Upload files of any type up to 5GB in size</li>
+                    <li>Chunked upload for large files with progress tracking</li>
+                    <li>Automatic file type detection</li>
+                    <li>File categorization and tagging</li>
+                    <li>Search by name, type, category, or content (for supported file types)</li>
+                    <li>Download tracking and statistics</li>
+                </ul>
+                <p>These features will be implemented in upcoming development phases. Currently, this page serves as a placeholder for the file management interface.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

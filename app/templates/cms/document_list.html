@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}Documents{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <div class="alert alert-info">
+            <h4 class="alert-heading">Document Management</h4>
+            <p>This is a placeholder for the document management page. It will be fully implemented in the next phase of development.</p>
+        </div>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="#" class="btn btn-primary">
+            <i class="bi bi-file-earmark-plus"></i> New Document
+        </a>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-filter"></i> Filters
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="categoryFilter" class="form-label">Category</label>
+                    <select class="form-select {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" id="categoryFilter">
+                        <option selected>All Categories</option>
+                        <option>Category placeholder</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="tagFilter" class="form-label">Tag</label>
+                    <select class="form-select {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" id="tagFilter">
+                        <option selected>All Tags</option>
+                        <option>Tag placeholder</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="statusFilter" class="form-label">Status</label>
+                    <select class="form-select {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" id="statusFilter">
+                        <option selected>All</option>
+                        <option>Draft</option>
+                        <option>Published</option>
+                    </select>
+                </div>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary" type="button">Apply Filters</button>
+                    <button class="btn btn-secondary" type="button">Reset</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-file-earmark-text"></i> Documents
+                        </h5>
+                    </div>
+                    <div class="col-auto">
+                        <div class="input-group">
+                            <input type="text" class="form-control {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" placeholder="Search documents...">
+                            <button class="btn btn-outline-secondary" type="button">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="placeholder-glow mb-4">
+                    <p class="placeholder col-12"></p>
+                    <p class="placeholder col-12"></p>
+                    <p class="placeholder col-12"></p>
+                    <p class="placeholder col-12"></p>
+                    <p class="placeholder col-12"></p>
+                </div>
+                <div class="text-center text-muted">
+                    <em>No documents found. Create a new document to get started.</em>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-info-circle"></i> About Document Management
+                </h5>
+            </div>
+            <div class="card-body">
+                <p>Documents in NetCtrl CMS support the following features:</p>
+                <ul>
+                    <li>Rich text editing with formatting options</li>
+                    <li>Categories and tags for organization</li>
+                    <li>Draft and publishing workflow</li>
+                    <li>Version history and tracking</li>
+                    <li>Search and filter capabilities</li>
+                    <li>Access control and permissions</li>
+                </ul>
+                <p>These features will be implemented in upcoming development phases. Currently, this page serves as a placeholder for the document management interface.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

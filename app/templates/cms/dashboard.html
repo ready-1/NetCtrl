@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="alert alert-info">
+            <h4 class="alert-heading">Welcome to NetCtrl CMS!</h4>
+            <p>This is a placeholder dashboard that will be enhanced with more functionality as development progresses.</p>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <!-- Statistics Cards -->
+    <div class="col-md-3 mb-3">
+        <div class="card h-100 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-body text-center">
+                <h1 class="display-4 text-primary">0</h1>
+                <h5 class="card-title">Documents</h5>
+                <p class="card-text small">Total documents in the system</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card h-100 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-body text-center">
+                <h1 class="display-4 text-success">0</h1>
+                <h5 class="card-title">Files</h5>
+                <p class="card-text small">Total files uploaded</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card h-100 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-body text-center">
+                <h1 class="display-4 text-info">0</h1>
+                <h5 class="card-title">Categories</h5>
+                <p class="card-text small">Content categories</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card h-100 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-body text-center">
+                <h1 class="display-4 text-warning">0</h1>
+                <h5 class="card-title">Tags</h5>
+                <p class="card-text small">Content tags</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <!-- Quick Actions -->
+    <div class="col-md-4">
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-lightning-charge"></i> Quick Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="#" class="btn btn-primary">
+                        <i class="bi bi-file-earmark-plus"></i> New Document
+                    </a>
+                    <a href="#" class="btn btn-success">
+                        <i class="bi bi-upload"></i> Upload File
+                    </a>
+                    <a href="#" class="btn btn-info">
+                        <i class="bi bi-folder-plus"></i> New Category
+                    </a>
+                    <a href="#" class="btn btn-warning">
+                        <i class="bi bi-tag"></i> New Tag
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Activity -->
+    <div class="col-md-8">
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-activity"></i> Recent Activity
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="placeholder-glow">
+                    <p class="placeholder col-12 mb-3"></p>
+                    <p class="placeholder col-12 mb-3"></p>
+                    <p class="placeholder col-12 mb-3"></p>
+                    <p class="placeholder col-12 mb-3"></p>
+                    <p class="placeholder col-12 mb-3"></p>
+                </div>
+                <div class="text-center text-muted">
+                    <em>Activity feed will be populated as you use the system</em>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- CMS Modules -->
+    <div class="col-md-6 mb-4">
+        <div class="card h-100 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-file-earmark-text"></i> Documents
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text">
+                    Create, edit, and manage documents with a rich text editor. Organize them with categories and tags for easy retrieval.
+                </p>
+                <div class="text-end">
+                    <a href="{% url 'cms:document_list' %}" class="btn btn-primary">
+                        Manage Documents <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 mb-4">
+        <div class="card h-100 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-files"></i> Files
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text">
+                    Upload, download, and manage files up to 5GB in size. The system supports chunked uploads for large files with progress tracking.
+                </p>
+                <div class="text-end">
+                    <a href="{% url 'cms:file_list' %}" class="btn btn-success">
+                        Manage Files <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

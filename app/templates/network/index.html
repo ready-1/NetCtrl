@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block title %}Network Management{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="alert alert-info">
+            <h4 class="alert-heading">Network Management</h4>
+            <p>This is a placeholder for the network management dashboard. It will be fully implemented in future phases of development.</p>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <!-- Statistics Cards -->
+    <div class="col-md-3 mb-3">
+        <div class="card h-100 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-body text-center">
+                <h1 class="display-4 text-primary">0</h1>
+                <h5 class="card-title">Devices</h5>
+                <p class="card-text small">Network devices</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card h-100 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-body text-center">
+                <h1 class="display-4 text-success">0</h1>
+                <h5 class="card-title">Connections</h5>
+                <p class="card-text small">Active connections</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card h-100 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-body text-center">
+                <h1 class="display-4 text-info">0</h1>
+                <h5 class="card-title">Services</h5>
+                <p class="card-text small">Network services</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card h-100 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-body text-center">
+                <h1 class="display-4 text-warning">0</h1>
+                <h5 class="card-title">Alerts</h5>
+                <p class="card-text small">Active alerts</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <!-- Network Topology -->
+    <div class="col-md-8 mb-4">
+        <div class="card h-100 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-diagram-3"></i> Network Topology
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="placeholder-glow mb-4" style="height: 300px;">
+                    <p class="placeholder col-12"></p>
+                    <p class="placeholder col-12"></p>
+                    <p class="placeholder col-12"></p>
+                    <p class="placeholder col-12"></p>
+                    <p class="placeholder col-12"></p>
+                </div>
+                <div class="text-center text-muted">
+                    <em>Network topology visualization will be available in future releases.</em>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-lightning-charge"></i> Quick Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="#" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Add Device
+                    </a>
+                    <a href="#" class="btn btn-info">
+                        <i class="bi bi-search"></i> Scan Network
+                    </a>
+                    <a href="{% url 'network:monitoring' %}" class="btn btn-success">
+                        <i class="bi bi-graph-up"></i> View Monitoring
+                    </a>
+                    <a href="#" class="btn btn-warning">
+                        <i class="bi bi-exclamation-triangle"></i> Manage Alerts
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Recent Events -->
+    <div class="col-md-6 mb-4">
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-clock-history"></i> Recent Events
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="placeholder-glow mb-3">
+                    <p class="placeholder col-12"></p>
+                    <p class="placeholder col-12"></p>
+                    <p class="placeholder col-12"></p>
+                    <p class="placeholder col-12"></p>
+                    <p class="placeholder col-12"></p>
+                </div>
+                <div class="text-center text-muted">
+                    <em>Event log will be available in future releases.</em>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Devices Status -->
+    <div class="col-md-6 mb-4">
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-hdd-network"></i> Devices Status
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="placeholder-glow mb-3">
+                    <p class="placeholder col-12"></p>
+                    <p class="placeholder col-12"></p>
+                    <p class="placeholder col-12"></p>
+                    <p class="placeholder col-12"></p>
+                    <p class="placeholder col-12"></p>
+                </div>
+                <div class="text-center text-muted">
+                    <em>Devices status will be available in future releases.</em>
+                </div>
+            </div>
+            <div class="card-footer text-end">
+                <a href="{% url 'network:devices' %}" class="btn btn-outline-primary btn-sm">
+                    View All Devices <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

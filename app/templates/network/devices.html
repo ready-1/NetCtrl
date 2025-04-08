@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}Network Devices{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <div class="alert alert-info">
+            <h4 class="alert-heading">Network Devices</h4>
+            <p>This is a placeholder for the network devices management page. It will be fully implemented in future phases of development.</p>
+        </div>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="#" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Add Device
+        </a>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-filter"></i> Filters
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="typeFilter" class="form-label">Device Type</label>
+                    <select class="form-select {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" id="typeFilter">
+                        <option selected>All Types</option>
+                        <option>Routers</option>
+                        <option>Switches</option>
+                        <option>Firewalls</option>
+                        <option>Servers</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="statusFilter" class="form-label">Status</label>
+                    <select class="form-select {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" id="statusFilter">
+                        <option selected>All</option>
+                        <option>Online</option>
+                        <option>Offline</option>
+                        <option>Warning</option>
+                        <option>Critical</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="locationFilter" class="form-label">Location</label>
+                    <select class="form-select {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" id="locationFilter">
+                        <option selected>All Locations</option>
+                        <option>Location placeholder</option>
+                    </select>
+                </div>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary" type="button">Apply Filters</button>
+                    <button class="btn btn-secondary" type="button">Reset</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-hdd-network"></i> Devices
+                        </h5>
+                    </div>
+                    <div class="col-auto">
+                        <div class="input-group">
+                            <input type="text" class="form-control {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" placeholder="Search devices...">
+                            <button class="btn btn-outline-secondary" type="button">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="placeholder-glow mb-4">
+                    <p class="placeholder col-12"></p>
+                    <p class="placeholder col-12"></p>
+                    <p class="placeholder col-12"></p>
+                    <p class="placeholder col-12"></p>
+                    <p class="placeholder col-12"></p>
+                </div>
+                <div class="text-center text-muted">
+                    <em>No devices found. Add a device to get started.</em>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-info-circle"></i> About Device Management
+                </h5>
+            </div>
+            <div class="card-body">
+                <p>The network device management system will support the following features:</p>
+                <ul>
+                    <li>Automated device discovery and inventory</li>
+                    <li>Device configuration management</li>
+                    <li>Real-time status monitoring</li>
+                    <li>Alert integration for device issues</li>
+                    <li>Remote device management</li>
+                    <li>Device and location tagging</li>
+                </ul>
+                <p>These features will be implemented in upcoming development phases. Currently, this page serves as a placeholder for the device management interface.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

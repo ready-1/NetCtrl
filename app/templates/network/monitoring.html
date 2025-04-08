@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block title %}Network Monitoring{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="alert alert-info">
+            <h4 class="alert-heading">Network Monitoring</h4>
+            <p>This is a placeholder for the network monitoring page. It will be fully implemented in future phases of development.</p>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6 mb-3">
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-activity"></i> Network Traffic
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="placeholder-glow mb-4" style="height: 200px;">
+                    <p class="placeholder col-12"></p>
+                    <p class="placeholder col-12"></p>
+                    <p class="placeholder col-12"></p>
+                    <p class="placeholder col-12"></p>
+                </div>
+                <div class="text-center text-muted">
+                    <em>Network traffic visualization will be available in future releases.</em>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-cpu"></i> System Resources
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="placeholder-glow mb-4" style="height: 200px;">
+                    <p class="placeholder col-12"></p>
+                    <p class="placeholder col-12"></p>
+                    <p class="placeholder col-12"></p>
+                    <p class="placeholder col-12"></p>
+                </div>
+                <div class="text-center text-muted">
+                    <em>System resource monitoring will be available in future releases.</em>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-exclamation-triangle"></i> Alerts
+                        </h5>
+                    </div>
+                    <div class="col-auto">
+                        <select class="form-select form-select-sm {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+                            <option>All Alerts</option>
+                            <option>Critical</option>
+                            <option>Warning</option>
+                            <option>Info</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="placeholder-glow mb-3">
+                    <p class="placeholder col-12"></p>
+                    <p class="placeholder col-12"></p>
+                    <p class="placeholder col-12"></p>
+                    <p class="placeholder col-12"></p>
+                    <p class="placeholder col-12"></p>
+                </div>
+                <div class="text-center text-muted">
+                    <em>Alert system will be available in future releases.</em>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-graph-up"></i> Performance Metrics
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <div class="card h-100 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+                            <div class="card-body text-center">
+                                <h2 class="text-primary">0 ms</h2>
+                                <h6>Average Latency</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card h-100 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+                            <div class="card-body text-center">
+                                <h2 class="text-success">0 Mbps</h2>
+                                <h6>Bandwidth Usage</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card h-100 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+                            <div class="card-body text-center">
+                                <h2 class="text-info">100%</h2>
+                                <h6>Uptime</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card h-100 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+                            <div class="card-body text-center">
+                                <h2 class="text-warning">0%</h2>
+                                <h6>Packet Loss</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-info-circle"></i> About Network Monitoring
+                </h5>
+            </div>
+            <div class="card-body">
+                <p>The network monitoring system will support the following features:</p>
+                <ul>
+                    <li>Real-time monitoring of network traffic and performance</li>
+                    <li>System resource utilization tracking</li>
+                    <li>Automated alerts for network issues</li>
+                    <li>Historical data analysis</li>
+                    <li>Customizable dashboards</li>
+                    <li>Reporting and export capabilities</li>
+                </ul>
+                <p>These features will be implemented in upcoming development phases. Currently, this page serves as a placeholder for the network monitoring interface.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
