@@ -1,0 +1,561 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Upload File (Debug){% endblock %}
+
+{% block extra_css %}
+<style>
+  .progress {
+    height: 20px;
+  }
+  .dropzone {
+    border: 2px dashed #ccc;
+    border-radius: 5px;
+    padding: 50px;
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+    cursor: pointer;
+  }
+  .dropzone.highlight {
+    border-color: #2196F3;
+    background-color: rgba(33, 150, 243, 0.1);
+  }
+  .file-info {
+    margin-top: 20px;
+  }
+  .error-message {
+    color: #dc3545;
+  }
+  #debug-log {
+    height: 200px;
+    overflow-y: auto;
+    font-family: monospace;
+    font-size: 12px;
+    padding: 10px;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    margin-top: 20px;
+    white-space: pre-wrap;
+  }
+  .debug-info {
+    color: #0d6efd;
+  }
+  .debug-warn {
+    color: #fd7e14;
+  }
+  .debug-error {
+    color: #dc3545;
+  }
+  .debug-section {
+    margin-top: 15px;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+  <div class="col-md-8">
+    <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+      <div class="card-header">
+        <h5 class="card-title mb-0">
+          <i class="bi bi-upload"></i> Upload File (Debug Mode)
+        </h5>
+      </div>
+      <div class="card-body">
+        <!-- Simple form with direct file input -->
+        <div class="dropzone" id="dropzone">
+          <div class="dropzone-text">
+            <i class="bi bi-cloud-upload fs-1"></i>
+            <p>Drag & drop files here or click to select files</p>
+            <p class="text-muted small">Max file size: {{ max_file_size|filesizeformat }}</p>
+          </div>
+          <input type="file" id="file-input" name="file">
+        </div>
+        
+        <div id="file-info" class="file-info" style="display: none;">
+          <div class="mb-3">
+            <label for="file-name" class="form-label">File Name</label>
+            <input type="text" class="form-control {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" 
+                   id="file-name">
+          </div>
+          
+          <div class="mb-3">
+            <label for="file-category" class="form-label">Category</label>
+            <select class="form-select {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" 
+                    id="file-category">
+              <option value="">-- Select Category --</option>
+              {% for category in categories %}
+              <option value="{{ category.id }}">{{ category.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          
+          <div class="mb-3">
+            <label for="file-tags" class="form-label">Tags</label>
+            <select class="form-select {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" 
+                    id="file-tags" multiple>
+              {% for tag in tags %}
+              <option value="{{ tag.id }}">{{ tag.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          
+          <div class="mb-3">
+            <label for="file-description" class="form-label">Description</label>
+            <textarea class="form-control {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" 
+                      id="file-description" rows="3"></textarea>
+          </div>
+        </div>
+        
+        <div id="upload-progress" class="mt-4" style="display: none;">
+          <h6><span id="progress-filename"></span></h6>
+          <div class="progress mb-2">
+            <div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated" 
+                 role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">0%</div>
+          </div>
+          <div class="d-flex justify-content-between">
+            <small id="progress-status">Preparing...</small>
+            <small id="progress-speed">0 KB/s</small>
+          </div>
+          <div class="d-flex justify-content-between">
+            <small id="progress-uploaded">0 B / 0 B</small>
+            <small id="progress-eta">--:--</small>
+          </div>
+        </div>
+        
+        <div id="error-container" class="alert alert-danger mt-3" style="display: none;">
+          <p id="error-message"></p>
+        </div>
+        
+        <div class="mt-3">
+          <div class="row">
+            <div class="col">
+              <button type="button" id="upload-button" class="btn btn-primary" disabled>
+                <i class="bi bi-upload"></i> Upload
+              </button>
+              <button type="button" id="cancel-button" class="btn btn-secondary" style="display: none;">
+                <i class="bi bi-x-circle"></i> Cancel
+              </button>
+            </div>
+            <div class="col text-end">
+              <a href="{% url 'cms:file_list' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Files
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <div id="debug-log" class="mt-4 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+          <div class="debug-info">Debug console initialized. See browser console (F12) for more details.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-4">
+    <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+      <div class="card-header">
+        <h5 class="card-title mb-0">
+          <i class="bi bi-info-circle"></i> Debugging Information
+        </h5>
+      </div>
+      <div class="card-body">
+        <h6>Browser Information:</h6>
+        <ul class="list-unstyled">
+          <li><strong>User Agent:</strong> <span id="user-agent"></span></li>
+          <li><strong>Platform:</strong> <span id="platform"></span></li>
+          <li><strong>Screen Size:</strong> <span id="screen-size"></span></li>
+        </ul>
+        
+        <h6>Server Configuration:</h6>
+        <ul class="list-unstyled">
+          <li><strong>Max File Size:</strong> {{ max_file_size|filesizeformat }}</li>
+          <li><strong>Chunk Size:</strong> {{ chunk_size|filesizeformat }}</li>
+          <li><strong>Upload URL:</strong> {% url 'cms:api_chunked_upload' %}</li>
+        </ul>
+        
+        <button type="button" id="test-connection-button" class="btn btn-sm btn-outline-primary mt-2">
+          <i class="bi bi-hdd-network"></i> Test API Connection
+        </button>
+        
+        <div id="test-result" class="mt-2" style="display: none;"></div>
+        
+        <div class="mt-3">
+          <button type="button" id="csrf-test-button" class="btn btn-sm btn-outline-primary">
+            <i class="bi bi-shield-check"></i> Test CSRF Token
+          </button>
+          <div id="csrf-test-result" class="mt-2" style="display: none;"></div>
+        </div>
+        
+        <div class="mt-3">
+          <button type="button" id="clear-log-button" class="btn btn-sm btn-outline-secondary">
+            <i class="bi bi-trash"></i> Clear Log
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/basic-uploader.js' %}"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Debug log display
+    const debugLog = document.getElementById('debug-log');
+    const originalConsoleLog = console.log;
+    const originalConsoleWarn = console.warn;
+    const originalConsoleError = console.error;
+    
+    // Override console methods to display in debug area
+    console.log = function() {
+      originalConsoleLog.apply(console, arguments);
+      const message = Array.from(arguments).join(' ');
+      addLogMessage(message, 'info');
+    };
+    
+    console.warn = function() {
+      originalConsoleWarn.apply(console, arguments);
+      const message = Array.from(arguments).join(' ');
+      addLogMessage(message, 'warn');
+    };
+    
+    console.error = function() {
+      originalConsoleError.apply(console, arguments);
+      const message = Array.from(arguments).join(' ');
+      addLogMessage(message, 'error');
+    };
+    
+    function addLogMessage(message, type) {
+      const div = document.createElement('div');
+      div.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+      div.className = `debug-${type}`;
+      debugLog.appendChild(div);
+      debugLog.scrollTop = debugLog.scrollHeight;
+    }
+    
+    // Clear log button
+    document.getElementById('clear-log-button').addEventListener('click', function() {
+      while (debugLog.firstChild) {
+        debugLog.removeChild(debugLog.firstChild);
+      }
+      addLogMessage('Log cleared', 'info');
+    });
+    
+    // Display browser info
+    document.getElementById('user-agent').textContent = navigator.userAgent;
+    document.getElementById('platform').textContent = navigator.platform;
+    document.getElementById('screen-size').textContent = `${window.innerWidth}x${window.innerHeight}`;
+    
+    // Test API connection
+    document.getElementById('test-connection-button').addEventListener('click', function() {
+      const testResult = document.getElementById('test-result');
+      testResult.style.display = 'block';
+      testResult.innerHTML = '<div class="spinner-border spinner-border-sm" role="status"></div> Testing connection...';
+      
+      fetch('{% url "cms:api_chunked_upload" %}', {
+        method: 'OPTIONS',
+        headers: {
+          'X-CSRFToken': '{{ csrf_token }}'
+        }
+      })
+        .then(response => {
+          if (response.ok) {
+            testResult.innerHTML = '<div class="alert alert-success">Connection successful</div>';
+            console.log('API connection test successful');
+          } else {
+            testResult.innerHTML = `<div class="alert alert-danger">Connection failed: ${response.status} ${response.statusText}</div>`;
+            console.error('API connection test failed:', response.status, response.statusText);
+          }
+        })
+        .catch(error => {
+          testResult.innerHTML = `<div class="alert alert-danger">Connection error: ${error.message}</div>`;
+          console.error('API connection test error:', error);
+        });
+    });
+    
+    // Test CSRF token
+    document.getElementById('csrf-test-button').addEventListener('click', function() {
+      const csrfTestResult = document.getElementById('csrf-test-result');
+      csrfTestResult.style.display = 'block';
+      csrfTestResult.innerHTML = '<div class="spinner-border spinner-border-sm" role="status"></div> Testing CSRF token...';
+      
+      // Get the CSRF token
+      const csrfToken = '{{ csrf_token }}';
+      console.log('CSRF Token value:', csrfToken);
+      
+      // Create a simple POST request with the CSRF token
+      fetch('{% url "cms:api_chunked_upload" %}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({ test: true })
+      })
+        .then(response => {
+          console.log('CSRF test response status:', response.status);
+          
+          return response.text().then(text => {
+            try {
+              // Try to parse as JSON
+              const data = JSON.parse(text);
+              return { status: response.status, data, text };
+            } catch (e) {
+              // Return as text if not JSON
+              return { status: response.status, text };
+            }
+          });
+        })
+        .then(result => {
+          if (result.status === 400) {
+            // 400 is actually expected here since we're not sending a valid file
+            // But we want to check if it's a CSRF error or something else
+            let errorDetail = '';
+            
+            if (result.data && result.data.detail) {
+              errorDetail = result.data.detail;
+            } else if (result.text) {
+              errorDetail = result.text;
+            }
+            
+            if (errorDetail.includes('CSRF')) {
+              csrfTestResult.innerHTML = `<div class="alert alert-danger">CSRF Test Failed: ${errorDetail}</div>`;
+            } else {
+              csrfTestResult.innerHTML = '<div class="alert alert-success">CSRF Test Passed (400 response as expected for invalid file, but CSRF validation passed)</div>';
+            }
+            
+            console.log('CSRF test response:', result);
+          } else {
+            csrfTestResult.innerHTML = `<div class="alert alert-warning">Unexpected response: ${result.status}</div>`;
+            console.warn('Unexpected CSRF test response:', result);
+          }
+        })
+        .catch(error => {
+          csrfTestResult.innerHTML = `<div class="alert alert-danger">CSRF Test Error: ${error.message}</div>`;
+          console.error('CSRF test error:', error);
+        });
+    });
+    
+    // Handle upload button click
+    document.getElementById('upload-button').addEventListener('click', function() {
+      const fileInput = document.getElementById('file-input');
+      if (!fileInput.files || fileInput.files.length === 0) {
+        console.error('No file selected');
+        return;
+      }
+      
+      const file = fileInput.files[0];
+      console.log('Starting upload for file:', file.name, file.size, 'bytes');
+      
+      // Create FormData
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('filename', file.name);
+      formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+      
+      // Add metadata
+      const name = document.getElementById('file-name').value;
+      if (name) {
+        formData.append('name', name);
+      }
+      
+      const category = document.getElementById('file-category').value;
+      if (category) {
+        formData.append('category_id', category);
+      }
+      
+      const description = document.getElementById('file-description').value;
+      if (description) {
+        formData.append('description', description);
+      }
+      
+      // Log FormData entries
+      console.log('Form data entries:');
+      for (let pair of formData.entries()) {
+        console.log(pair[0], pair[1]);
+      }
+      
+      // Start upload
+      document.getElementById('progress-filename').textContent = file.name;
+      document.getElementById('upload-progress').style.display = 'block';
+      document.getElementById('cancel-button').style.display = 'inline-block';
+      document.getElementById('upload-button').disabled = true;
+      
+      // Display a message about trying a direct approach instead of chunked
+      console.log('Trying direct file upload to file_upload_debug endpoint');
+      
+      // Use the debug view's POST handler instead of the API
+      fetch(window.location.href, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'X-CSRFToken': '{{ csrf_token }}'
+        }
+      })
+        .then(response => {
+          console.log('Upload response status:', response.status);
+          
+          // Get both the response object and text content
+          return response.text().then(text => {
+            try {
+              // Try to parse as JSON
+              const data = JSON.parse(text);
+              return { ok: response.ok, status: response.status, data, text };
+            } catch (e) {
+              // Return as text if not JSON
+              return { ok: response.ok, status: response.status, text };
+            }
+          });
+        })
+        .then(result => {
+          console.log('Upload response:', result);
+          
+          if (result.ok) {
+            document.getElementById('progress-bar').style.width = '100%';
+            document.getElementById('progress-bar').textContent = '100%';
+            document.getElementById('progress-status').textContent = 'Upload complete!';
+            
+            // Check if we received a redirect - this indicates a successful direct upload
+          if (result.status === 302 || (result.text && result.text.includes('Redirecting'))) {
+            // Direct upload successful - file is already saved
+            document.getElementById('progress-status').textContent = 'File saved successfully!';
+            
+            // Extract the redirect URL from the response if possible
+            let redirectUrl = '';
+            if (result.text && result.text.includes('href=')) {
+              const match = result.text.match(/href=['"]([^'"]+)['"]/);
+              if (match && match[1]) {
+                redirectUrl = match[1];
+              }
+            }
+            
+            // Redirect to the file detail page or file list
+            setTimeout(() => {
+              window.location.href = redirectUrl || '{% url "cms:file_list" %}';
+            }, 1000);
+          } else if (result.data && result.data.upload_id) {
+            // This is a chunked upload response, proceed with completion
+            completeUpload(result.data.upload_id, file.name);
+          } else {
+            // No upload ID found, but successful response
+            document.getElementById('progress-status').textContent = 'Upload completed!';
+            setTimeout(() => {
+              window.location.href = '{% url "cms:file_list" %}';
+            }, 1000);
+          }
+          } else {
+            // Handle error response
+            let errorMessage = `Server responded with status ${result.status}`;
+            
+            if (result.data && result.data.message) {
+              errorMessage += `: ${result.data.message}`;
+            } else if (result.text) {
+              errorMessage += `: ${result.text}`;
+            }
+            
+            throw new Error(errorMessage);
+          }
+        })
+        .catch(error => {
+          console.error('Upload error:', error);
+          document.getElementById('error-message').textContent = error.message;
+          document.getElementById('error-container').style.display = 'block';
+          document.getElementById('upload-button').disabled = false;
+          document.getElementById('cancel-button').style.display = 'none';
+        });
+    });
+    
+    function completeUpload(uploadId, filename) {
+      console.log('Completing upload:', uploadId);
+      
+      const formData = new FormData();
+      formData.append('upload_id', uploadId);
+      formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+      formData.append('name', document.getElementById('file-name').value || filename);
+      
+      // Log FormData entries for complete request
+      console.log('Complete request form data entries:');
+      for (let pair of formData.entries()) {
+        console.log(pair[0], pair[1]);
+      }
+      
+      fetch('{% url "cms:api_chunked_upload_complete" %}', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'X-CSRFToken': '{{ csrf_token }}'
+        }
+      })
+        .then(response => {
+          console.log('Completion response status:', response.status);
+          
+          return response.text().then(text => {
+            try {
+              // Try to parse as JSON
+              const data = JSON.parse(text);
+              return { ok: response.ok, status: response.status, data, text };
+            } catch (e) {
+              // Return as text if not JSON
+              return { ok: response.ok, status: response.status, text };
+            }
+          });
+        })
+        .then(result => {
+          console.log('Completion response:', result);
+          
+          if (result.ok && result.data && result.data.success) {
+            document.getElementById('progress-status').textContent = 'File saved successfully!';
+            
+            // Redirect to file detail page after a short delay
+            if (result.data.redirect_url) {
+              setTimeout(() => {
+                window.location.href = result.data.redirect_url;
+              }, 1000);
+            }
+          } else {
+            // Handle error response
+            let errorMessage = 'Failed to complete upload';
+            
+            if (result.data && result.data.message) {
+              errorMessage += `: ${result.data.message}`;
+            } else if (result.text) {
+              errorMessage += `: ${result.text}`;
+            }
+            
+            throw new Error(errorMessage);
+          }
+        })
+        .catch(error => {
+          console.error('Upload completion error:', error);
+          document.getElementById('error-message').textContent = error.message;
+          document.getElementById('error-container').style.display = 'block';
+          document.getElementById('upload-button').disabled = false;
+          document.getElementById('cancel-button').style.display = 'none';
+        });
+    }
+    
+    // Cancel button
+    document.getElementById('cancel-button').addEventListener('click', function() {
+      console.log('Upload cancelled by user');
+      document.getElementById('upload-button').disabled = false;
+      document.getElementById('cancel-button').style.display = 'none';
+      document.getElementById('upload-progress').style.display = 'none';
+    });
+    
+    // Log initialization
+    console.log('Debug page initialized');
+    console.log('CSRF Token:', '{{ csrf_token }}');
+    
+    // Add a section marker to the log
+    const sectionDiv = document.createElement('div');
+    sectionDiv.className = 'debug-section';
+    sectionDiv.textContent = '--- Debug Session Started ---';
+    debugLog.appendChild(sectionDiv);
+  });
+</script>
+{% endblock %}

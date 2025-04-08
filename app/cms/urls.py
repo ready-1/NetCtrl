@@ -17,44 +17,58 @@ from . import views
 
 app_name = 'cms'
 
-# URLs for the chunked upload functionality - will implement in the next phase
-chunked_upload_urls = [
-    # Custom URLs for chunked upload will be defined here
-    path('chunked_upload/', TemplateView.as_view(
-        template_name='cms/placeholder.html',
-        extra_context={'title': 'File Upload'}
-    ), name='chunked_upload'),
+# File upload URLs
+file_upload_urls = [
+    # Upload form views - advanced, simple, and debug
+    path('new/', views.uploads.FileUploadView.as_view(), name='file_upload'),
+    path('simple/', views.uploads.SimpleFileUploadView.as_view(), name='file_upload_simple'),
+    path('debug/', views.uploads.FileUploadDebugView.as_view(), name='file_upload_debug'),
+    
+    # API endpoints for chunked upload
+    path('api/chunked_upload/', views.uploads.FileChunkedUploadView.as_view(), 
+         name='api_chunked_upload'),
+    path('api/chunked_upload_complete/', views.uploads.FileChunkedUploadCompleteView.as_view(), 
+         name='api_chunked_upload_complete'),
+]
+
+# File management URLs
+file_urls = [
+    # File list with search and filtering
+    path('', views.files.FileListView.as_view(), name='file_list'),
+    
+    # File detail, download, edit and delete
+    path('<uuid:uuid>/', views.files.FileDetailView.as_view(), name='file_detail'),
+    path('<uuid:uuid>/download/', views.files.FileDownloadView.as_view(), name='file_download'),
+    path('<uuid:uuid>/edit/', views.files.FileEditView.as_view(), name='file_edit'),
+    path('<uuid:uuid>/delete/', views.files.FileDeleteView.as_view(), name='file_delete'),
+    
+    # File upload (includes chunked upload)
+    path('upload/', include(file_upload_urls)),
 ]
 
 urlpatterns = [
-    # Dashboard (temporary placeholder views)
+    # Dashboard view
     path('dashboard/', login_required(TemplateView.as_view(
         template_name='cms/dashboard.html',
         extra_context={'title': 'Dashboard'}
     )), name='dashboard'),
     
-    # Placeholder for document URLs (will be implemented in next phase)
+    # Document URLs (will be implemented in next phase)
     path('documents/', login_required(TemplateView.as_view(
         template_name='cms/document_list.html',
         extra_context={'title': 'Documents'}
     )), name='document_list'),
     
-    # Placeholder for file management URLs (will be implemented in next phase)
-    path('files/', login_required(TemplateView.as_view(
-        template_name='cms/file_list.html',
-        extra_context={'title': 'Files'}
-    )), name='file_list'),
+    # File management URLs
+    path('files/', include(file_urls)),
     
-    # Placeholder for user profile URLs (will be implemented in next phase)
+    # User profile (will be implemented in next phase)
     path('profile/', login_required(TemplateView.as_view(
         template_name='cms/profile.html',
         extra_context={'title': 'User Profile'}
     )), name='user_profile'),
     
-    # Chunked upload URLs
-    path('uploads/', include(chunked_upload_urls)),
-    
-    # Landing page (will redirect to dashboard if logged in)
+    # Landing page
     path('', TemplateView.as_view(
         template_name='cms/landing.html',
         extra_context={'title': 'Welcome to NetCtrl CMS'}

@@ -1,0 +1,406 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Upload File{% endblock %}
+
+{% block extra_css %}
+<style>
+  .progress {
+    height: 20px;
+  }
+  .progress {
+    height: 20px;
+  }
+  .dropzone {
+    border: 2px dashed #ccc;
+    border-radius: 5px;
+    padding: 50px;
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+    cursor: pointer;
+  }
+  .dropzone.highlight {
+    border-color: #2196F3;
+    background-color: rgba(33, 150, 243, 0.1);
+  }
+  .file-info {
+    margin-top: 20px;
+  }
+  .error-message {
+    color: #dc3545;
+  }
+  /* Improved styling for file input */
+  .dropzone input[type="file"] {
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    z-index: 10;
+  }
+  /* Style the upload button */
+  .upload-btn {
+    transition: all 0.3s ease;
+  }
+  .upload-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+  <div class="col-md-8">
+    <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+      <div class="card-header">
+        <h5 class="card-title mb-0">
+          <i class="bi bi-upload"></i> Upload File
+        </h5>
+      </div>
+      <div class="card-body">
+        <!-- Form with file input -->
+        <form id="upload-form" enctype="multipart/form-data" method="post" action="{% url 'cms:file_upload_simple' %}">
+          {% csrf_token %}
+          <div class="dropzone" id="dropzone">
+            <div class="dropzone-text">
+              <i class="bi bi-cloud-upload fs-1"></i>
+              <p>Drag & drop a file here or click to select a file (one at a time)</p>
+              <p class="text-muted small">Max file size: {{ max_file_size|filesizeformat }}</p>
+            </div>
+            <input type="file" id="file-input" name="file">
+          </div>
+        
+        <div id="file-info" class="file-info" style="display: none;">
+          <div class="mb-3">
+            <label for="file-name" class="form-label">File Name</label>
+            <input type="text" class="form-control {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" 
+                   id="file-name">
+          </div>
+          
+          <div class="mb-3">
+            <label for="file-category" class="form-label">Category</label>
+            <select class="form-select {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" 
+                    id="file-category">
+              <option value="">-- Select Category --</option>
+              {% for category in categories %}
+              <option value="{{ category.id }}">{{ category.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          
+          <div class="mb-3">
+            <label for="file-tags" class="form-label">Tags</label>
+            <select class="form-select {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" 
+                    id="file-tags" multiple>
+              {% for tag in tags %}
+              <option value="{{ tag.id }}">{{ tag.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          
+          <div class="mb-3">
+            <label for="file-description" class="form-label">Description</label>
+            <textarea class="form-control {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" 
+                      id="file-description" rows="3"></textarea>
+          </div>
+        </div>
+        
+        <div id="upload-progress" class="mt-4" style="display: none;">
+          <h6><span id="progress-filename"></span></h6>
+          <div class="progress mb-2">
+            <div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated" 
+                 role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">0%</div>
+          </div>
+          <div class="d-flex justify-content-between">
+            <small id="progress-status">Preparing...</small>
+            <small id="progress-speed">0 KB/s</small>
+          </div>
+          <div class="d-flex justify-content-between">
+            <small id="progress-uploaded">0 B / 0 B</small>
+            <small id="progress-eta">--:--</small>
+          </div>
+        </div>
+        
+        <div id="error-container" class="alert alert-danger mt-3" style="display: none;">
+          <p id="error-message"></p>
+        </div>
+        
+        <div class="mt-3 text-end">
+          <button type="button" id="cancel-button" class="btn btn-secondary" style="display: none;">
+            <i class="bi bi-x-circle"></i> Cancel
+          </button>
+          <button type="button" id="upload-button" class="btn btn-primary upload-btn" disabled>
+            <i class="bi bi-upload"></i> Upload
+          </button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-4">
+    <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+      <div class="card-header">
+        <h5 class="card-title mb-0">
+          <i class="bi bi-info-circle"></i> About File Uploads
+        </h5>
+      </div>
+      <div class="card-body">
+        <p>The system supports uploading files up to <strong>5GB</strong> in size.</p>
+        <h6>Features:</h6>
+        <ul>
+          <li>Chunked uploads for large files</li>
+          <li>Progress tracking</li>
+          <li>Pause and resume capability</li>
+          <li>Automatic file type detection</li>
+          <li>Metadata extraction</li>
+        </ul>
+        <p><strong>Supported file types:</strong> All file types are supported.</p>
+        <p><small>Files are uploaded in chunks to ensure reliable transfers of large files.</small></p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM content loaded - initializing uploader');
+    
+    // Debug log
+    const logEvent = (message) => {
+      console.log(`[Uploader] ${message}`);
+    };
+    
+    // Prevent browser from opening the file when dropped outside of dropzone
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      document.addEventListener(eventName, function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }, false);
+    });
+    
+    // Highlight dropzone when dragging over it
+    const dropzone = document.getElementById('dropzone');
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropzone.addEventListener(eventName, function() {
+        dropzone.classList.add('highlight');
+        logEvent(`Dropzone ${eventName} event handled`);
+      }, false);
+    });
+    
+    // Remove highlight when leaving dropzone
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropzone.addEventListener(eventName, function() {
+        dropzone.classList.remove('highlight');
+        logEvent(`Dropzone ${eventName} event handled`);
+      }, false);
+    });
+    
+    // Setup file input change event
+    const fileInput = document.getElementById('file-input');
+    const fileInfoElement = document.getElementById('file-info');
+    const fileNameInput = document.getElementById('file-name');
+    const uploadButton = document.getElementById('upload-button');
+    const cancelButton = document.getElementById('cancel-button');
+    const progressElement = document.getElementById('upload-progress');
+    const progressBar = document.getElementById('progress-bar');
+    const progressFilename = document.getElementById('progress-filename');
+    const progressStatus = document.getElementById('progress-status');
+    const progressSpeed = document.getElementById('progress-speed');
+    const progressUploaded = document.getElementById('progress-uploaded');
+    const progressEta = document.getElementById('progress-eta');
+    const errorContainer = document.getElementById('error-container');
+    const errorMessage = document.getElementById('error-message');
+    
+    fileInput.addEventListener('change', function(event) {
+      logEvent('File input change event triggered');
+      
+      if (event.target.files && event.target.files.length > 0) {
+        const file = event.target.files[0];
+        logEvent(`File selected: ${file.name} (${file.size} bytes)`);
+        
+        // Enable UI elements
+        fileNameInput.value = file.name;
+        fileInfoElement.style.display = 'block';
+        uploadButton.disabled = false;
+      }
+    });
+    
+    // Format bytes to human-readable form
+    function formatBytes(bytes, decimals = 2) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const dm = decimals < 0 ? 0 : decimals;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    }
+    
+    // Format time in seconds to MM:SS
+    function formatTime(seconds) {
+      seconds = Math.round(seconds);
+      const minutes = Math.floor(seconds / 60);
+      seconds = seconds % 60;
+      return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+    
+    // Update progress bar
+    function updateProgressBar(percent) {
+      progressBar.style.width = `${percent}%`;
+      progressBar.setAttribute('aria-valuenow', percent);
+      progressBar.textContent = `${percent}%`;
+      
+      if (percent >= 100) {
+        progressBar.classList.remove('progress-bar-striped', 'progress-bar-animated');
+        progressBar.classList.add('bg-success');
+      } else {
+        progressBar.classList.add('progress-bar-striped', 'progress-bar-animated');
+        progressBar.classList.remove('bg-success');
+      }
+    }
+    
+    // Show error message
+    function showError(message) {
+      errorMessage.textContent = message;
+      errorContainer.style.display = 'block';
+      console.error('Upload error:', message);
+    }
+    
+    // Add file selection event with more verbose logging
+    fileInput.addEventListener('change', function(event) {
+      logEvent('File input change event triggered');
+      
+      // Clear any previous errors
+      errorContainer.style.display = 'none';
+      
+      if (event.target.files && event.target.files.length > 0) {
+        const file = event.target.files[0];
+        logEvent(`File selected: ${file.name} (${file.size} bytes)`);
+        
+        // Check file size immediately
+        if (file.size > {{ max_file_size }}) {
+          showError(`File size exceeds the maximum allowed size of ${formatBytes({{ max_file_size }})}.`);
+          fileInput.value = ''; // Clear the file input
+          return;
+        }
+        
+        // Enable UI elements
+        fileNameInput.value = file.name;
+        fileInfoElement.style.display = 'block';
+        uploadButton.disabled = false;
+        
+        logEvent('File input form elements updated and ready for upload');
+      }
+    });
+    
+        // Add upload button handler
+    uploadButton.addEventListener('click', function() {
+      logEvent('Upload button clicked');
+      
+      if (fileInput.files && fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+        logEvent(`Selected file: ${file.name} (${formatBytes(file.size)})`);
+        
+        // Check file size
+        if (file.size > {{ max_file_size }}) {
+          showError(`File size exceeds the maximum allowed size of ${formatBytes({{ max_file_size }})}.`);
+          return;
+        }
+        
+        // Show progress status
+        progressFilename.textContent = file.name;
+        progressElement.style.display = 'block';
+        progressStatus.textContent = 'Preparing submission...';
+        updateProgressBar(50);
+        
+        // Get selected tags and convert to a format the server expects
+        const tagsSelect = document.getElementById('file-tags');
+        const selectedTags = Array.from(tagsSelect.selectedOptions).map(option => option.value);
+        
+        // Add hidden inputs for form submission
+        const form = document.getElementById('upload-form');
+        
+        // Add name if user modified it
+        if (fileNameInput.value && fileNameInput.value !== file.name) {
+          let nameInput = document.createElement('input');
+          nameInput.type = 'hidden';
+          nameInput.name = 'name';
+          nameInput.value = fileNameInput.value;
+          form.appendChild(nameInput);
+        }
+        
+        // Add category if selected
+        const category = document.getElementById('file-category').value;
+        if (category) {
+          let categoryInput = document.createElement('input');
+          categoryInput.type = 'hidden';
+          categoryInput.name = 'category_id';
+          categoryInput.value = category;
+          form.appendChild(categoryInput);
+        }
+        
+        // Add description if provided
+        const description = document.getElementById('file-description').value;
+        if (description) {
+          let descInput = document.createElement('input');
+          descInput.type = 'hidden';
+          descInput.name = 'description';
+          descInput.value = description;
+          form.appendChild(descInput);
+        }
+        
+        // Add selected tags
+        if (selectedTags.length > 0) {
+          selectedTags.forEach(tagId => {
+            let tagInput = document.createElement('input');
+            tagInput.type = 'hidden';
+            tagInput.name = 'tags';
+            tagInput.value = tagId;
+            form.appendChild(tagInput);
+          });
+        }
+        
+        // Submit the form directly - using the simple upload method
+        logEvent('Submitting form to simple upload handler');
+        progressStatus.textContent = 'Uploading file...';
+        form.submit();
+      } else {
+        showError('Please select a file to upload.');
+      }
+    });
+    
+    // Make the whole dropzone clickable
+    dropzone.addEventListener('click', function(e) {
+      logEvent('Dropzone clicked');
+      
+      // Only trigger file input click if not clicking on the file input itself
+      if (e.target !== fileInput) {
+        e.preventDefault();
+        fileInput.click();
+      }
+    });
+    
+    // Cancel button handler
+    cancelButton.addEventListener('click', function() {
+      logEvent('Upload cancelled');
+      progressElement.style.display = 'none';
+      cancelButton.style.display = 'none';
+      uploadButton.disabled = false;
+    });
+    
+    // Global error handler
+    window.addEventListener('error', function(e) {
+      console.error('Global error:', e.error || e.message);
+      showError('An error occurred: ' + (e.error ? e.error.message : e.message));
+    });
+    
+    logEvent('Upload page initialized successfully');
+  });
+</script>
+{% endblock %}

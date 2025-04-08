@@ -1,120 +1,219 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Files{% endblock %}
 
+{% block extra_css %}
+<style>
+  .filter-card {
+    margin-bottom: 20px;
+  }
+  .file-card {
+    height: 100%;
+    transition: transform 0.2s;
+  }
+  .file-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  }
+  .file-icon {
+    font-size: 2rem;
+    margin-bottom: 10px;
+  }
+  .file-info {
+    font-size: 0.9rem;
+  }
+  .file-description {
+    min-height: 45px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="row mb-4">
-    <div class="col-md-8">
-        <div class="alert alert-info">
-            <h4 class="alert-heading">File Management</h4>
-            <p>This is a placeholder for the file management page. It will be fully implemented in the next phase of development.</p>
-        </div>
+  <div class="col-md-9">
+    <h2 class="mb-4">Files</h2>
+  </div>
+  <div class="col-md-3 text-end">
+    <div class="dropdown">
+      <button class="btn btn-primary dropdown-toggle" type="button" id="uploadDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="bi bi-upload"></i> Upload File
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="uploadDropdown">
+        <li><a class="dropdown-item" href="{% url 'cms:file_upload' %}">Advanced Upload (for large files)</a></li>
+        <li><a class="dropdown-item" href="{% url 'cms:file_upload_simple' %}">Simple Upload</a></li>
+      </ul>
     </div>
-    <div class="col-md-4 text-end">
-        <a href="#" class="btn btn-success">
-            <i class="bi bi-upload"></i> Upload File
-        </a>
-    </div>
+  </div>
 </div>
 
-<div class="row mb-4">
-    <div class="col-md-4">
-        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="bi bi-filter"></i> Filters
-                </h5>
+<!-- Filters -->
+<div class="row">
+  <div class="col-md-12">
+    <div class="card filter-card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+      <div class="card-body">
+        <form method="get" class="row g-3">
+          <div class="col-md-4">
+            <label for="category" class="form-label">Category</label>
+            <select name="category_id" id="category" class="form-select {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+              <option value="">All Categories</option>
+              {% for category in categories %}
+              <option value="{{ category.id }}" {% if category_id == category.id|stringformat:"i" %}selected{% endif %}>
+                {{ category.name }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label for="tag" class="form-label">Tag</label>
+            <select name="tag_id" id="tag" class="form-select {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+              <option value="">All Tags</option>
+              {% for tag in tags %}
+              <option value="{{ tag.id }}" {% if tag_id == tag.id|stringformat:"i" %}selected{% endif %}>
+                {{ tag.name }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label for="search" class="form-label">Search</label>
+            <div class="input-group">
+              <input type="text" name="q" id="search" class="form-control {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" 
+                     placeholder="Search files..." value="{{ query }}">
+              <button type="submit" class="btn btn-primary">
+                <i class="bi bi-search"></i>
+              </button>
             </div>
-            <div class="card-body">
-                <div class="mb-3">
-                    <label for="categoryFilter" class="form-label">Category</label>
-                    <select class="form-select {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" id="categoryFilter">
-                        <option selected>All Categories</option>
-                        <option>Category placeholder</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="tagFilter" class="form-label">Tag</label>
-                    <select class="form-select {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" id="tagFilter">
-                        <option selected>All Tags</option>
-                        <option>Tag placeholder</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="typeFilter" class="form-label">File Type</label>
-                    <select class="form-select {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" id="typeFilter">
-                        <option selected>All Types</option>
-                        <option>Images</option>
-                        <option>Documents</option>
-                        <option>Videos</option>
-                        <option>Audio</option>
-                        <option>Other</option>
-                    </select>
-                </div>
-                <div class="d-grid gap-2">
-                    <button class="btn btn-primary" type="button">Apply Filters</button>
-                    <button class="btn btn-secondary" type="button">Reset</button>
-                </div>
-            </div>
-        </div>
+          </div>
+        </form>
+      </div>
     </div>
+  </div>
+</div>
+
+<!-- Files Grid -->
+<div class="row mt-4">
+  {% if files %}
+    {% for file in files %}
+    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+      <div class="card file-card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+        <div class="card-body text-center">
+          <div class="file-icon">
+            <i class="{{ file.get_icon_class }}"></i>
+          </div>
+          <h5 class="card-title text-truncate">{{ file.name }}</h5>
+          <div class="file-description text-muted mb-3">
+            {% if file.description %}
+              {{ file.description }}
+            {% else %}
+              <span class="text-muted">No description</span>
+            {% endif %}
+          </div>
+          <div class="file-info mb-3">
+            <small class="d-block">{{ file.file_size|filesizeformat }}</small>
+            <small class="d-block">{{ file.uploaded_at|date:"M d, Y" }}</small>
+          </div>
+          <div class="d-grid gap-2">
+            <a href="{% url 'cms:file_detail' uuid=file.uuid %}" class="btn btn-primary btn-sm">
+              <i class="bi bi-info-circle"></i> Details
+            </a>
+            <a href="{% url 'cms:file_download' uuid=file.uuid %}" class="btn btn-success btn-sm">
+              <i class="bi bi-download"></i> Download
+            </a>
+          </div>
+        </div>
+        {% if file.category or file.tags.all %}
+        <div class="card-footer text-center {% if user.profile.dark_mode %}bg-dark border-secondary{% endif %}">
+          {% if file.category %}
+          <span class="badge bg-secondary">{{ file.category.name }}</span>
+          {% endif %}
+          {% for tag in file.tags.all %}
+          <span class="badge bg-primary">{{ tag.name }}</span>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  {% else %}
+    <div class="col-12 text-center py-5">
+      <div class="display-1 text-muted mb-4">
+        <i class="bi bi-file-earmark-x"></i>
+      </div>
+      <h3>No files found</h3>
+      <p class="text-muted">
+        {% if query or category_id or tag_id %}
+          No files match your filter criteria. <a href="{% url 'cms:file_list' %}">Clear filters</a>
+        {% else %}
+          There are no files in the system yet. 
+          <a href="{% url 'cms:file_upload' %}">Upload your first file</a>
+        {% endif %}
+      </p>
+    </div>
+  {% endif %}
+</div>
+
+<!-- Pagination -->
+{% if is_paginated %}
+<nav aria-label="Page navigation" class="mt-4">
+  <ul class="pagination justify-content-center">
+    {% if page_obj.has_previous %}
+    <li class="page-item">
+      <a class="page-link {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" 
+         href="?page=1{% if query %}&q={{ query }}{% endif %}{% if category_id %}&category_id={{ category_id }}{% endif %}{% if tag_id %}&tag_id={{ tag_id }}{% endif %}" 
+         aria-label="First">
+        <span aria-hidden="true">&laquo;&laquo;</span>
+      </a>
+    </li>
+    <li class="page-item">
+      <a class="page-link {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" 
+         href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if category_id %}&category_id={{ category_id }}{% endif %}{% if tag_id %}&tag_id={{ tag_id }}{% endif %}" 
+         aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+      </a>
+    </li>
+    {% endif %}
     
-    <div class="col-md-8">
-        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
-            <div class="card-header">
-                <div class="row align-items-center">
-                    <div class="col">
-                        <h5 class="card-title mb-0">
-                            <i class="bi bi-files"></i> Files
-                        </h5>
-                    </div>
-                    <div class="col-auto">
-                        <div class="input-group">
-                            <input type="text" class="form-control {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" placeholder="Search files...">
-                            <button class="btn btn-outline-secondary" type="button">
-                                <i class="bi bi-search"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="placeholder-glow mb-4">
-                    <p class="placeholder col-12"></p>
-                    <p class="placeholder col-12"></p>
-                    <p class="placeholder col-12"></p>
-                    <p class="placeholder col-12"></p>
-                    <p class="placeholder col-12"></p>
-                </div>
-                <div class="text-center text-muted">
-                    <em>No files found. Upload a file to get started.</em>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="bi bi-info-circle"></i> About File Management
-                </h5>
-            </div>
-            <div class="card-body">
-                <p>The file management system in NetCtrl CMS supports the following features:</p>
-                <ul>
-                    <li>Upload files of any type up to 5GB in size</li>
-                    <li>Chunked upload for large files with progress tracking</li>
-                    <li>Automatic file type detection</li>
-                    <li>File categorization and tagging</li>
-                    <li>Search by name, type, category, or content (for supported file types)</li>
-                    <li>Download tracking and statistics</li>
-                </ul>
-                <p>These features will be implemented in upcoming development phases. Currently, this page serves as a placeholder for the file management interface.</p>
-            </div>
-        </div>
-    </div>
-</div>
+    {% for num in page_obj.paginator.page_range %}
+      {% if page_obj.number == num %}
+        <li class="page-item active">
+          <span class="page-link {% if not user.profile.dark_mode %}bg-primary{% else %}bg-primary text-light{% endif %}">
+            {{ num }}
+            <span class="sr-only">(current)</span>
+          </span>
+        </li>
+      {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+        <li class="page-item">
+          <a class="page-link {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" 
+             href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}{% if category_id %}&category_id={{ category_id }}{% endif %}{% if tag_id %}&tag_id={{ tag_id }}{% endif %}">
+            {{ num }}
+          </a>
+        </li>
+      {% endif %}
+    {% endfor %}
+    
+    {% if page_obj.has_next %}
+    <li class="page-item">
+      <a class="page-link {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" 
+         href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if category_id %}&category_id={{ category_id }}{% endif %}{% if tag_id %}&tag_id={{ tag_id }}{% endif %}" 
+         aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+      </a>
+    </li>
+    <li class="page-item">
+      <a class="page-link {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" 
+         href="?page={{ page_obj.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}{% if category_id %}&category_id={{ category_id }}{% endif %}{% if tag_id %}&tag_id={{ tag_id }}{% endif %}" 
+         aria-label="Last">
+        <span aria-hidden="true">&raquo;&raquo;</span>
+      </a>
+    </li>
+    {% endif %}
+  </ul>
+</nav>
+{% endif %}
 {% endblock %}

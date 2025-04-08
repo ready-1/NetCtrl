@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Upload File - Simple{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+  <div class="col-md-8">
+    <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+      <div class="card-header">
+        <h5 class="card-title mb-0">
+          <i class="bi bi-upload"></i> Upload File (Simplified Version)
+        </h5>
+      </div>
+      <div class="card-body">
+        <!-- Simple form with direct file input -->
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          
+          <div class="mb-3">
+            <label for="file" class="form-label">Select File (one at a time)</label>
+            <input type="file" class="form-control {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" 
+                   id="file" name="file" required>
+            <div class="form-text">Maximum file size: {{ max_file_size|filesizeformat }} | Files can only be uploaded one at a time</div>
+          </div>
+          
+          <div class="mb-3">
+            <label for="name" class="form-label">File Name</label>
+            <input type="text" class="form-control {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" 
+                   id="name" name="name">
+            <div class="form-text">Leave blank to use original filename</div>
+          </div>
+          
+          <div class="mb-3">
+            <label for="category" class="form-label">Category</label>
+            <select class="form-select {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" 
+                    id="category" name="category_id">
+              <option value="">-- Select Category --</option>
+              {% for category in categories %}
+              <option value="{{ category.id }}">{{ category.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          
+          <div class="mb-3">
+            <label for="tags" class="form-label">Tags</label>
+            <select class="form-select {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" 
+                    id="tags" name="tags" multiple>
+              {% for tag in tags %}
+              <option value="{{ tag.id }}">{{ tag.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          
+          <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea class="form-control {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" 
+                      id="description" name="description" rows="3"></textarea>
+          </div>
+          
+          <div class="text-end">
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-upload"></i> Upload
+            </button>
+          </div>
+        </form>
+        
+        {% if error %}
+        <div class="alert alert-danger mt-3">
+          {{ error }}
+        </div>
+        {% endif %}
+        
+        {% if success %}
+        <div class="alert alert-success mt-3">
+          {{ success }}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-4">
+    <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+      <div class="card-header">
+        <h5 class="card-title mb-0">
+          <i class="bi bi-info-circle"></i> About Simple File Upload
+        </h5>
+      </div>
+      <div class="card-body">
+        <p>This is a simplified version of the file upload system.</p>
+        <p>For files larger than 100MB, use the <a href="{% url 'cms:file_upload' %}">chunked uploader</a> instead.</p>
+        
+        <h6>Features:</h6>
+        <ul>
+          <li>Simple one-step upload</li>
+          <li>File metadata support</li>
+          <li>Automatic file type detection</li>
+          <li>Seamless integration with file system</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
