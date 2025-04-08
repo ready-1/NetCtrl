@@ -26,6 +26,10 @@ This document tracks the current state, decisions, and priorities for the NetCtr
 - Created example Django views demonstrating proper logging usage with different log levels
 - Fixed TCP logging by implementing a custom TCP handler for reliable syslog communication
 - Created detailed Django implementation plan for the CMS with file management up to 5GB
+- Implemented file metadata editing functionality allowing users to update file details post-upload
+- Fixed file upload functionality to reliably handle files up to 5GB in size
+- Created user-friendly file detail page with download, edit, and delete capabilities
+- Integrated file categorization and tagging system for better organization
 
 ## Decisions
 
@@ -44,7 +48,7 @@ This document tracks the current state, decisions, and priorities for the NetCtr
 
 ## Priorities
 
-1. **Current Focus**: Begin implementing Django application according to the implementation plan
+1. **Current Focus**: Continue implementing Django application CMS features
 2. **Next Steps**: Set up Django project structure and core models
 3. **Short-term**: 
    - Create syslog-ng configuration with service-specific log files
