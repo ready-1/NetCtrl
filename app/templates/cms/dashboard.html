@@ -1,149 +1,230 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Dashboard{% endblock %}
+{% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="alert alert-info">
-            <h4 class="alert-heading">Welcome to NetCtrl CMS!</h4>
-            <p>This is a placeholder dashboard that will be enhanced with more functionality as development progresses.</p>
-        </div>
-    </div>
-</div>
-
-<div class="row mb-4">
-    <!-- Statistics Cards -->
+<div class="container-fluid mt-4">
+  <h1 class="mb-4">Dashboard</h1>
+  
+  <!-- Statistics Overview Row -->
+  <div class="row mb-4">
+    <!-- Total Documents -->
     <div class="col-md-3 mb-3">
-        <div class="card h-100 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
-            <div class="card-body text-center">
-                <h1 class="display-4 text-primary">0</h1>
-                <h5 class="card-title">Documents</h5>
-                <p class="card-text small">Total documents in the system</p>
-            </div>
+      <div class="card h-100 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+        <div class="card-body">
+          <h5 class="card-title">Documents</h5>
+          <h2 class="display-4">{{ total_documents }}</h2>
+          <p class="card-text text-muted">
+            {{ user_documents }} created by you
+          </p>
         </div>
-    </div>
-    <div class="col-md-3 mb-3">
-        <div class="card h-100 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
-            <div class="card-body text-center">
-                <h1 class="display-4 text-success">0</h1>
-                <h5 class="card-title">Files</h5>
-                <p class="card-text small">Total files uploaded</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3 mb-3">
-        <div class="card h-100 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
-            <div class="card-body text-center">
-                <h1 class="display-4 text-info">0</h1>
-                <h5 class="card-title">Categories</h5>
-                <p class="card-text small">Content categories</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3 mb-3">
-        <div class="card h-100 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
-            <div class="card-body text-center">
-                <h1 class="display-4 text-warning">0</h1>
-                <h5 class="card-title">Tags</h5>
-                <p class="card-text small">Content tags</p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row mb-4">
-    <!-- Quick Actions -->
-    <div class="col-md-4">
-        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="bi bi-lightning-charge"></i> Quick Actions
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="d-grid gap-2">
-                    <a href="#" class="btn btn-primary">
-                        <i class="bi bi-file-earmark-plus"></i> New Document
-                    </a>
-                    <a href="#" class="btn btn-success">
-                        <i class="bi bi-upload"></i> Upload File
-                    </a>
-                    <a href="#" class="btn btn-info">
-                        <i class="bi bi-folder-plus"></i> New Category
-                    </a>
-                    <a href="#" class="btn btn-warning">
-                        <i class="bi bi-tag"></i> New Tag
-                    </a>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
     
-    <!-- Recent Activity -->
-    <div class="col-md-8">
-        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="bi bi-activity"></i> Recent Activity
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="placeholder-glow">
-                    <p class="placeholder col-12 mb-3"></p>
-                    <p class="placeholder col-12 mb-3"></p>
-                    <p class="placeholder col-12 mb-3"></p>
-                    <p class="placeholder col-12 mb-3"></p>
-                    <p class="placeholder col-12 mb-3"></p>
-                </div>
-                <div class="text-center text-muted">
-                    <em>Activity feed will be populated as you use the system</em>
-                </div>
-            </div>
+    <!-- Total Files -->
+    <div class="col-md-3 mb-3">
+      <div class="card h-100 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+        <div class="card-body">
+          <h5 class="card-title">Files</h5>
+          <h2 class="display-4">{{ total_files }}</h2>
+          <p class="card-text text-muted">
+            {{ user_files }} uploaded by you
+          </p>
         </div>
-    </div>
-</div>
-
-<div class="row">
-    <!-- CMS Modules -->
-    <div class="col-md-6 mb-4">
-        <div class="card h-100 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="bi bi-file-earmark-text"></i> Documents
-                </h5>
-            </div>
-            <div class="card-body">
-                <p class="card-text">
-                    Create, edit, and manage documents with a rich text editor. Organize them with categories and tags for easy retrieval.
-                </p>
-                <div class="text-end">
-                    <a href="{% url 'cms:document_list' %}" class="btn btn-primary">
-                        Manage Documents <i class="bi bi-arrow-right"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
     
-    <div class="col-md-6 mb-4">
-        <div class="card h-100 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="bi bi-files"></i> Files
-                </h5>
-            </div>
-            <div class="card-body">
-                <p class="card-text">
-                    Upload, download, and manage files up to 5GB in size. The system supports chunked uploads for large files with progress tracking.
-                </p>
-                <div class="text-end">
-                    <a href="{% url 'cms:file_list' %}" class="btn btn-success">
-                        Manage Files <i class="bi bi-arrow-right"></i>
-                    </a>
-                </div>
-            </div>
+    <!-- Storage Usage -->
+    <div class="col-md-3 mb-3">
+      <div class="card h-100 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+        <div class="card-body">
+          <h5 class="card-title">Storage Used</h5>
+          <h2 class="display-4">{{ total_storage }}</h2>
+          <p class="card-text text-muted">
+            {{ user_storage }} by your files
+          </p>
         </div>
+      </div>
     </div>
+    
+    <!-- Users -->
+    <div class="col-md-3 mb-3">
+      <div class="card h-100 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+        <div class="card-body">
+          <h5 class="card-title">Users</h5>
+          <h2 class="display-4">{{ total_users }}</h2>
+          <p class="card-text text-muted">
+            Active system users
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Document Status Row -->
+  <div class="row mb-4">
+    <!-- Published Documents -->
+    <div class="col-md-6 mb-3">
+      <div class="card h-100 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+        <div class="card-body">
+          <h5 class="card-title">Document Status</h5>
+          <div class="row align-items-center">
+            <div class="col-md-6">
+              <div class="d-flex justify-content-between mb-2">
+                <span>Published</span>
+                <span class="badge bg-success">{{ published_documents }}</span>
+              </div>
+              <div class="d-flex justify-content-between">
+                <span>Draft</span>
+                <span class="badge bg-warning">{{ draft_documents }}</span>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="progress mt-2 {% if user.profile.dark_mode %}bg-secondary{% endif %}" style="height: 20px;">
+                {% if total_documents > 0 %}
+                <div class="progress-bar bg-success" role="progressbar" 
+                     style="width: {{ published_documents|floatformat:0|default:'0'|stringformat:'s'|add:'.0'|div:total_documents|mul:100 }}%" 
+                     aria-valuenow="{{ published_documents }}" aria-valuemin="0" aria-valuemax="{{ total_documents }}">
+                  {{ published_documents }}
+                </div>
+                <div class="progress-bar bg-warning" role="progressbar" 
+                     style="width: {{ draft_documents|floatformat:0|default:'0'|stringformat:'s'|add:'.0'|div:total_documents|mul:100 }}%" 
+                     aria-valuenow="{{ draft_documents }}" aria-valuemin="0" aria-valuemax="{{ total_documents }}">
+                  {{ draft_documents }}
+                </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- File Type Distribution -->
+    <div class="col-md-6 mb-3">
+      <div class="card h-100 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+        <div class="card-header">
+          <h5 class="mb-0">File Type Distribution</h5>
+        </div>
+        <div class="card-body">
+          {% if file_types %}
+            <div class="row">
+              {% for type in file_types %}
+                <div class="col-6 mb-3">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <span>{{ type.type_name }}</span>
+                    <span class="badge bg-secondary">{{ type.count }}</span>
+                  </div>
+                  <div class="progress mt-1 {% if user.profile.dark_mode %}bg-secondary{% endif %}">
+                    <div class="progress-bar" role="progressbar" 
+                         style="width: {{ type.count|floatformat:0|default:'0'|stringformat:'s'|add:'.0'|div:total_files|mul:100 }}%" 
+                         aria-valuenow="{{ type.count }}" aria-valuemin="0" aria-valuemax="{{ total_files }}"></div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <p class="text-muted mb-0">No file type data available</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Recent Activity Row -->
+  <div class="row mb-4">
+    <!-- Recent Documents -->
+    <div class="col-md-6 mb-3">
+      <div class="card h-100 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Recent Documents</h5>
+          <a href="{% url 'cms:document_list' %}" class="btn btn-sm btn-primary">View All</a>
+        </div>
+        <div class="card-body">
+          {% if recent_documents %}
+            <div class="list-group">
+              {% for doc in recent_documents %}
+                <a href="{% url 'cms:document_detail' doc.slug %}" class="list-group-item list-group-item-action {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+                  <div class="d-flex w-100 justify-content-between">
+                    <h6 class="mb-1">{{ doc.title }}</h6>
+                    <small>{{ doc.created_at|date:"M d, Y" }}</small>
+                  </div>
+                  <p class="mb-1 text-truncate">{{ doc.excerpt|default:"No excerpt" }}</p>
+                  <small>By: {{ doc.author.username }}</small>
+                </a>
+              {% endfor %}
+            </div>
+          {% else %}
+            <p class="text-muted mb-0">No recent documents</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    
+    <!-- Recent Files -->
+    <div class="col-md-6 mb-3">
+      <div class="card h-100 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Recent Files</h5>
+          <a href="{% url 'cms:file_list' %}" class="btn btn-sm btn-primary">View All</a>
+        </div>
+        <div class="card-body">
+          {% if recent_files %}
+            <div class="list-group">
+              {% for file in recent_files %}
+                <a href="{% url 'cms:file_detail' file.uuid %}" class="list-group-item list-group-item-action {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+                  <div class="d-flex w-100 justify-content-between">
+                    <h6 class="mb-1">{{ file.name }}</h6>
+                    <small>{{ file.uploaded_at|date:"M d, Y" }}</small>
+                  </div>
+                  <p class="mb-1">{{ file.description|truncatechars:60|default:"No description" }}</p>
+                  <small>
+                    <i class="{{ file.get_icon_class }}"></i>
+                    {{ file.mime_type }}
+                  </small>
+                </a>
+              {% endfor %}
+            </div>
+          {% else %}
+            <p class="text-muted mb-0">No recent files</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Popular Files Row -->
+  <div class="row">
+    <!-- Popular Files -->
+    <div class="col-md-12 mb-3">
+      <div class="card h-100 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+        <div class="card-header">
+          <h5 class="mb-0">Most Downloaded Files</h5>
+        </div>
+        <div class="card-body">
+          {% if popular_files %}
+            <div class="list-group">
+              {% for file in popular_files %}
+                <a href="{% url 'cms:file_detail' file.uuid %}" class="list-group-item list-group-item-action {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+                  <div class="d-flex w-100 justify-content-between">
+                    <h6 class="mb-1">{{ file.name }}</h6>
+                    <span class="badge bg-primary">{{ file.download_count }} downloads</span>
+                  </div>
+                  <p class="mb-1">{{ file.description|truncatechars:100|default:"No description" }}</p>
+                  <small>
+                    <i class="{{ file.get_icon_class }}"></i>
+                    {{ file.mime_type }} | {{ file.file_size|filesizeformat }}
+                  </small>
+                </a>
+              {% endfor %}
+            </div>
+          {% else %}
+            <p class="text-muted mb-0">No download data available</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}

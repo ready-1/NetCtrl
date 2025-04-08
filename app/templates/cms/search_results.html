@@ -1,0 +1,244 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+  <h1 class="mb-4">Search</h1>
+  
+  <!-- Search Form -->
+  <div class="card mb-4 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+    <div class="card-body">
+      <form method="get" action="{% url 'cms:search' %}">
+        <div class="row g-3">
+          <!-- Search Query -->
+          <div class="col-md-6">
+            <div class="input-group">
+              <input type="text" class="form-control" id="q" name="q" value="{{ query }}" placeholder="Search...">
+              <button class="btn btn-primary" type="submit">
+                <i class="bi bi-search"></i> Search
+              </button>
+            </div>
+          </div>
+          
+          <!-- Content Type Filter -->
+          <div class="col-md-2">
+            <select class="form-select" id="type" name="type">
+              <option value="all" {% if search_type == 'all' %}selected{% endif %}>All Content</option>
+              <option value="documents" {% if search_type == 'documents' %}selected{% endif %}>Documents</option>
+              <option value="files" {% if search_type == 'files' %}selected{% endif %}>Files</option>
+            </select>
+          </div>
+          
+          <!-- Category Filter -->
+          <div class="col-md-2">
+            <select class="form-select" id="category" name="category">
+              <option value="">All Categories</option>
+              <optgroup label="Document Categories">
+                {% for category in document_categories %}
+                <option value="{{ category.id }}" {% if selected_category == category.id|stringformat:"i" %}selected{% endif %}>
+                  {{ category.name }}
+                </option>
+                {% endfor %}
+              </optgroup>
+              <optgroup label="File Categories">
+                {% for category in file_categories %}
+                <option value="{{ category.id }}" {% if selected_category == category.id|stringformat:"i" %}selected{% endif %}>
+                  {{ category.name }}
+                </option>
+                {% endfor %}
+              </optgroup>
+            </select>
+          </div>
+          
+          <!-- Tag Filter -->
+          <div class="col-md-2">
+            <select class="form-select" id="tag" name="tag">
+              <option value="">All Tags</option>
+              <optgroup label="Document Tags">
+                {% for tag in document_tags %}
+                <option value="{{ tag.id }}" {% if selected_tag == tag.id|stringformat:"i" %}selected{% endif %}>
+                  {{ tag.name }}
+                </option>
+                {% endfor %}
+              </optgroup>
+              <optgroup label="File Tags">
+                {% for tag in file_tags %}
+                <option value="{{ tag.id }}" {% if selected_tag == tag.id|stringformat:"i" %}selected{% endif %}>
+                  {{ tag.name }}
+                </option>
+                {% endfor %}
+              </optgroup>
+            </select>
+          </div>
+        </div>
+        
+        <!-- Advanced Filters (collapsible) -->
+        <div class="collapse mt-3" id="advancedFilters">
+          <div class="row g-3">
+            <!-- Date Range -->
+            <div class="col-md-3">
+              <label for="date_from" class="form-label">From Date</label>
+              <input type="date" class="form-control" id="date_from" name="date_from" value="{{ date_from }}">
+            </div>
+            <div class="col-md-3">
+              <label for="date_to" class="form-label">To Date</label>
+              <input type="date" class="form-control" id="date_to" name="date_to" value="{{ date_to }}">
+            </div>
+          </div>
+        </div>
+        
+        <!-- Toggle Advanced Filters -->
+        <div class="mt-2">
+          <button class="btn btn-sm btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#advancedFilters">
+            <i class="bi bi-sliders"></i> Advanced Filters
+          </button>
+          {% if query or selected_category or selected_tag or date_from or date_to %}
+          <button type="button" class="btn btn-sm btn-outline-secondary" id="clearFilters">
+            <i class="bi bi-x-circle"></i> Clear Filters
+          </button>
+          {% endif %}
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <!-- Search Results -->
+  {% if results %}
+    <h2 class="h4 mb-3">
+      Found {{ paginator.count }} result{{ paginator.count|pluralize }} 
+      {% if query %}for "{{ query }}"{% endif %}
+    </h2>
+    
+    <div class="list-group mb-4">
+      {% for result in results %}
+        {% if result.result_type == 'document' %}
+          <a href="{% url 'cms:document_detail' result.slug %}" class="list-group-item list-group-item-action {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">
+                <i class="bi bi-file-text me-2"></i>
+                {{ result.title }}
+              </h5>
+              <small>
+                <span class="badge bg-primary">Document</span>
+                {{ result.created_at|date:"M d, Y" }}
+              </small>
+            </div>
+            <p class="mb-1">{{ result.excerpt|truncatechars:200|default:"No excerpt" }}</p>
+            <small>
+              {% if result.category %}
+              Category: {{ result.category.name }}
+              {% endif %}
+              {% if result.tags.all %}
+              | Tags: 
+              {% for tag in result.tags.all %}
+              <span class="badge bg-secondary">{{ tag.name }}</span>
+              {% endfor %}
+              {% endif %}
+            </small>
+          </a>
+        {% elif result.result_type == 'file' %}
+          <a href="{% url 'cms:file_detail' result.uuid %}" class="list-group-item list-group-item-action {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">
+                <i class="{{ result.get_icon_class }} me-2"></i>
+                {{ result.name }}
+              </h5>
+              <small>
+                <span class="badge bg-success">File</span>
+                {{ result.uploaded_at|date:"M d, Y" }}
+              </small>
+            </div>
+            <p class="mb-1">{{ result.description|truncatechars:200|default:"No description" }}</p>
+            <small>
+              {{ result.mime_type }} | {{ result.file_size|filesizeformat }}
+              {% if result.category %}
+              | Category: {{ result.category.name }}
+              {% endif %}
+              {% if result.tags.all %}
+              | Tags: 
+              {% for tag in result.tags.all %}
+              <span class="badge bg-secondary">{{ tag.name }}</span>
+              {% endfor %}
+              {% endif %}
+            </small>
+          </a>
+        {% endif %}
+      {% endfor %}
+    </div>
+    
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <nav aria-label="Search results pages">
+      <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?q={{ query|urlencode }}&type={{ search_type }}&category={{ selected_category }}&tag={{ selected_tag }}&date_from={{ date_from }}&date_to={{ date_to }}&page=1" aria-label="First">
+            <span aria-hidden="true">&laquo;&laquo;</span>
+          </a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" href="?q={{ query|urlencode }}&type={{ search_type }}&category={{ selected_category }}&tag={{ selected_tag }}&date_from={{ date_from }}&date_to={{ date_to }}&page={{ page_obj.previous_page_number }}" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+        {% endif %}
+        
+        {% for num in page_obj.paginator.page_range %}
+          {% if page_obj.number == num %}
+          <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+          {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+          <li class="page-item">
+            <a class="page-link" href="?q={{ query|urlencode }}&type={{ search_type }}&category={{ selected_category }}&tag={{ selected_tag }}&date_from={{ date_from }}&date_to={{ date_to }}&page={{ num }}">{{ num }}</a>
+          </li>
+          {% endif %}
+        {% endfor %}
+        
+        {% if page_obj.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?q={{ query|urlencode }}&type={{ search_type }}&category={{ selected_category }}&tag={{ selected_tag }}&date_from={{ date_from }}&date_to={{ date_to }}&page={{ page_obj.next_page_number }}" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" href="?q={{ query|urlencode }}&type={{ search_type }}&category={{ selected_category }}&tag={{ selected_tag }}&date_from={{ date_from }}&date_to={{ date_to }}&page={{ page_obj.paginator.num_pages }}" aria-label="Last">
+            <span aria-hidden="true">&raquo;&raquo;</span>
+          </a>
+        </li>
+        {% endif %}
+      </ul>
+    </nav>
+    {% endif %}
+    
+  {% else %}
+    {% if query or selected_category or selected_tag %}
+      <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i> No results found. Try different search terms or filters.
+      </div>
+    {% endif %}
+  {% endif %}
+</div>
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Clear filters button
+    const clearFiltersBtn = document.getElementById('clearFilters');
+    if (clearFiltersBtn) {
+        clearFiltersBtn.addEventListener('click', function() {
+            window.location.href = "{% url 'cms:search' %}";
+        });
+    }
+    
+    // Show advanced filters if they have values
+    if ("{{ date_from }}" || "{{ date_to }}") {
+        const advancedFilters = document.getElementById('advancedFilters');
+        if (advancedFilters) {
+            new bootstrap.Collapse(advancedFilters, { toggle: true });
+        }
+    }
+});
+</script>
+{% endblock %}
+{% endblock %}

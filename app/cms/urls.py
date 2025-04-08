@@ -48,10 +48,10 @@ file_urls = [
 
 urlpatterns = [
     # Dashboard view
-    path('dashboard/', login_required(TemplateView.as_view(
-        template_name='cms/dashboard.html',
-        extra_context={'title': 'Dashboard'}
-    )), name='dashboard'),
+    path('dashboard/', views.dashboard.DashboardView.as_view(), name='dashboard'),
+    
+    # Search view
+    path('search/', views.search.SearchView.as_view(), name='search'),
     
     # Document management URLs
     path('documents/', include([
