@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+  <div class="row">
+    <div class="col-12 mb-4">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'cms:profile' %}">Profile</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Edit Profile</li>
+        </ol>
+      </nav>
+      
+      <h1 class="mb-4">Edit Profile</h1>
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="col-md-8 mx-auto">
+      <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+        <div class="card-header">
+          <h5 class="card-title mb-0">
+            <i class="bi bi-pencil-square"></i> Update Your Profile
+          </h5>
+        </div>
+        <div class="card-body">
+          <!-- Error messages for form validation -->
+          {% if form.errors %}
+          <div class="alert alert-danger">
+            <h5 class="alert-heading"><i class="bi bi-exclamation-triangle"></i> Please fix the following errors:</h5>
+            <ul>
+              {% for field in form %}
+                {% for error in field.errors %}
+                  <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+                {% endfor %}
+              {% endfor %}
+              {% for error in form.non_field_errors %}
+                <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+          {% endif %}
+          
+          <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+            
+            <div class="row">
+              <!-- Personal Information -->
+              <div class="col-md-6 mb-3">
+                <label for="{{ form.first_name.id_for_label }}" class="form-label">First Name</label>
+                {{ form.first_name }}
+                {% if form.first_name.help_text %}
+                <div class="form-text">{{ form.first_name.help_text }}</div>
+                {% endif %}
+              </div>
+              
+              <div class="col-md-6 mb-3">
+                <label for="{{ form.last_name.id_for_label }}" class="form-label">Last Name</label>
+                {{ form.last_name }}
+                {% if form.last_name.help_text %}
+                <div class="form-text">{{ form.last_name.help_text }}</div>
+                {% endif %}
+              </div>
+            </div>
+            
+            <!-- Email -->
+            <div class="mb-3">
+              <label for="{{ form.email.id_for_label }}" class="form-label">Email Address</label>
+              {{ form.email }}
+              {% if form.email.help_text %}
+              <div class="form-text">{{ form.email.help_text }}</div>
+              {% endif %}
+            </div>
+            
+            <!-- Bio -->
+            <div class="mb-3">
+              <label for="{{ form.bio.id_for_label }}" class="form-label">Bio</label>
+              {{ form.bio }}
+              <div class="form-text">Share a bit about yourself</div>
+            </div>
+            
+            <!-- Profile Picture with Preview -->
+            <div class="mb-3">
+              <label for="{{ form.profile_picture.id_for_label }}" class="form-label">Profile Picture</label>
+              <div class="input-group">
+                <input type="file" class="form-control {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" 
+                       id="{{ form.profile_picture.id_for_label }}" name="{{ form.profile_picture.html_name }}"
+                       accept="image/jpeg,image/png,image/gif">
+                {% if profile.profile_picture %}
+                <a href="{{ profile.profile_picture.url }}" class="btn btn-outline-secondary" target="_blank">
+                  <i class="bi bi-eye"></i> View Current
+                </a>
+                {% endif %}
+              </div>
+              <div class="form-text">
+                Supported formats: JPEG, PNG, GIF. Max size: 5MB.
+                {% if profile.profile_picture %}
+                Current: {{ profile.profile_picture.name }}
+                {% endif %}
+              </div>
+              
+              <!-- Profile Picture Preview -->
+              {% if profile.profile_picture %}
+              <div class="mt-2">
+                <div class="profile-preview" style="max-width: 150px; max-height: 150px; overflow: hidden;">
+                  <img src="{{ profile.profile_picture.url }}" class="img-thumbnail" alt="Current profile picture">
+                </div>
+              </div>
+              {% endif %}
+            </div>
+            
+            <!-- Dark Mode Toggle -->
+            <div class="mb-3 form-check">
+              {{ form.dark_mode }}
+              <label class="form-check-label" for="{{ form.dark_mode.id_for_label }}">Dark Mode</label>
+            </div>
+            
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary">Save Changes</button>
+              <a href="{% url 'cms:profile' %}" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JavaScript for Form Validation and Image Preview -->
+{% block scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // File input change handler for image preview
+    const fileInput = document.getElementById('{{ form.profile_picture.id_for_label }}');
+    if (fileInput) {
+      fileInput.addEventListener('change', function() {
+        // Validate file size
+        if (this.files && this.files[0]) {
+          const fileSize = this.files[0].size / 1024 / 1024; // in MB
+          if (fileSize > 5) {
+            alert('File size exceeds 5MB. Please choose a smaller file.');
+            this.value = ''; // Clear the input
+            return;
+          }
+          
+          // Create or update preview
+          const file = this.files[0];
+          const reader = new FileReader();
+          
+          reader.onload = function(e) {
+            let previewContainer = document.querySelector('.profile-preview');
+            
+            if (!previewContainer) {
+              previewContainer = document.createElement('div');
+              previewContainer.className = 'profile-preview mt-2';
+              previewContainer.style = 'max-width: 150px; max-height: 150px; overflow: hidden;';
+              fileInput.parentNode.parentNode.appendChild(previewContainer);
+            }
+            
+            previewContainer.innerHTML = `<img src="${e.target.result}" class="img-thumbnail" alt="Profile picture preview">`;
+          };
+          
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+    
+    // Form validation
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(event) {
+      let hasError = false;
+      
+      // Email validation
+      const emailInput = document.getElementById('{{ form.email.id_for_label }}');
+      if (emailInput && !emailInput.value.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+        alert('Please enter a valid email address.');
+        event.preventDefault();
+        hasError = true;
+      }
+      
+      if (!hasError) {
+        // Show loading indicator
+        const submitBtn = form.querySelector('button[type="submit"]');
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
+        submitBtn.disabled = true;
+      }
+    });
+  });
+</script>
+{% endblock %}
+{% endblock %}

@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+  <div class="row">
+    <div class="col-12 mb-4">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'cms:profile' %}">Profile</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Activity</li>
+        </ol>
+      </nav>
+      
+      <h1 class="mb-4">
+        Your Activity
+        {% if activity_user != request.user %}
+        <small class="text-muted">- {{ activity_user.username }}</small>
+        {% endif %}
+      </h1>
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="col-md-6 mb-4">
+      <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="card-title mb-0">
+            <i class="bi bi-file-earmark-text"></i> Recent Documents
+          </h5>
+          <a href="{% url 'cms:document_list' %}" class="btn btn-sm btn-primary">View All</a>
+        </div>
+        <div class="card-body p-0">
+          {% if documents %}
+            <div class="list-group list-group-flush">
+              {% for doc in documents %}
+                <a href="{% url 'cms:document_detail' doc.slug %}" class="list-group-item list-group-item-action {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+                  <div class="d-flex w-100 justify-content-between">
+                    <h6 class="mb-1">{{ doc.title }}</h6>
+                    <small>{{ doc.created_at|date:"M d, Y" }}</small>
+                  </div>
+                  <p class="mb-1 text-truncate">{{ doc.excerpt|default:"No excerpt" }}</p>
+                  <small>
+                    Status: 
+                    <span class="badge {% if doc.status == 'published' %}bg-success{% else %}bg-warning{% endif %}">
+                      {{ doc.status|title }}
+                    </span>
+                    {% if doc.category %}
+                    | Category: <span class="badge bg-secondary">{{ doc.category.name }}</span>
+                    {% endif %}
+                    {% if doc.tags.all %}
+                    | Tags: 
+                    {% for tag in doc.tags.all %}
+                      <span class="badge bg-info">{{ tag.name }}</span>
+                    {% endfor %}
+                    {% endif %}
+                  </small>
+                </a>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="p-4 text-center text-muted">
+              <em>No documents created yet.</em>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-6 mb-4">
+      <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="card-title mb-0">
+            <i class="bi bi-files"></i> Recent Files
+          </h5>
+          <a href="{% url 'cms:file_list' %}" class="btn btn-sm btn-primary">View All</a>
+        </div>
+        <div class="card-body p-0">
+          {% if files %}
+            <div class="list-group list-group-flush">
+              {% for file in files %}
+                <a href="{% url 'cms:file_detail' file.uuid %}" class="list-group-item list-group-item-action {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+                  <div class="d-flex w-100 justify-content-between">
+                    <h6 class="mb-1">{{ file.name }}</h6>
+                    <small>{{ file.uploaded_at|date:"M d, Y" }}</small>
+                  </div>
+                  <p class="mb-1 text-truncate">{{ file.description|default:"No description" }}</p>
+                  <small>
+                    <i class="{{ file.get_icon_class }}"></i>
+                    {{ file.mime_type }} | {{ file.file_size|filesizeformat }} | {{ file.download_count }} downloads
+                    {% if file.category %}
+                    | Category: <span class="badge bg-secondary">{{ file.category.name }}</span>
+                    {% endif %}
+                    {% if file.tags.all %}
+                    | Tags: 
+                    {% for tag in file.tags.all %}
+                      <span class="badge bg-info">{{ tag.name }}</span>
+                    {% endfor %}
+                    {% endif %}
+                  </small>
+                </a>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="p-4 text-center text-muted">
+              <em>No files uploaded yet.</em>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="col-12 mb-4">
+      <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+        <div class="card-header">
+          <h5 class="card-title mb-0">
+            <i class="bi bi-clock-history"></i> Document Version History
+          </h5>
+        </div>
+        <div class="card-body p-0">
+          {% if versions %}
+            <div class="list-group list-group-flush">
+              {% for version in versions %}
+                <a href="{% url 'cms:document_version_detail' version.document.slug version.version_number %}" class="list-group-item list-group-item-action {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+                  <div class="d-flex w-100 justify-content-between">
+                    <h6 class="mb-1">{{ version.document.title }} - v{{ version.version_number }}</h6>
+                    <small>{{ version.created_at|date:"M d, Y" }}</small>
+                  </div>
+                  <p class="mb-1">{{ version.changelog|truncatechars:100|default:"No changelog" }}</p>
+                  <small>
+                    Document Status: 
+                    <span class="badge {% if version.document.status == 'published' %}bg-success{% else %}bg-warning{% endif %}">
+                      {{ version.document.status|title }}
+                    </span>
+                    | Created by: {{ version.created_by.username }}
+                  </small>
+                </a>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="p-4 text-center text-muted">
+              <em>No document versions created yet.</em>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="col-12 mb-4">
+      <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="card-title mb-0">
+            <i class="bi bi-activity"></i> Activity Summary
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row align-items-center">
+            <div class="col-md-3 text-center mb-3 mb-md-0">
+              <div class="display-4">{{ documents.count|default:"0" }}</div>
+              <div class="text-muted">Documents Created</div>
+            </div>
+            <div class="col-md-3 text-center mb-3 mb-md-0">
+              <div class="display-4">{{ files.count|default:"0" }}</div>
+              <div class="text-muted">Files Uploaded</div>
+            </div>
+            <div class="col-md-3 text-center mb-3 mb-md-0">
+              <div class="display-4">{{ versions.count|default:"0" }}</div>
+              <div class="text-muted">Document Versions</div>
+            </div>
+            <div class="col-md-3 text-center">
+              <a href="{% url 'cms:profile' %}" class="btn btn-outline-primary">
+                <i class="bi bi-person"></i> View Full Profile
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
