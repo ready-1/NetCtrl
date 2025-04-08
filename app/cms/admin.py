@@ -11,7 +11,7 @@ from django.urls import reverse
 from django.utils.text import Truncator
 
 from cms.models import (
-    UserProfile, Category, Tag, Document,
+    UserProfile, Category, Tag, Document, DocumentVersion, DocumentFile,
     FileCategory, FileTag, File, FileChunkedUpload
 )
 
@@ -203,11 +203,81 @@ class FileChunkedUploadAdmin(admin.ModelAdmin):
     )
 
 
+class DocumentVersionAdmin(admin.ModelAdmin):
+    """Admin interface for DocumentVersion model."""
+    list_display = ('document', 'version_number', 'created_by', 'created_at')
+    list_filter = ('created_at', 'created_by')
+    search_fields = ('document__title', 'changelog', 'content')
+    readonly_fields = ('document', 'version_number', 'created_at', 'created_by')
+    fieldsets = (
+        (None, {
+            'fields': ('document', 'version_number', 'created_by', 'created_at')
+        }),
+        ('Content', {
+            'fields': ('content', 'excerpt')
+        }),
+        ('Changes', {
+            'fields': ('changelog',)
+        }),
+    )
+    
+    def has_add_permission(self, request):
+        """Disable manual addition of versions."""
+        return False
+    
+    actions = ['promote_to_current']
+    
+    def promote_to_current(self, request, queryset):
+        """Promote selected version to be current document content."""
+        if queryset.count() > 1:
+            self.message_user(request, 'Please select only one version to promote.', level='error')
+            return
+            
+        version = queryset.first()
+        if version:
+            version.promote_to_current()
+            self.message_user(request, f'Version {version.version_number} promoted to current for document "{version.document.title}".')
+            logger.info(f"Admin user {request.user.username} promoted version {version.version_number} for document {version.document.id}")
+    promote_to_current.short_description = 'Promote selected version to current'
+
+
+class DocumentFileAdmin(admin.ModelAdmin):
+    """Admin interface for DocumentFile model."""
+    list_display = ('document', 'file', 'order', 'added_by', 'added_at')
+    list_filter = ('added_at', 'added_by', 'document')
+    search_fields = ('document__title', 'file__name')
+    readonly_fields = ('added_at',)
+    fieldsets = (
+        (None, {
+            'fields': ('document', 'file', 'order')
+        }),
+        ('Details', {
+            'fields': ('added_by', 'added_at')
+        }),
+    )
+    
+    def get_file_link(self, obj):
+        """Get link to file detail page."""
+        url = reverse('admin:cms_file_change', args=[obj.file.id])
+        return format_html('<a href="{}">{}</a>', url, obj.file.name)
+    get_file_link.short_description = 'File'
+    get_file_link.admin_order_field = 'file__name'
+    
+    def get_document_link(self, obj):
+        """Get link to document detail page."""
+        url = reverse('admin:cms_document_change', args=[obj.document.id])
+        return format_html('<a href="{}">{}</a>', url, obj.document.title)
+    get_document_link.short_description = 'Document'
+    get_document_link.admin_order_field = 'document__title'
+
+
 # Register models with admin site
 admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Tag, TagAdmin)
 admin.site.register(Document, DocumentAdmin)
+admin.site.register(DocumentVersion, DocumentVersionAdmin)
+admin.site.register(DocumentFile, DocumentFileAdmin)
 admin.site.register(FileCategory, FileCategoryAdmin)
 admin.site.register(FileTag, FileTagAdmin)
 admin.site.register(File, FileAdmin)

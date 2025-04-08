@@ -53,11 +53,29 @@ urlpatterns = [
         extra_context={'title': 'Dashboard'}
     )), name='dashboard'),
     
-    # Document URLs (will be implemented in next phase)
-    path('documents/', login_required(TemplateView.as_view(
-        template_name='cms/document_list.html',
-        extra_context={'title': 'Documents'}
-    )), name='document_list'),
+    # Document management URLs
+    path('documents/', include([
+        # Document list with search and filtering
+        path('', views.documents.DocumentListView.as_view(), name='document_list'),
+        
+        # Document CRUD operations
+        path('create/', views.documents.DocumentCreateView.as_view(), name='document_create'),
+        path('<slug:slug>/', views.documents.DocumentDetailView.as_view(), name='document_detail'),
+        path('<slug:slug>/edit/', views.documents.DocumentUpdateView.as_view(), name='document_update'),
+        path('<slug:slug>/delete/', views.documents.DocumentDeleteView.as_view(), name='document_delete'),
+        
+        # Document version management
+        path('<slug:slug>/versions/', views.documents.DocumentVersionListView.as_view(), name='document_versions'),
+        path('<slug:slug>/versions/create/', views.documents.DocumentVersionCreateView.as_view(), name='document_version_create'),
+        path('<slug:slug>/versions/<int:version>/', views.documents.DocumentVersionDetailView.as_view(), name='document_version_detail'),
+        path('<slug:slug>/versions/<int:version>/promote/', views.documents.DocumentVersionPromoteView.as_view(), name='document_version_promote'),
+        
+        # Document file management
+        path('<slug:slug>/files/', views.documents.DocumentFileListView.as_view(), name='document_files'),
+        path('<slug:slug>/files/add/', views.documents.DocumentFileAddView.as_view(), name='document_file_add'),
+        path('<slug:slug>/files/<uuid:file_uuid>/remove/', views.documents.DocumentFileRemoveView.as_view(), name='document_file_remove'),
+        path('<slug:slug>/files/reorder/', views.documents.DocumentFileReorderView.as_view(), name='document_file_reorder'),
+    ])),
     
     # File management URLs
     path('files/', include(file_urls)),

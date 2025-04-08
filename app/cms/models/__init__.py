@@ -10,7 +10,7 @@ Models are split into separate modules for better organization:
 """
 
 from cms.models.users import UserProfile
-from cms.models.documents import Category, Tag, Document
+from cms.models.documents import Category, Tag, Document, DocumentVersion, DocumentFile
 from cms.models.files import FileCategory, FileTag, File, FileChunkedUpload
 
 __all__ = [
@@ -18,6 +18,8 @@ __all__ = [
     'Category',
     'Tag', 
     'Document',
+    'DocumentVersion',
+    'DocumentFile',
     'FileCategory',
     'FileTag',
     'File',

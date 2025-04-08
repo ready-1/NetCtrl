@@ -5,15 +5,18 @@ This module defines models for content management:
 - Category: For organizing documents in a hierarchy
 - Tag: For tagging and filtering documents
 - Document: The main content type with publishing workflow
+- DocumentVersion: For tracking document version history
+- DocumentFile: Junction model to associate files with documents
 """
 
-from django.db import models
+from django.db import models, transaction
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.utils.text import slugify
 from django.utils import timezone
 import uuid
 import logging
+from .files import File
 
 logger = logging.getLogger(__name__)
 
@@ -198,3 +201,124 @@ class Document(models.Model):
         self.published_at = None
         self.save()
         logger.info(f"Document unpublished: {self.title} by {self.author.username}")
+    
+    def create_version(self, created_by, changelog=""):
+        """
+        Create a new version of this document.
+        
+        Args:
+            created_by (User): User creating the version
+            changelog (str): Description of changes in this version
+            
+        Returns:
+            DocumentVersion: The new version object
+        """
+        version_number = self.versions.count() + 1
+        version = DocumentVersion.objects.create(
+            document=self,
+            version_number=version_number,
+            content=self.content,
+            excerpt=self.excerpt,
+            created_by=created_by,
+            changelog=changelog
+        )
+        logger.info(f"Document version {version_number} created for {self.title} by {created_by.username}")
+        return version
+
+
+class DocumentVersion(models.Model):
+    """
+    Document version model for tracking document history.
+    
+    Attributes:
+        document (ForeignKey): The document this version belongs to
+        version_number (PositiveIntegerField): Sequential version number
+        content (TextField): Version-specific content
+        excerpt (TextField): Version-specific excerpt
+        created_at (DateTimeField): When this version was created
+        created_by (ForeignKey): User who created this version
+        changelog (TextField): Description of changes made in this version
+    """
+    document = models.ForeignKey(
+        Document, 
+        on_delete=models.CASCADE, 
+        related_name='versions',
+        verbose_name="Document"
+    )
+    version_number = models.PositiveIntegerField("Version Number")
+    content = models.TextField("Content")
+    excerpt = models.TextField("Excerpt", blank=True)
+    created_at = models.DateTimeField("Created at", auto_now_add=True)
+    created_by = models.ForeignKey(
+        User, 
+        on_delete=models.CASCADE, 
+        related_name='created_versions',
+        verbose_name="Created by"
+    )
+    changelog = models.TextField("Change Description", blank=True)
+    
+    class Meta:
+        verbose_name = "Document Version"
+        verbose_name_plural = "Document Versions"
+        ordering = ['-version_number']
+        unique_together = ['document', 'version_number']
+    
+    def __str__(self):
+        return f"{self.document.title} - v{self.version_number}"
+        
+    def promote_to_current(self):
+        """
+        Promote this version to be the current document content.
+        
+        Returns:
+            Document: The updated document
+        """
+        with transaction.atomic():
+            self.document.content = self.content
+            self.document.excerpt = self.excerpt
+            self.document.updated_at = timezone.now()
+            self.document.save(update_fields=['content', 'excerpt', 'updated_at'])
+            logger.info(f"Version {self.version_number} promoted to current for document {self.document.id}")
+        return self.document
+
+
+class DocumentFile(models.Model):
+    """
+    Junction model to track files associated with documents.
+    
+    Attributes:
+        document (ForeignKey): The document this file is associated with
+        file (ForeignKey): The associated file
+        order (PositiveIntegerField): Display order within the document
+        added_at (DateTimeField): When the file was added to the document
+        added_by (ForeignKey): User who added the file
+    """
+    document = models.ForeignKey(
+        Document,
+        on_delete=models.CASCADE,
+        related_name='document_files',
+        verbose_name="Document"
+    )
+    file = models.ForeignKey(
+        File,
+        on_delete=models.CASCADE,
+        related_name='used_in_documents',
+        verbose_name="File"
+    )
+    order = models.PositiveIntegerField("Order", default=0)
+    added_at = models.DateTimeField("Added at", auto_now_add=True)
+    added_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='added_document_files',
+        verbose_name="Added by"
+    )
+    
+    class Meta:
+        verbose_name = "Document File"
+        verbose_name_plural = "Document Files"
+        ordering = ['order', 'added_at']
+        unique_together = ['document', 'file']
+        
+    def __str__(self):
+        return f"{self.document.title} - {self.file.name}"
