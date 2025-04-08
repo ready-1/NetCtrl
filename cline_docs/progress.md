@@ -30,9 +30,9 @@ This document tracks the progress of tasks and milestones for the NetCtrl projec
 - [x] Create document-file associations
 
 ## Upcoming Tasks
-- [ ] Create dashboard with system statistics
-- [ ] Implement advanced search functionality with filters
-- [ ] Add user profile management
+- [x] Create dashboard with system statistics
+- [x] Implement advanced search functionality with filters
+- [x] Add user profile management
 - [ ] Enhance administrative tools for user and content management
 - [ ] Create reporting functionality
 - [ ] Implement comprehensive testing
