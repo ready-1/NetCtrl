@@ -80,11 +80,11 @@ urlpatterns = [
     # File management URLs
     path('files/', include(file_urls)),
     
-    # User profile (will be implemented in next phase)
-    path('profile/', login_required(TemplateView.as_view(
-        template_name='cms/profile.html',
-        extra_context={'title': 'User Profile'}
-    )), name='user_profile'),
+    # User profile management
+    path('profile/', views.users.ProfileView.as_view(), name='profile'),
+    path('profile/edit/', views.users.ProfileUpdateView.as_view(), name='profile_edit'),
+    path('profile/activity/', views.users.UserActivityView.as_view(), name='user_activity'),
+    path('profile/password/', views.users.EnhancedPasswordChangeView.as_view(), name='password_change'),
     
     # Landing page
     path('', TemplateView.as_view(
