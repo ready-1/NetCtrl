@@ -13,49 +13,355 @@ The NetCtrl project requires a containerized environment with four primary servi
 
 1. **Create Project Directory Structure**
    ```bash
-   mkdir -p app nginx
+   mkdir -p app nginx syslog
    ```
 
-2. **Create Docker Compose File**
-   - Create `compose.yaml` in the project root
-   - Define four services: syslog, postgres, nginx, app
-   - Configure volumes for persistent storage
-   - Set up networking between containers
-   - Establish proper service dependencies
+2. **Configure Syslog Server**
+   - Create `syslog/syslog-ng.conf` with the following configuration:
+   ```
+   @version: 4.2
+   @include "scl.conf"
 
-3. **Configure Nginx**
-   - Create `nginx/nginx.conf` for the Nginx service
-   - Configure proxy settings for the Django application
-   - Set up static and media file serving
-   - Configure for large file uploads (up to 5GB)
+   # Global options
+   options {
+       chain_hostnames(no);
+       create_dirs(yes);
+       keep_hostname(yes);
+       log_fifo_size(5000);
+       time_reopen(10);
+       use_dns(no);
+       threaded(yes);
+   };
 
-4. **Create Django Dockerfile**
-   - Create `app/Dockerfile` for building the Django application
-   - Use Python 3.9 as the base image
-   - Install required dependencies
-   - Configure for Gunicorn
+   # Sources
+   source s_local { internal(); };
+   source s_network {
+       network(transport("udp") port(514));
+       network(transport("tcp") port(601));
+   };
 
-5. **Create Requirements File**
-   - Create `app/requirements.txt` listing all Python dependencies
-   - Include Django, PostgreSQL adapter, django-chunked-upload, and Gunicorn
+   # Combined source
+   source s_all {
+       s_local();
+       s_network();
+   };
 
-6. **Test Docker Compose Configuration**
-   - Validate the compose file syntax
-   - Test building the images
-   - Verify volume and network creation
+   # Template for structured logging
+   template t_standard {
+       template("${ISODATE} [${LEVEL}] ${PROGRAM}[${PID}]: ${MSGHDR}${MSG}\n");
+       template_escape(no);
+   };
+
+   # Filters by service
+   filter f_nginx { program("nginx"); };
+   filter f_django { program("django") or program("gunicorn"); };
+   filter f_postgres { program("postgres"); };
+   filter f_error { level(err..emerg); };
+
+   # Destinations with rotation and retention
+   destination d_nginx {
+       file(
+           "/var/log/nginx.log"
+           template(t_standard)
+           create_dirs(yes)
+           owner("root") group("root") perm(0644)
+           remove_if_older(14d)
+       );
+   };
+
+   destination d_django {
+       file(
+           "/var/log/django.log"
+           template(t_standard)
+           create_dirs(yes)
+           owner("root") group("root") perm(0644)
+           remove_if_older(14d)
+       );
+   };
+
+   destination d_postgres {
+       file(
+           "/var/log/postgres.log"
+           template(t_standard)
+           create_dirs(yes)
+           owner("root") group("root") perm(0644)
+           remove_if_older(14d)
+       );
+   };
+
+   destination d_errors {
+       file(
+           "/var/log/errors.log"
+           template(t_standard)
+           create_dirs(yes)
+           owner("root") group("root") perm(0644)
+           remove_if_older(30d)
+       );
+   };
+
+   destination d_all {
+       file(
+           "/var/log/all.log"
+           template(t_standard)
+           create_dirs(yes)
+           owner("root") group("root") perm(0644)
+           remove_if_older(7d)
+       );
+   };
+
+   # Log paths
+   log { source(s_all); filter(f_nginx); destination(d_nginx); };
+   log { source(s_all); filter(f_django); destination(d_django); };
+   log { source(s_all); filter(f_postgres); destination(d_postgres); };
+   log { source(s_all); filter(f_error); destination(d_errors); };
+   log { source(s_all); destination(d_all); };
+   ```
+
+3. **Create Docker Compose File**
+   - Create `compose.yaml` in the project root with the following content:
+   ```yaml
+   version: '3.8'
+
+   services:
+     syslog:
+       image: balabit/syslog-ng:4.2.0-alpine
+       container_name: netctrl_syslog
+       ports:
+         - "514:514/udp"
+         - "601:601/tcp"
+       volumes:
+         - syslog_data:/var/log
+         - ./syslog/syslog-ng.conf:/etc/syslog-ng/syslog-ng.conf:ro
+       networks:
+         - netctrl_network
+       restart: unless-stopped
+       healthcheck:
+         test: ["CMD-SHELL", "nc -z localhost 601 || exit 1"]
+         interval: 30s
+         timeout: 10s
+         retries: 3
+       logging:
+         driver: "json-file"
+         options:
+           max-size: "10m"
+           max-file: "3"
+     
+     logviewer:
+       image: amir20/dozzle:latest
+       container_name: netctrl_logviewer
+       volumes:
+         - /var/run/docker.sock:/var/run/docker.sock:ro
+         - syslog_data:/var/log:ro
+       environment:
+         - DOZZLE_TAILSIZE=1000
+         - DOZZLE_AUTH=admin:${LOGVIEWER_PASSWORD:-N3tCtrl_L0gs}
+         - DOZZLE_FILTER=name=netctrl
+       networks:
+         - netctrl_network
+       depends_on:
+         - syslog
+       restart: unless-stopped
+     
+     postgres:
+       image: postgres:14
+       container_name: netctrl_postgres
+       environment:
+         POSTGRES_DB: netctrl_db
+         POSTGRES_USER: netctrl_user
+         POSTGRES_PASSWORD: N3tCtrl_P@ssw0rd
+       volumes:
+         - postgres_data:/var/lib/postgresql/data
+       networks:
+         - netctrl_network
+       depends_on:
+         - syslog
+       logging:
+         driver: syslog
+         options:
+           syslog-address: "tcp://syslog:601"
+           tag: "postgres"
+     
+     nginx:
+       image: nginx:1.21
+       container_name: netctrl_nginx
+       ports:
+         - "80:80"
+         - "443:443"
+       volumes:
+         - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+         - ./nginx/certs:/etc/nginx/certs:ro
+         - static_volume:/srv/NetCtrl/static
+         - media_volume:/srv/NetCtrl/media
+       networks:
+         - netctrl_network
+       depends_on:
+         - app
+       logging:
+         driver: syslog
+         options:
+           syslog-address: "tcp://syslog:601"
+           tag: "nginx"
+     
+     app:
+       build:
+         context: ./app
+         dockerfile: Dockerfile
+       container_name: netctrl_app
+       environment:
+         - DJANGO_SETTINGS_MODULE=netctrl.settings
+         - POSTGRES_DB=netctrl_db
+         - POSTGRES_USER=netctrl_user
+         - POSTGRES_PASSWORD=N3tCtrl_P@ssw0rd
+         - POSTGRES_HOST=postgres
+         - POSTGRES_PORT=5432
+         - SYSLOG_HOST=syslog
+         - SYSLOG_PORT=601
+       volumes:
+         - static_volume:/srv/NetCtrl/static
+         - media_volume:/srv/NetCtrl/media
+       networks:
+         - netctrl_network
+       depends_on:
+         - postgres
+         - syslog
+       logging:
+         driver: syslog
+         options:
+           syslog-address: "tcp://syslog:601"
+           tag: "django"
+
+   volumes:
+     syslog_data:
+     postgres_data:
+     static_volume:
+     media_volume:
+
+   networks:
+     netctrl_network:
+       driver: bridge
+   ```
+
+4. **Configure Nginx**
+   - Create `nginx/nginx.conf` for the Nginx service with the following content:
+   ```
+   worker_processes auto;
+   events {
+       worker_connections 1024;
+   }
+
+   http {
+       include /etc/nginx/mime.types;
+       default_type application/octet-stream;
+       
+       log_format json_combined escape=json '{"time":"$time_iso8601","remote_addr":"$remote_addr","remote_user":"$remote_user","request":"$request","status":$status,"body_bytes_sent":$body_bytes_sent,"request_time":$request_time,"http_referrer":"$http_referer","http_user_agent":"$http_user_agent"}';
+       
+       access_log syslog:server=syslog:601,facility=local3,tag=nginx json_combined;
+       error_log syslog:server=syslog:601,facility=local3,tag=nginx error;
+       
+       sendfile on;
+       tcp_nopush on;
+       tcp_nodelay on;
+       keepalive_timeout 65;
+       types_hash_max_size 2048;
+       client_max_body_size 5G;
+       proxy_read_timeout 300s;
+       client_body_timeout 300s;
+       
+       server {
+           listen 80;
+           server_name localhost;
+           
+           location / {
+               proxy_pass http://app:8000;
+               proxy_set_header Host $host;
+               proxy_set_header X-Real-IP $remote_addr;
+           }
+           
+           location /static/ {
+               alias /srv/NetCtrl/static/;
+           }
+           
+           location /media/ {
+               alias /srv/NetCtrl/media/;
+           }
+           
+           location /logs/ {
+               proxy_pass http://logviewer:8080/;
+               proxy_set_header Host $host;
+               proxy_set_header X-Real-IP $remote_addr;
+           }
+       }
+   }
+   ```
+
+5. **Create Django Dockerfile**
+   - Create `app/Dockerfile` for building the Django application:
+   ```dockerfile
+   FROM python:3.9-slim
+   
+   WORKDIR /srv/NetCtrl
+   
+   RUN apt-get update && apt-get install -y --no-install-recommends \
+       netcat \
+       && rm -rf /var/lib/apt/lists/*
+   
+   COPY requirements.txt /srv/NetCtrl/
+   RUN pip install --no-cache-dir -r requirements.txt
+   
+   COPY . /srv/NetCtrl/
+   
+   CMD ["gunicorn", "netctrl.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3"]
+   ```
+
+6. **Create Requirements File**
+   - Create `app/requirements.txt` listing all Python dependencies:
+   ```
+   Django==4.2.7
+   psycopg2-binary==2.9.9
+   django-chunked-upload==2.0.0
+   gunicorn==21.2.0
+   python-json-logger==2.0.7
+   ```
+
+7. **Add Environment Variables**
+   - Create `.env` file for storing environment variables:
+   ```
+   LOGVIEWER_PASSWORD=N3tCtrl_L0gs
+   ```
+
+8. **Test Docker Compose Configuration**
+   - Validate the compose file syntax:
+   ```bash
+   docker compose config
+   ```
+   - Test building the images:
+   ```bash
+   docker compose build
+   ```
+   - Start the syslog service:
+   ```bash
+   docker compose up -d syslog logviewer
+   ```
+   - Verify syslog is running:
+   ```bash
+   docker compose ps syslog
+   ```
 
 ## Expected Output
 - Working `compose.yaml` configuring all required services
+- Syslog server with log categorization, rotation, and viewer
 - Nginx configuration file ready for production use
 - Django Dockerfile properly configured
 - Requirements file with all necessary dependencies
 - Docker volumes and networks correctly defined
 
 ## Notes
-- Use Docker Compose version 3.8 syntax
-- Ensure proper container naming for easier management
-- Configure reasonable resource limits
-- Use environment variables for sensitive information
+- Using modern Docker Compose syntax with `compose.yaml` instead of docker-compose.yml
+- Using Alpine-based image for syslog to reduce size
+- Configured log rotation with retention periods for space efficiency
+- Added web-based log viewer accessible at /logs/
+- Implement proper log forwarding from all containers to syslog
+- All services run in the same network for easy communication
 - Remember the deployment will ultimately be in an air-gapped environment
 
 ## Mini Dependency Tracker

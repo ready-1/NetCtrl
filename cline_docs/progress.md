@@ -14,7 +14,8 @@ This document tracks the progress of tasks and milestones for the NetCtrl projec
 - [x] Create detailed implementation instructions for Phase 1 components
 
 ## Upcoming Tasks
-- [ ] Begin Docker infrastructure setup
+- [ ] Implement Syslog server with log categorization and viewer
+- [ ] Complete remaining Docker infrastructure setup
 - [ ] Create Django project structure
 - [ ] Implement CMS core functionality
 - [ ] Implement file management with large file support
