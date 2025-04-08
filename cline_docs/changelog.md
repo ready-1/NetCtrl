@@ -1,5 +1,15 @@
 # Changelog
 
+## 2025-04-07
+### Added
+- Implemented Syslog server component (syslog-ng in Docker)
+- Configured log categorization by service (nginx, django, postgres)
+- Set up log rotation with appropriate retention periods
+- Added Graylog as web-based log viewer (replaced Dozzle)
+- Created testing script for syslog verification
+- Configured Nginx to proxy log viewer at /logs/ path
+- Set up Docker infrastructure for the logging system
+
 This document logs significant changes to the NetCtrl codebase.
 
 ## Format
@@ -55,3 +65,72 @@ Each entry should include:
   - cline_docs/activeContext.md
   - cline_docs/progress.md
   - cline_docs/changelog.md
+
+### 2025-04-07
+- Description: Implemented Syslog server with log categorization and Dozzle web viewer
+- Reason: Establishing centralized logging infrastructure for the project
+- Files Affected: 
+  - compose.yaml
+  - syslog/syslog-ng.conf
+  - nginx/nginx.conf
+  - app/Dockerfile
+  - app/requirements.txt
+  - .env
+  - .clinerules
+  - cline_docs/activeContext.md
+  - cline_docs/changelog.md
+  - cline_docs/progress.md
+
+### 2025-04-07
+- Description: Added Syslog test script
+- Reason: Testing log categorization and filtering functionality
+- Files Affected: 
+  - scripts/syslog_test.sh
+
+### 2025-04-07
+- Description: Changed log viewer from Dozzle to Graylog
+- Reason: To provide improved log viewing capabilities for containers, applications, and future network devices
+- Files Affected: 
+  - compose.yaml
+  - nginx/nginx.conf
+  - cline_docs/activeContext.md
+  - cline_docs/changelog.md
+  - .clinerules
+
+### 2025-04-07
+- Description: Fixed Docker infrastructure logging configuration
+- Reason: Resolved container startup errors by changing container logging driver from syslog to json-file, removing non-existent Python package, and removing unnecessary logshipper container
+- Files Affected: 
+  - compose.yaml
+  - app/requirements.txt
+  - cline_docs/changelog.md
+  - cline_docs/activeContext.md
+
+### 2025-04-07
+- Description: Enhanced Graylog integration with syslog-ng
+- Reason: Fixed GELF message formatting to include mandatory host field and exposed the GELF UDP port
+- Files Affected: 
+  - syslog/syslog-ng.conf
+  - compose.yaml
+  - cline_docs/activeContext.md
+
+### 2025-04-07
+- Description: Converted syslog test script from Bash to Python
+- Reason: For better compatibility with project Python environment and improved maintainability
+- Files Affected: 
+  - scripts/syslog_test.py
+
+### 2025-04-07
+- Description: Implemented Python logging facility for the application
+- Reason: To provide a standardized logging approach that integrates with the syslog system
+- Files Affected: 
+  - src/netctrl/logging_config.py
+  - src/netctrl/views_example.py
+  - scripts/syslog_test.py
+
+### 2025-04-08
+- Description: Fixed TCP logging configuration
+- Reason: Implemented custom TCP handler for reliable syslog communication over TCP
+- Files Affected: 
+  - src/netctrl/logging_config.py
+  - scripts/syslog_test.py

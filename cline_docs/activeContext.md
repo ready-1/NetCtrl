@@ -6,18 +6,32 @@ This document tracks the current state, decisions, and priorities for the NetCtr
 
 - Project defined with comprehensive requirements for both Phase 1 (CMS) and Phase 2 (Network Management)
 - CRCT system initialized with core documentation structure
-- Currently in Strategy phase, with detailed implementation instructions created
+- Transitioned to Execution phase, implementing components according to strategic plan
 - Project technical stack defined: Django, PostgreSQL, Docker, Nginx, Bootstrap 5.3
 - Phase 1 requirements solidified: CMS with file management up to 5GB
 - Phase 2 requirements outlined: Network management for Netgear M4300 switches
-- Docker infrastructure details finalized, with focus on Syslog implementation first
+- Docker infrastructure implementation started with Syslog server
+- Syslog server implemented with log categorization by service and Graylog web viewer
+- Completed Docker setup for syslog-ng (balabit/syslog-ng) and log viewer (graylog/graylog)
+- Implemented log rotation with retention periods (7-30 days)
+- Created testing script for verifying syslog functionality
+- Nginx configured to proxy the log viewer at /logs/ path
+- Fixed container logging configuration using json-file driver instead of syslog
+- Removed non-existent python-logging-handler package from requirements.txt
+- Removed unnecessary logshipper container since logs are now managed via json-file driver
+- Configured syslog-ng to forward logs to Graylog in GELF format with proper host field
+- Exposed GELF UDP port (12201) in Graylog container to receive logs directly
+- Converted syslog test script from Bash to Python for better project compatibility
+- Implemented Python logging facility with syslog integration for standardized application logging
+- Created example Django views demonstrating proper logging usage with different log levels
+- Fixed TCP logging by implementing a custom TCP handler for reliable syslog communication
 
 ## Decisions
 
 - Implementing a containerized architecture with four primary services: syslog, PostgreSQL, Nginx, Django app
 - Starting with Syslog implementation to enable better debugging during development
 - Using syslog-ng with log categorization by service (nginx, django, postgres)
-- Implementing a web-based log viewer using Dozzle, accessible via Nginx at /logs/
+- Implementing a web-based log viewer using Graylog, accessible via Nginx at /logs/
 - Configuring log rotation with appropriate retention periods (7-30 days)
 - Using Alpine-based images where possible to reduce container size
 - Using modern Docker Compose syntax (compose.yaml, docker compose command)
@@ -29,11 +43,11 @@ This document tracks the current state, decisions, and priorities for the NetCtr
 
 ## Priorities
 
-1. **Current Focus**: Implement Syslog server with log categorization and viewer
-2. **Next Steps**: Complete remaining Docker infrastructure and begin Django implementation
+1. **Current Focus**: Continue implementing Django application core
+2. **Next Steps**: Implement Django project structure and begin CMS core functionality
 3. **Short-term**: 
    - Create syslog-ng configuration with service-specific log files
-   - Set up Dozzle log viewer with Nginx proxy configuration
+   - Set up Graylog log viewer with Nginx proxy configuration
    - Complete Docker infrastructure (compose.yaml, Dockerfiles, config files)
    - Implement Django project structure
 4. **Medium-term**:
