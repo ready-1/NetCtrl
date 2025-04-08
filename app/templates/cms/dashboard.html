@@ -84,12 +84,12 @@
               <div class="progress mt-2 {% if user.profile.dark_mode %}bg-secondary{% endif %}" style="height: 20px;">
                 {% if total_documents > 0 %}
                 <div class="progress-bar bg-success" role="progressbar" 
-                     style="width: {{ published_documents|floatformat:0|default:'0'|stringformat:'s'|add:'.0'|div:total_documents|mul:100 }}%" 
+                     style="width: {% widthratio published_documents total_documents 100 %}%" 
                      aria-valuenow="{{ published_documents }}" aria-valuemin="0" aria-valuemax="{{ total_documents }}">
                   {{ published_documents }}
                 </div>
                 <div class="progress-bar bg-warning" role="progressbar" 
-                     style="width: {{ draft_documents|floatformat:0|default:'0'|stringformat:'s'|add:'.0'|div:total_documents|mul:100 }}%" 
+                     style="width: {% widthratio draft_documents total_documents 100 %}%" 
                      aria-valuenow="{{ draft_documents }}" aria-valuemin="0" aria-valuemax="{{ total_documents }}">
                   {{ draft_documents }}
                 </div>
@@ -118,7 +118,7 @@
                   </div>
                   <div class="progress mt-1 {% if user.profile.dark_mode %}bg-secondary{% endif %}">
                     <div class="progress-bar" role="progressbar" 
-                         style="width: {{ type.count|floatformat:0|default:'0'|stringformat:'s'|add:'.0'|div:total_files|mul:100 }}%" 
+                         style="width: {% widthratio type.count total_files 100 %}%" 
                          aria-valuenow="{{ type.count }}" aria-valuemin="0" aria-valuemax="{{ total_files }}"></div>
                   </div>
                 </div>
