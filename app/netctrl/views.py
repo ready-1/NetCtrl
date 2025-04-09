@@ -81,6 +81,17 @@ def submit_issue(request):
         # Create labels based on issue type
         labels = [issue_type]
         
+        # Check if GitHub integration is available
+        github_token = getattr(settings, 'GITHUB_TOKEN', None)
+        if not github_token:
+            message = "GitHub integration is currently disabled. Please report this issue to the administrator."
+            logger.warning("Issue submission attempted while GitHub integration is disabled")
+            return JsonResponse({
+                'success': False,
+                'error': message,
+                'status': 'disabled'
+            }, status=503)  # Service Unavailable
+            
         # Submit to GitHub
         result = create_github_issue(title, full_description, labels)
         
@@ -89,14 +100,41 @@ def submit_issue(request):
             return JsonResponse({
                 'success': True,
                 'issue_url': result['url'],
+                'issue_number': result.get('issue_number'),
                 'message': f'Issue #{result["issue_number"]} created successfully'
             })
         else:
-            logger.warning(f"Issue submission failed: {result['error']}")
+            # Handle different error types based on status
+            error_status = result.get('status', 'unknown_error')
+            status_code = 500  # Default status code
+            
+            if error_status == 'disabled':
+                # GitHub integration is disabled
+                status_code = 503  # Service Unavailable
+                logger.warning(f"Issue submission failed: GitHub integration disabled")
+            elif error_status == 'auth_error':
+                # Authentication failure
+                status_code = 401  # Unauthorized
+                logger.error(f"Issue submission failed: GitHub authentication error")
+            elif error_status == 'not_found':
+                # Repository not found
+                status_code = 404  # Not Found
+                logger.error(f"Issue submission failed: GitHub repository not found")
+            elif error_status == 'rate_limited':
+                # Rate limited
+                status_code = 429  # Too Many Requests
+                retry_after = result.get('retry_after', 60)
+                logger.warning(f"Issue submission failed: Rate limited, retry after {retry_after}s")
+            else:
+                # Generic error
+                logger.error(f"Issue submission failed: {result['error']}")
+            
             return JsonResponse({
                 'success': False,
-                'error': result['error']
-            }, status=500)
+                'error': result['error'],
+                'status': error_status,
+                'retry_after': result.get('retry_after') if error_status == 'rate_limited' else None
+            }, status=status_code)
             
     except ValueError as e:
         # Invalid JSON

@@ -9,9 +9,21 @@ This module provides filters for:
 
 import markdown
 import bleach
+import logging
 from django import template
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
+
+# Set up module logger
+logger = logging.getLogger(__name__)
+
+# Try to import CSS sanitizer
+try:
+    from bleach.css_sanitizer import CSSSanitizer
+    CSS_SANITIZER_AVAILABLE = True
+except ImportError:
+    logger.warning("bleach.css_sanitizer.CSSSanitizer not available - CSS sanitization will be limited")
+    CSS_SANITIZER_AVAILABLE = False
 
 register = template.Library()
 
@@ -72,31 +84,51 @@ def markdown_to_html(markdown_text):
             ]
         )
         
-        # Sanitize the HTML
-        # Note: Different bleach versions handle CSS differently
+        # Set up CSS sanitizer if available
+        css_sanitizer = None
+        if CSS_SANITIZER_AVAILABLE:
+            css_sanitizer = CSSSanitizer(allowed_css_properties=ALLOWED_STYLES)
+        
+        # Sanitize the HTML with proper CSS handling
         try:
-            # Try with styles parameter (newer bleach versions)
+            # Modern bleach with CSSSanitizer
+            if css_sanitizer:
+                clean_html = bleach.clean(
+                    html,
+                    tags=ALLOWED_TAGS,
+                    attributes=ALLOWED_ATTRIBUTES,
+                    css_sanitizer=css_sanitizer,
+                    strip=True
+                )
+            else:
+                # Using styles parameter for older bleach versions that don't support css_sanitizer
+                clean_html = bleach.clean(
+                    html,
+                    tags=ALLOWED_TAGS,
+                    attributes=ALLOWED_ATTRIBUTES,
+                    styles=ALLOWED_STYLES,
+                    strip=True
+                )
+        except TypeError as e:
+            # Last resort fallback: handle the case where neither method works
+            logger.warning(f"CSS sanitization failed: {e}. Falling back to basic HTML sanitization.")
+            
+            # Remove style attribute from allowed attributes to avoid warnings
+            modified_attributes = ALLOWED_ATTRIBUTES.copy()
+            for key in modified_attributes:
+                if 'style' in modified_attributes[key]:
+                    modified_attributes[key] = [attr for attr in modified_attributes[key] if attr != 'style']
+            
             clean_html = bleach.clean(
                 html,
                 tags=ALLOWED_TAGS,
-                attributes=ALLOWED_ATTRIBUTES,
-                styles=ALLOWED_STYLES,
-                strip=True
-            )
-        except TypeError:
-            # Fallback for older bleach versions that don't support styles
-            clean_html = bleach.clean(
-                html,
-                tags=ALLOWED_TAGS,
-                attributes=ALLOWED_ATTRIBUTES,
+                attributes=modified_attributes,
                 strip=True
             )
         
         return mark_safe(clean_html)
     except Exception as e:
         # Log the error and return a sanitized version of the markdown text
-        import logging
-        logger = logging.getLogger(__name__)
         logger.error(f"Error converting markdown to HTML: {e}")
         return mark_safe(f'<pre>{escape(markdown_text)}</pre>')
 

@@ -12,37 +12,57 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 import os
 import warnings
+import logging
 from pathlib import Path
 
 # Import the environment variable management module
-from netctrl.env_config import get_env_var
+from netctrl.env_config import get_env_var, is_placeholder, load_environment
+
+# Configure settings logging
+logger = logging.getLogger('netctrl.settings')
+
+# Determine environment first - this affects validation requirements
+ENVIRONMENT = get_env_var('ENVIRONMENT', default='development')
+IS_PRODUCTION = ENVIRONMENT.lower() == 'production'
+IS_TESTING = ENVIRONMENT.lower() == 'testing'
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# In production, this must be set in the environment
 SECRET_KEY = get_env_var(
     'DJANGO_SECRET_KEY', 
-    default="django-insecure-3^r@-ojml9!&-esnjq6+@e0$ne71i(8cok$rml7o#ixki*!+#k"
+    default="django-insecure-3^r@-ojml9!&-esnjq6+@e0$ne71i(8cok$rml7o#ixki*!+#k",
+    required=IS_PRODUCTION
 )
-if "django-insecure" in SECRET_KEY:
-    warnings.warn(
-        "Using insecure default SECRET_KEY. Set DJANGO_SECRET_KEY in your .env file.",
-        UserWarning
-    )
+
+# Verify the secret key is not a default insecure key
+if "django-insecure" in SECRET_KEY or is_placeholder(SECRET_KEY):
+    if IS_PRODUCTION:
+        raise RuntimeError(
+            "Using insecure SECRET_KEY in production environment. "
+            "Generate a proper secret key and set DJANGO_SECRET_KEY in your .env file."
+        )
+    else:
+        warnings.warn(
+            "Using insecure default SECRET_KEY. Set DJANGO_SECRET_KEY in your .env file.",
+            UserWarning
+        )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = get_env_var('DJANGO_DEBUG', default=True, var_type=bool)
+DEBUG = get_env_var('DJANGO_DEBUG', default=not IS_PRODUCTION, var_type=bool)
+
+# Safety check for production
+if IS_PRODUCTION and DEBUG:
+    warnings.warn(
+        "DEBUG mode enabled in production environment. This is a security risk.",
+        RuntimeWarning
+    )
 
 ALLOWED_HOSTS = get_env_var('DJANGO_ALLOWED_HOSTS', default=['localhost', '127.0.0.1'], var_type=list)
-
-# Determine the current environment
-ENVIRONMENT = get_env_var('ENVIRONMENT', default='development')
 
 
 # Application definition
