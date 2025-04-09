@@ -80,23 +80,78 @@ python manage.py runserver
 
 7. Access the application at `http://localhost:8000`
 
-### Environment Variables
+### Environment Configuration
 
-The application supports the following environment variables:
+NetCtrl uses environment variables for configuration, especially for sensitive information like API keys and credentials. These are managed through a `.env` file in the project root.
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `DJANGO_SECRET_KEY` | Django secret key | Auto-generated |
-| `DJANGO_DEBUG` | Debug mode | `True` |
-| `DJANGO_ALLOWED_HOSTS` | Allowed hosts | `localhost,127.0.0.1` |
-| `USE_POSTGRES` | Use PostgreSQL instead of SQLite | `False` |
-| `POSTGRES_DB` | PostgreSQL database name | `netctrl_db` |
-| `POSTGRES_USER` | PostgreSQL username | `netctrl_user` |
-| `POSTGRES_PASSWORD` | PostgreSQL password | `netctrl_password` |
-| `POSTGRES_HOST` | PostgreSQL host | `postgres` |
-| `POSTGRES_PORT` | PostgreSQL port | `5432` |
-| `SYSLOG_HOST` | Syslog server host | `syslog` |
-| `SYSLOG_PORT` | Syslog server port | `601` |
+#### Setting Up Your Environment
+
+1. Copy the example environment file to create your own:
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Edit the `.env` file and set the appropriate values for your environment:
+   ```bash
+   # Open in your favorite editor
+   nano .env  # or vim .env, code .env, etc.
+   ```
+
+3. Generate a secure Django secret key (if needed):
+   ```bash
+   python -c "from django.core.management.utils.get_random_secret_key import get_random_secret_key; print(get_random_secret_key())"
+   ```
+
+#### Available Environment Variables
+
+| Variable | Description | Default | Required |
+|----------|-------------|---------|----------|
+| **Core Django Settings** |
+| `DJANGO_SECRET_KEY` | Django encryption key | Auto-generated (insecure) | Yes for production |
+| `DJANGO_DEBUG` | Debug mode | `True` | No |
+| `DJANGO_ALLOWED_HOSTS` | Comma-separated list of allowed hosts | `localhost,127.0.0.1` | No |
+| `ENVIRONMENT` | Environment type (development, testing, production) | `development` | No |
+| **Database Configuration** |
+| `USE_POSTGRES` | Use PostgreSQL instead of SQLite | `False` | No |
+| `POSTGRES_DB` | PostgreSQL database name | `netctrl_db` | Yes if using PostgreSQL |
+| `POSTGRES_USER` | PostgreSQL username | `netctrl_user` | Yes if using PostgreSQL |
+| `POSTGRES_PASSWORD` | PostgreSQL password | `netctrl_password` | Yes if using PostgreSQL |
+| `POSTGRES_HOST` | PostgreSQL host | `postgres` | Yes if using PostgreSQL |
+| `POSTGRES_PORT` | PostgreSQL port | `5432` | Yes if using PostgreSQL |
+| **GitHub Integration** |
+| `GITHUB_TOKEN` | GitHub Personal Access Token | None | Yes for GitHub features |
+| `GITHUB_REPOSITORY` | GitHub repository name (format: owner/repo) | `ready-1/NetCtrl` | No |
+| **Logging Configuration** |
+| `LOG_LEVEL` | Log level (INFO, WARNING, ERROR, DEBUG) | `INFO` | No |
+| `SYSLOG_HOST` | Syslog server host | None | No |
+| `SYSLOG_PORT` | Syslog server port | `5140` | No |
+| **File Storage** |
+| `MEDIA_ROOT` | Absolute path to media storage | `BASE_DIR/media` | No |
+| `STATIC_ROOT` | Absolute path to static files storage | `BASE_DIR/staticfiles` | No |
+
+#### Using Environment Variables in Different Contexts
+
+**Development**:
+- Use the `.env` file in the project root
+- Set `ENVIRONMENT=development` and `DJANGO_DEBUG=True`
+
+**Production**:
+- Set `ENVIRONMENT=production` and `DJANGO_DEBUG=False`
+- Ensure a secure `DJANGO_SECRET_KEY` is set
+- Configure appropriate database settings
+
+**Docker**:
+- Environment variables can be passed to Docker using the `-e` flag or in `docker-compose.yml`
+- Example `docker-compose.yml` excerpt:
+  ```yaml
+  services:
+    web:
+      build: .
+      environment:
+        - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+        - DJANGO_DEBUG=False
+        - ENVIRONMENT=production
+  ```
 
 ## Project Structure
 

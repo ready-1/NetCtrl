@@ -11,7 +11,11 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 import os
+import warnings
 from pathlib import Path
+
+# Import the environment variable management module
+from netctrl.env_config import get_env_var
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,12 +25,24 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', "django-insecure-3^r@-ojml9!&-esnjq6+@e0$ne71i(8cok$rml7o#ixki*!+#k")
+# In production, this must be set in the environment
+SECRET_KEY = get_env_var(
+    'DJANGO_SECRET_KEY', 
+    default="django-insecure-3^r@-ojml9!&-esnjq6+@e0$ne71i(8cok$rml7o#ixki*!+#k"
+)
+if "django-insecure" in SECRET_KEY:
+    warnings.warn(
+        "Using insecure default SECRET_KEY. Set DJANGO_SECRET_KEY in your .env file.",
+        UserWarning
+    )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
+DEBUG = get_env_var('DJANGO_DEBUG', default=True, var_type=bool)
 
-ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = get_env_var('DJANGO_ALLOWED_HOSTS', default=['localhost', '127.0.0.1'], var_type=list)
+
+# Determine the current environment
+ENVIRONMENT = get_env_var('ENVIRONMENT', default='development')
 
 
 # Application definition
@@ -92,15 +108,15 @@ DATABASES = {
 }
 
 # Use PostgreSQL if explicitly configured
-if os.environ.get('USE_POSTGRES', 'False') == 'True':
+if get_env_var('USE_POSTGRES', default=False, var_type=bool):
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
-            "NAME": os.environ.get('POSTGRES_DB', 'netctrl_db'),
-            "USER": os.environ.get('POSTGRES_USER', 'netctrl_user'),
-            "PASSWORD": os.environ.get('POSTGRES_PASSWORD', 'netctrl_password'),
-            "HOST": os.environ.get('POSTGRES_HOST', 'postgres'),
-            "PORT": os.environ.get('POSTGRES_PORT', '5432'),
+            "NAME": get_env_var('POSTGRES_DB', default='netctrl_db'),
+            "USER": get_env_var('POSTGRES_USER', default='netctrl_user'),
+            "PASSWORD": get_env_var('POSTGRES_PASSWORD', default='netctrl_password'),
+            "HOST": get_env_var('POSTGRES_HOST', default='postgres'),
+            "PORT": get_env_var('POSTGRES_PORT', default='5432'),
         }
     }
 
@@ -143,12 +159,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = get_env_var('STATIC_ROOT', default=os.path.join(BASE_DIR, 'staticfiles'))
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 # Media files (User uploads)
 MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = get_env_var('MEDIA_ROOT', default=os.path.join(BASE_DIR, 'media'))
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -168,6 +184,10 @@ CHUNKED_UPLOAD_ABSTRACT_MODEL = False
 CHUNKED_UPLOAD_COMPLETE_EXT = '.done'
 
 # Logging - Integrate with our custom TCPSysLogHandler
+LOG_LEVEL = get_env_var('LOG_LEVEL', default='INFO')
+SYSLOG_HOST = get_env_var('SYSLOG_HOST', default=None)
+SYSLOG_PORT = get_env_var('SYSLOG_PORT', default=5140, var_type=int)
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -179,36 +199,38 @@ LOGGING = {
     },
     'handlers': {
         'console': {
-            'level': 'INFO',
+            'level': LOG_LEVEL,
             'class': 'logging.StreamHandler',
             'formatter': 'verbose',
         },
         'syslog': {
-            'level': 'INFO',
+            'level': LOG_LEVEL,
             'class': 'netctrl.logging_config.TCPSysLogHandler',
             'formatter': 'verbose',
             'facility': 'local1',
+            'host': SYSLOG_HOST,
+            'port': SYSLOG_PORT,
         },
     },
     'loggers': {
         'django': {
-            'handlers': ['console', 'syslog'],
-            'level': 'INFO',
+            'handlers': ['console', 'syslog'] if SYSLOG_HOST else ['console'],
+            'level': LOG_LEVEL,
             'propagate': True,
         },
         'cms': {
-            'handlers': ['console', 'syslog'],
-            'level': 'INFO',
+            'handlers': ['console', 'syslog'] if SYSLOG_HOST else ['console'],
+            'level': LOG_LEVEL,
             'propagate': True,
         },
         'network': {
-            'handlers': ['console', 'syslog'],
-            'level': 'INFO',
+            'handlers': ['console', 'syslog'] if SYSLOG_HOST else ['console'],
+            'level': LOG_LEVEL,
             'propagate': True,
         },
         'netctrl': {
-            'handlers': ['console', 'syslog'],
-            'level': 'INFO',
+            'handlers': ['console', 'syslog'] if SYSLOG_HOST else ['console'],
+            'level': LOG_LEVEL,
             'propagate': True,
         },
     },
@@ -229,5 +251,18 @@ except ImportError:
 
 # GitHub Issue Reporter Configuration
 APP_VERSION = '1.0.0'  # Update with your actual application version
-GITHUB_TOKEN = "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"
-GITHUB_REPOSITORY = "ready-1/NetCtrl"
+GITHUB_TOKEN = get_env_var('GITHUB_TOKEN', default=None)
+if not GITHUB_TOKEN:
+    if DEBUG:
+        warnings.warn(
+            "GITHUB_TOKEN environment variable is not set. GitHub integration features will be disabled.",
+            UserWarning
+        )
+    else:
+        # In production, warn but don't fail the application
+        warnings.warn(
+            "GITHUB_TOKEN environment variable is not set in production. GitHub integration will be unavailable.",
+            UserWarning
+        )
+
+GITHUB_REPOSITORY = get_env_var('GITHUB_REPOSITORY', default="ready-1/NetCtrl")

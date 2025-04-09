@@ -3,6 +3,15 @@
 This file tracks significant changes to the codebase.
 
 ## 2025-04-09
+- Improved security by implementing comprehensive environment variables management:
+  - Created centralized environment variable module (`env_config.py`) with type validation and error handling
+  - Moved all secrets and configuration values to environment variables loaded from `.env` file
+  - Removed hardcoded GitHub token from settings.py
+  - Added proper environment variable documentation in README.md and a detailed environment setup guide
+  - Created `.env.example` template with placeholder values and clear documentation
+  - Updated database configuration to use environment variables consistently
+  - Added environment-specific configuration for different deployment scenarios
+  - Enhanced logging configuration with environment variable control
 - Implemented TODO management system with structured format in `cline_docs/todos.md`
 - Added TODO system configuration to `.clinerules` with categories, priority levels, and workflow rules
 - Updated `activeContext.md` with TODO system usage instructions

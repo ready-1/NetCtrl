@@ -13,18 +13,18 @@ The NetCtrl CMS is a content management system with document and file management
 
 ## Recent Changes (Last 24 Hours)
 
-- Fixed TinyMCE editor read-only issue by modifying `editor-switcher.js` to:
-  - Set global TinyMCE settings with `readonly: false`
-  - Add verification and correction of editor mode after initialization
-  - Improve error handling for TinyMCE initialization
-- Fixed TinyMCE editor initialization and resource loading issues:
-  - Completely rewrote `tinymce-core.js` with hardcoded paths instead of dynamic detection
-  - Implemented multi-layered read-only prevention with four separate strategies
-  - Added comprehensive resource validation and error handling
-  - Applied aggressive API key warning suppression
-  - Improved plugin resolution with explicit external_plugins mapping
-  - Configured direct resource paths for all components (themes, plugins, models, skins)
-- These changes resolved the issues where the rich text editor would initialize in read-only mode and display API key warnings, providing a seamless editing experience
+- Implemented comprehensive environment variables management:
+  - Created centralized environment variable module (`env_config.py`) with type validation
+  - Moved all secrets and configuration values from hardcoded settings to `.env` file
+  - Removed exposed GitHub token from settings.py
+  - Improved security by properly handling sensitive information
+  - Added detailed documentation for environment setup
+  - Created environment-specific configurations for development, testing, and production
+  - Added validation and proper error handling for missing critical variables
+
+- Added TODO management system with structured format in `cline_docs/todos.md`
+  - Added configuration to `.clinerules` with categories and priority levels
+  - Created streamlined workflow for managing future tasks
 
 ## Current Focus
 
