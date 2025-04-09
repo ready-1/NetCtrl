@@ -1,8 +1,8 @@
 ---CLINE_RULES_START---
 [LAST_ACTION_STATE]
-last_action: "Implemented TODO management system with structured format and workflow"
+last_action: "Added deployment workflow task to TODO list"
 current_phase: "Execution"
-next_action: "Enhance administrative tools for user and content management"
+next_action: "Plan and implement the deployment workflow for air-gapped Debian environment"
 next_phase: "Execution"
 
 [CODE_ROOT_DIRECTORIES]
@@ -12,6 +12,7 @@ next_phase: "Execution"
 
 
 [LEARNING_JOURNAL]
+- Added deployment workflow planning and implementation task to the TODO list with detailed steps.
 - Initial setup completed on April 7, 2025.
 - Identified code roots: src, tests, utils.
 - Updated project documentation with comprehensive requirements.

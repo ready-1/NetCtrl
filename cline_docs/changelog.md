@@ -7,6 +7,8 @@ This file tracks significant changes to the codebase.
 - Added TODO system configuration to `.clinerules` with categories, priority levels, and workflow rules
 - Updated `activeContext.md` with TODO system usage instructions
 - Created streamlined workflow for adding, categorizing, and managing future tasks
+- Added deployment workflow task to the TODO list with detailed implementation steps
+- Updated `activeContext.md` to include deployment workflow planning as a next step
 
 ## 2025-04-08
 - Fixed TinyMCE editor read-only issue by adding initialization code to prevent read-only mode. Modified `editor-switcher.js` to set global TinyMCE settings with `readonly: false` and verify editor mode.

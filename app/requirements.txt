@@ -10,3 +10,4 @@ django-chunked-upload>=2.0.0,<3.0.0  # For handling large file uploads
 python-magic>=0.4.27,<0.5.0  # For file type detection
 markdown>=3.4.4,<4.0.0     # For Markdown processing
 bleach>=6.1.0,<7.0.0       # For HTML sanitization
+requests>=2.28.0,<3.0.0    # For GitHub API integration

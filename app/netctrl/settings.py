@@ -206,6 +206,11 @@ LOGGING = {
             'level': 'INFO',
             'propagate': True,
         },
+        'netctrl': {
+            'handlers': ['console', 'syslog'],
+            'level': 'INFO',
+            'propagate': True,
+        },
     },
 }
 
@@ -221,3 +226,8 @@ except ImportError:
     # Add a warning about missing the custom handler
     import warnings
     warnings.warn("Custom TCPSysLogHandler not found. Falling back to console logging only.")
+
+# GitHub Issue Reporter Configuration
+APP_VERSION = '1.0.0'  # Update with your actual application version
+GITHUB_TOKEN = "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"
+GITHUB_REPOSITORY = "ready-1/NetCtrl"

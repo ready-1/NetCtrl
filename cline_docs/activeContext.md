@@ -35,6 +35,7 @@ The NetCtrl CMS is a content management system with document and file management
 
 ## Next Steps
 
+- Plan and implement the deployment workflow for air-gapped Debian environment
 - Implement administrative dashboard for user management
 - Add bulk operations for document and file management
 - Improve taxonomy management interface

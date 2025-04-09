@@ -19,6 +19,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import RedirectView
+from . import views  # Import our views
 
 urlpatterns = [
     # Admin URL
@@ -35,6 +36,10 @@ urlpatterns = [
     
     # User authentication URLs
     path("accounts/", include("django.contrib.auth.urls")),
+    
+    # GitHub issue reporting API endpoints
+    path("api/github/submit/", views.submit_issue, name="submit_issue"),
+    path("api/github/templates/", views.get_issue_templates, name="get_templates"),
 ]
 
 # Serve media and static files during development
