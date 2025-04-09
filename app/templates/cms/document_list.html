@@ -11,7 +11,7 @@
         </div>
     </div>
     <div class="col-md-4 text-end">
-        <a href="#" class="btn btn-primary">
+        <a href="{% url 'cms:document_create' %}" class="btn btn-primary">
             <i class="bi bi-file-earmark-plus"></i> New Document
         </a>
     </div>
@@ -26,32 +26,38 @@
                 </h5>
             </div>
             <div class="card-body">
-                <div class="mb-3">
-                    <label for="categoryFilter" class="form-label">Category</label>
-                    <select class="form-select {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" id="categoryFilter">
-                        <option selected>All Categories</option>
-                        <option>Category placeholder</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="tagFilter" class="form-label">Tag</label>
-                    <select class="form-select {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" id="tagFilter">
-                        <option selected>All Tags</option>
-                        <option>Tag placeholder</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="statusFilter" class="form-label">Status</label>
-                    <select class="form-select {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" id="statusFilter">
-                        <option selected>All</option>
-                        <option>Draft</option>
-                        <option>Published</option>
-                    </select>
-                </div>
-                <div class="d-grid gap-2">
-                    <button class="btn btn-primary" type="button">Apply Filters</button>
-                    <button class="btn btn-secondary" type="button">Reset</button>
-                </div>
+                <form method="get" action="{% url 'cms:document_list' %}">
+                    <div class="mb-3">
+                        <label for="category_id" class="form-label">Category</label>
+                        <select class="form-select {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" id="category_id" name="category_id">
+                            <option value="">All Categories</option>
+                            {% for category in categories %}
+                                <option value="{{ category.id }}" {% if request.GET.category_id == category.id|stringformat:"i" %}selected{% endif %}>{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="tag_id" class="form-label">Tag</label>
+                        <select class="form-select {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" id="tag_id" name="tag_id">
+                            <option value="">All Tags</option>
+                            {% for tag in tags %}
+                                <option value="{{ tag.id }}" {% if request.GET.tag_id == tag.id|stringformat:"i" %}selected{% endif %}>{{ tag.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="status" class="form-label">Status</label>
+                        <select class="form-select {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" id="status" name="status">
+                            <option value="">All</option>
+                            <option value="draft" {% if request.GET.status == 'draft' %}selected{% endif %}>Draft</option>
+                            <option value="published" {% if request.GET.status == 'published' %}selected{% endif %}>Published</option>
+                        </select>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-primary" type="submit">Apply Filters</button>
+                        <a href="{% url 'cms:document_list' %}" class="btn btn-secondary">Reset</a>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -66,26 +72,110 @@
                         </h5>
                     </div>
                     <div class="col-auto">
-                        <div class="input-group">
-                            <input type="text" class="form-control {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" placeholder="Search documents...">
-                            <button class="btn btn-outline-secondary" type="button">
-                                <i class="bi bi-search"></i>
-                            </button>
-                        </div>
+                        <form method="get" action="{% url 'cms:document_list' %}" class="d-flex">
+                            <div class="input-group">
+                                <input type="text" name="q" class="form-control {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" placeholder="Search documents..." value="{{ request.GET.q|default:'' }}">
+                                <button class="btn btn-outline-secondary" type="submit">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
             <div class="card-body">
-                <div class="placeholder-glow mb-4">
-                    <p class="placeholder col-12"></p>
-                    <p class="placeholder col-12"></p>
-                    <p class="placeholder col-12"></p>
-                    <p class="placeholder col-12"></p>
-                    <p class="placeholder col-12"></p>
-                </div>
-                <div class="text-center text-muted">
-                    <em>No documents found. Create a new document to get started.</em>
-                </div>
+                {% if documents %}
+                    <div class="table-responsive">
+                        <table class="table table-hover {% if user.profile.dark_mode %}table-dark{% endif %}">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Status</th>
+                                    <th>Category</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for document in documents %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'cms:document_detail' document.slug %}" class="d-block text-truncate" style="max-width: 250px;">
+                                            {{ document.title }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <span class="badge {% if document.status == 'published' %}bg-success{% else %}bg-warning text-dark{% endif %}">
+                                            {{ document.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td>{{ document.category.name|default:"—" }}</td>
+                                    <td>{{ document.created_at|date:"M d, Y" }}</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="{% url 'cms:document_detail' document.slug %}" class="btn btn-outline-primary">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a href="{% url 'cms:document_update' document.slug %}" class="btn btn-outline-secondary">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <a href="{% url 'cms:document_delete' document.slug %}" class="btn btn-outline-danger">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    {% if is_paginated %}
+                    <nav aria-label="Page navigation" class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="First">
+                                    <span aria-hidden="true">&laquo;&laquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            {% endif %}
+                            
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if page_obj.number == num %}
+                                <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+                                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a>
+                                </li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Last">
+                                    <span aria-hidden="true">&raquo;&raquo;</span>
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    {% endif %}
+                {% else %}
+                    <div class="text-center text-muted">
+                        <em>No documents found. Create a new document to get started.</em>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>

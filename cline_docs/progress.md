@@ -28,6 +28,8 @@ This document tracks the progress of tasks and milestones for the NetCtrl projec
 - [x] Implement document management features
 - [x] Add file version management 
 - [x] Create document-file associations
+- [x] Fix TinyMCE editor read-only mode issue for document creation/editing
+- [x] Fix TinyMCE editor initialization and resource loading issues (Completed)
 
 ## Upcoming Tasks
 - [x] Create dashboard with system statistics
@@ -53,3 +55,5 @@ This document tracks the progress of tasks and milestones for the NetCtrl projec
 - Support for files up to 5GB with proper metadata management
 - Document management system implemented with version tracking
 - File-to-document association capabilities for comprehensive content management
+- Fixed TinyMCE rich text editor to prevent read-only mode, enabling proper document creation and editing
+- Fixed TinyMCE editor initialization with hardcoded paths, multi-layered read-only prevention, comprehensive error handling, and explicit resource mappings for all required components

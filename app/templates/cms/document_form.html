@@ -1,0 +1,615 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'vendor/simplemde/1.11.2/css/simplemde.min.css' %}">
+<style>
+    /* Style fixes for editors in dark mode */
+    .CodeMirror {
+        height: 400px;
+        font-family: monospace;
+        font-size: 14px;
+    }
+    
+    .dark-mode .CodeMirror, 
+    .dark-mode .CodeMirror-scroll {
+        background-color: #2d3748;
+        color: #e2e8f0;
+        border-color: #4a5568;
+    }
+    
+    .dark-mode .editor-toolbar {
+        background-color: #2d3748;
+        border-color: #4a5568;
+    }
+    
+    .dark-mode .editor-toolbar button {
+        color: #e2e8f0 !important;
+    }
+    
+    .dark-mode .editor-toolbar button:hover {
+        background-color: #4a5568;
+    }
+    
+    .dark-mode .editor-preview {
+        background-color: #2d3748;
+        color: #e2e8f0;
+    }
+    
+    /* Editor status bar styling */
+    .editor-statusbar {
+        padding: 8px 10px;
+        font-size: 12px;
+        color: #959694;
+        text-align: right;
+    }
+    
+    .dark-mode .editor-statusbar {
+        color: #a0aec0;
+        background-color: #2d3748;
+        border-color: #4a5568;
+    }
+    
+    /* Markdown help panel */
+    .markdown-help {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 0.25rem;
+        padding: 1rem;
+        margin-top: 1rem;
+    }
+    
+    .dark-mode .markdown-help {
+        background-color: #2d3748;
+        border-color: #4a5568;
+        color: #e2e8f0;
+    }
+    
+    .markdown-help table {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+    
+    .markdown-help th, 
+    .markdown-help td {
+        padding: 0.5rem;
+        border-bottom: 1px solid #dee2e6;
+    }
+    
+    .dark-mode .markdown-help th,
+    .dark-mode .markdown-help td {
+        border-color: #4a5568;
+    }
+    
+    .markdown-help code {
+        background-color: #edf2f7;
+        padding: 0.2rem 0.4rem;
+        border-radius: 0.25rem;
+    }
+    
+    .dark-mode .markdown-help code {
+        background-color: #4a5568;
+        color: #e2e8f0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="alert alert-info">
+            <h4 class="alert-heading">{{ title }}</h4>
+            <p>{% if is_new %}Use this form to create a new document.{% else %}Edit the document properties.{% endif %}</p>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-lg-8 offset-lg-2">
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-file-earmark-text"></i> {% if is_new %}New Document{% else %}Edit Document{% endif %}
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.title.id_for_label }}" class="form-label">Title</label>
+                        <input type="text" name="{{ form.title.name }}" 
+                               id="{{ form.title.id_for_label }}" 
+                               class="form-control {% if form.title.errors %}is-invalid{% endif %} {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}"
+                               value="{{ form.title.value|default:'' }}" 
+                               placeholder="Document title">
+                        {% if form.title.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.title.errors %}
+                            {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.excerpt.id_for_label }}" class="form-label">Excerpt</label>
+                        <textarea name="{{ form.excerpt.name }}" 
+                                 id="{{ form.excerpt.id_for_label }}" 
+                                 class="form-control {% if form.excerpt.errors %}is-invalid{% endif %} {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}"
+                                 rows="3" 
+                                 placeholder="Brief document summary">{{ form.excerpt.value|default:'' }}</textarea>
+                        {% if form.excerpt.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.excerpt.errors %}
+                            {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.content_format.id_for_label }}" class="form-label">Content Format</label>
+                        <select name="{{ form.content_format.name }}" 
+                                id="{{ form.content_format.id_for_label }}" 
+                                class="form-select {% if form.content_format.errors %}is-invalid{% endif %} {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+                            {% for choice in form.content_format.field.choices %}
+                                <option value="{{ choice.0 }}" {% if form.content_format.value == choice.0 %}selected{% endif %}>
+                                    {{ choice.1 }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <div class="form-text">
+                            Markdown: Use Markdown syntax for text formatting with preview capability<br>
+                            Plain Text: Use basic text without formatting
+                        </div>
+                        {% if form.content_format.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.content_format.errors %}
+                            {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.content.id_for_label }}" class="form-label">Content</label>
+                        <textarea name="{{ form.content.name }}" 
+                                 id="{{ form.content.id_for_label }}" 
+                                 class="form-control {% if form.content.errors %}is-invalid{% endif %} {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}"
+                                 rows="10" 
+                                 placeholder="Document content">{{ form.content.value|default:'' }}</textarea>
+                        <div class="form-text editor-info" id="markdown-info" style="display: none;">
+                            <strong>Markdown Tips:</strong>
+                            # Heading 1, ## Heading 2, **bold**, *italic*, 
+                            [link](url), ![image](url), > blockquote, 
+                            - list item, 1. numbered item, ```code```
+                        </div>
+                        {% if form.content.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.content.errors %}
+                            {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.category.id_for_label }}" class="form-label">Category</label>
+                        <div class="input-group">
+                            <select name="{{ form.category.name }}" 
+                                    id="{{ form.category.id_for_label }}" 
+                                    class="form-select {% if form.category.errors %}is-invalid{% endif %} {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+                                <option value="">-- Select Category --</option>
+                                {% for choice in form.category.field.choices %}
+                                    {% if choice.0 %}
+                                    <option value="{{ choice.0 }}" {% if form.category.value|stringformat:"s" == choice.0|stringformat:"s" %}selected{% endif %}>
+                                        {{ choice.1 }}
+                                    </option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                            <a href="{% url 'cms:category_create' %}" class="btn btn-outline-secondary" target="_blank">
+                                <i class="bi bi-plus-circle"></i> New
+                            </a>
+                        </div>
+                        {% if form.category.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.category.errors %}
+                            {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.tags.id_for_label }}" class="form-label">Tags</label>
+                        <div class="input-group">
+                            <select name="{{ form.tags.name }}" 
+                                    id="{{ form.tags.id_for_label }}" 
+                                    class="form-select {% if form.tags.errors %}is-invalid{% endif %} {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}"
+                                    multiple>
+                                {% for choice in form.tags.field.choices %}
+                                    {% if choice.0 %}
+                                    <option value="{{ choice.0 }}" 
+                                        {% if choice.0|stringformat:"s" in form.tags.value|stringformat:"s" %}selected{% endif %}>
+                                        {{ choice.1 }}
+                                    </option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                            <a href="{% url 'cms:tag_create' %}" class="btn btn-outline-secondary" target="_blank">
+                                <i class="bi bi-plus-circle"></i> New
+                            </a>
+                        </div>
+                        <div class="form-text">Hold Ctrl (or Cmd on Mac) to select multiple tags</div>
+                        {% if form.tags.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.tags.errors %}
+                            {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.featured_image.id_for_label }}" class="form-label">Featured Image</label>
+                        <input type="file" name="{{ form.featured_image.name }}" 
+                               id="{{ form.featured_image.id_for_label }}" 
+                               class="form-control {% if form.featured_image.errors %}is-invalid{% endif %} {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+                        {% if form.featured_image.value %}
+                        <div class="mt-2">
+                            <span>Current image: {{ form.featured_image.value }}</span>
+                        </div>
+                        {% endif %}
+                        {% if form.featured_image.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.featured_image.errors %}
+                            {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    {% if not is_new %}
+                    <div class="mb-3">
+                        <label for="{{ form.status.id_for_label }}" class="form-label">Status</label>
+                        <select name="{{ form.status.name }}" 
+                                id="{{ form.status.id_for_label }}" 
+                                class="form-select {% if form.status.errors %}is-invalid{% endif %} {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+                            {% for choice in form.status.field.choices %}
+                                <option value="{{ choice.0 }}" {% if form.status.value == choice.0 %}selected{% endif %}>
+                                    {{ choice.1 }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        {% if form.status.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.status.errors %}
+                            {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'cms:document_list' %}" class="btn btn-secondary me-md-2">
+                            <i class="bi bi-x-circle"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> {% if is_new %}Create Document{% else %}Save Changes{% endif %}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Add fallback notice placeholder -->
+<div id="editor-fallback-notice" class="alert alert-warning mt-2" style="display: none;">
+    <strong>Notice:</strong> Editor could not be loaded. Using basic textarea instead.
+</div>
+
+<!-- Markdown help panel -->
+<div id="markdown-help-panel" class="markdown-help" style="display: none;">
+    <h5>Markdown Quick Reference</h5>
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th>Element</th>
+                <th>Markdown Syntax</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Heading</td>
+                <td><code># H1</code>, <code>## H2</code>, <code>### H3</code></td>
+            </tr>
+            <tr>
+                <td>Bold</td>
+                <td><code>**bold text**</code></td>
+            </tr>
+            <tr>
+                <td>Italic</td>
+                <td><code>*italicized text*</code></td>
+            </tr>
+            <tr>
+                <td>Blockquote</td>
+                <td><code>> blockquote</code></td>
+            </tr>
+            <tr>
+                <td>Ordered List</td>
+                <td><code>1. First item</code><br><code>2. Second item</code></td>
+            </tr>
+            <tr>
+                <td>Unordered List</td>
+                <td><code>- Item</code><br><code>- Another item</code></td>
+            </tr>
+            <tr>
+                <td>Code</td>
+                <td><code>`code`</code></td>
+            </tr>
+            <tr>
+                <td>Link</td>
+                <td><code>[title](https://www.example.com)</code></td>
+            </tr>
+            <tr>
+                <td>Image</td>
+                <td><code>![alt text](image.jpg)</code></td>
+            </tr>
+            <tr>
+                <td>Horizontal Rule</td>
+                <td><code>---</code></td>
+            </tr>
+        </tbody>
+    </table>
+    <p class="mb-0 mt-2">
+        <button id="toggle-markdown-help" class="btn btn-sm btn-outline-secondary">Hide Reference</button>
+    </p>
+</div>
+
+<!-- SimpleMDE Editor for Markdown content -->
+<script src="{% static 'vendor/simplemde/1.11.2/js/simplemde.min.js' %}"></script>
+
+<script>
+    /**
+     * Document editor initialization script
+     * Enhanced SimpleMDE implementation with Markdown support and validation
+     */
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Document form loaded');
+        
+        // Elements
+        const formatSelect = document.getElementById('id_content_format');
+        const contentField = document.getElementById('id_content');
+        const markdownInfo = document.getElementById('markdown-info');
+        const fallbackNotice = document.getElementById('editor-fallback-notice');
+        const markdownHelpPanel = document.getElementById('markdown-help-panel');
+        const toggleMarkdownHelpBtn = document.getElementById('toggle-markdown-help');
+        
+        // Document properties
+        const documentId = '{{ document.id|default:"new" }}';
+        
+        // Editor instances
+        let simpleMDEInstance = null;
+        
+        // Detect dark mode
+        const isDarkMode = document.querySelector('.card.bg-dark') !== null;
+        
+        // Set default content format if needed
+        if (formatSelect && !formatSelect.value) {
+            console.log('Setting default content format to markdown');
+            formatSelect.value = 'markdown';
+        }
+        
+        // Hide fallback notice by default
+        if (fallbackNotice) {
+            fallbackNotice.style.display = 'none';
+        }
+        
+        // Toggle markdown help reference panel
+        if (toggleMarkdownHelpBtn) {
+            toggleMarkdownHelpBtn.addEventListener('click', function() {
+                if (markdownHelpPanel.style.display === 'none') {
+                    markdownHelpPanel.style.display = 'block';
+                    toggleMarkdownHelpBtn.textContent = 'Hide Reference';
+                } else {
+                    markdownHelpPanel.style.display = 'none';
+                    toggleMarkdownHelpBtn.textContent = 'Show Reference';
+                }
+            });
+        }
+        
+        // Show or hide markdown help text
+        function toggleMarkdownHelp(show) {
+            if (markdownInfo) {
+                markdownInfo.style.display = show ? 'block' : 'none';
+            }
+            
+            // Also show the full markdown help panel for markdown format
+            if (markdownHelpPanel) {
+                markdownHelpPanel.style.display = show ? 'block' : 'none';
+            }
+        }
+        
+        // Validate markdown content for common issues
+        function validateMarkdown(content) {
+            const warnings = [];
+            
+            // Check for unclosed markdown elements
+            if ((content.match(/\*\*/g) || []).length % 2 !== 0) {
+                warnings.push("Warning: You may have unclosed bold formatting (**) in your text");
+            }
+            
+            if ((content.match(/\*/g) || []).length % 2 !== 0) {
+                warnings.push("Warning: You may have unclosed italic formatting (*) in your text");
+            }
+            
+            if ((content.match(/`/g) || []).length % 2 !== 0) {
+                warnings.push("Warning: You may have unclosed inline code formatting (`) in your text");
+            }
+            
+            // Check for broken links
+            const brokenLinks = content.match(/\[([^\]]+)\]\s*\((\s*)\)/g);
+            if (brokenLinks && brokenLinks.length > 0) {
+                warnings.push("Warning: You have links with empty URLs");
+            }
+            
+            // Return warnings if any
+            return warnings;
+        }
+        
+        // Clean up existing editors
+        function cleanupEditors() {
+            // Clean up SimpleMDE
+            if (simpleMDEInstance) {
+                try {
+                    simpleMDEInstance.toTextArea();
+                    simpleMDEInstance = null;
+                } catch(e) {
+                    console.warn('Error cleaning up SimpleMDE:', e);
+                }
+            }
+        }
+        
+        // Create fallback textarea when editor fails to load
+        function createFallbackEditor() {
+            console.warn('Creating fallback editor');
+            if (contentField) {
+                contentField.style.display = 'block';
+                if (fallbackNotice) {
+                    fallbackNotice.style.display = 'block';
+                }
+            }
+        }
+        
+        // Initialize Markdown editor (SimpleMDE) with enhanced features
+        function initializeMarkdownEditor() {
+            // Clean up existing editors
+            cleanupEditors();
+            
+            // Show markdown help
+            toggleMarkdownHelp(true);
+            
+            // Initialize SimpleMDE with enhanced configuration
+            if (typeof SimpleMDE !== 'undefined' && contentField) {
+                try {
+                    simpleMDEInstance = new SimpleMDE({ 
+                        element: contentField,
+                        spellChecker: true,
+                        autosave: {
+                            enabled: true,
+                            uniqueId: 'document-content-' + documentId,
+                            delay: 10000
+                        },
+                        toolbar: [
+                            "bold", "italic", "heading", "strikethrough", "|", 
+                            "quote", "unordered-list", "ordered-list", "|", 
+                            "link", "image", "table", "horizontal-rule", "|",
+                            "code", "clean-block", "|",
+                            "preview", "side-by-side", "fullscreen", "|", 
+                            "guide"
+                        ],
+                        status: ["autosave", "lines", "words", "cursor"],
+                        tabSize: 4,
+                        forceSync: true,
+                        placeholder: "Write your document content here using Markdown...",
+                        renderingConfig: {
+                            singleLineBreaks: false,
+                            codeSyntaxHighlighting: true
+                        },
+                        previewRender: function(plainText) {
+                            // Custom preview rendering if needed
+                            return this.parent.markdown(plainText);
+                        }
+                    });
+                    
+                    // Add validation on change
+                    simpleMDEInstance.codemirror.on("change", function() {
+                        const content = simpleMDEInstance.value();
+                        const warnings = validateMarkdown(content);
+                        
+                        // If warnings exist, show them somewhere in the UI
+                        if (warnings.length > 0) {
+                            console.warn('Markdown validation warnings:', warnings);
+                            // You could display these warnings in the UI
+                        }
+                    });
+                    
+                    console.log('SimpleMDE initialized successfully');
+                } catch (error) {
+                    console.error('Error initializing SimpleMDE:', error);
+                    createFallbackEditor();
+                }
+            } else {
+                console.error('SimpleMDE not loaded');
+                createFallbackEditor();
+            }
+        }
+        
+        // Initialize plaintext editor (basic textarea)
+        function initializePlaintextEditor() {
+            // Clean up existing editors
+            cleanupEditors();
+            
+            // Hide markdown help
+            toggleMarkdownHelp(false);
+            
+            // Just use the basic textarea with some styling
+            if (contentField) {
+                contentField.style.display = 'block';
+                contentField.setAttribute('rows', '15');
+                contentField.setAttribute('placeholder', 'Enter plain text content here...');
+            }
+            
+            console.log('Plaintext editor initialized');
+        }
+        
+        // Initialize the editor based on format
+        function initializeEditor() {
+            if (!formatSelect || !contentField) {
+                console.error('Required form elements not found');
+                return;
+            }
+            
+            const format = formatSelect.value;
+            console.log('Initializing editor for format:', format);
+            
+            if (format === 'markdown') {
+                initializeMarkdownEditor();
+            } else if (format === 'plaintext') {
+                initializePlaintextEditor();
+            } else {
+                console.warn('Unknown format:', format);
+                // Show basic textarea as fallback
+                createFallbackEditor();
+            }
+        }
+        
+        // Initialize the editor on load
+        if (formatSelect && contentField) {
+            // Initial initialization
+            initializeEditor();
+            
+            // Re-initialize when format changes
+            formatSelect.addEventListener('change', initializeEditor);
+        } else {
+            console.error('Required form elements not found, editor not initialized');
+        }
+    });
+</script>
+{% endblock %}

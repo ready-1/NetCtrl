@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'cms:dashboard' %}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'cms:document_list' %}">Documents</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'cms:document_detail' document.slug %}">{{ document.title }}</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'cms:document_files' document.slug %}">Files</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Add Files</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-lg-8 offset-lg-2">
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-plus-circle"></i> Add Files to Document
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <h4 class="alert-heading">Add Files to "{{ document.title }}"</h4>
+                    <p>Select files to attach to this document. You can select multiple files at once.</p>
+                </div>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.files.id_for_label }}" class="form-label">Select Files</label>
+                        <select name="{{ form.files.name }}" 
+                                id="{{ form.files.id_for_label }}" 
+                                class="form-select {% if form.files.errors %}is-invalid{% endif %} {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}"
+                                multiple size="12">
+                            {% for file in available_files %}
+                                <option value="{{ file.id }}">
+                                    {{ file.name }} ({{ file.file_size|filesizeformat }}) - {{ file.uploaded_by.username }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <div class="form-text">
+                            Hold Ctrl (or Cmd on Mac) to select multiple files.
+                        </div>
+                        {% if form.files.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.files.errors %}
+                            {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'cms:document_files' document.slug %}" class="btn btn-secondary me-md-2">
+                            <i class="bi bi-x-circle"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i> Add Selected Files
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if available_files.count > 10 %}
+<div class="row mb-4">
+    <div class="col-lg-8 offset-lg-2">
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-search"></i> Filter Files
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="input-group mb-3">
+                    <input type="text" id="file-search" class="form-control {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}" placeholder="Type to filter files...">
+                    <button class="btn btn-outline-secondary" type="button" id="clear-search">
+                        <i class="bi bi-x-circle"></i> Clear
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="row mb-4">
+    <div class="col-lg-8 offset-lg-2">
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-info-circle"></i> About File Attachments
+                </h5>
+            </div>
+            <div class="card-body">
+                <p>File attachments allow you to:</p>
+                <ul>
+                    <li>Associate supporting documents with a document</li>
+                    <li>Include images, spreadsheets, PDFs, and other file types</li>
+                    <li>Organize related files under a single document</li>
+                    <li>Provide supplementary information to readers</li>
+                </ul>
+                <p>Files can be attached to multiple documents, and you can reorder the files to control how they appear in the document.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% if available_files.count > 10 %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const fileSearch = document.getElementById('file-search');
+        const fileSelect = document.getElementById('{{ form.files.id_for_label }}');
+        const clearSearch = document.getElementById('clear-search');
+        
+        fileSearch.addEventListener('input', function() {
+            const searchTerm = fileSearch.value.toLowerCase();
+            
+            Array.from(fileSelect.options).forEach(option => {
+                const text = option.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    option.style.display = '';
+                } else {
+                    option.style.display = 'none';
+                }
+            });
+        });
+        
+        clearSearch.addEventListener('click', function() {
+            fileSearch.value = '';
+            Array.from(fileSelect.options).forEach(option => {
+                option.style.display = '';
+            });
+        });
+    });
+</script>
+{% endif %}
+{% endblock %}

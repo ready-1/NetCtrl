@@ -106,7 +106,8 @@ class Document(models.Model):
     Attributes:
         title (CharField): The document title
         slug (SlugField): URL-friendly version of the title
-        content (TextField): The main document content (HTML)
+        content (TextField): The main document content (HTML or Markdown)
+        content_format (CharField): Format of the content (HTML or Markdown)
         excerpt (TextField): Short summary or teaser
         author (ForeignKey): User who created the document
         category (ForeignKey): Primary category for the document
@@ -121,6 +122,11 @@ class Document(models.Model):
     STATUS_CHOICES = (
         ('draft', 'Draft'),
         ('published', 'Published'),
+    )
+    
+    CONTENT_FORMAT_CHOICES = (
+        ('markdown', 'Markdown'),
+        ('plaintext', 'Plain Text'),
     )
     
     title = models.CharField("Title", max_length=255)
@@ -152,6 +158,12 @@ class Document(models.Model):
         upload_to='documents/featured_images/%Y/%m/', 
         null=True, 
         blank=True
+    )
+    content_format = models.CharField(
+        "Content Format",
+        max_length=10,
+        choices=CONTENT_FORMAT_CHOICES,
+        default='markdown'
     )
     status = models.CharField(
         "Status",
@@ -218,6 +230,7 @@ class Document(models.Model):
             document=self,
             version_number=version_number,
             content=self.content,
+            content_format=self.content_format,
             excerpt=self.excerpt,
             created_by=created_by,
             changelog=changelog
@@ -234,6 +247,7 @@ class DocumentVersion(models.Model):
         document (ForeignKey): The document this version belongs to
         version_number (PositiveIntegerField): Sequential version number
         content (TextField): Version-specific content
+        content_format (CharField): Format of the content (HTML or Markdown)
         excerpt (TextField): Version-specific excerpt
         created_at (DateTimeField): When this version was created
         created_by (ForeignKey): User who created this version
@@ -249,6 +263,12 @@ class DocumentVersion(models.Model):
     content = models.TextField("Content")
     excerpt = models.TextField("Excerpt", blank=True)
     created_at = models.DateTimeField("Created at", auto_now_add=True)
+    content_format = models.CharField(
+        "Content Format",
+        max_length=10,
+        choices=Document.CONTENT_FORMAT_CHOICES,
+        default='markdown'
+    )
     created_by = models.ForeignKey(
         User, 
         on_delete=models.CASCADE, 
@@ -275,9 +295,10 @@ class DocumentVersion(models.Model):
         """
         with transaction.atomic():
             self.document.content = self.content
+            self.document.content_format = self.content_format
             self.document.excerpt = self.excerpt
             self.document.updated_at = timezone.now()
-            self.document.save(update_fields=['content', 'excerpt', 'updated_at'])
+            self.document.save(update_fields=['content', 'content_format', 'excerpt', 'updated_at'])
             logger.info(f"Version {self.version_number} promoted to current for document {self.document.id}")
         return self.document
 

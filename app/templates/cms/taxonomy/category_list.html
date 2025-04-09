@@ -1,0 +1,269 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="h2">{{ title }}</h1>
+        <p class="lead">Manage hierarchical categories for organizing documents</p>
+    </div>
+    <div class="col-auto">
+        {% if user.is_staff %}
+        <a href="{% url 'cms:category_create' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Create Category
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-lg-8">
+        <form method="get" action="{% url 'cms:category_list' %}" class="mb-4">
+            <div class="input-group">
+                <input type="text" name="q" class="form-control" placeholder="Search categories..." value="{{ search_query }}">
+                <button type="submit" class="btn btn-outline-secondary">
+                    <i class="bi bi-search"></i> Search
+                </button>
+                {% if search_query %}
+                <a href="{% url 'cms:category_list' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-x-circle"></i> Clear
+                </a>
+                {% endif %}
+            </div>
+        </form>
+        
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-folder2"></i> Categories ({{ total_count }})</span>
+            </div>
+            <div class="card-body p-0">
+                {% if categories %}
+                {% if search_query %}
+                <!-- Show flat list for search results -->
+                <div class="table-responsive">
+                    <table class="table {% if user.profile.dark_mode %}table-dark{% endif %} mb-0">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Parent</th>
+                                <th>Documents</th>
+                                {% if user.is_staff %}
+                                <th>Actions</th>
+                                {% endif %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for category in categories %}
+                            <tr>
+                                <td>
+                                    <a href="{% url 'cms:category_detail' category.slug %}">{{ category.name }}</a>
+                                </td>
+                                <td>
+                                    {% if category.parent %}
+                                    <a href="{% url 'cms:category_detail' category.parent.slug %}">{{ category.parent.name }}</a>
+                                    {% else %}
+                                    <span class="text-muted">None</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if category.document_count %}
+                                    <a href="{% url 'cms:category_detail' category.slug %}">{{ category.document_count }}</a>
+                                    {% else %}
+                                    <span class="text-muted">0</span>
+                                    {% endif %}
+                                </td>
+                                {% if user.is_staff %}
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="{% url 'cms:category_update' category.slug %}" class="btn btn-outline-primary">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        {% if category.document_count == 0 and not category.children.exists %}
+                                        <a href="{% url 'cms:category_delete' category.slug %}" class="btn btn-outline-danger">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                        {% else %}
+                                        <button class="btn btn-outline-danger" disabled title="Cannot delete category in use">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                {% endif %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <!-- Show hierarchical list when not searching -->
+                <div class="list-group list-group-flush">
+                    {% if top_level_categories %}
+                    {% for category in top_level_categories %}
+                    <div class="list-group-item {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+                        <div class="d-flex w-100 justify-content-between align-items-center">
+                            <div>
+                                <h5 class="mb-1">
+                                    <a href="{% url 'cms:category_detail' category.slug %}" class="text-decoration-none">
+                                        <i class="bi bi-folder2"></i> {{ category.name }}
+                                    </a>
+                                </h5>
+                                {% if category.description %}
+                                <p class="mb-1 text-muted small">{{ category.description|truncatechars:100 }}</p>
+                                {% endif %}
+                                
+                                <div class="small">
+                                    <span class="badge bg-info">{{ category.document_count }} document{{ category.document_count|pluralize }}</span>
+                                    <span class="badge bg-secondary">{{ category.children.count }} subcategories</span>
+                                </div>
+                            </div>
+                            
+                            {% if user.is_staff %}
+                            <div class="btn-group btn-group-sm">
+                                <a href="{% url 'cms:category_update' category.slug %}" class="btn btn-outline-primary">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                {% if category.document_count == 0 and not category.children.exists %}
+                                <a href="{% url 'cms:category_delete' category.slug %}" class="btn btn-outline-danger">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                                {% else %}
+                                <button class="btn btn-outline-danger" disabled title="Cannot delete category in use">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        {% if category.children.exists %}
+                        <div class="ms-4 mt-3">
+                            <div class="list-group">
+                                {% for child in category.children.all %}
+                                <div class="list-group-item {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+                                    <div class="d-flex w-100 justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">
+                                                <a href="{% url 'cms:category_detail' child.slug %}" class="text-decoration-none">
+                                                    <i class="bi bi-folder2"></i> {{ child.name }}
+                                                </a>
+                                            </h6>
+                                            {% if child.description %}
+                                            <p class="mb-1 text-muted small">{{ child.description|truncatechars:80 }}</p>
+                                            {% endif %}
+                                            <div class="small">
+                                                <span class="badge bg-info">{{ child.documents.count }} document{{ child.documents.count|pluralize }}</span>
+                                            </div>
+                                        </div>
+                                        
+                                        {% if user.is_staff %}
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="{% url 'cms:category_update' child.slug %}" class="btn btn-outline-primary btn-sm">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            {% if child.documents.count == 0 and not child.children.exists %}
+                                            <a href="{% url 'cms:category_delete' child.slug %}" class="btn btn-outline-danger btn-sm">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                            {% endif %}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                </div>
+                {% endif %}
+                
+                {% if is_paginated %}
+                <nav aria-label="Category pagination" class="p-3">
+                    <ul class="pagination justify-content-center mb-0">
+                        {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1{% if search_query %}&q={{ search_query }}{% endif %}" aria-label="First">
+                                <span aria-hidden="true">&laquo;&laquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        {% endif %}
+                        
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                            <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}{% if search_query %}&q={{ search_query }}{% endif %}">{{ num }}</a>
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&q={{ search_query }}{% endif %}" aria-label="Last">
+                                <span aria-hidden="true">&raquo;&raquo;</span>
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+                
+                {% else %}
+                <div class="p-4 text-center">
+                    {% if search_query %}
+                    <p class="mb-0 text-muted">
+                        <em>No categories found matching "{{ search_query }}".</em>
+                    </p>
+                    {% else %}
+                    <p class="mb-0 text-muted">
+                        <em>No categories have been created yet.</em>
+                    </p>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <i class="bi bi-info-circle"></i> About Categories
+            </div>
+            <div class="card-body">
+                <p>Categories organize documents in a hierarchical structure, allowing for a more organized content management system.</p>
+                <h5>Benefits:</h5>
+                <ul>
+                    <li>Hierarchical organization with parent-child relationships</li>
+                    <li>Documents can be assigned to a specific category</li>
+                    <li>Easy navigation through related content</li>
+                    <li>Improved content discoverability</li>
+                </ul>
+                <p>Categories differ from tags in that they organize content hierarchically, while tags provide more flexible, non-hierarchical organization.</p>
+            </div>
+            {% if user.is_staff %}
+            <div class="card-footer">
+                <a href="{% url 'cms:category_create' %}" class="btn btn-primary btn-sm w-100">
+                    <i class="bi bi-plus-circle"></i> Create New Category
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

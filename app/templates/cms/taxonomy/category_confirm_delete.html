@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'cms:dashboard' %}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'cms:category_list' %}">Categories</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'cms:category_detail' category.slug %}">{{ category.name }}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Delete Category</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-exclamation-triangle text-danger"></i> Delete Category: {{ category.name }}
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if document_count > 0 %}
+                <div class="alert alert-danger">
+                    <h4 class="alert-heading">This category cannot be deleted!</h4>
+                    <p>This category is currently in use by {{ document_count }} document{{ document_count|pluralize }}.</p>
+                    <p class="mb-0">To delete this category, you must first reassign or remove all documents.</p>
+                </div>
+                
+                <div class="d-grid gap-2">
+                    <a href="{% url 'cms:category_list' %}" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Back to Categories
+                    </a>
+                </div>
+                {% elif children_count > 0 %}
+                <div class="alert alert-danger">
+                    <h4 class="alert-heading">This category cannot be deleted!</h4>
+                    <p>This category has {{ children_count }} subcategories.</p>
+                    <p class="mb-0">To delete this category, you must first delete or reassign all subcategories.</p>
+                </div>
+                
+                <div class="d-grid gap-2">
+                    <a href="{% url 'cms:category_list' %}" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Back to Categories
+                    </a>
+                </div>
+                {% else %}
+                <p>Are you sure you want to delete the category <strong>"{{ category.name }}"</strong>?</p>
+                
+                {% if category.parent %}
+                <div class="alert alert-info">
+                    <p class="mb-0">This is a subcategory of <a href="{% url 'cms:category_detail' category.parent.slug %}">{{ category.parent.name }}</a>.</p>
+                </div>
+                {% endif %}
+                
+                <p class="text-danger">This action cannot be undone.</p>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'cms:category_detail' category.slug %}" class="btn btn-secondary me-md-2">
+                            <i class="bi bi-x-circle"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-trash"></i> Delete Category
+                        </button>
+                    </div>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

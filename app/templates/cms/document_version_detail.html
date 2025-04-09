@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% load static markdown_filters %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'cms:dashboard' %}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'cms:document_list' %}">Documents</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'cms:document_detail' document.slug %}">{{ document.title }}</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'cms:document_versions' document.slug %}">Versions</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Version {{ version.version_number }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-8">
+        <div class="alert alert-warning">
+            <h4 class="alert-heading">Viewing Historical Version</h4>
+            <p>You are viewing version {{ version.version_number }} from {{ version.created_at|date:"F j, Y, g:i a" }}.</p>
+            {% if can_restore %}
+            <hr>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <form method="post" action="{% url 'cms:document_version_promote' document.slug version.version_number %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-warning">
+                        <i class="bi bi-arrow-up-circle"></i> Promote to Current Version
+                    </button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{% url 'cms:document_versions' document.slug %}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Versions
+        </a>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-8">
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <h4 class="card-title mb-0">{{ version.title }}</h4>
+            </div>
+            <div class="card-body">
+                {% if version.featured_image %}
+                <div class="text-center mb-4">
+                    <img src="{{ version.featured_image.url }}" alt="{{ version.title }}" class="img-fluid rounded">
+                </div>
+                {% endif %}
+                
+                {% if version.excerpt %}
+                <div class="alert alert-secondary {% if user.profile.dark_mode %}bg-secondary text-light{% endif %}">
+                    <p class="lead mb-0">{{ version.excerpt }}</p>
+                </div>
+                {% endif %}
+                
+                <div class="document-content">
+                    {{ version|render_document_content }}
+                </div>
+            </div>
+            <div class="card-footer text-muted">
+                <div class="row">
+                    <div class="col-md-6">
+                        <small>Version: {{ version.version_number }}</small>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <small>Created: {{ version.created_at|date:"F j, Y, g:i a" }}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <!-- Document Version Metadata -->
+        <div class="card mb-4 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-info-circle"></i> Version Info
+                </h5>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Version</dt>
+                    <dd class="col-sm-8">{{ version.version_number }}</dd>
+                    
+                    <dt class="col-sm-4">Created By</dt>
+                    <dd class="col-sm-8">{{ version.created_by.get_full_name|default:version.created_by.username }}</dd>
+                    
+                    <dt class="col-sm-4">Created At</dt>
+                    <dd class="col-sm-8">{{ version.created_at|date:"F j, Y, g:i a" }}</dd>
+                    
+                    {% if version.changelog %}
+                    <dt class="col-sm-4">Changelog</dt>
+                    <dd class="col-sm-8">{{ version.changelog }}</dd>
+                    {% endif %}
+                    
+                    {% if version.category %}
+                    <dt class="col-sm-4">Category</dt>
+                    <dd class="col-sm-8">{{ version.category.name }}</dd>
+                    {% endif %}
+                    
+                    {% if version.tags.exists %}
+                    <dt class="col-sm-4">Tags</dt>
+                    <dd class="col-sm-8">
+                        {% for tag in version.tags.all %}
+                        <span class="badge bg-secondary">{{ tag.name }}</span>
+                        {% endfor %}
+                    </dd>
+                    {% endif %}
+                </dl>
+            </div>
+        </div>
+        
+        <!-- Comparison -->
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-arrow-left-right"></i> Version Comparison
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{% url 'cms:document_detail' document.slug %}" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-arrow-right"></i> Compare with Current Version
+                    </a>
+                </div>
+                
+                <hr>
+                
+                <h6>Nearby Versions</h6>
+                <div class="list-group">
+                    {% if prev_version %}
+                    <a href="{% url 'cms:document_version_detail' document.slug prev_version.version_number %}" class="list-group-item list-group-item-action {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">Version {{ prev_version.version_number }}</h6>
+                            <small>{{ prev_version.created_at|date:"M d, Y" }}</small>
+                        </div>
+                        <small><i class="bi bi-arrow-up"></i> Previous version</small>
+                    </a>
+                    {% endif %}
+                    
+                    {% if next_version %}
+                    <a href="{% url 'cms:document_version_detail' document.slug next_version.version_number %}" class="list-group-item list-group-item-action {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">Version {{ next_version.version_number }}</h6>
+                            <small>{{ next_version.created_at|date:"M d, Y" }}</small>
+                        </div>
+                        <small><i class="bi bi-arrow-down"></i> Next version</small>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

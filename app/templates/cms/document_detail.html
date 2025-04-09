@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+{% load markdown_filters %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'cms:dashboard' %}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'cms:document_list' %}">Documents</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ document.title }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-8">
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="card-title mb-0">{{ document.title }}</h4>
+                <div class="btn-group">
+                    {% if can_edit %}
+                    <a href="{% url 'cms:document_update' document.slug %}" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-pencil"></i> Edit
+                    </a>
+                    <a href="{% url 'cms:document_delete' document.slug %}" class="btn btn-sm btn-outline-danger">
+                        <i class="bi bi-trash"></i> Delete
+                    </a>
+                    {% endif %}
+                    <a href="{% url 'cms:document_versions' document.slug %}" class="btn btn-sm btn-outline-secondary">
+                        <i class="bi bi-clock-history"></i> Versions
+                    </a>
+                    <a href="{% url 'cms:document_files' document.slug %}" class="btn btn-sm btn-outline-info">
+                        <i class="bi bi-file-earmark"></i> Files
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if document.featured_image %}
+                <div class="text-center mb-4">
+                    <img src="{{ document.featured_image.url }}" alt="{{ document.title }}" class="img-fluid rounded">
+                </div>
+                {% endif %}
+                
+                {% if document.excerpt %}
+                <div class="alert alert-secondary {% if user.profile.dark_mode %}bg-secondary text-light{% endif %}">
+                    <p class="lead mb-0">{{ document.excerpt }}</p>
+                </div>
+                {% endif %}
+                
+                <div class="document-content">
+                    {{ document|render_document_content }}
+                </div>
+            </div>
+            <div class="card-footer text-muted">
+                <div class="row">
+                    <div class="col-md-6">
+                        <small>Created: {{ document.created_at|date:"F j, Y, g:i a" }}</small>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <small>Last updated: {{ document.updated_at|date:"F j, Y, g:i a" }}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <!-- Document Metadata -->
+        <div class="card mb-4 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-info-circle"></i> Document Info
+                </h5>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Author</dt>
+                    <dd class="col-sm-8">{{ document.author.get_full_name|default:document.author.username }}</dd>
+                    
+                    <dt class="col-sm-4">Status</dt>
+                    <dd class="col-sm-8">
+                        <span class="badge {% if document.status == 'published' %}bg-success{% else %}bg-warning text-dark{% endif %}">
+                            {{ document.get_status_display }}
+                        </span>
+                    </dd>
+                    
+                    {% if document.category %}
+                    <dt class="col-sm-4">Category</dt>
+                    <dd class="col-sm-8">{{ document.category.name }}</dd>
+                    {% endif %}
+                    
+                    {% if document.tags.exists %}
+                    <dt class="col-sm-4">Tags</dt>
+                    <dd class="col-sm-8">
+                        {% for tag in document.tags.all %}
+                        <span class="badge bg-secondary">{{ tag.name }}</span>
+                        {% endfor %}
+                    </dd>
+                    {% endif %}
+                    
+                    {% if document.published_at %}
+                    <dt class="col-sm-4">Published</dt>
+                    <dd class="col-sm-8">{{ document.published_at|date:"F j, Y" }}</dd>
+                    {% endif %}
+                </dl>
+            </div>
+        </div>
+        
+        <!-- Document Versions -->
+        <div class="card mb-4 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-clock-history"></i> Recent Versions
+                </h5>
+                <a href="{% url 'cms:document_versions' document.slug %}" class="btn btn-sm btn-outline-secondary">
+                    View All
+                </a>
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    {% if versions %}
+                        {% for version in versions %}
+                        <li class="list-group-item {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>v{{ version.version_number }}</strong>
+                                    <small class="text-muted ms-2">{{ version.created_at|date:"M d, Y g:i a" }}</small>
+                                </div>
+                                <a href="{% url 'cms:document_version_detail' document.slug version.version_number %}" class="btn btn-sm btn-outline-primary">
+                                    View
+                                </a>
+                            </div>
+                            {% if version.changelog %}
+                            <div class="mt-1">
+                                <small>{{ version.changelog }}</small>
+                            </div>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    {% else %}
+                        <li class="list-group-item {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+                            <em>No versions available</em>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Attached Files -->
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-file-earmark"></i> Attached Files
+                </h5>
+                <a href="{% url 'cms:document_files' document.slug %}" class="btn btn-sm btn-outline-secondary">
+                    Manage Files
+                </a>
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    {% if files %}
+                        {% for doc_file in files %}
+                        <li class="list-group-item {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="bi 
+                                    {% if doc_file.file.is_image %}bi-file-earmark-image
+                                    {% elif 'pdf' in doc_file.file.mime_type %}bi-file-earmark-pdf
+                                    {% elif 'word' in doc_file.file.mime_type %}bi-file-earmark-word
+                                    {% elif 'excel' in doc_file.file.mime_type %}bi-file-earmark-excel
+                                    {% elif 'text' in doc_file.file.mime_type %}bi-file-earmark-text
+                                    {% else %}bi-file-earmark
+                                    {% endif %}"></i>
+                                    <a href="{% url 'cms:file_detail' doc_file.file.uuid %}">{{ doc_file.file.name }}</a>
+                                </div>
+                                <a href="{% url 'cms:file_download' doc_file.file.uuid %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-download"></i>
+                                </a>
+                            </div>
+                            <div class="mt-1">
+                                <small class="text-muted">
+                                    {{ doc_file.file.file_size|filesizeformat }} • 
+                                    Added by {{ doc_file.added_by.get_full_name|default:doc_file.added_by.username }}
+                                </small>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    {% else %}
+                        <li class="list-group-item {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+                            <em>No files attached</em>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

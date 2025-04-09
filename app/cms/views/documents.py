@@ -121,7 +121,7 @@ class DocumentCreateView(LoginRequiredMixin, CreateView):
     """View for creating a new document."""
     model = Document
     template_name = 'cms/document_form.html'
-    fields = ['title', 'content', 'excerpt', 'category', 'tags', 'featured_image']
+    fields = ['title', 'content', 'excerpt', 'category', 'tags', 'featured_image', 'content_format']
     
     def get_context_data(self, **kwargs):
         """Add form context."""
@@ -146,7 +146,7 @@ class DocumentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     """View for updating an existing document."""
     model = Document
     template_name = 'cms/document_form.html'
-    fields = ['title', 'content', 'excerpt', 'category', 'tags', 'featured_image', 'status']
+    fields = ['title', 'content', 'content_format', 'excerpt', 'category', 'tags', 'featured_image', 'status']
     
     def test_func(self):
         """Check if user can edit this document."""

@@ -80,6 +80,24 @@ urlpatterns = [
     # File management URLs
     path('files/', include(file_urls)),
     
+    # Tag management URLs
+    path('tags/', include([
+        path('', views.taxonomy.TagListView.as_view(), name='tag_list'),
+        path('create/', views.taxonomy.TagCreateView.as_view(), name='tag_create'),
+        path('<slug:slug>/', views.taxonomy.TagDetailView.as_view(), name='tag_detail'),
+        path('<slug:slug>/edit/', views.taxonomy.TagUpdateView.as_view(), name='tag_update'),
+        path('<slug:slug>/delete/', views.taxonomy.TagDeleteView.as_view(), name='tag_delete'),
+    ])),
+    
+    # Category management URLs
+    path('categories/', include([
+        path('', views.taxonomy.CategoryListView.as_view(), name='category_list'),
+        path('create/', views.taxonomy.CategoryCreateView.as_view(), name='category_create'),
+        path('<slug:slug>/', views.taxonomy.CategoryDetailView.as_view(), name='category_detail'),
+        path('<slug:slug>/edit/', views.taxonomy.CategoryUpdateView.as_view(), name='category_update'),
+        path('<slug:slug>/delete/', views.taxonomy.CategoryDeleteView.as_view(), name='category_delete'),
+    ])),
+    
     # User profile management
     path('profile/', views.users.ProfileView.as_view(), name='profile'),
     path('profile/edit/', views.users.ProfileUpdateView.as_view(), name='profile_edit'),

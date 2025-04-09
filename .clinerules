@@ -1,6 +1,6 @@
 ---CLINE_RULES_START---
 [LAST_ACTION_STATE]
-last_action: "Implemented user profile management system"
+last_action: "Completely rewrote TinyMCE initialization with extensive path mapping and read-only prevention"
 current_phase: "Execution"
 next_action: "Enhance administrative tools for user and content management"
 next_phase: "Execution"
@@ -49,6 +49,14 @@ next_phase: "Execution"
 - Created password change functionality with enhanced security features.
 - Added user activity tracking to display documents and files created by the user.
 - Implemented responsive UI for profile management with dark mode support.
+- Fixed circular import issue in CMS document forms by directly defining form classes in forms/__init__.py module.
+- Fixed URL name mismatch for user profile in base.html template.
+- Fixed TinyMCE editor read-only mode issue by modifying editor-switcher.js to set global TinyMCE settings with readonly:false and verify editor mode after initialization.
+- Eliminated TinyMCE API key warning by implementing a comprehensive configuration module with proper self-hosted mode setup and notification suppression.
+- Improved TinyMCE self-hosted mode configuration by creating tinymce-init.js that pre-configures TinyMCE before it loads to prevent API key validation.
+- Fixed TinyMCE editor initialization issues by implementing a robust approach with tinymce-core.js that provides proper path detection, warning suppression, and error handling for reliable editor loading.
+- Fixed TinyMCE resource loading with explicit path mappings for plugins, themes, models, and skins to ensure all editor components load correctly.
+- Completely rewrote TinyMCE initialization with hardcoded paths, multi-level read-only prevention, and enhanced error handling to fix persistent loading issues.
 
 [INSTRUCTIONS]
 - When told to commit all files, commit all changed, deleted, untracked and any other files in the project tree to the git repo. Git status should return no uncommitted files of any type in the project tree. If there is a discrepancy, ask the user for guidance.

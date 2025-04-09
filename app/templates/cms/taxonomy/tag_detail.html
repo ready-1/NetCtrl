@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'cms:dashboard' %}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'cms:tag_list' %}">Tags</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ tag.name }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-lg-8">
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %} mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-tag"></i> {{ tag.name }}
+                </h5>
+                {% if user.is_staff %}
+                <div class="btn-group">
+                    <a href="{% url 'cms:tag_update' tag.slug %}" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-pencil"></i> Edit
+                    </a>
+                    {% if document_count == 0 %}
+                    <a href="{% url 'cms:tag_delete' tag.slug %}" class="btn btn-sm btn-outline-danger">
+                        <i class="bi bi-trash"></i> Delete
+                    </a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <p class="text-muted mb-0">Slug:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <p class="mb-0"><code>{{ tag.slug }}</code></p>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-md-3">
+                        <p class="text-muted mb-0">Documents:</p>
+                    </div>
+                    <div class="col-md-9">
+                        <p class="mb-0">{{ document_count }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Documents associated with this tag -->
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-file-earmark-text"></i> Documents with this Tag ({{ document_count }})
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                {% if documents %}
+                <div class="table-responsive">
+                    <table class="table {% if user.profile.dark_mode %}table-dark{% endif %} mb-0">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Author</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for document in documents %}
+                            <tr>
+                                <td>
+                                    <a href="{% url 'cms:document_detail' document.slug %}">{{ document.title }}</a>
+                                    {% if document.category %}
+                                    <span class="badge bg-secondary">{{ document.category.name }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ document.author.username }}</td>
+                                <td>
+                                    {% if document.status == 'published' %}
+                                    <span class="badge bg-success">Published</span>
+                                    {% else %}
+                                    <span class="badge bg-warning text-dark">Draft</span>
+                                    {% endif %}
+                                </td>
+                                <td><small>{{ document.created_at|date:"M d, Y" }}</small></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="p-4 text-center">
+                    <p class="mb-0 text-muted">
+                        <em>No documents are using this tag yet.</em>
+                    </p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <i class="bi bi-info-circle"></i> Tag Information
+            </div>
+            <div class="card-body">
+                <p>Tags allow you to organize and categorize documents based on topics, themes, or other attributes.</p>
+                
+                <h5>Usage:</h5>
+                <ul>
+                    <li>Click on a document title to view its details</li>
+                    <li>Add this tag to documents by editing them</li>
+                    <li>Use the search feature to find documents with specific tags</li>
+                </ul>
+                
+                <h5>Similar Tags:</h5>
+                <div class="d-flex flex-wrap gap-1 mt-2">
+                    {% for similar_tag in similar_tags %}
+                    <a href="{% url 'cms:tag_detail' similar_tag.slug %}" class="badge bg-secondary text-decoration-none">
+                        {{ similar_tag.name }}
+                    </a>
+                    {% empty %}
+                    <p class="small text-muted">No similar tags found.</p>
+                    {% endfor %}
+                </div>
+            </div>
+            {% if user.is_staff %}
+            <div class="card-footer">
+                <div class="d-grid gap-2">
+                    <a href="{% url 'cms:tag_update' tag.slug %}" class="btn btn-primary btn-sm">
+                        <i class="bi bi-pencil"></i> Edit Tag
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

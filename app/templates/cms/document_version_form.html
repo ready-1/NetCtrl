@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'cms:dashboard' %}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'cms:document_list' %}">Documents</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'cms:document_detail' document.slug %}">{{ document.title }}</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'cms:document_versions' document.slug %}">Versions</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Create Version</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-lg-8 offset-lg-2">
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-plus-circle"></i> Create Manual Version
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <h4 class="alert-heading">Create a Manual Version</h4>
+                    <p>You're creating a new version snapshot of "<strong>{{ document.title }}</strong>" without changing its content.</p>
+                    <p>Use this to mark significant milestones or to document important changes that have been made.</p>
+                </div>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.changelog.id_for_label }}" class="form-label">Changelog Message</label>
+                        <textarea name="{{ form.changelog.name }}" 
+                                 id="{{ form.changelog.id_for_label }}" 
+                                 class="form-control {% if form.changelog.errors %}is-invalid{% endif %} {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}"
+                                 rows="4" 
+                                 placeholder="Description of changes or reason for creating this version">{{ form.changelog.value|default:'' }}</textarea>
+                        <div class="form-text">
+                            Describe what changes have been made or why you're creating this version.
+                        </div>
+                        {% if form.changelog.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.changelog.errors %}
+                            {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'cms:document_versions' document.slug %}" class="btn btn-secondary me-md-2">
+                            <i class="bi bi-x-circle"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> Create Version
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-lg-8 offset-lg-2">
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-info-circle"></i> About Manual Versions
+                </h5>
+            </div>
+            <div class="card-body">
+                <p>Manual versions are useful in several scenarios:</p>
+                <ul>
+                    <li>Marking significant milestones in the document's development</li>
+                    <li>Creating a snapshot before making extensive changes</li>
+                    <li>Documenting changes that were made outside the system</li>
+                    <li>Establishing a baseline for future reference</li>
+                </ul>
+                <p>Each version is a complete snapshot of the document at that point in time, including all content, metadata, and associated information.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

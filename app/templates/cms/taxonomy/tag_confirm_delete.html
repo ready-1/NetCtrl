@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'cms:dashboard' %}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'cms:tag_list' %}">Tags</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Delete Tag</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-exclamation-triangle text-danger"></i> Delete Tag: {{ tag.name }}
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if document_count > 0 %}
+                <div class="alert alert-danger">
+                    <h4 class="alert-heading">This tag cannot be deleted!</h4>
+                    <p>This tag is currently in use by {{ document_count }} document{{ document_count|pluralize }}.</p>
+                    <p class="mb-0">To delete this tag, you must first remove it from all documents.</p>
+                </div>
+                
+                <div class="d-grid gap-2">
+                    <a href="{% url 'cms:tag_list' %}" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Back to Tags
+                    </a>
+                </div>
+                {% else %}
+                <p>Are you sure you want to delete the tag <strong>"{{ tag.name }}"</strong>?</p>
+                <p class="text-danger">This action cannot be undone.</p>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'cms:tag_list' %}" class="btn btn-secondary me-md-2">
+                            <i class="bi bi-x-circle"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-trash"></i> Delete Tag
+                        </button>
+                    </div>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

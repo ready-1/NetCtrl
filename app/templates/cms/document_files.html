@@ -1,0 +1,245 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'cms:dashboard' %}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'cms:document_list' %}">Documents</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'cms:document_detail' document.slug %}">{{ document.title }}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Files</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-8">
+        <div class="alert alert-info">
+            <h4 class="alert-heading">Manage Document Files</h4>
+            <p>Add, remove, or reorder files attached to this document.</p>
+        </div>
+    </div>
+    <div class="col-md-4 text-end">
+        {% if can_manage_files %}
+        <a href="{% url 'cms:document_file_add' document.slug %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Add Files
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-lg-8 offset-lg-2">
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-file-earmark"></i> {{ document.title }} - Files
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                {% if document_files %}
+                <div class="table-responsive">
+                    <table class="table table-hover {% if user.profile.dark_mode %}table-dark{% endif %} mb-0" id="files-table">
+                        <thead>
+                            <tr>
+                                {% if can_manage_files %}
+                                <th width="50">#</th>
+                                {% endif %}
+                                <th>File</th>
+                                <th>Size</th>
+                                <th>Added By</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for doc_file in document_files %}
+                            <tr data-file-id="{{ doc_file.file.id }}">
+                                {% if can_manage_files %}
+                                <td class="handle">
+                                    <i class="bi bi-grip-vertical"></i>
+                                </td>
+                                {% endif %}
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi me-2
+                                        {% if doc_file.file.is_image %}bi-file-earmark-image
+                                        {% elif 'pdf' in doc_file.file.mime_type %}bi-file-earmark-pdf
+                                        {% elif 'word' in doc_file.file.mime_type %}bi-file-earmark-word
+                                        {% elif 'excel' in doc_file.file.mime_type %}bi-file-earmark-excel
+                                        {% elif 'text' in doc_file.file.mime_type %}bi-file-earmark-text
+                                        {% else %}bi-file-earmark
+                                        {% endif %}"></i>
+                                        <div>
+                                            <div>{{ doc_file.file.name }}</div>
+                                            <small class="text-muted">{{ doc_file.file.original_filename }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>{{ doc_file.file.file_size|filesizeformat }}</td>
+                                <td>{{ doc_file.added_by.get_full_name|default:doc_file.added_by.username }}</td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="{% url 'cms:file_detail' doc_file.file.uuid %}" class="btn btn-outline-primary">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="{% url 'cms:file_download' doc_file.file.uuid %}" class="btn btn-outline-success">
+                                            <i class="bi bi-download"></i>
+                                        </a>
+                                        {% if can_manage_files %}
+                                        <form method="post" action="{% url 'cms:document_file_remove' document.slug doc_file.file.uuid %}" class="d-inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-outline-danger">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="p-4 text-center">
+                    <p class="mb-0">
+                        <em>No files attached to this document yet.</em>
+                    </p>
+                </div>
+                {% endif %}
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'cms:document_detail' document.slug %}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to Document
+                </a>
+                
+                {% if can_manage_files and document_files %}
+                <button id="save-order" class="btn btn-success float-end d-none">
+                    <i class="bi bi-save"></i> Save Order
+                </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if available_files and can_manage_files %}
+<div class="row mb-4">
+    <div class="col-lg-8 offset-lg-2">
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-plus-circle"></i> Available Files
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover {% if user.profile.dark_mode %}table-dark{% endif %} mb-0">
+                        <thead>
+                            <tr>
+                                <th>File</th>
+                                <th>Size</th>
+                                <th>Uploaded By</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for file in available_files %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi me-2
+                                        {% if file.is_image %}bi-file-earmark-image
+                                        {% elif 'pdf' in file.mime_type %}bi-file-earmark-pdf
+                                        {% elif 'word' in file.mime_type %}bi-file-earmark-word
+                                        {% elif 'excel' in file.mime_type %}bi-file-earmark-excel
+                                        {% elif 'text' in file.mime_type %}bi-file-earmark-text
+                                        {% else %}bi-file-earmark
+                                        {% endif %}"></i>
+                                        <div>
+                                            <div>{{ file.name }}</div>
+                                            <small class="text-muted">{{ file.original_filename }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>{{ file.file_size|filesizeformat }}</td>
+                                <td>{{ file.uploaded_by.get_full_name|default:file.uploaded_by.username }}</td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="{% url 'cms:file_detail' file.uuid %}" class="btn btn-outline-primary">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <form method="post" action="{% url 'cms:document_file_add' document.slug %}" class="d-inline">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="files" value="{{ file.id }}">
+                                            <button type="submit" class="btn btn-outline-success">
+                                                <i class="bi bi-plus-circle"></i> Add
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+{% if can_manage_files and document_files %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const filesTable = document.getElementById('files-table');
+        let orderChanged = false;
+        
+        // File reordering functionality could be added here
+        // For example, using a drag-and-drop library like Sortable.js
+        
+        // This is a simplified version that would need to be expanded
+        document.getElementById('save-order').addEventListener('click', function() {
+            const rows = filesTable.querySelectorAll('tbody tr');
+            const newOrder = [];
+            
+            rows.forEach((row, index) => {
+                newOrder.push({
+                    id: row.dataset.fileId,
+                    position: index
+                });
+            });
+            
+            // Send the new order to the server
+            fetch('{% url "cms:document_file_reorder" document.slug %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify(newOrder)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    orderChanged = false;
+                    document.getElementById('save-order').classList.add('d-none');
+                } else {
+                    alert('Error saving order: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error saving order');
+            });
+        });
+    });
+</script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'cms:dashboard' %}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'cms:document_list' %}">Documents</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'cms:document_detail' document.slug %}">{{ document.title }}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Versions</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-8">
+        <div class="alert alert-info">
+            <h4 class="alert-heading">Version History</h4>
+            <p>This page shows all versions of the document. You can view any version or promote an older version to be the current document.</p>
+        </div>
+    </div>
+    <div class="col-md-4 text-end">
+        {% if can_restore %}
+        <a href="{% url 'cms:document_version_create' document.slug %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Create Manual Version
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-lg-8 offset-lg-2">
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-clock-history"></i> {{ document.title }} - Versions
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover {% if user.profile.dark_mode %}table-dark{% endif %} mb-0">
+                        <thead>
+                            <tr>
+                                <th>Version</th>
+                                <th>Created</th>
+                                <th>Created By</th>
+                                <th>Changelog</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if versions %}
+                                {% for version in versions %}
+                                <tr {% if forloop.first %}class="table-primary{% if user.profile.dark_mode %} bg-primary text-light{% endif %}"{% endif %}>
+                                    <td>
+                                        <span class="badge {% if forloop.first %}bg-primary{% else %}bg-secondary{% endif %}">v{{ version.version_number }}</span>
+                                        {% if forloop.first %}<span class="ms-2 badge bg-success">Current</span>{% endif %}
+                                    </td>
+                                    <td>{{ version.created_at|date:"M d, Y g:i a" }}</td>
+                                    <td>{{ version.created_by.get_full_name|default:version.created_by.username }}</td>
+                                    <td>
+                                        {% if version.changelog %}
+                                        <span class="text-truncate d-inline-block" style="max-width: 250px;">{{ version.changelog }}</span>
+                                        {% else %}
+                                        <em class="text-muted">No changelog</em>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="{% url 'cms:document_version_detail' document.slug version.version_number %}" class="btn btn-outline-primary">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            {% if can_restore and not forloop.first %}
+                                            <form method="post" action="{% url 'cms:document_version_promote' document.slug version.version_number %}" class="d-inline">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-outline-warning" title="Promote to current version">
+                                                    <i class="bi bi-arrow-up-circle"></i>
+                                                </button>
+                                            </form>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="5" class="text-center">
+                                        <em>No versions available</em>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'cms:document_detail' document.slug %}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to Document
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-lg-8 offset-lg-2">
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-info-circle"></i> About Version Management
+                </h5>
+            </div>
+            <div class="card-body">
+                <p>Document versions allow you to:</p>
+                <ul>
+                    <li>Track the history of changes to a document</li>
+                    <li>View previous versions of a document</li>
+                    <li>Restore a document to a previous state by promoting an older version</li>
+                    <li>Create manual versions to mark significant changes or milestones</li>
+                </ul>
+                <p>The system automatically creates a new version when you edit a document. You can also create versions manually.</p>
+                <p>When you promote an older version, it becomes the current document, but the history is preserved.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
