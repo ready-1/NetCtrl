@@ -208,8 +208,7 @@ LOGGING = {
             'class': 'netctrl.logging_config.TCPSysLogHandler',
             'formatter': 'verbose',
             'facility': 'local1',
-            'host': SYSLOG_HOST,
-            'port': SYSLOG_PORT,
+            'address': (SYSLOG_HOST, SYSLOG_PORT) if SYSLOG_HOST else ('localhost', 601),
         },
     },
     'loggers': {
