@@ -1,6 +1,6 @@
 ---CLINE_RULES_START---
 [LAST_ACTION_STATE]
-last_action: "Completely rewrote TinyMCE initialization with extensive path mapping and read-only prevention"
+last_action: "Implemented TODO management system with structured format and workflow"
 current_phase: "Execution"
 next_action: "Enhance administrative tools for user and content management"
 next_phase: "Execution"
@@ -58,6 +58,18 @@ next_phase: "Execution"
 - Fixed TinyMCE resource loading with explicit path mappings for plugins, themes, models, and skins to ensure all editor components load correctly.
 - Completely rewrote TinyMCE initialization with hardcoded paths, multi-level read-only prevention, and enhanced error handling to fix persistent loading issues.
 
+[TODO_SYSTEM]
+trigger: "#TODO:"
+categories: ["Feature", "Fix", "Improve", "Document"]
+priority_levels: ["!", "!!", "!!!", "!!!!"]
+default_priority: "!!"
+auto_categorize: true
+confirmation_required: true
+corrections_format: "#Category !!!"
+never_work_on_todos_without_direction: true
+todos_file: "cline_docs/todos.md"
+
 [INSTRUCTIONS]
 - When told to commit all files, commit all changed, deleted, untracked and any other files in the project tree to the git repo. Git status should return no uncommitted files of any type in the project tree. If there is a discrepancy, ask the user for guidance.
+- Never work on items from todos.md without explicit direction using "Work on TODO:" syntax.
 ---CLINE_RULES_END---

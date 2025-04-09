@@ -46,3 +46,17 @@ The NetCtrl CMS is a content management system with document and file management
 - The TinyMCE integration requires properly handling the editor's initialization to prevent read-only mode
 - Document content supports both HTML (via TinyMCE) and Markdown (via SimpleMDE) formats
 - Large file uploads are handled via chunking using the django-chunked-upload package
+
+## TODO Management System
+
+A TODO tracking system has been implemented to manage future tasks, bugs, features, and improvements. The system uses a dedicated `cline_docs/todos.md` file with configuration in `.clinerules`.
+
+### Usage Instructions
+
+- **Adding TODOs**: Use the syntax `#TODO: [description]` with optional priority (!-!!!!)
+- **Categories**: TODOs are automatically categorized as Feature, Fix, Improve, or Document
+- **Priorities**: ! (Low), !! (Normal), !!! (High), !!!! (Critical)
+- **Corrections**: Use `#Category` and/or priority markers (e.g., `#Feature !!!`) to modify suggestions
+- **Working on TODOs**: Use the syntax `Work on TODO: [description]` to begin implementation
+
+See `cline_docs/todos.md` for the current list of tasks and full explanation of the system.
