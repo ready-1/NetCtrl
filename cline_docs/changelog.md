@@ -3,6 +3,15 @@
 This file tracks significant changes to the codebase.
 
 ## 2025-04-09
+- Enhanced environment variables management and security:
+  - Fixed placeholder detection mechanism to prevent false positives (CHANGEME, True/False values)
+  - Added robust CSS sanitizer support to fix warnings in Markdown processing
+  - Improved GitHub API integration with graceful degradation when token is missing
+  - Added proper error handling in views with specific HTTP status codes
+  - Created verification script for environment configuration validation
+  - Added comprehensive placeholder detection patterns using regex
+  - Updated environment variable validation with more robust type conversion
+
 - Improved security by implementing comprehensive environment variables management:
   - Created centralized environment variable module (`env_config.py`) with type validation and error handling
   - Moved all secrets and configuration values to environment variables loaded from `.env` file
