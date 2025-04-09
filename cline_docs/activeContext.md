@@ -13,6 +13,21 @@ The NetCtrl CMS is a content management system with document and file management
 
 ## Recent Changes (Last 24 Hours)
 
+- Fixed Bleach CSS sanitizer warnings:
+  - Added CSS sanitizer extras to Bleach requirements
+  - Improved Markdown rendering with proper CSS sanitization
+
+- Fixed GitHub token recognition and enhanced integration:
+  - Fixed GitHub token recognition by adding explicit whitelisting for GitHub token formats
+  - Created diagnostic tools for troubleshooting environment and API issues
+  - Added GitHub API test script for verifying and demonstrating integration
+  - Created comprehensive GitHub integration documentation
+
+- Enhanced environment verification and setup automation:
+  - Enhanced environment verification with virtual environment and dependency checks
+  - Created automated setup script (`setup_env.py`) to streamline development environment configuration
+  - Improved environment documentation with clearer setup instructions and troubleshooting guidance
+
 - Enhanced environment variables management and security:
   - Fixed placeholder detection to prevent false positives for common values (True/False, environment names)
   - Added robust CSS sanitizer support to fix warnings in Markdown rendering

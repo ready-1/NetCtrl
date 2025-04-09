@@ -8,6 +8,7 @@ and validates the environment configuration.
 import os
 import sys
 import logging
+import importlib.util
 from pathlib import Path
 
 # Configure logging
@@ -22,6 +23,61 @@ logger = logging.getLogger("env-verify")
 script_dir = Path(__file__).resolve().parent
 app_dir = script_dir.parent / 'app'
 sys.path.insert(0, str(app_dir))
+
+def check_virtualenv():
+    """Verify the script is running in the correct virtual environment"""
+    # Get project root directory
+    project_root = Path(__file__).resolve().parent.parent
+    venv_path = project_root / 'python'
+    
+    # Check if we're running in a virtual environment
+    in_venv = hasattr(sys, 'real_prefix') or (
+        hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix
+    )
+    
+    expected_python = str(venv_path / 'bin' / 'python')
+    current_python = sys.executable
+    
+    if not in_venv:
+        logger.warning("Not running in any virtual environment")
+        logger.info(f"Current Python: {current_python}")
+        logger.info(f"Expected Python: {expected_python}")
+        logger.info("\nTo activate the virtual environment, run:")
+        logger.info(f"source {venv_path}/bin/activate")
+        return False
+    
+    if expected_python not in current_python:
+        logger.warning("Running in a different virtual environment than expected")
+        logger.info(f"Current Python: {current_python}")
+        logger.info(f"Expected Python: {expected_python}")
+        return False
+        
+    logger.info("✓ Running in the correct virtual environment")
+    return True
+
+def check_prerequisites():
+    """Check that all required packages are installed"""
+    required_packages = {
+        'dotenv': 'python-dotenv',
+        'requests': 'requests',
+        'markdown': 'markdown',
+        'bleach': 'bleach'
+    }
+    missing_packages = []
+    
+    for module_name, package_name in required_packages.items():
+        spec = importlib.util.find_spec(module_name)
+        if spec is None:
+            missing_packages.append(package_name)
+    
+    if missing_packages:
+        logger.error(f"Missing required packages: {', '.join(missing_packages)}")
+        logger.info("\nTo install required packages, run:")
+        logger.info("pip install -r app/requirements.txt")
+        return False
+    
+    logger.info("✓ All required packages are installed")
+    return True
 
 def test_env_loading():
     """Test environment variable loading mechanism"""
@@ -175,6 +231,17 @@ def main():
     logger.info("NetCtrl Environment Verification Tool")
     logger.info("====================================")
     
+    # First check virtual environment and prerequisites
+    logger.info("=== Checking Environment Prerequisites ===")
+    venv_ok = check_virtualenv()
+    prereq_ok = check_prerequisites()
+    
+    if not (venv_ok and prereq_ok):
+        logger.error("\n❌ Environment prerequisites check failed")
+        logger.warning("\nPlease resolve environment issues before continuing")
+        logger.info("See instructions above for activating the virtual environment and installing packages")
+        return 1
+    
     # Run all verification checks
     env_loading_ok = test_env_loading()
     vars_ok = check_critical_variables()
@@ -185,6 +252,8 @@ def main():
     # Final summary
     logger.info("\n=== Verification Summary ===")
     for test, result in [
+        ("Virtual Environment", venv_ok),
+        ("Required Packages", prereq_ok),
         ("Environment Loading", env_loading_ok),
         ("Critical Variables", vars_ok),
         ("Django Settings", settings_ok),
@@ -194,7 +263,7 @@ def main():
         status = "✓ PASS" if result else "✗ FAIL"
         logger.info(f"{status}: {test}")
     
-    all_ok = env_loading_ok and vars_ok and settings_ok and github_ok and bleach_ok
+    all_ok = venv_ok and prereq_ok and env_loading_ok and vars_ok and settings_ok and github_ok and bleach_ok
     
     logger.info("\n" + ("=" * 50))
     if all_ok:

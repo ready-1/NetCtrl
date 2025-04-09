@@ -37,6 +37,11 @@ def is_placeholder(value):
     """
     if not value or not isinstance(value, str):
         return False
+    
+    # Whitelist known token formats from major services
+    # GitHub PATs (github_pat_* or ghp_*)
+    if isinstance(value, str) and value.startswith(('github_pat_', 'ghp_')):
+        return False
         
     # Common legitimate values (not placeholders)
     common_values = [

@@ -10,17 +10,38 @@ NetCtrl uses environment variables for all configuration, especially for sensiti
 
 ## Quick Start
 
-1. **Create your environment file**:
+1. **Set up the development environment**:
+   ```bash
+   # Run the automated setup script
+   python scripts/setup_env.py
+   
+   # Activate the virtual environment
+   source python/bin/activate  # Linux/macOS
+   # OR
+   .\python\Scripts\activate   # Windows
+   ```
+
+   The setup script will:
+   - Create or validate the Python virtual environment
+   - Install all required dependencies
+   - Verify your environment configuration
+
+2. **Create your environment file** (if it doesn't exist):
    ```bash
    cp .env.example .env
    ```
 
-2. **Generate a secure Django secret key**:
+3. **Generate a secure Django secret key**:
    ```bash
    python -c "from django.core.management.utils.get_random_secret_key import get_random_secret_key; print(get_random_secret_key())"
    ```
 
-3. **Edit your `.env` file** with the generated key and other required values.
+4. **Edit your `.env` file** with the generated key and other required values.
+
+5. **Verify your environment**:
+   ```bash
+   python scripts/verify_env.py
+   ```
 
 ## Security Best Practices
 
