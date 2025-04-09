@@ -16,7 +16,7 @@
         </div>
         
         <div class="row mb-5">
-            <div class="col-md-6 mb-4">
+            <div class="col-md-4 mb-4">
                 <div class="card h-100 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
                     <div class="card-body">
                         <h3 class="card-title">
@@ -27,10 +27,30 @@
                             Store, organize, and manage your documents and files up to 5GB in size 
                             with powerful search and categorization features.
                         </p>
+                        <a href="{% url 'cms:document_list' %}" class="btn btn-outline-primary mt-2">
+                            <i class="bi bi-file-earmark-text"></i> Manage Documents
+                        </a>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 mb-4">
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+                    <div class="card-body">
+                        <h3 class="card-title">
+                            <i class="bi bi-book text-primary"></i> 
+                            Content Library
+                        </h3>
+                        <p class="card-text">
+                            Browse our knowledge base with a clean, reader-friendly interface. 
+                            Find documents by category or tag in a wiki-like experience.
+                        </p>
+                        <a href="{% url 'cms:content_list' %}" class="btn btn-outline-primary mt-2">
+                            <i class="bi bi-book"></i> Browse Content
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
                 <div class="card h-100 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
                     <div class="card-body">
                         <h3 class="card-title">
@@ -41,6 +61,9 @@
                             Monitor, manage and control your network infrastructure from a single 
                             unified dashboard with real-time analytics.
                         </p>
+                        <a href="{% url 'network:index' %}" class="btn btn-outline-primary mt-2">
+                            <i class="bi bi-diagram-3"></i> Network Tools
+                        </a>
                     </div>
                 </div>
             </div>

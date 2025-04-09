@@ -73,13 +73,24 @@ def markdown_to_html(markdown_text):
         )
         
         # Sanitize the HTML
-        clean_html = bleach.clean(
-            html,
-            tags=ALLOWED_TAGS,
-            attributes=ALLOWED_ATTRIBUTES,
-            styles=ALLOWED_STYLES,
-            strip=True
-        )
+        # Note: Different bleach versions handle CSS differently
+        try:
+            # Try with styles parameter (newer bleach versions)
+            clean_html = bleach.clean(
+                html,
+                tags=ALLOWED_TAGS,
+                attributes=ALLOWED_ATTRIBUTES,
+                styles=ALLOWED_STYLES,
+                strip=True
+            )
+        except TypeError:
+            # Fallback for older bleach versions that don't support styles
+            clean_html = bleach.clean(
+                html,
+                tags=ALLOWED_TAGS,
+                attributes=ALLOWED_ATTRIBUTES,
+                strip=True
+            )
         
         return mark_safe(clean_html)
     except Exception as e:

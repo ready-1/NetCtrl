@@ -1,0 +1,307 @@
+{% extends "base.html" %}
+{% load markdown_filters %}
+
+{% block title %}{{ document.title }}{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <!-- Navigation breadcrumbs -->
+    <div class="row mb-3">
+        <div class="col">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'cms:content_list' %}">Content Library</a></li>
+                    {% if document.category %}
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'cms:content_list' %}?category={{ document.category.id }}">
+                            {{ document.category.name }}
+                        </a>
+                    </li>
+                    {% endif %}
+                    <li class="breadcrumb-item active" aria-current="page">{{ document.title }}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    
+    <!-- Document content - front and center -->
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <!-- Document header -->
+            <header class="mb-4">
+                <h1 class="display-5 mb-3">{{ document.title }}</h1>
+                
+                <div class="mb-4">
+                    <span class="text-muted">
+                        Published {{ document.published_at|date:"F j, Y" }} 
+                        {% if reading_time %}• {{ reading_time }} min read{% endif %}
+                    </span>
+                </div>
+                
+                {% if document.featured_image %}
+                <div class="featured-image mb-4 text-center">
+                    <img src="{{ document.featured_image.url }}" alt="{{ document.title }}" class="img-fluid rounded shadow">
+                </div>
+                {% endif %}
+                
+                {% if document.excerpt %}
+                <div class="lead p-3 mb-4 bg-light rounded {% if user.profile.dark_mode %}bg-dark text-light{% endif %}">
+                    {{ document.excerpt }}
+                </div>
+                {% endif %}
+            </header>
+            
+            <!-- Document content - rendered as HTML -->
+            <article class="document-content mb-5">
+                <!-- The render_document_content filter handles Markdown-to-HTML conversion -->
+                {% if document.content %}
+                    <div class="content-body">
+                        {{ document|render_document_content }}
+                    </div>
+                {% else %}
+                    <div class="alert alert-warning">
+                        This document has no content yet.
+                    </div>
+                {% endif %}
+            </article>
+            
+            <!-- Document metadata at the bottom -->
+            <footer class="mt-5">
+                <div class="card mb-3 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+                    <div class="card-header">
+                        <h5 class="mb-0">Document Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <dl>
+                                    <dt>Author</dt>
+                                    <dd>{{ document.author.get_full_name|default:document.author.username }}</dd>
+                                    
+                                    {% if document.category %}
+                                    <dt>Category</dt>
+                                    <dd>
+                                        <a href="{% url 'cms:content_list' %}?category={{ document.category.id }}">
+                                            {{ document.category.name }}
+                                        </a>
+                                    </dd>
+                                    {% endif %}
+                                    
+                                    <dt>Published</dt>
+                                    <dd>{{ document.published_at|date:"F j, Y" }}</dd>
+                                </dl>
+                            </div>
+                            <div class="col-md-6">
+                                {% if document.tags.exists %}
+                                <dt>Tags</dt>
+                                <dd>
+                                    {% for tag in document.tags.all %}
+                                    <a href="{% url 'cms:content_list' %}?tag={{ tag.id }}" class="badge bg-secondary text-decoration-none me-1">
+                                        {{ tag.name }}
+                                    </a>
+                                    {% endfor %}
+                                </dd>
+                                {% endif %}
+                                
+                                {% if files %}
+                                <dt>Attached Files</dt>
+                                <dd>
+                                    <ul class="list-unstyled">
+                                        {% for doc_file in files %}
+                                        <li class="mb-2">
+                                            <i class="bi 
+                                            {% if doc_file.file.is_image %}bi-file-earmark-image
+                                            {% elif 'pdf' in doc_file.file.mime_type %}bi-file-earmark-pdf
+                                            {% elif 'word' in doc_file.file.mime_type %}bi-file-earmark-word
+                                            {% elif 'excel' in doc_file.file.mime_type %}bi-file-earmark-excel
+                                            {% elif 'text' in doc_file.file.mime_type %}bi-file-earmark-text
+                                            {% else %}bi-file-earmark
+                                            {% endif %}"></i>
+                                            <a href="{% url 'cms:file_download' doc_file.file.uuid %}" class="text-decoration-none">
+                                                {{ doc_file.file.name }} ({{ doc_file.file.file_size|filesizeformat }})
+                                            </a>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                </dd>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Document Actions Card -->
+                <div class="card mb-4 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-tools"></i> Document Actions
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        {% if user.is_authenticated and user == document.author or user.is_staff %}
+                        <div class="mb-3">
+                            <h6 class="text-muted mb-2">Editing</h6>
+                            <div class="d-flex gap-2">
+                                <a href="{% url 'cms:document_update' document.slug %}" class="btn btn-outline-primary">
+                                    <i class="bi bi-pencil"></i> Edit
+                                </a>
+                                <a href="{% url 'cms:document_delete' document.slug %}" class="btn btn-outline-danger">
+                                    <i class="bi bi-trash"></i> Delete
+                                </a>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="mb-3">
+                            <h6 class="text-muted mb-2">Version Control</h6>
+                            <div class="d-flex gap-2">
+                                <a href="{% url 'cms:document_versions' document.slug %}" class="btn btn-outline-secondary">
+                                    <i class="bi bi-clock-history"></i> Versions
+                                </a>
+                                {% if user.is_authenticated and user == document.author or user.is_staff %}
+                                <a href="{% url 'cms:document_version_create' document.slug %}" class="btn btn-outline-secondary">
+                                    <i class="bi bi-plus-circle"></i> Create Version
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h6 class="text-muted mb-2">File Management</h6>
+                            <div class="d-flex gap-2">
+                                <a href="{% url 'cms:document_files' document.slug %}" class="btn btn-outline-info">
+                                    <i class="bi bi-file-earmark"></i> Manage Files
+                                </a>
+                                {% if user.is_authenticated and user == document.author or user.is_staff %}
+                                <a href="{% url 'cms:document_file_add' document.slug %}" class="btn btn-outline-info">
+                                    <i class="bi bi-link"></i> Attach Files
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+            
+            <!-- Related documents -->
+            {% if related_documents %}
+            <div class="mt-5">
+                <h4 class="mb-3">
+                    {% if relation_type == 'category' %}
+                    More in {{ document.category.name }}
+                    {% elif relation_type == 'tags' %}
+                    Related Content
+                    {% else %}
+                    Recent Documents
+                    {% endif %}
+                </h4>
+                <div class="row row-cols-1 row-cols-md-3 g-4">
+                    {% for related in related_documents %}
+                    <div class="col">
+                        <div class="card h-100 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+                            {% if related.featured_image %}
+                            <img src="{{ related.featured_image.url }}" class="card-img-top" alt="{{ related.title }}" loading="lazy" height="120" style="object-fit: cover;">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ related.title }}</h5>
+                                <p class="card-text small">{{ related.excerpt|truncatewords:15|default:"" }}</p>
+                            </div>
+                            <div class="card-footer text-end">
+                                <a href="{% url 'cms:content_detail' related.slug %}" class="btn btn-sm btn-outline-primary">
+                                    Read
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Document content enhancement styles -->
+<style>
+    .document-content {
+        font-size: 1.1rem;
+        line-height: 1.6;
+    }
+    
+    .document-content h1,
+    .document-content h2,
+    .document-content h3 {
+        margin-top: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .document-content ul,
+    .document-content ol {
+        margin-bottom: 1rem;
+    }
+    
+    .document-content img {
+        max-width: 100%;
+        height: auto;
+        margin: 1rem 0;
+    }
+    
+    .document-content table {
+        width: 100%;
+        margin-bottom: 1rem;
+        border-collapse: collapse;
+    }
+    
+    .document-content table th,
+    .document-content table td {
+        padding: 0.5rem;
+        border: 1px solid #dee2e6;
+    }
+    
+    .document-content pre,
+    .document-content code {
+        background: #f8f9fa;
+        border-radius: 0.25rem;
+        padding: 0.2rem 0.4rem;
+    }
+    
+    .document-content blockquote {
+        border-left: 0.25rem solid #dee2e6;
+        padding-left: 1rem;
+        margin-left: 0;
+        color: #6c757d;
+    }
+    
+    /* Dark mode adjustments */
+    {% if user.profile.dark_mode %}
+    .document-content pre,
+    .document-content code {
+        background: #343a40;
+        color: #f8f9fa;
+    }
+    
+    .document-content blockquote {
+        border-left-color: #495057;
+        color: #adb5bd;
+    }
+    
+    .document-content table th,
+    .document-content table td {
+        border-color: #495057;
+    }
+    {% endif %}
+</style>
+
+<!-- Add print styles -->
+<style media="print">
+    .container { width: 100%; max-width: 100%; }
+    nav, .breadcrumb, footer, .related-documents, .btn { display: none !important; }
+    body { font-size: 12pt; }
+    .document-content { font-size: 12pt; line-height: 1.5; }
+    h1 { font-size: 18pt; }
+    h2 { font-size: 16pt; }
+    h3 { font-size: 14pt; }
+    .card { border: none !important; }
+    .card-header { border: none !important; background: none !important; }
+</style>
+{% endblock %}

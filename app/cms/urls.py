@@ -7,6 +7,7 @@ This module defines all URL patterns for the CMS application, including:
 - File management views (upload, download, list, delete)
 - User profile views
 - Category and tag views
+- Content-focused views (reader-optimized views)
 """
 
 from django.urls import path, include
@@ -103,6 +104,10 @@ urlpatterns = [
     path('profile/edit/', views.users.ProfileUpdateView.as_view(), name='profile_edit'),
     path('profile/activity/', views.users.UserActivityView.as_view(), name='user_activity'),
     path('profile/password/', views.users.EnhancedPasswordChangeView.as_view(), name='password_change'),
+    
+    # Content library (reader-optimized views)
+    path('content/', views.content.ContentListView.as_view(), name='content_list'),
+    path('content/<slug:slug>/', views.content.ContentDetailView.as_view(), name='content_detail'),
     
     # Landing page
     path('', TemplateView.as_view(

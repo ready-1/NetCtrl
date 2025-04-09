@@ -19,24 +19,8 @@
 <div class="row mb-4">
     <div class="col-md-8">
         <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
-            <div class="card-header d-flex justify-content-between align-items-center">
+            <div class="card-header">
                 <h4 class="card-title mb-0">{{ document.title }}</h4>
-                <div class="btn-group">
-                    {% if can_edit %}
-                    <a href="{% url 'cms:document_update' document.slug %}" class="btn btn-sm btn-outline-primary">
-                        <i class="bi bi-pencil"></i> Edit
-                    </a>
-                    <a href="{% url 'cms:document_delete' document.slug %}" class="btn btn-sm btn-outline-danger">
-                        <i class="bi bi-trash"></i> Delete
-                    </a>
-                    {% endif %}
-                    <a href="{% url 'cms:document_versions' document.slug %}" class="btn btn-sm btn-outline-secondary">
-                        <i class="bi bi-clock-history"></i> Versions
-                    </a>
-                    <a href="{% url 'cms:document_files' document.slug %}" class="btn btn-sm btn-outline-info">
-                        <i class="bi bi-file-earmark"></i> Files
-                    </a>
-                </div>
             </div>
             <div class="card-body">
                 {% if document.featured_image %}
@@ -151,7 +135,7 @@
         </div>
         
         <!-- Attached Files -->
-        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+        <div class="card mb-4 {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="card-title mb-0">
                     <i class="bi bi-file-earmark"></i> Attached Files
@@ -195,6 +179,58 @@
                         </li>
                     {% endif %}
                 </ul>
+            </div>
+        </div>
+        
+        <!-- Document Actions -->
+        <div class="card {% if user.profile.dark_mode %}bg-dark text-light border-secondary{% endif %}">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-tools"></i> Document Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if can_edit %}
+                <div class="mb-3">
+                    <h6 class="text-muted mb-2">Editing</h6>
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'cms:document_update' document.slug %}" class="btn btn-outline-primary">
+                            <i class="bi bi-pencil"></i> Edit
+                        </a>
+                        <a href="{% url 'cms:document_delete' document.slug %}" class="btn btn-outline-danger">
+                            <i class="bi bi-trash"></i> Delete
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="mb-3">
+                    <h6 class="text-muted mb-2">Version Control</h6>
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'cms:document_versions' document.slug %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-clock-history"></i> Versions
+                        </a>
+                        {% if can_edit %}
+                        <a href="{% url 'cms:document_version_create' document.slug %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-plus-circle"></i> Create Version
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div>
+                    <h6 class="text-muted mb-2">File Management</h6>
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'cms:document_files' document.slug %}" class="btn btn-outline-info">
+                            <i class="bi bi-file-earmark"></i> Manage Files
+                        </a>
+                        {% if can_edit %}
+                        <a href="{% url 'cms:document_file_add' document.slug %}" class="btn btn-outline-info">
+                            <i class="bi bi-link"></i> Attach Files
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

@@ -9,6 +9,7 @@ This package contains all view modules for the CMS application:
 - search.py: Views for advanced search functionality
 - users.py: Views for user profile management and activity tracking
 - taxonomy.py: Views for tag and category management
+- content.py: Views for content-focused document browsing (wiki-like experience)
 """
 
 from . import uploads
@@ -18,3 +19,4 @@ from . import dashboard
 from . import search
 from . import users
 from . import taxonomy
+from . import content
